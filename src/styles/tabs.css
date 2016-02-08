@@ -35,8 +35,8 @@
 
 .tab-button {
   min-width: 0px;
-  min-height: 85%;
-  height: 85%;
+  min-height: 32px;
+  height: 32px;
   margin-top: 0;
   margin-bottom: 0;
   text-transform: none;
@@ -88,4 +88,21 @@
   top: -10px;
   left: 10px;
   transform: rotate(-90deg);
+}
+
+.subbeat-tab {
+  xbackground-color: red;
+  height: 144px;
+  xmargin: 2px;
+  position: relative;
+}
+
+.tab-top-marker {
+  position: absolute;
+  top: -20px;
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+  color: #777;
+  line-height: 5px;
 }
