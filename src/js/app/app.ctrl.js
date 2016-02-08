@@ -95,11 +95,27 @@
         },
         pop: {
           name: 'pop',
-          label: 'Pop'
+          label: 'Pop',
+          noteLabel: function(subbeat) {
+            if (subbeat.note.name) {
+              return "<sup>(Pop)</sup> {0}<sub>{1}</sub>".format(
+                subbeat.note.name,
+                subbeat.note.octave || ''
+              );
+            }
+          }
         },
         tap: {
           name: 'tap',
-          label: 'Tap'
+          label: 'Tap',
+          noteLabel: function(subbeat) {
+            if (subbeat.note.name) {
+              return "<sup>(Tap)</sup> {0}<sub>{1}</sub>".format(
+                subbeat.note.name,
+                subbeat.note.octave || ''
+              );
+            }
+          }
         },
         hammer: {
           name: 'hammer-on',
