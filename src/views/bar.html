@@ -1,0 +1,99 @@
+<div
+  layout-fill
+  layout="row"
+  class="bar">
+  <div></div>
+  <md-button
+    class="time-signature-button"
+    ng-click="showNoteDialog({}, $event)">
+    {{ bar.timeSignature.top }}<br>{{ bar.timeSignature.bottom }}
+  </md-button>
+  <div
+    class="bar-settings-container closed">
+    <div style="position:relative;"
+      layout="row">
+      <label>Time signature:</label>
+      <md-select
+        ng-model="bar.timeSignature.top"
+        class="time-signature">
+        <md-option
+          ng-repeat="value in [2,3,4,5,6,7,8,9,10,11,12]"
+          ng-value="{{ value }}">
+          {{ value }}
+        </md-option>
+      </md-select>
+      <label>/</label>
+      <md-select
+        ng-model="bar.timeSignature.bottom"
+        class="time-signature">
+        <md-option
+          ng-repeat="value in [2,4,8,16]"
+          ng-value="{{ value }}">
+          {{ value }}
+        </md-option>
+      </md-select>
+    </div>
+  </div>
+  <div
+    ng-repeat="subbeat in bar.subbeats | limitTo: bar.timeSignature.top*4"
+    layout="column"
+    class="subbeat subbeat-{{ ::subbeat.index }}"
+    flex>
+      <label class="subbeat-label">
+        {{ subbeat.name }}
+        <!-- <sub>({{ subbeat.index }})</sub> -->
+      </label>
+      <div
+        class="note-container"
+        style="width: {{ subbeat.width * 100 }}%;">
+        <md-button
+          aria-label="Note"
+          class="md-raised note-button {{ subbeat.note.style }}"
+          ng-class="{'md-primary': subbeat.note.name}"
+          ng-hide="off"
+          ng-click="showNoteDialog(subbeat, $event)"
+          ng-bind-html="bass.playingStyles[subbeat.note.style].noteLabel(subbeat)">
+          <!-- {{ subbeat.note.label }}<sub>{{ subbeat.note.octave }}</sub> -->
+        </md-button>
+        <md-button
+          aria-label="Clear"
+          class="clear-button"
+          ng-show="subbeat.note.name"
+          ng-click="clearNote(subbeat)">
+          x
+        </md-button>
+        <div class="subbeat-form-container closed"
+          xng-include="'views/subbeat-form.html'"
+          ng-include="'views/note-form2.html'">
+        </div>
+      </div>
+      <!-- <md-button>X</md-button> -->
+  </div>
+  <div class="bar-end">
+  </div>
+</div>
+
+<!-- <div layout="row" layout-fill>
+  <div
+    ng-repeat="beat in beats"
+    layout="row"
+    class="beat"
+    flex>
+      <div
+        ng-repeat="subbeat in beat.subbeats"
+        style="position:relative;"
+        layout="column"
+        class="subbeat"
+        flex>
+        <md-button
+          class="md-raised"
+          ng-class="{'md-primary': subbeat.pitch}"
+          style="width: {{ subbeat.length }}%;"
+          ng-click="showNoteDialog(subbeat, $event)">
+          {{ subbeat.pitch }}
+        </md-button>
+        <div class="note-form-container">
+        </div>
+      </div>
+  </div>
+</div> -->

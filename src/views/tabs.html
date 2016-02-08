@@ -1,0 +1,69 @@
+<div
+  ng-controller="TabsController"
+  class="tabs-container">
+  <md-button
+    aria-label="Tunning"
+    class="tabs-tunning-button">
+    <span ng-repeat="string in bass.strings">
+      {{ string.label }}<br>
+    </span>
+  </md-button>
+  <div
+    ng-repeat="string in bass.strings"
+    layout="row"
+    class="tab-string-container">
+    <div class="tab-string"></div>
+    <div
+      ng-repeat="subbeat in bar.subbeats | limitTo: bar.timeSignature.top*4"
+      class="tab-note-container"
+      flex>
+      <md-button
+        ng-if="subbeat.note.style !== 'hammer' && subbeat.note.style !== 'pull'"
+        aria-label="tab"
+        class="md-raised tab-button"
+        ng-class="{'md-primary': subbeat.tabs.selected === string.index}"
+        ng-show="subbeat.tabs[string.index]"
+        ng-click="subbeat.tabs.selected=string.index">
+        {{ subbeat.tabs[string.index] }}
+      </md-button>
+
+      <!-- subbeat.prevSubbeat().tabs[string.index] -->
+      <div
+        style="height: 100%;"
+        ng-if="subbeat.note.style === 'hammer'">
+        <div
+          class="tab-hammer"
+          ng-show="previousNoteSubbeat(subbeat).tabs.selected === string.index">
+          <span class="hammer-top">)</span>
+          <span class="hammer-bottom">h</span>
+        </div>
+        <md-button
+          aria-label="tab"
+          class="md-raised tab-button"
+          ng-class="{'md-primary': previousNoteSubbeat(subbeat).tabs.selected === string.index}"
+          ng-show="subbeat.tabs[string.index]">
+          {{ subbeat.tabs[string.index] }}
+        </md-button>
+      </div>
+
+      <div
+        style="height: 100%;"
+        ng-if="subbeat.note.style === 'pull'">
+        <div
+          class="tab-pull"
+          ng-show="previousNoteSubbeat(subbeat).tabs.selected === string.index">
+          <span class="pull-top">p</span>
+          <span class="pull-bottom">)</span>
+        </div>
+        <md-button
+          aria-label="tab"
+          class="md-raised tab-button"
+          ng-class="{'md-primary': previousNoteSubbeat(subbeat).tabs.selected === string.index}"
+          ng-show="subbeat.tabs[string.index]">
+          {{ subbeat.tabs[string.index] }}
+        </md-button>
+      </div>
+
+    </div>
+  </div>
+</div>

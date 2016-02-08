@@ -1,0 +1,91 @@
+<div class="subbeat-form" layout="column">
+  <div layout="row">
+    <md-input-container
+      flex
+      layout="row">
+      <label class="md-label">Style</label>
+      <md-select
+        flex
+        ng-model="subbeat.note.style"
+        md-on-close="updateNote(subbeat)">
+        <md-option
+          ng-repeat="style in playingStyles"
+          ng-value="style">
+          {{ bass.playingStyles[style].label }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <md-checkbox
+      class="md-primary"
+      aria-label="Staccato"
+      ng-model="subbeat.note.staccato"
+      ng-disabled="subbeat.note.name==='x'">
+      Staccato
+    </md-checkbox>
+  </div>
+  <div layout="row">
+    <md-input-container flex="33">
+      <label class="md-label">Note</label>
+      <md-select
+        ng-model="subbeat.note.name"
+        md-on-close="updateNote(subbeat)">
+        <md-option
+          ng-repeat="noteLabel in notesLabels"
+          ng-value="noteLabel">
+          {{ noteLabel }}
+        </md-option>
+        <md-option value="x">
+          Ghost
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <md-input-container flex="33">
+      <label class="md-label">Octave</label>
+      <md-select
+        ng-model="subbeat.note.octave"
+        md-on-close="updateNote(subbeat)"
+        ng-disabled="!subbeat.note.name || subbeat.note.name==='x'">
+        <md-option
+          ng-repeat="octave in bass.notes.notesOctaves[subbeat.note.name]"
+          ng-value="octave">
+          {{ octave }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <md-input-container flex="33">
+      <label class="md-label">Length</label>
+      <md-select
+        ng-model="subbeat.note.length"
+        md-on-close="checkMeasure(subbeat)"
+        ng-disabled="!subbeat.note.name || subbeat.note.name==='x'">
+        <md-option
+          ng-repeat="value in [1, 0.5, 0.25, 0.125, 0.0625]"
+          ng-value="{{ value }}">
+          1/{{ 1/value }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+  </div>
+  <div layout="row">
+    <md-input-container
+      class="volume-field"
+      flex="none">
+      <label>Volume</label>
+      <input
+        type="number"
+        min="0"
+        max="1"
+        step="0.01"
+        ng-model="subbeat.note.volume">
+    </md-input-container>
+    <md-slider
+      class="md-primary"
+      ng-model="subbeat.note.volume"
+      aria-label="Volume"
+      min="0"
+      max="1"
+      step="0.01"
+      flex>
+    </md-slider>
+  </div>
+</div>

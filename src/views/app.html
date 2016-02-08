@@ -1,0 +1,35 @@
+<div
+  layout="column"
+  class="main-page"
+  ng-controller="AppController">
+  <div
+    layout="row"
+    class="control-panel">
+    <md-button ng-click="play()">
+      Play
+    </md-button>
+    <md-button ng-click="stop()">
+      Stop
+    </md-button>
+  </div>
+  <div
+    ng-controller="NoteController"
+    flex="none"
+    class="bar-container">
+    <ng-include
+      src="'views/bar.html'">
+    </ng-include>
+    <div id="time-marker" class="time-marker"></div>
+  </div>
+  <div ng-include src="'views/tabs.html'">
+    
+  </div>
+  <div class="audio-graph-container">
+    <canvas
+      id="canvas"
+      class="audio-graph">
+    </canvas>
+  </div>
+  <div flex>
+  </div>
+</div>

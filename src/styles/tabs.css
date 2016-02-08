@@ -1,0 +1,91 @@
+.tabs-container {
+  margin: 20px 0 40px 0;
+  position: relative;
+}
+
+.tab-string-container {
+  height: 36px;
+  position: relative;
+}
+
+.tabs-tunning-button {
+  position: absolute;
+  min-width: 20px;
+  left: -40px;
+  top: 0;
+  font-size: 20px;
+  margin-top: 0;
+}
+
+.tab-string {
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  background-color: #CCC;
+  top: 18px;
+}
+
+.tab-note-container {
+  height: 100%;
+  line-height: 36px;
+  text-align: center;
+  z-index: 50;
+  position: relative;
+}
+
+.tab-button {
+  min-width: 0px;
+  min-height: 85%;
+  height: 85%;
+  margin-top: 0;
+  margin-bottom: 0;
+  text-transform: none;
+}
+.tab-button span {
+  opacity: 0.35;
+}
+.tab-button.md-primary span {
+  opacity: 1;
+}
+.musical-tab-char {
+  display: inline-block;
+  line-height: 28px;
+  font-size: 60px;
+  max-height: 38px;
+  width: 18px;
+  vertical-align: top;
+}
+
+.tab-hammer,
+.tab-pull {
+  position: absolute;
+  left: -10px;
+  top: 10px;
+  width: 28px;
+  height: 32px;
+  background-color: white;
+}
+
+.tab-hammer .hammer-top {
+  transform: rotate(90deg);
+  position: absolute;
+  left: 12px;
+  top: -8px;
+}
+.tab-hammer .hammer-bottom {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+}
+
+.tab-pull .pull-top {
+  position: absolute;
+  left: 11px;
+  top: -26px;
+}
+.tab-pull .pull-bottom {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  transform: rotate(-90deg);
+}
