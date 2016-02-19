@@ -5,7 +5,7 @@
     aria-label="Tunning"
     class="tabs-tunning-button">
     <span ng-repeat="string in bass.strings">
-      {{ string.label }}<br>
+      {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
     </span>
   </md-button>
 

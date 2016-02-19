@@ -4,23 +4,22 @@
   angular
     .module('bd.app')
     .controller('AppController', AppController)
-    .controller('LayoutAnimationController', LayoutAnimationController)
     .value('context', new AudioContext());
 
-  function LayoutAnimationController($scope, $timeout) {
-    $scope.$on('ui.layout.toggle', function(e, container) {
-      var layoutElem = container.element.parent();
-      layoutElem.addClass('ui-layout-animation');
-      $timeout(function() {
-        layoutElem.removeClass('ui-layout-animation');
-      }, 600);
-    });
-  }
 
   function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel) {
-    var analyser = context.createAnalyser();
-    analyser.connect(context.destination);
-    audioPlayer.initialize(analyser);
+    var analyser;
+    setTimeout(function() {
+      analyser = context.createAnalyser();
+      analyser.fftSize = 1024;
+      analyser.connect(context.destination);
+      audioPlayer.initialize(analyser);
+
+      audioVisualiser.initialize(
+        document.getElementById("canvas"),
+        analyser
+      );
+    }, 200);
 
     function analyze() {
       audioVisualiser.draw();
@@ -28,14 +27,6 @@
         requestAnimationFrame(analyze);
       }
     }
-
-    analyser.fftSize = 1024;
-    $timeout(function() {
-      audioVisualiser.initialize(
-        document.getElementById("canvas"),
-        analyser
-      );
-    }); 
 
     function stringNotes(notes, note, frets) {
       var index = notes.list.indexOf(notes.map[note]);
@@ -53,7 +44,7 @@
           noteIndex: bassNotes.list.indexOf(bassNotes.map['E1'])
         }, {
           label: 'A',
-          octave: 2,
+          octave: 1,
           index: 1,
           noteIndex: bassNotes.list.indexOf(bassNotes.map['A1'])
         }, {
@@ -281,9 +272,8 @@
       );
       $scope.playing = true;
       audioVisualiser.reset();
-      analyze();
-      audioPlayer.play(0.5);
-      //setTimeout(play, 100, 0.25);
+      audioPlayer.play(bar, 120);
+      setTimeout(analyze, 120);
     };
 
     $scope.stop = function() {

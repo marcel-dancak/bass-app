@@ -214,3 +214,14 @@
   height: 30px;
   bottom: 0;
 }
+
+.note-symbol {
+  font-size: 22px;
+}
+
+.note-length-title {
+  padding-left: 10px;
+}
+.md-select-value .note-length-title {
+  display: none;
+}
