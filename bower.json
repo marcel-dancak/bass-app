@@ -22,6 +22,8 @@
     "angular-animate": "~1.5.0",
     "angular-sanitize": "~1.5.0",
     "angular-material": "~1.0.5",
-    "velocity": "~1.2.3"
+    "velocity": "~1.2.3",
+    "angular-native-dragdrop": "~1.2.0",
+    "angular-resizable": "~1.2.0"
   }
 }

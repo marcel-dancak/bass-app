@@ -14,8 +14,8 @@
     <div
       class="subbeat-tab"
       layout="column"
-      style="width: {{ subbeat.width * 100 }}%;"
-      ng-repeat="subbeat in bar.subbeats | limitTo: bar.timeSignature.top*4">
+      style="width: {{ 1 * 100 }}%;"
+      ng-repeat="bassSubbeat in bassData">
 
       <div
         class="tab-top-marker"
@@ -24,57 +24,175 @@
       </div>
       <div
         flex
-        ng-repeat="string in bass.strings"
-        class="tab-note-container">
-        <div class="tab-string"></div>
-        <md-button
-          ng-if="subbeat.note.style !== 'hammer' && subbeat.note.style !== 'pull'"
-          aria-label="tab"
-          class="md-raised tab-button"
-          ng-class="{'md-primary': subbeat.tabs.selected === string.index}"
-          ng-show="subbeat.tabs[string.index]"
-          ng-click="subbeat.tabs.selected=string.index">
-          {{ subbeat.tabs[string.index] }}
-        </md-button>
+        ng-repeat="subbeat in bassSubbeat | orderBy:string.index:'-'"
+        ui-draggable="true"
+        drag="subbeat"
+        ui-on-drop="onDrop($event, $data, subbeat, bassData)"
+        drop-validate="dropValidation(subbeat, $data)"
+        ui-on-drag-enter="onDragEnter($event, subbeat)"
+        ui-on-drag-leave="onDragLeave($event, subbeat)"
 
+        class="tab-note-container"
+        ng-class="{active: subbeat.note.name}"
+        ng-style="{
+          width: 
+            (100*subbeat.note.length*16*(subbeat.note.dotted? 1.5 : 1))+'%'
+        }">
         <div
-          style="height: 100%;"
-          ng-if="subbeat.note.style === 'hammer'">
-          <div
-            class="tab-hammer"
-            ng-show="previousNoteSubbeat(subbeat).tabs.selected === string.index">
-            <span class="hammer-top">)</span>
-            <span class="hammer-bottom">h</span>
-          </div>
-          <md-button
-            aria-label="tab"
-            class="md-raised tab-button"
-            ng-class="{'md-primary': previousNoteSubbeat(subbeat).tabs.selected === string.index}"
-            ng-show="subbeat.tabs[string.index]">
-            {{ subbeat.tabs[string.index] }}
-          </md-button>
+          class="resize-container"
+          ng-if="subbeat.note.name"
+          resizable
+          r-directions="['right']"
+          on-resize="onResize(subbeat, info)"
+          on-resize-start="onResizeStart(subbeat, info)"
+          on-resize-end="onResizeEnd(subbeat, info)">
         </div>
-
-        <div
-          style="height: 100%;"
-          ng-if="subbeat.note.style === 'pull'">
-          <div
-            class="tab-pull"
-            ng-show="previousNoteSubbeat(subbeat).tabs.selected === string.index">
-            <span class="pull-top">p</span>
-            <span class="pull-bottom">)</span>
-          </div>
+        <!-- <div class="tab-string"></div> -->
+        <md-menu>
+          <!-- Trigger element is a md-button with an icon -->
           <md-button
-            aria-label="tab"
-            class="md-raised tab-button"
-            ng-class="{'md-primary': previousNoteSubbeat(subbeat).tabs.selected === string.index}"
-            ng-show="subbeat.tabs[string.index]">
-            {{ subbeat.tabs[string.index] }}
+            ng-click="$mdOpenMenu($event);activeMenu.subbeat=subbeat"
+            class="tab-button"
+            aria-label="Note properties">
+            <md-icon
+              md-svg-icon="{{ subbeat.note.name? 'menu-dots' : 'plus' }}">
+            </md-icon>
           </md-button>
-        </div>
+          <md-menu-content
+            class="subbeat-form-container">
+            <div class="subbeat-form" layout="column">
+              <div layout="row">
+                <md-input-container flex>
+                  <label class="md-label">Style</label>
+                  <md-select
+                    flex
+                    ng-model="subbeat.note.style"
+                    md-on-close="updateNote(subbeat)">
+                    <md-option
+                      ng-repeat="style in playingStyles"
+                      ng-value="style">
+                      {{ bass.playingStyles[style].label }}
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+                <md-button
+                  aria-label="Clear"
+                  class="clear-button"
+                  ng-click="clearNote(subbeat)">
+                  <md-icon
+                    md-svg-icon="delete">
+                  </md-icon>
+                </md-button>
+              </div>
 
+              <div layout="row">
+                <md-input-container flex>
+                  <label class="md-label">Note</label>
+                  <md-select
+                    ng-model="subbeat.note.name"
+                    md-on-close="subbeat.note.string=string.index;updateNote(subbeat)">
+                    <md-option
+                      ng-repeat="noteLabel in notesLabels"
+                      ng-value="noteLabel">
+                      {{ noteLabel }}
+                    </md-option>
+                    <md-option value="x">
+                      Ghost
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+                <div class="horizontal-space"></div>
+                <md-input-container flex>
+                  <label class="md-label">Octave</label>
+                  <md-select
+                    ng-model="subbeat.note.octave"
+                    md-on-close="updateNote(subbeat)"
+                    ng-disabled="!subbeat.note.name || subbeat.note.name==='x'">
+                    <md-option
+                      xng-repeat="octave in bass.notes.notesOctaves[subbeat.note.name]"
+                      ng-repeat="octave in bass.noteStringOctaves(subbeat.note.name, subbeat.string)"
+                      ng-value="octave">
+                      {{ octave }}
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+              </div>
+
+              <div layout="row">
+                <md-input-container flex="30">
+                  <label class="md-label">Length</label>
+                  <md-select
+                    ng-model="subbeat.note.length"
+                    md-on-close="checkMeasure(subbeat)"
+                    ng-disabled="!subbeat.note.name || subbeat.note.name==='x'">
+                    <md-option
+                      ng-repeat="value in [
+                        ['𝅝', 'Whole', 1],
+                        ['𝅗𝅥', 'Half', 0.5],
+                        ['𝅘𝅥', 'Quarter', 0.25],
+                        ['𝅘𝅥𝅮', 'Eighth', 0.125],
+                        ['𝅘𝅥𝅯', 'Sixteenth', 0.0625]
+                      ]"
+                      ng-value="{{ value[2] }}">
+                      <span class="note-symbol">{{ ::value[0] }}</span>
+                      <span class="note-length-title"> {{ value[1] }}</span>
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+                <md-checkbox
+                  flex="30"
+                  class="md-primary"
+                  aria-label="Staccato"
+                  ng-model="subbeat.note.dotted"
+                  ng-disabled="subbeat.note.name==='x'">
+                  Dotted
+                </md-checkbox>
+                <md-checkbox
+                  flex="40"
+                  class="md-primary"
+                  aria-label="Staccato"
+                  ng-model="subbeat.note.staccato"
+                  ng-disabled="subbeat.note.name==='x'">
+                  Staccato
+                </md-checkbox>
+              </div>
+
+              <div layout="row">
+                <md-input-container
+                  class="volume-field"
+                  flex="none">
+                  <label>Volume</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    ng-model="subbeat.note.volume">
+                </md-input-container>
+                <md-slider
+                  class="md-primary"
+                  ng-model="subbeat.note.volume"
+                  aria-label="Volume"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  flex>
+                </md-slider>
+              </div>
+            </div>
+          </md-menu-content>
+        </md-menu>
+        {{ subbeat.note.name }}<sub>{{ subbeat.note.octave }}</sub>
       </div>
     </div>
   </div>
-
+  <div
+    class="drop-note-area"
+    ng-style="{
+      width: dropNote.width+'px',
+      left: dropNote.left+'px',
+      top: dropNote.top+'px',
+      opacity: dropNote.visible? 1 : 0
+    }">
+  </div>
 </div>

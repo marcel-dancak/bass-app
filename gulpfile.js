@@ -9,7 +9,7 @@ var connect = require('gulp-connect');
 var path = require('path');
 
 
-var TARGET = 'dist/';
+var TARGET = 'dist/v2/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -75,6 +75,8 @@ gulp.task('uglify', function() {
       'bower_components/angular-animate/angular-animate.min.js',
       'bower_components/angular-sanitize/angular-sanitize.min.js',
       'bower_components/angular-material/angular-material.js',
+      'bower_components/angular-native-dragdrop/draganddrop.js',
+      'bower_components/angular-resizable/src/angular-resizable.js',
 
       'src/**/*.module.js',
       'src/**/*.js',
@@ -94,6 +96,7 @@ gulp.task('csss', function() {
   var minifyCss = require('gulp-minify-css');
   return gulp.src([
     'bower_components/angular-material/angular-material.css',
+    'bower_components/angular-resizable/src/angular-resizable.css',
     'src/styles/**/*.css'
   ])
     .pipe(minifyCss())
@@ -115,8 +118,32 @@ gulp.task('build', ['index-page', 'uglify', 'csss']);
 
 gulp.task('serve-deploy', function() {
   connect.server({
-    root: ['dist/'],
-    port: 3000,
+    root: ['dist/v2'],
+    port: 3300,
     livereload: true
   });
+});
+
+
+/**
+ * Create SVG sprite file from separated files (compatibile with Angular Material library)
+ */
+gulp.task('icons', function() {
+  var svgmin = require('gulp-svgmin');
+  var svgng = require('gulp-svg-ngmaterial');
+  var cheerio = require('gulp-cheerio');
+
+  return gulp
+    .src('icons/*.svg')
+    .pipe(svgmin())
+    .pipe(cheerio({
+      run: function($) {
+        $('[fill]').removeAttr('fill');
+      },
+      parserOptions: { xmlMode: true }
+    }))
+    .pipe(svgng({ filename : "icons.svg"}))
+    .pipe(gulp.dest('src/styles/'));
+    //.pipe(gzip({append: true,gzipOptions: { level: 9 }}))
+    //.pipe(gulp.dest('src/web/styles/'));
 });

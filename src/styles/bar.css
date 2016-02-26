@@ -69,10 +69,12 @@
 
 .bar .time-signature-button {
   position: absolute;
-  min-width: 20px;
-  left: -40px;
+  min-width: 36px;
+  left: -48px;
   top: 0;
   font-size: 20px;
+  margin: 0 3px;
+  padding: 0;
 }
 
 /**
@@ -98,25 +100,27 @@
   transform: translate3d(-100px, -120px, 0px) scale3d(0.25, 0.5, 1);
 }
 
-.subbeat-form-container {
-  position: absolute;
-  width: 275px;
-  height: auto;
-  top: 40px;
-  left: 0px;
-  background-color: white;
-  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  font-size: 15px;
-  z-index: 51;
+.md-select-menu-container {
+  z-index: 500;
 }
 
+md-menu-content.subbeat-form-container {
+  background-color: white;
+  font-size: 15px;
+}
+
+.subbeat-form {
+  overflow: hidden;
+}
+
+.md-open-menu-container {
+  border-radius: 8px;
+}
 .subbeat-form-container {
-  visibility: visible;
-  opacity: 1;
-  transform: scale3d(1, 1, 1);
   border: 1px solid #ccc;
   border-radius: 7px;
-  padding: 4px; 
+  padding: 4px;
+  min-width: 250px;
 }
 
 .subbeat-form-container.closed {
@@ -135,6 +139,24 @@
   margin: 2px 8px 0 10px;
   height: 50px;
   border-bottom: 1px solid #ddd;
+}
+
+.subbeat-form-container .horizontal-space {
+  width: 8px;
+}
+
+.subbeat-form-container .clear-button {
+  margin: 4px 4px 8px 4px;
+  padding: 0px;
+  min-width: 44px;
+}
+.subbeat-form-container .clear-button.md-focused,
+.subbeat-form-container .clear-button:hover:not([disabled]) {
+  background-color: transparent;
+}
+.subbeat-form-container .clear-button md-icon {
+  width: 22px;
+  height: 22px;
 }
 
 .bar-settings-container label, 
@@ -224,4 +246,11 @@
 }
 .md-select-value .note-length-title {
   display: none;
+}
+
+.tab-button {
+  margin: 0;
+  padding: 0;
+  background-color: rgba(0,0,0,0.05);
+  border: 1px solid rgba(50,0,0,0.1);
 }

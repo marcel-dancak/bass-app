@@ -6,17 +6,22 @@
     .controller('NoteController', NoteController);
 
   function NoteController($scope, $timeout) {
+    console.log('NOTE CONTROLLER');
+
     var notesLabels = [];
     $scope.bass.notes.scaleNotes.forEach(function(note) {
       notesLabels.push.apply(notesLabels, note.label);
     });
     $scope.notesLabels = notesLabels;
+    $scope.dropNote = {
+      width: 0
+    };
+    $scope.activeMenu = {};
 
+    var dragNote, dragElement;
     $scope.playingStyles = ['finger', 'slap', 'pop', 'tap', 'hammer', 'pull'];
 
     $scope.clearNote = function(subbeat) {
-      console.log('clearNote');
-      console.log(subbeat);
       subbeat.note = {};
       // subbeat.length = 0;
       if (subbeat.width > 1) {
@@ -31,32 +36,146 @@
       $scope.updateNote(subbeat);
     };
 
-    $scope.updateNote = function(subbeat) {
-      $scope.$root.$broadcast('subbeatChanged', subbeat);
+    var notesWidths;
+    var widthToLength = {};
+    var closestWidth;
+    $scope.onResizeStart = function(subbeat, info) {
+      // console.log('onResizeStart');
+      // console.log(info);
+      var length = subbeat.note.dotted? subbeat.note.length*1.5 : subbeat.note.length;
+      var subbeatWidth = info.width/length;
+      var noteLengths = [
+        {
+          length: 1,
+          dotted: false
+        }, {
+          length: 1,
+          dotted: true
+        }, {
+          length: 1/2,
+          dotted: false
+        }, {
+          length: 1/2,
+          dotted: true
+        }, {
+          length: 1/4,
+          dotted: false
+        }, {
+          length: 1/4,
+          dotted: true
+        }, {
+          length: 1/8,
+          dotted: false
+        }, {
+          length: 1/8,
+          dotted: true
+        }, {
+          length: 1/16,
+          dotted: false
+        }
+      ];
+      widthToLength = {};
+      notesWidths = noteLengths.map(function(noteLength) {
+        var length = noteLength.dotted? noteLength.length*1.5 : noteLength.length;
+        var width = length*subbeatWidth;
+        widthToLength[width] = noteLength;
+        return width;
+      });
+      var containerElem = info.element.parent()[0];
+      $scope.dropNote.visible = true;
+      $scope.dropNote.width = info.width;
+      $scope.dropNote.left = containerElem.offsetParent.offsetLeft;
+      $scope.dropNote.top = containerElem.offsetTop;
+      $scope.$apply();
     };
 
-    $scope.checkMeasure = function(subbeat) {
-      if (subbeat.width > 1) {
-        var count = subbeat.width-1;
-        var nextSubbeat = subbeat;
-        while(count--) {
-          nextSubbeat = subbeat.bar.nextSubbeat(nextSubbeat);
-          nextSubbeat.width = 1;
-        }
-      }
-      if (subbeat.note.length) {
-        subbeat.width = (subbeat.note.length / 0.25) * 4;
-      }
-      if (subbeat.width > 1) {
-        var count = subbeat.width - 1;
-        var nextSubbeat = subbeat;
-        while (count--) {
-          nextSubbeat = subbeat.bar.nextSubbeat(nextSubbeat);
-          nextSubbeat.width = 0;
-        }
-      }
+    $scope.onResizeEnd = function(subbeat, info) {
+      info.element.css('width', '');
+      angular.extend(subbeat.note, widthToLength[closestWidth]);
+      $scope.dropNote.visible = false;
+      $scope.$apply();
     };
-    $scope.bar.subbeats.forEach($scope.checkMeasure);
+
+    $scope.onResize = function(subbeat, info) {
+      var delta;
+      var minDelta = notesWidths[0];
+      notesWidths.forEach(function(width) {
+        delta = Math.abs(info.width-width);
+        if (delta < minDelta) {
+          closestWidth = width;
+          minDelta = delta;
+        }
+      });
+      $scope.dropNote.width = closestWidth;
+      $scope.$apply();
+    };
+
+    $scope.onDrop = function($event, $data, subbeat, bar) {
+      // console.log('onDrop');
+      // console.log($event);
+      if ($event.dataTransfer.dropEffect === "move") {
+        bar[$data.beat*4+$data.subbeat][$data.string.index].note = {};
+      }
+      subbeat.note = $data.note;
+    };
+
+    $scope.updateNote = function(subbeat) {
+      // $scope.$root.$broadcast('subbeatChanged', subbeat);
+    };
+
+    $scope.onDragEnter = function(evt, $data) {
+      var target = evt.target || evt.originalTarget;
+      if (target.tagName === 'BUTTON') {
+        target = target.parentElement.parentElement;
+      }
+      $timeout(function() {
+        $scope.dropNote.visible = true;
+        $scope.dropNote.left = target.offsetParent.offsetLeft;
+        $scope.dropNote.top = target.offsetTop;
+      });
+    };
+
+    $scope.onDragLeave = function(evt, $data) {
+      $scope.dropNote.visible = false;
+    };
+
+    $scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
+      dragNote = data.data;
+      if (!dragNote.note.length) {
+        return;
+      }
+      $scope.dropNote.width = e.target.clientWidth;
+      if (!e.ctrlKey) {
+        dragElement = angular.element(e.target);
+        setTimeout(function() {
+          dragElement.addClass('drag-element');
+        }, 100);
+        // $scope.bassData[dragNote.beat*4+dragNote.subbeat][dragNote.string.index].note = {};
+      }
+      $scope.$apply();
+    });
+
+    $scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
+      if (dragElement) {
+        dragElement.removeClass('drag-element');
+        dragElement = null;
+      }
+      $scope.dropNote.visible = false;
+    });
+
+    $scope.dropValidation = function(subbeat, $data) {
+      if (subbeat.note.name && subbeat.note.length) {
+        return false;
+      }
+      var fret = $scope.bass.stringFret(subbeat.string, $data.note);
+      return fret !== -1;
+    };
+    /*
+    $scope.$on('$mdMenuClose', function(evt, element, eventDetails) {
+      console.log('mdMenuClose');
+      console.log($scope.activeMenu);
+      var subbeat = $scope.activeMenu.subbeat;
+    });*/
   }
 
 })();

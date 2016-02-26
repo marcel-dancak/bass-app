@@ -5,15 +5,18 @@
   <div
     layout="row"
     class="control-panel">
-    <md-button ng-click="play()">
+    <md-button
+      ng-disabled="true"
+      ng-click="play()">
       Play
     </md-button>
-    <md-button ng-click="stop()">
+    <md-button
+      ng-disabled="true"
+      ng-click="stop()">
       Stop
     </md-button>
   </div>
   <div
-    ng-controller="NoteController"
     flex="none"
     class="bar-container">
     <ng-include
@@ -21,7 +24,9 @@
     </ng-include>
     <div id="time-marker" class="time-marker"></div>
   </div>
-  <div ng-include src="'views/tabs2.html'">
+  <div
+    ng-controller="NoteController"
+    ng-include src="'views/tabs2.html'">
     
   </div>
   <div class="audio-graph-container">

@@ -7,6 +7,8 @@
       'bd.app', [
         'templates',
         'ngMaterial',
-        'ngSanitize'
+        'ngSanitize',
+        'ang-drag-drop',
+        'angularResizable'
     ]);
 })();

@@ -43,31 +43,7 @@
         {{ subbeat.name }}
         <!-- <sub>({{ subbeat.index }})</sub> -->
       </label>
-      <div
-        class="note-container"
-        style="width: {{ subbeat.width * 100 }}%;">
-        <md-button
-          aria-label="Note"
-          class="md-raised note-button {{ subbeat.note.style }}"
-          ng-class="{'md-primary': subbeat.note.name}"
-          ng-hide="off"
-          ng-click="showNoteDialog(subbeat, $event)"
-          ng-bind-html="bass.playingStyles[subbeat.note.style].noteLabel(subbeat)">
-          <!-- {{ subbeat.note.label }}<sub>{{ subbeat.note.octave }}</sub> -->
-        </md-button>
-        <md-button
-          aria-label="Clear"
-          class="clear-button"
-          ng-show="subbeat.note.name"
-          ng-click="clearNote(subbeat)">
-          x
-        </md-button>
-        <div class="subbeat-form-container closed"
-          xng-include="'views/subbeat-form.html'"
-          ng-include="'views/note-form2.html'">
-        </div>
-      </div>
-      <!-- <md-button>X</md-button> -->
+      <div class="note-container"></div>
   </div>
   <div class="bar-end">
   </div>

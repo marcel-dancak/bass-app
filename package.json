@@ -19,7 +19,10 @@
     "gulp-ng-annotate": "",
     "gulp-minify-css": "",
     "gulp-angular-templatecache": "^1.8.0",
-    "stream-series": "^0.1.1"
+    "stream-series": "^0.1.1",
+    "gulp-cheerio": "^0.6.2",
+    "gulp-svg-ngmaterial": "^2.0.2",
+    "gulp-svgmin": "^1.2.0"
   },
   "ext": [],
   "maintainers": [],

@@ -6,7 +6,6 @@
     .controller('AppController', AppController)
     .value('context', new AudioContext());
 
-
   function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel) {
     var analyser;
     setTimeout(function() {
@@ -36,12 +35,28 @@
     var bassNotes = new NotesModel('B0', 'G4');
     $scope.bass = {
       notes: bassNotes,
+      noteStringOctaves: function(noteName, string) {
+        var octaves = [];
+        bassNotes.list.slice(string.noteIndex, string.noteIndex+24).filter(function(note) {
+          if (note.label.indexOf(noteName) !== -1) {
+            octaves.push(note.octave);
+          }
+        });
+        return octaves;
+      },
+      stringFret: function(string, note) {
+        var noteName = note.name + note.octave;
+        // console.log(noteName+' on '+string.label);
+        var index = bassNotes.list.indexOf(bassNotes.map[noteName]);
+        var fret = index - string.noteIndex;
+        return (fret >= 0 && fret <= 24)? fret : -1;
+      },
       strings: [
         {
           label: 'E',
           octave: 1,
           index: 0,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1'])
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1']),
         }, {
           label: 'A',
           octave: 1,
@@ -192,68 +207,37 @@
         staccato: false, // staccato or legato
         string: 1 // string index 
       }
+    };
+
+    var data = [];
+    var beat;
+    for (beat=0; beat<bar.timeSignature.top; beat++) {
+      for (subbeat=0; subbeat<4; subbeat++) {
+        var list = new Array($scope.bass.strings);
+        $scope.bass.strings.forEach(function(string) {
+          list[string.index] = {
+            string: string,
+            beat: beat,
+            subbeat: subbeat,
+            note: {
+              volume: 0.75
+            },
+            width: 1
+          };
+        });
+        data.push(list);
+      }
     }
     /**
      * test data
      */
-    angular.extend(
-      bar.subbeats[0],
-      {
-        note: {
-          volume: 0.75,
-          style: 'finger',
-          name: 'C',
-          octave: 2,
-          length: 1/16
-        },
-      }
-    );
-    angular.extend(
-      bar.subbeats[1],
-      {
-        note: {
-          volume: 0.75,
-          style: 'hammer',
-          name: 'D',
-          octave: 2,
-          length: 1/16
-        },
-      }
-    );
-    angular.extend(
-      bar.subbeats[3],
-      {
-        note: {
-          volume: 0.75,
-          style: 'finger',
-          name: 'x'
-        },
-      }
-    );
-    angular.extend(
-      bar.subbeats[5],
-      {
-        note: {
-          volume: 0.75,
-          style: 'slap',
-          name: 'G',
-          octave: 2,
-          length: 1/8
-        },
-      }
-    );
-    angular.extend(
-      bar.subbeats[7],
-      {
-        note: {
-          volume: 0.75,
-          style: 'pull',
-          name: 'F',
-          octave: 2,
-          length: 1/16
-        },
-      }
-    );
+    data[1][0].note = {
+      name: 'C',
+      octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    $scope.bassData = data;
 
     $scope.bar = bar;
     $scope.play = function() {
@@ -279,24 +263,6 @@
     $scope.stop = function() {
       $scope.playing = false;
       audioPlayer.stop();
-    };
-
-    var openedNote;
-    var noteForm;
-    $scope.showNoteDialog = function(model, evt) {
-      console.log('showNoteDialog');
-      var parent = angular.element(angular.element(evt.target).parent().children()[2]);
-
-      if (noteForm) {
-        noteForm.addClass('closed');
-        if (noteForm[0] === parent[0]) {
-          noteForm = null;
-          return;
-        }
-      }
-      parent.removeClass('closed');
-      openedNote = model;
-      noteForm = parent;
     };
 
   }

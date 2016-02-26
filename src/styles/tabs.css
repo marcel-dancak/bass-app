@@ -10,11 +10,12 @@
 
 .tabs-tunning-button {
   position: absolute;
-  min-width: 20px;
-  left: -40px;
+  min-width: 36px;
+  left: -48px;
   top: 0;
   font-size: 20px;
-  margin-top: 0;
+  margin: 0 3px;
+  padding: 0;
 }
 
 .tab-string {
@@ -31,22 +32,55 @@
   text-align: center;
   z-index: 50;
   position: relative;
+  border-radius: 3px;
+  margin: 2px 0;
+}
+
+.tab-note-container.active {
+  background-color: #d94b49;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 
 .tab-button {
-  min-width: 0px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 32px;
   min-height: 32px;
+  width: 32px;
   height: 32px;
+  line-height: 32px;
   margin-top: 0;
   margin-bottom: 0;
   text-transform: none;
+  color: #777;
+  background-color: transparent;
+  opacity: 0.5;
+  border-radius: 16px;
 }
-.tab-button span {
-  opacity: 0.35;
-}
-.tab-button.md-primary span {
+.tab-button:hover:not([disabled]) {
+  background-color: transparent;
   opacity: 1;
 }
+
+.tab-button md-icon {
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.tab-note-container {
+  text-align: center;
+}
+
+.tab-note-container.active .tab-button {
+  color: #333;
+  opacity: 1;
+  border-radius: 0;
+  border-width: 0 1px 0 0;
+  border-color: rgba(50, 50, 50, 0.5);
+}
+
 .musical-tab-char {
   display: inline-block;
   line-height: 28px;
@@ -105,4 +139,72 @@
   font-size: 30px;
   color: #777;
   line-height: 5px;
+}
+
+.octave-index {
+  opacity: 0.25;
+  font-size: 14px;
+}
+
+.tab-note-container {
+  z-index: 50;
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+}
+
+.tab-note-container.active {
+  z-index: 100;
+}
+.md-menu {
+  padding: 0;
+  line-height: 20px;
+  display: block;
+  text-align: left;
+}
+
+.tab-note-container:hover {
+  xborder: 1px solid rgb(0, 170, 212);
+}
+.on-drag-hover .tab-button {
+  xborder: 1px solid rgb(0, 170, 212);
+}
+
+.drop-note-area {
+  position: absolute;
+  height: 32px;
+  border: 2px solid orange;
+  border-radius: 3px;
+  box-sizing: border-box;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.rbox {
+  padding: 10px 5px;
+  margin: 5px 10px;
+  width: 100%;
+}
+.resize-container {
+  position: absolute;
+  xbackground-color: rgba(217, 75, 75, 0.5);
+  background-color: rgba(100, 0, 0, 0.2);
+  border-radius: 4px;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.rg-right {
+  right: 16px;
+}
+.rg-right > span {
+  border-color: #333;
+}
+.drag-element {
+  pointer-events: none;
+}
+
+.tab-note-container.drag-element {
+  background-color: rgb(250, 220, 220);
 }
