@@ -24,10 +24,12 @@
     'B' : 'B'
   };
 
-  function audioPlayer(context) {
+  function audioPlayer(context, soundsUrl) {
 
     function AudioPlayer() {
       this.playing = false;
+      this.playback = this.playback.bind(this);
+      this.setBpm(60);
     }
 
     var source1, source2, source3, source4;
@@ -39,9 +41,9 @@
       finger: {
         getResources: function(note) {
           if (note.name === 'x') {
-            return ['sounds/finger/ogg/X{1}'.format(noteFileName[note.name], '1')];
+            return ['sounds/finger/X{1}'.format(noteFileName[note.name], '1')];
           }
-          return ['sounds/finger/ogg/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
+          return ['sounds/finger/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
         },
         play: function(note, bpm) {
           console.log('playing ... '+note.name);
@@ -91,10 +93,19 @@
       if (this.playing) {
         var playTime = context.currentTime-this.startTime;
         if (playTime > this.subbeatIndex*this.subbeatTime) {
-          var subbeat = (this.subbeatIndex % 16) + 1;
+          var subbeat = (this.subbeatIndex % 16);
+          if (subbeat % 4 === 0) {
+            this.beatCallback(this.bpm, (this.beatIndex % 4)+1);
+            this.beatIndex++;
+          }
           // console.log('subbeat: '+subbeat);
-          var note = this.bar.subbeats[this.subbeatIndex].note;
-          if (note.style && note.name) {
+          var stringsNotes = this.bar.notes[subbeat];
+          var notes = stringsNotes.filter(function(noteItem) {
+            if (!noteItem.note.style || !noteItem.note.name) {
+              return;
+            }
+            var note = noteItem.note;
+            // console.log(note.style+' '+note.name);
             // console.log(note);
             var source = context.createBufferSource();
             var gain = context.createGain();
@@ -109,20 +120,20 @@
             if (note.staccato) {
               duration = 0.8*duration;
             }
-            duration = 1.1*duration;
+            duration = duration;
             var startTime = context.currentTime;
-            source.start(startTime, 0, duration);
+            source.start(startTime, 0, duration+50);
             var sound = {
               note: note,
               source: source,
               gain: gain,
               startTime: startTime,
               endTime: startTime+duration,
-              fadeIn: note.name === 'x'? 0 : 60,
-              fadeOut: note.name === 'x'? 0 : 60
+              fadeIn: 0,
+              fadeOut: note.name === 'x'? 0 : 30
             };
             this.playingNotes.push(sound);
-          }
+          }, this);
           this.subbeatIndex++;
         }
         if (this.playingNotes.length) {
@@ -130,6 +141,7 @@
           this.playingNotes = this.playingNotes.filter(function(playingNote) {
             if (currentTime > playingNote.endTime) {
               // maybe some cleanup
+              playingNote.gain.gain.value = 0.0;
               return false;
             }
             return true;
@@ -148,74 +160,51 @@
             }
           });
         }
-        requestAnimationFrame(this.playback.bind(this));
+        requestAnimationFrame(this.playback);
       }
     }
 
-    AudioPlayer.prototype._play = function(bar, bpm) {
+    AudioPlayer.prototype._play = function(bar) {
       this.playing = true;
       this.startTime = context.currentTime;
-      var beatTime = 60/bpm;
-      this.subbeatTime = beatTime/4;
       this.subbeatIndex = 0;
+      this.beatIndex = 0;
       this.bar = bar;
       this.playback();
-      return;
-
-      var noteLength = 0.5;
-      var noteMutingTime = 0.025+noteLength*0.1;
-      var noteMutingStep = 0.01/noteMutingTime; // 10ms constant for fade-out timer
-
-      var startTime = context.currentTime;
-      gain1.gain.value = 1;
-      console.log(this.destination);
-      gain1.connect(this.destination);
-      
-      source1.start(startTime, 0, noteLength);
-      fadeOut(gain1.gain, noteLength-0.02, 0.1);
-
-
-      gain2.gain.value = 0.5;
-      gain2.connect(this.destination);
-      source2.start(startTime+noteLength-0.05, 0, noteLength+0.05);
-      fadeOut(gain2.gain, 2*noteLength-noteMutingTime, noteMutingStep);
-
-      gain3.gain.value = 0.8;
-      gain3.connect(this.destination);
-      source3.start(startTime+2*noteLength, 0, noteLength);
-      fadeOut(gain3.gain, 3*noteLength-noteMutingTime, noteMutingStep);
-
-      gain4.gain.value = 0.8;
-      gain4.connect(this.destination);
-      source4.start(startTime+3*noteLength, 0, noteLength);
-      fadeOut(gain4.gain, 4*noteLength-noteMutingTime, noteMutingStep);
     };
 
-    AudioPlayer.prototype.play = function(bar, bpm) {
+    AudioPlayer.prototype.setBpm = function(bpm) {
+      this.bpm = bpm;
+      var beatTime = 60/bpm;
+      this.subbeatTime = beatTime/4;
+    }
+
+    AudioPlayer.prototype.play = function(bar, beatCallback) {
       var player = this;
-      console.log(bar);
+      this.beatCallback = angular.isFunction(beatCallback)? beatCallback : angular.noop;
       function afterLoad(bufferList) {
-        player._play(bar, bpm);
+        player._play(bar);
       }
 
       var resources = [];
       var resourcesIndexes = {};
-      bar.subbeats.forEach(function(subbeat) {
-        if (subbeat.note.style) {
-          console.log('get resources: '+subbeat.note.style);
-          var subbeatResources = bassSounds[subbeat.note.style].getResources(subbeat.note);
-          var filename;
-          subbeatResources.forEach(function(resource) {
-            filename = resource+'.ogg'
-            if (resources.indexOf(filename) === -1) {
-              resourcesIndexes[resource] = resources.length;
-              resources.push(filename);
-            }
-          });
+      var subbeat, string;
+      for (subbeat=0; subbeat<16; subbeat++) {
+        for (string=0; string<4; string++) {
+          var note = bar.notes[subbeat][string].note;
+          if (note.name && note.style) {
+            var subbeatResources = bassSounds[note.style].getResources(note);
+            var filename;
+            subbeatResources.forEach(function(resource) {
+              filename = soundsUrl+resource+'.ogg'
+              if (resources.indexOf(filename) === -1) {
+                resourcesIndexes[resource] = resources.length;
+                resources.push(filename);
+              }
+            });
+          }
         }
-      });
-      console.log(resources);
-      console.log(resourcesIndexes);
+      }
       bufferLoader = new BufferLoader(
         context,
         resources,
@@ -229,6 +218,10 @@
 
     AudioPlayer.prototype.stop = function(noteLength) {
       this.playing = false;
+      this.playingNotes.forEach(function(playingNote) {
+        playingNote.gain.gain.value = 0;
+        // playingNote.source.stop();
+      });
     }
 
     return new AudioPlayer();

@@ -247,10 +247,3 @@ md-menu-content.subbeat-form-container {
 .md-select-value .note-length-title {
   display: none;
 }
-
-.tab-button {
-  margin: 0;
-  padding: 0;
-  background-color: rgba(0,0,0,0.05);
-  border: 1px solid rgba(50,0,0,0.1);
-}

@@ -55,3 +55,24 @@ md-input-container.input-inline-label label {
   opacity: 1;
   transform: none;
 }
+.play-stop-button {
+  border: 1px solid #ccc;
+  margin: 0 10px;
+}
+
+.play-stop-button md-icon {
+  margin-right: 6px;
+  padding: 6px 0;
+  width: 32px;
+  height: 32px;
+}
+.bpm-field {
+  width: 80px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 2px 4px 0 4px;
+}
+.control-panel md-input-container {
+  margin-bottom: 0;
+  height: 33px;
+}

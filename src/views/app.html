@@ -5,15 +5,37 @@
   <div
     layout="row"
     class="control-panel">
+    <div
+      xlayout="row"
+      class="bpm-field">
+      <md-input-container
+        xflex="25">
+        <label>BPM</label>
+        <input
+          type="number"
+          min="30"
+          max="160"
+          step="5"
+          ng-model="player.bpm">
+      </md-input-container>
+      <!-- <md-slider
+        class="md-primary"
+        ng-model="player.bpm"
+        aria-label="BPM"
+        min="30"
+        max="160"
+        step="1"
+        flex>
+      </md-slider> -->
+    </div>
+
     <md-button
-      ng-disabled="true"
-      ng-click="play()">
-      Play
-    </md-button>
-    <md-button
-      ng-disabled="true"
-      ng-click="stop()">
-      Stop
+      class="play-stop-button"
+      ng-click="player.playing? stop() : play()">
+      <md-icon
+        md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
+      </md-icon>
+      {{ player.playing? 'Stop' : 'Play' }}
     </md-button>
   </div>
   <div

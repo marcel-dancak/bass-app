@@ -20,12 +20,10 @@
       );
     }, 200);
 
-    function analyze() {
-      audioVisualiser.draw();
-      if ($scope.playing) {
-        requestAnimationFrame(analyze);
-      }
-    }
+    $scope.player = {
+      playing: false,
+      bpm: 60
+    };
 
     function stringNotes(notes, note, frets) {
       var index = notes.list.indexOf(notes.map[note]);
@@ -220,6 +218,8 @@
             beat: beat,
             subbeat: subbeat,
             note: {
+              style: 'finger',
+              length: 1/8,
               volume: 0.75
             },
             width: 1
@@ -240,28 +240,50 @@
     $scope.bassData = data;
 
     $scope.bar = bar;
+
+    $scope.$watch('player.bpm', function(value) {
+      if (audioPlayer.playing) {
+        audioPlayer.stop();
+        audioPlayer.setBpm($scope.player.bpm);
+        audioPlayer.play(
+          {
+            timeSignature: timeSignature,
+            notes: $scope.bassData
+          },
+          audioVisualiser.beatSync.bind(audioVisualiser)
+        );
+      }
+    });
+
     $scope.play = function() {
-      var elem = document.getElementById('time-marker');
-      var ngElem = angular.element(elem);
-      Velocity(
-        elem, {
-          left: ngElem.parent()[0].offsetWidth,
-        }, {
-          duration: 4000,
-          easing: "linear",
-          begin: function() {
-            ngElem.css('left', 0+'px');
-          }
-        }
-      );
-      $scope.playing = true;
+      // var elem = document.getElementById('time-marker');
+      // var ngElem = angular.element(elem);
+      // Velocity(
+      //   elem, {
+      //     left: ngElem.parent()[0].offsetWidth,
+      //   }, {
+      //     duration: 4000,
+      //     easing: "linear",
+      //     begin: function() {
+      //       ngElem.css('left', 0+'px');
+      //     }
+      //   }
+      // );
+      $scope.player.playing = true;
       audioVisualiser.reset();
-      audioPlayer.play(bar, 120);
-      setTimeout(analyze, 120);
+      audioPlayer.setBpm($scope.player.bpm);
+      audioPlayer.play(
+        {
+          timeSignature: timeSignature,
+          notes: $scope.bassData
+        },
+        audioVisualiser.beatSync.bind(audioVisualiser)
+      );
+
     };
 
     $scope.stop = function() {
-      $scope.playing = false;
+      $scope.player.playing = false;
       audioPlayer.stop();
     };
 
