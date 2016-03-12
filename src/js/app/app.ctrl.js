@@ -145,6 +145,7 @@
         }
       }
     };
+    $scope.bass.presents = [];
     // stringNotes($scope.bass.notes, 'E1', 24)
     console.log($scope.bass);
 
@@ -207,27 +208,31 @@
       }
     };
 
-    var data = [];
-    var beat;
-    for (beat=0; beat<bar.timeSignature.top; beat++) {
-      for (subbeat=0; subbeat<4; subbeat++) {
-        var list = new Array($scope.bass.strings);
-        $scope.bass.strings.forEach(function(string) {
-          list[string.index] = {
-            string: string,
-            beat: beat,
-            subbeat: subbeat,
-            note: {
-              style: 'finger',
-              length: 1/8,
-              volume: 0.75
-            },
-            width: 1
-          };
-        });
-        data.push(list);
+    function newBar() {
+      var data = [];
+      var beat;
+      for (beat=0; beat<bar.timeSignature.top; beat++) {
+        for (subbeat=0; subbeat<4; subbeat++) {
+          var list = new Array($scope.bass.strings);
+          $scope.bass.strings.forEach(function(string) {
+            list[string.index] = {
+              string: string,
+              beat: beat,
+              subbeat: subbeat,
+              note: {
+                style: 'finger',
+                length: 1/8,
+                volume: 0.75
+              },
+              width: 1
+            };
+          });
+          data.push(list);
+        }
       }
+      return data;
     }
+    var data = newBar();
     /**
      * test data
      */
@@ -279,7 +284,6 @@
         },
         audioVisualiser.beatSync.bind(audioVisualiser)
       );
-
     };
 
     $scope.stop = function() {
@@ -287,5 +291,90 @@
       audioPlayer.stop();
     };
 
+    $scope.newBar = function() {
+      $scope.bass.present = {
+        name: 'New',
+        data: newBar()
+      };
+      $scope.bass.presents.push($scope.bass.present);
+      $scope.bassData = $scope.bass.present.data;
+    };
+
+    $scope.deleteBar = function(present) {
+      var index = $scope.bass.presents.indexOf(present);
+      $scope.bass.presents.splice(index, 1);
+    };
+
+    $scope.saveBar = function() {
+      var storageKey = 'bass.present.'+$scope.bass.present.name;
+      $scope.bass.present.data = $scope.bassData;
+      console.log($scope.bass.present);
+
+      //var data = $scope.bass.presents.map(function(bar) {
+      var bar = $scope.bass.present;
+      var data = {
+        name: bar.name,
+        data: bar.data
+      };
+      console.log(data);
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    };
+
+    function printSubbeat(stringsSubbeats) {
+      var i;
+      for (i=0; i < 4; i++) {
+        if (stringsSubbeats[i] && stringsSubbeats[i].note && stringsSubbeats[i].note.name) {
+          console.log(i+': {0} {1}'.format(
+            stringsSubbeats[i].note.name, stringsSubbeats[i].note.length)
+          );
+        } else {
+          console.log(i+': - ');
+        }
+      }
+      console.log('--------------');
+    }
+
+    $scope.loadBassPresent = function(present) {
+      if (present && present !== $scope.bass.present) {
+        console.log('Load: '+present.name);
+        $scope.bassData = present.data;
+         /*
+        var i,j;
+        for (i=0; i < present.data.length; i++) {
+          // printSubbeat(present.data[i]);
+          for (j=0; j < 4; j++) {
+            // $scope.bassData[i][j] = angular.copy(present.data[i][j]);
+            $scope.bassData[i][j] = present.data[i][j];
+
+          }
+        }*/
+        $scope.bass.present = present;
+      }
+    };
+
+    function loadSavedBars() {
+      var storageKey = 'bass.presents';
+      var presents = [];
+      var i;
+      for (i=0; i<localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key.startsWith('bass.present.')) {
+          var present = JSON.parse(localStorage.getItem(key));
+          presents.push(present);
+        }
+      }
+      // console.log(presents);
+      // presents = null;
+      if (presents) {
+        $scope.bass.presents = presents;
+        console.log($scope.bass.presents);
+        $scope.loadBassPresent(presents[0]);
+      } else {
+        $scope.bass.present = {name: ''};
+        $scope.bass.presents = [$scope.bass.present];
+      }
+    }
+
+    loadSavedBars();
   }
 })();

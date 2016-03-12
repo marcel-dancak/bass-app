@@ -40,7 +40,7 @@
         }">
         <div
           class="resize-container"
-          ng-if="subbeat.note.name"
+          ng-if="subbeat.note.name && subbeat.note.name !== 'x'"
           resizable
           r-directions="['right']"
           on-resize="onResize(subbeat, info)"

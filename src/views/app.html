@@ -2,14 +2,13 @@
   layout="column"
   class="main-page"
   ng-controller="AppController">
+  <div flex></div>
   <div
     layout="row"
     class="control-panel">
     <div
-      xlayout="row"
       class="bpm-field">
-      <md-input-container
-        xflex="25">
+      <md-input-container>
         <label>BPM</label>
         <input
           type="number"
@@ -18,15 +17,6 @@
           step="5"
           ng-model="player.bpm">
       </md-input-container>
-      <!-- <md-slider
-        class="md-primary"
-        ng-model="player.bpm"
-        aria-label="BPM"
-        min="30"
-        max="160"
-        step="1"
-        flex>
-      </md-slider> -->
     </div>
 
     <md-button
@@ -37,6 +27,64 @@
       </md-icon>
       {{ player.playing? 'Stop' : 'Play' }}
     </md-button>
+
+    <div flex></div>
+
+    <div
+      layout="row"
+      class="present-field">
+      <md-input-container>
+        <label>Bar</label>
+        <input
+          type="text"
+          ng-model="bass.present.name">
+      </md-input-container>
+      <md-input-container>
+        <md-select
+          ng-show="bass.presents.length > 1"
+          aria-label="Bar Present"
+          class="select-editable"
+          ng-model="bass.$selectedPresent"
+          md-on-close="loadBassPresent(bass.$selectedPresent)">
+          <md-option
+            ng-repeat="present in bass.presents"
+            ng-value="present">
+            {{ present.name }}
+          </md-option>
+        </md-select>
+      </md-input-container>
+      <md-button
+        aria-label="Save"
+        class="toolbar-button"
+        ng-click="saveBar()">
+        <md-icon
+          md-svg-icon="pen">
+        </md-icon>
+      </md-button>
+      <md-menu md-position-mode="target-right target">
+        <md-button
+          aria-label="Menu"
+          class="toolbar-button"
+          ng-click="$mdOpenMenu($event)">
+          <md-icon
+            md-svg-icon="menu-dots">
+          </md-icon>
+        </md-button>
+        <md-menu-content>
+          <md-menu-item>
+            <md-button
+              ng-click="newBar()">
+              Add
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button ng-click="delete()">
+              Delete
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+    </div>
   </div>
   <div
     flex="none"
@@ -57,6 +105,5 @@
       class="audio-graph">
     </canvas>
   </div>
-  <div flex>
-  </div>
+  <div flex></div>
 </div>

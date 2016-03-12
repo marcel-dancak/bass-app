@@ -3,37 +3,38 @@
   layout="row"
   class="bar">
   <div></div>
-  <md-button
-    class="time-signature-button"
-    ng-click="showNoteDialog({}, $event)">
-    {{ bar.timeSignature.top }}<br>{{ bar.timeSignature.bottom }}
-  </md-button>
-  <div
-    class="bar-settings-container closed">
-    <div style="position:relative;"
-      layout="row">
-      <label>Time signature:</label>
-      <md-select
-        ng-model="bar.timeSignature.top"
-        class="time-signature">
-        <md-option
-          ng-repeat="value in [2,3,4,5,6,7,8,9,10,11,12]"
-          ng-value="{{ value }}">
-          {{ value }}
-        </md-option>
-      </md-select>
-      <label>/</label>
-      <md-select
-        ng-model="bar.timeSignature.bottom"
-        class="time-signature">
-        <md-option
-          ng-repeat="value in [2,4,8,16]"
-          ng-value="{{ value }}">
-          {{ value }}
-        </md-option>
-      </md-select>
-    </div>
-  </div>
+  <md-menu>
+    <md-button
+      class="time-signature-button"
+      ng-click="$mdOpenMenu($event)">
+      {{ bar.timeSignature.top }}<br>{{ bar.timeSignature.bottom }}
+    </md-button>
+    <md-menu-content class="bar-settings-container">
+      <div style="position:relative;"
+        layout="row">
+        <label>Time signature:</label>
+        <md-select
+          ng-model="bar.timeSignature.top"
+          class="time-signature">
+          <md-option
+            ng-repeat="value in [2,3,4,5,6,7,8,9,10,11,12]"
+            ng-value="{{ value }}">
+            {{ value }}
+          </md-option>
+        </md-select>
+        <label>/</label>
+        <md-select
+          ng-model="bar.timeSignature.bottom"
+          class="time-signature">
+          <md-option
+            ng-repeat="value in [2,4,8,16]"
+            ng-value="{{ value }}">
+            {{ value }}
+          </md-option>
+        </md-select>
+      </div>
+    </md-menu-content>
+  </md-menu>
   <div
     ng-repeat="subbeat in bar.subbeats | limitTo: bar.timeSignature.top*4"
     layout="column"

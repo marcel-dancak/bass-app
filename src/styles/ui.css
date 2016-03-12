@@ -1,5 +1,5 @@
 .main-page {
-  padding: 100px;
+  padding: 0 70px;
   overflow: hidden;
   height: 100%;
 }
@@ -33,7 +33,7 @@ md-select-value {
 }
 
 .control-panel {
-  margin: 10px 0 20px 0;
+  margin: 10px 0 50px 0;
 }
 
 md-dialog {
@@ -75,4 +75,40 @@ md-input-container.input-inline-label label {
 .control-panel md-input-container {
   margin-bottom: 0;
   height: 33px;
+}
+
+.select-editable .md-select-value {
+  border: none;
+  min-width: 16px;
+  width: 16px;
+  padding: 0;
+}
+
+.select-editable .md-select-icon {
+  margin: 0;
+}
+.toolbar-button {
+  min-width: 32px;
+  margin: 12px 2px 5px 2px;
+}
+
+.select-editable:not([disabled]):focus .md-select-value,
+.select-editable .md-select-value {
+  border: none;
+  min-width: 16px;
+  width: 16px;
+  padding: 0;
+}
+.select-editable .md-select-value span:not(.md-select-icon) {
+  display: none;
+}
+
+.present-field {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 2px 4px 0 4px;
+}
+
+md-backdrop.md-select-backdrop {
+  z-index: 100;
 }

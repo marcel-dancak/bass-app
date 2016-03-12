@@ -167,6 +167,9 @@
       if (subbeat.note.name && subbeat.note.length) {
         return false;
       }
+      if ($data.note.name === 'x') {
+        return true;
+      }
       var fret = $scope.bass.stringFret(subbeat.string, $data.note);
       return fret !== -1;
     };
