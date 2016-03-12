@@ -5,7 +5,7 @@
     .module('bd.app')
     .controller('NoteController', NoteController);
 
-  function NoteController($scope, $timeout) {
+  function NoteController($scope, $timeout, $mdMenu) {
     console.log('NOTE CONTROLLER');
 
     var notesLabels = [];
@@ -16,7 +16,15 @@
     $scope.dropNote = {
       width: 0
     };
-    $scope.activeMenu = {};
+    $scope.menu = {
+      element: null,
+      open: angular.noop,
+      note: $scope.bassData[0][0].note
+    };
+
+    $timeout(function() {
+      $scope.menu.element = angular.element(document.getElementById('subbeat-menu'));
+    }, 100);
 
     var dragNote, dragElement;
     $scope.playingStyles = ['finger', 'slap', 'pop', 'tap', 'hammer', 'pull'];
@@ -34,6 +42,10 @@
       }
       subbeat.width = 1;
       $scope.updateNote(subbeat);
+    };
+
+    $scope.updateNoteLength = function(subbeat) {
+      
     };
 
     var notesWidths;
@@ -126,7 +138,8 @@
     $scope.onDragEnter = function(evt, $data) {
       var target = evt.target || evt.originalTarget;
       if (target.tagName === 'BUTTON') {
-        target = target.parentElement.parentElement;
+        // target = target.parentElement.parentElement;
+        target = target.parentElement;
       }
       $timeout(function() {
         $scope.dropNote.visible = true;
@@ -173,12 +186,23 @@
       var fret = $scope.bass.stringFret(subbeat.string, $data.note);
       return fret !== -1;
     };
-    /*
-    $scope.$on('$mdMenuClose', function(evt, element, eventDetails) {
-      console.log('mdMenuClose');
-      console.log($scope.activeMenu);
-      var subbeat = $scope.activeMenu.subbeat;
-    });*/
+
+    $scope.setSubbeatMenu = function(subbeat) {
+      console.log('setSubbeatMenu');
+      $scope.menu.subbeat = subbeat;
+      $scope.menu.note = subbeat.note;
+    };
+
+    $scope.openSubbeatMenu = function(evt, subbeat) {
+      $mdMenu.hide().then(function() {
+        $scope.menu.subbeat = subbeat;
+        $scope.menu.note = subbeat.note;
+        $scope.menu.open(evt);
+        var box = evt.target.getBoundingClientRect();
+        $scope.menu.element.css('left', box.left+'px');
+        $scope.menu.element.css('top', 32+box.top+'px');
+      });
+    };
   }
 
 })();

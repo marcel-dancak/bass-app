@@ -73,7 +73,7 @@
 .tab-button md-icon {
   width: 18px;
   height: 18px;
-  pointer-events: none;
+  xpointer-events: none;
 }
 
 .tab-note-container {
@@ -216,4 +216,9 @@
 
 .tab-note-container.drag-element {
   background-color: rgb(250, 220, 220);
+}
+
+#subbeat-menu {
+  position: fixed;
+  opacity: 0;
 }
