@@ -72,17 +72,6 @@
       }
     };
 
-    function fadeOutCallbback(gain, step) {
-      gain.value -= step;
-      if (gain.value > 0) {
-        setTimeout(fadeOutCallbback, 10, gain, step);
-      }
-    }
-
-    function fadeOut(gain, delay, step) {
-      setTimeout(fadeOutCallbback, delay*1000, gain, step);
-    }
-
     AudioPlayer.prototype.initialize = function(destination) {
       this.destination = destination;
       this.playingNotes = [];
@@ -109,7 +98,7 @@
             // console.log(note);
             var source = context.createBufferSource();
             var gain = context.createGain();
-            gain.gain.value = 0;
+
             source.connect(gain);
             gain.connect(this.destination);
             source.buffer = bufferLoader.getAudioData(bassSounds[note.style].getResources(note)[0]);
@@ -120,17 +109,19 @@
             if (note.staccato) {
               duration = 0.8*duration;
             }
-            duration = duration;
             var startTime = context.currentTime;
-            source.start(startTime, 0, duration+50);
+            gain.gain.setValueAtTime(note.volume, startTime);
+            gain.gain.setValueAtTime(note.volume, startTime+duration-0.05);
+            source.start(startTime, 0, duration+0.05);
+            gain.gain.linearRampToValueAtTime(0.001, startTime+duration);
+            // gain.gain.exponentialRampToValueAtTime(0.001, startTime+duration);
+
             var sound = {
               note: note,
               source: source,
               gain: gain,
               startTime: startTime,
               endTime: startTime+duration,
-              fadeIn: 0,
-              fadeOut: note.name === 'x'? 0 : 30
             };
             this.playingNotes.push(sound);
           }, this);
@@ -141,23 +132,10 @@
           this.playingNotes = this.playingNotes.filter(function(playingNote) {
             if (currentTime > playingNote.endTime) {
               // maybe some cleanup
-              playingNote.gain.gain.value = 0.0;
+              playingNote.gain.gain.value = 0.001;
               return false;
             }
             return true;
-          });
-          this.playingNotes.forEach(function(playingNote) {
-            var timeElapsed = 1000*(currentTime-playingNote.startTime);
-            if (timeElapsed < playingNote.fadeIn) {
-              playingNote.gain.gain.value = (timeElapsed/playingNote.fadeIn)*playingNote.note.volume;
-            } else {
-              var timeRemaining = 1000*(playingNote.endTime - currentTime);
-              if (timeRemaining < playingNote.fadeOut) {
-                playingNote.gain.gain.value = (timeRemaining/playingNote.fadeOut)*playingNote.note.volume;
-              } else {
-                playingNote.gain.gain.value = playingNote.note.volume;
-              }
-            }
           });
         }
         requestAnimationFrame(this.playback);
