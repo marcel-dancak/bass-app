@@ -133,6 +133,9 @@
 
     $scope.updateNote = function(subbeat) {
       // $scope.$root.$broadcast('subbeatChanged', subbeat);
+      if (subbeat.note.name === 'x') {
+        subbeat.note.length = 1/16;
+      }
     };
 
     $scope.onDragEnter = function(evt, $data) {

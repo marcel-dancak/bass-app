@@ -300,12 +300,35 @@
       $scope.bassData = $scope.bass.present.data;
     };
 
+    function deleteObsoletePresents() {
+      var actualPresentsKeys = $scope.bass.presents.map(function(present) {
+        return 'bass.present.'+present.name;
+      });
+      var i;
+      for (i=0; i<localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key.startsWith('bass.present.') && actualPresentsKeys.indexOf(key) === -1) {
+          console.log('delete: '+key);
+          localStorage.removeItem(key);
+          break;
+        }
+      }
+    }
+
     $scope.deleteBar = function(present) {
       var index = $scope.bass.presents.indexOf(present);
       $scope.bass.presents.splice(index, 1);
+      deleteObsoletePresents();
+      if ($scope.bass.presents) {
+        $scope.loadBassPresent($scope.bass.presents[0]);
+      } else {
+        $scope.bass.present = {name: ''};
+        $scope.bass.presents = [$scope.bass.present];
+      }
     };
 
     $scope.saveBar = function() {
+      deleteObsoletePresents();
       var storageKey = 'bass.present.'+$scope.bass.present.name;
       $scope.bass.present.data = $scope.bassData;
       console.log($scope.bass.present);
@@ -367,7 +390,6 @@
       // presents = null;
       if (presents) {
         $scope.bass.presents = presents;
-        console.log($scope.bass.presents);
         $scope.loadBassPresent(presents[0]);
       } else {
         $scope.bass.present = {name: ''};
