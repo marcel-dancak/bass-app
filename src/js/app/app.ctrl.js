@@ -236,9 +236,59 @@
     /**
      * test data
      */
-    data[1][0].note = {
+    data[0][1].note = {
+      style: 'finger',
       name: 'C',
       octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    data[2][1].note = {
+      style: 'finger',
+      name: 'D',
+      octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    data[4][2].note = {
+      style: 'finger',
+      name: 'E',
+      octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    data[6][2].note = {
+      style: 'finger',
+      name: 'F',
+      octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    data[8][2].note = {
+      style: 'finger',
+      name: 'G',
+      octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    data[10][3].note = {
+      style: 'finger',
+      name: 'A',
+      octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    data[12][3].note = {
+      style: 'finger',
+      name: 'B',
+      octave: 2,
+      length: 1/8,
+      volume: 0.75
+    };
+    data[14][3].note = {
+      style: 'finger',
+      name: 'C',
+      octave: 3,
       length: 1/8,
       volume: 0.75
     };
