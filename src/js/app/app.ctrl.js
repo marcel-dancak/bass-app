@@ -54,7 +54,7 @@
           label: 'E',
           octave: 1,
           index: 0,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1']),
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1'])
         }, {
           label: 'A',
           octave: 1,
@@ -236,20 +236,33 @@
     /**
      * test data
      */
-    data[0][1].note = {
+     /*
+    angular.extend(data[0][1], {
       style: 'finger',
-      name: 'C',
-      octave: 2,
-      length: 1/8,
+      fret: 3,
+      note: {
+        name: 'C',
+        octave: 2,
+        code: 'C2'
+      },
+      noteLength: {
+        length: 1/8
+      },
       volume: 0.75
-    };
-    data[2][1].note = {
+    });
+    angular.extend(data[2][1], {
       style: 'finger',
-      name: 'D',
-      octave: 2,
-      length: 1/8,
+      fret: 5,
+      note: {
+        name: 'D',
+        octave: 2,
+        code: 'D2'
+      },
+      noteLength: {
+        length: 1/8,
+      },
       volume: 0.75
-    };
+    });
     data[4][2].note = {
       style: 'finger',
       name: 'E',
@@ -291,7 +304,7 @@
       octave: 3,
       length: 1/8,
       volume: 0.75
-    };
+    };*/
     $scope.bassData = data;
 
     $scope.bar = bar;
@@ -339,6 +352,21 @@
     $scope.stop = function() {
       $scope.player.playing = false;
       audioPlayer.stop();
+    };
+
+    $scope.playBassNote = function(bassNote) {
+      audioPlayer.playSound({
+        style: 'finger',
+        note: {
+          name: bassNote.label[0],
+          octave: bassNote.octave,
+          code: bassNote.label[0]+bassNote.octave
+        },
+        noteLength: {
+          length: 1/4
+        },
+        volume: 0.75
+      });
     };
 
     $scope.newBar = function() {
@@ -411,16 +439,6 @@
       if (present && present !== $scope.bass.present) {
         console.log('Load: '+present.name);
         $scope.bassData = present.data;
-         /*
-        var i,j;
-        for (i=0; i < present.data.length; i++) {
-          // printSubbeat(present.data[i]);
-          for (j=0; j < 4; j++) {
-            // $scope.bassData[i][j] = angular.copy(present.data[i][j]);
-            $scope.bassData[i][j] = present.data[i][j];
-
-          }
-        }*/
         $scope.bass.present = present;
       }
     };

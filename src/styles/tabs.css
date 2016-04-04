@@ -32,21 +32,83 @@
 
 .tab-note-container {
   height: 100%;
-  line-height: 36px;
   text-align: center;
   z-index: 50;
   position: relative;
   border-radius: 3px;
-  margin: 2px 0;
+  margin: 2px 2px;
+  outline: none;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.tab-note-container label {
+  display: none;
+  font-size: 15px;
 }
 
 .tab-note-container.active {
   background-color: #d94b49;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  border: 1px solid #777;
+  max-height: 32px;
+  line-height: 32px;
 }
-.tab-button {
-  
+.tab-note-container.active label {
+  padding-left: 16px;
+  display: block;
 }
+.tab-note-container.active[octave="1"] {
+  background-color: #ff5722;
+}
+.tab-note-container.active[octave="2"] {
+  background-color: #ff9800;
+}
+.tab-note-container.active[octave="3"] {
+  background-color: #ffc107;
+}
+.tab-note-container.active[octave="4"] {
+  background-color: #ffeb3b;
+}
+
+.tab-note-container.active.selected {
+  border: 2px solid #333;
+  margin: 1px 1px 1px 2px;
+  border-radius: 4px;
+  line-height: 32px;
+  max-height: 34px;
+}
+.fret-input {
+  min-width: 18px;
+  max-width: 18px;
+}
+.fretboard-icon {
+
+}
+.fretboard-select md-select {
+  min-width: 30px;
+  max-width: 30px;
+}
+.fretboard-select .md-select-icon {
+  display: none;
+}
+.fretboard-select md-select-value {
+  min-width: 30px;
+  max-width: 30px;
+  padding: 0;
+}
+.fretboard-select md-icon {
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+}
+
+.spinner-label {
+  line-height: 30px;
+  height: 29px;
+  width: 30px;
+  border-bottom: 1px solid #ddd;
+}
+
 .tab-button {
   position: absolute;
   left: 0;
@@ -182,10 +244,11 @@
 
 .drop-note-area {
   position: absolute;
-  height: 32px;
+  height: 30px;
+  padding: 0;
   border: 2px solid orange;
-  border-radius: 3px;
-  box-sizing: border-box;
+  border-radius: 4px;
+  xbox-sizing: border-box;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   z-index: 100;
   pointer-events: none;
@@ -220,5 +283,17 @@
 
 #subbeat-menu {
   position: fixed;
-  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+
+
+md-select-menu {
+  border-radius: 5px;
+}
+
+md-select-menu:not(.md-overflow) md-content {
+  padding: 0;
+  border-radius: 5px;
 }

@@ -21,7 +21,7 @@
 }
 
 .audio-graph {
-  height: 100px;
+  height: 85px;
   width: 100%;
 }
 
@@ -111,4 +111,7 @@ md-input-container.input-inline-label label {
 
 md-backdrop.md-select-backdrop {
   z-index: 100;
+}
+.md-virtual-repeat-container.md-autocomplete-suggestions-container {
+  z-index: 101;
 }

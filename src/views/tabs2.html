@@ -1,6 +1,7 @@
 <div
   ng-controller="TabsController"
-  class="tabs-container">
+  class="tabs-container"
+  ng-keyup="$event.keyCode == 46 && clearNote(selected.subbeat)">
   <md-button
     aria-label="Tunning"
     class="tabs-tunning-button">
@@ -19,7 +20,7 @@
 
       <div
         class="tab-top-marker"
-        ng-show="subbeat.note.staccato">
+        ng-show="subbeat.noteLength.staccato">
         .
       </div>
       <div
@@ -32,11 +33,16 @@
         ui-on-drag-enter="onDragEnter($event, subbeat)"
         ui-on-drag-leave="onDragLeave($event, subbeat)"
 
+        ng-click="selected.subbeat=subbeat"
+        ng-attr-octave="{{ subbeat.note.octave }}"
         class="tab-note-container"
-        ng-class="{active: subbeat.note.name}"
+        ng-class="{
+          active: subbeat.note.name,
+          selected: selected.subbeat===subbeat
+        }"
         ng-style="{
           width: 
-            (100*subbeat.note.length*16*(subbeat.note.dotted? 1.5 : 1))+'%'
+            (100*subbeat.noteLength.length*16*(subbeat.noteLength.dotted? 1.5 : 1))+'%'
         }">
         <div
           class="resize-container"
@@ -49,6 +55,7 @@
         </div>
         <!-- <div class="tab-string"></div> -->
         <md-button
+          md-no-ink
           aria-label="Subbeat"
           class="tab-button"
           xng-mouseover="setSubbeatMenu(subbeat)"
@@ -57,7 +64,9 @@
             md-svg-icon="{{ subbeat.note.name? 'menu-dots' : 'plus' }}">
           </md-icon>
         </md-button>
-        {{ subbeat.note.name }}<sub>{{ subbeat.note.octave }}</sub>
+        <label>
+          {{ subbeat.note.name }}<sub>{{ subbeat.note.octave }}</sub> &nbsp( {{ subbeat.fret }} )
+        </label>
       </div>
     </div>
   </div>
@@ -76,7 +85,7 @@
             <label class="md-label">Style</label>
             <md-select
               flex
-              ng-model="menu.note.style"
+              ng-model="menu.subbeat.style"
               md-on-close="updateNote(menu.subbeat)">
               <md-option
                 ng-repeat="style in playingStyles"
@@ -85,23 +94,14 @@
               </md-option>
             </md-select>
           </md-input-container>
-          <md-button
-            md-no-ink
-            aria-label="Clear"
-            class="clear-button"
-            ng-click="clearNote(menu.subbeat)">
-            <md-icon
-              md-svg-icon="trash">
-            </md-icon>
-          </md-button>
         </div>
 
-        <div layout="row">
+<!--         <div layout="row">
           <md-input-container flex>
             <label class="md-label">Note</label>
             <md-select
-              ng-model="menu.note.name"
-              md-on-close="menu.note.string=string.index;updateNote(menu.subbeat)">
+              ng-model="menu.subbeat.note.name"
+              md-on-close="menu.subbeat.string=string.index;updateNote(menu.subbeat)">
               <md-option
                 ng-repeat="noteLabel in notesLabels"
                 ng-value="noteLabel">
@@ -115,17 +115,162 @@
           <div class="horizontal-space"></div>
           <md-input-container flex>
             <label class="md-label">Octave</label>
-            <md-select
+            <input
               ng-if="menu.subbeat"
-              ng-model="menu.note.octave"
-              md-on-close="updateNote(menu.subbeat)"
-              ng-disabled="!menu.note.name || menu.note.name==='x'">
+              ng-model="menu.subbeat.note.octave"
+              type="number"
+              min="{{ menu.subbeat.$form.minOctave }}"
+              max="{{ menu.subbeat.$form.maxOctave }}"
+              ng-disabled="!menu.subbeat.note.name || menu.subbeat.note.name==='x'">
+            </input>
+          </md-input-container>
+          <div
+            class="buttons-spinner"
+            layout="column">
+            <md-button
+              md-prevent-menu-close
+              ng-click="nextNoteLabel(menu.subbeat)">
+              <md-icon md-svg-icon="plus"></md-icon>
+            </md-button>
+            <md-button
+              md-prevent-menu-close>
+              <md-icon md-svg-icon="minus"></md-icon>
+            </md-button>
+          </div>
+        </div> -->
+
+        <div layout="row">
+          <md-input-container flex>
+            <label class="md-label">Note</label>
+            <md-select
+              md-container-class="note-select-menu"
+              ng-model="menu.subbeat.note"
+              ng-model-options="{trackBy: '$value.code'}"
+              md-on-close="updateNote(menu.subbeat)">
+              <div layout="row">
+              <span class="fret-index">( X )</span>
               <md-option
-                xng-repeat="octave in bass.notes.notesOctaves[menu.note.name]"
-                ng-repeat="octave in bass.noteStringOctaves(menu.note.name, menu.subbeat.string)"
-                ng-value="octave">
-                {{ octave }}
+                flex
+                value="{
+                  name: 'x',
+                  code: 'x'
+                }">
+                Ghost
               </md-option>
+              </div>
+              <div
+                ng-repeat="note in menu.subbeat.string.notes"
+                layout="row">
+                <span class="fret-index">( {{ $index }} )</span>
+                
+                <md-option
+                  flex
+                  ng-if-end 
+                  ng-value="{
+                    name: note.label[0],
+                    octave: note.octave,
+                    code: note.label[0]+note.octave
+                  }">
+                  {{ note.label[0] }} <sub>{{ note.octave }}</sub>
+                </md-option>
+                <span
+                  ng-if-start="note.label[1]">/
+                </span>
+                <md-option
+                  flex
+                  ng-if-end 
+                  ng-value="{
+                    name: note.label[1],
+                    octave: note.octave,
+                    code: note.label[1]+note.octave
+                  }">
+                  {{ note.label[1] }} <sub>{{ note.octave }}</sub>
+                </md-option>
+              </div>
+            </md-select>
+          </md-input-container>
+          <div
+            class="buttons-spinner"
+            layout="column">
+            <md-button
+              md-prevent-menu-close
+              ng-click="menu.nextNote()">
+              <md-icon md-svg-icon="plus"></md-icon>
+            </md-button>
+            <md-button
+              md-prevent-menu-close
+              ng-click="menu.prevNote()">
+              <md-icon md-svg-icon="minus"></md-icon>
+            </md-button>
+          </div>
+
+        </div>
+
+        <div layout="row" ng-if="xxx">
+          <md-autocomplete
+            md-no-cache="true"
+            md-selected-item="menu.selectedItem"
+            md-search-text="menu.searchText"
+            md-selected-item-change="ctrl.selectedItemChange(item)"
+            md-items="note in noteQuerySearch(menu.subbeat.string.notes, menu.searchText)"
+            md-item-text="note.label.join(' / ')"
+            md-min-length="0"
+            placeholder="Note">
+          <md-item-template>
+            <span
+              md-highlight-text="menu.searchText"
+              md-highlight-flags="^i">
+              {{ note.label.join(' / ') }}
+            </span>
+            <sub>{{ note.octave }}</sub>
+          </md-item-template>
+          <md-not-found>
+            No notes matching "{{ menu.searchText }}" were found.
+          </md-not-found>
+        </md-autocomplete>
+          <md-input-container class="fretboard-select">
+            <!-- <label class="md-label">Fretboard</label> -->
+            <md-icon
+              class="fretboard-icon"
+              md-svg-icon="fretboard">
+            </md-icon>
+            <md-select
+              ng-model="menu.subbeat.fret">
+              <div
+                style="max-width: {{ ::menu.maxWidth*0.95 }}px;"
+                class="fretboard">
+                <div layout="row">
+                  <span
+                    class="fret-index"
+                    ng-repeat="fret in [].constructor(25) track by $index">
+                    {{ $index }}
+                  </span>
+                </div>
+                <div
+                  ng-repeat="string in bass.strings"
+                  layout="row">
+                  <div
+                    layout="row"
+                    class="fret-box octave-{{ ::note.octave }}"
+                    ng-repeat="note in string.notes">
+                    <md-option
+                      flex
+                      md-no-ink
+                      ng-value="string.index+':'+$index+':1'"
+                      ng-disabled="string.index!==menu.subbeat.string.index">
+                      {{ note.label[0] }}
+                    </md-option>
+                    <md-option
+                      flex
+                      class="second-button"
+                      ng-if="::note.label[1]"
+                      ng-value="string.index+':'+$index+':2'"
+                      ng-disabled="string.index!==menu.subbeat.string.index">
+                      {{ note.label[1] }}
+                    </md-option>
+                  </div>
+                </div>
+              </div>
             </md-select>
           </md-input-container>
         </div>
@@ -134,9 +279,9 @@
           <md-input-container flex="30">
             <label class="md-label">Length</label>
             <md-select
-              ng-model="menu.note.length"
+              ng-model="menu.subbeat.noteLength.length"
               md-on-close="checkMeasure(menu.subbeat)"
-              ng-disabled="!menu.note.name || menu.note.name==='x'">
+              ng-disabled="!menu.subbeat.note.name || menu.subbeat.note.name==='x'">
               <md-option
                 ng-repeat="value in [
                   ['𝅝', 'Whole', 1],
@@ -155,23 +300,24 @@
             flex="30"
             class="md-primary"
             aria-label="Staccato"
-            ng-model="menu.note.dotted"
-            ng-disabled="menu.note.name==='x'">
+            ng-model="menu.subbeat.noteLength.dotted"
+            ng-disabled="menu.subbeat.note.name==='x'">
             Dotted
           </md-checkbox>
           <md-checkbox
             flex="40"
             class="md-primary"
             aria-label="Staccato"
-            ng-model="menu.note.staccato"
-            ng-disabled="menu.note.name==='x'">
+            ng-model="menu.subbeat.noteLength.staccato"
+            ng-disabled="menu.subbeat.note.name==='x'">
             Staccato
           </md-checkbox>
         </div>
 
-        <div layout="row">
+        <div
+          layout="row"
+          class="volume-field">
           <md-input-container
-            class="volume-field"
             flex="none">
             <label>Volume</label>
             <input
@@ -179,17 +325,23 @@
               min="0"
               max="1"
               step="0.01"
-              ng-model="menu.note.volume">
+              ng-model="menu.subbeat.volume">
           </md-input-container>
           <md-slider
             class="md-primary"
-            ng-model="menu.note.volume"
+            ng-model="menu.subbeat.volume"
             aria-label="Volume"
             min="0"
             max="1"
             step="0.01"
             flex>
           </md-slider>
+          <md-button
+            class="play-button"
+            md-prevent-menu-close
+            ng-click="playSound(menu.subbeat)">
+            <md-icon md-svg-icon="play"></md-icon>
+          </md-button>
         </div>
       </div>
     </md-menu-content>

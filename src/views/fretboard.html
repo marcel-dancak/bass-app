@@ -1,0 +1,39 @@
+<div
+  class="fretboard">
+  <div layout="row">
+    <span
+      flex
+      class="fret-index"
+      ng-repeat="fret in [].constructor(25) track by $index">
+      {{ $index }}
+    </span>
+  </div>
+  <div
+    ng-repeat="string in bass.strings"
+    layout="row">
+    <div
+      flex
+      ng-click="playBassNote(note)"
+      class="fret-box octave-{{ ::note.octave }}"
+      ng-repeat="note in string.notes"
+
+      ui-draggable="true"
+      drag="{
+        source: 'fretboard',
+        style: 'finger',
+        note: {
+          label: note.label,
+          octave: note.octave
+        },
+        noteLength: {
+          length: 1/16
+        },
+        volume: 0.75,
+        string: string,
+        fret: $index
+      }"
+      >
+      {{ ::note.label.join(' / ') }}
+    </div>
+  </div>
+</div>

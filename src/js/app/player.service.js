@@ -30,12 +30,8 @@
       this.playing = false;
       this.playback = this.playback.bind(this);
       this.setBpm(60);
+      this.bufferLoader = new BufferLoader(context, soundsUrl);
     }
-
-    var source1, source2, source3, source4;
-    var gain1, gain2, gain3, gain4;
-    var bufferLoader;
-
 
     var bassSounds = {
       finger: {
@@ -44,25 +40,16 @@
             return ['sounds/finger/X{1}'.format(noteFileName[note.name], '1')];
           }
           return ['sounds/finger/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
-        },
-        play: function(note, bpm) {
-          console.log('playing ... '+note.name);
         }
       },
       hammer: {
         getResources: function(note) {
           return ['sounds/tap-{0}{1}'.format(noteFileName[note.name], note.octave||'')];
-        },
-        play: function(note, bpm) {
-          console.log('playing ... '+note.name);
         }
       },
       slap: {
         getResources: function(note) {
           return ['sounds/slap-{0}{1}'.format(noteFileName[note.name], note.octave||'')];
-        },
-        play: function(note, bpm) {
-          console.log('slapping ... '+note.name);
         }
       },
       pull: {
@@ -88,12 +75,13 @@
             this.beatIndex++;
           }
           // console.log('subbeat: '+subbeat);
-          var stringsNotes = this.bar.notes[subbeat];
-          var notes = stringsNotes.filter(function(noteItem) {
-            if (!noteItem.note.style || !noteItem.note.name) {
+          var stringsSounds = this.bar.notes[subbeat];
+          // console.log(stringsSounds);
+          var sounds = stringsSounds.filter(function(sound) {
+            if (!sound.style || !sound.note.name) {
               return;
             }
-            var note = noteItem.note;
+            var note = sound.note;
             // console.log(note.style+' '+note.name);
             // console.log(note);
             var source = context.createBufferSource();
@@ -101,29 +89,33 @@
 
             source.connect(gain);
             gain.connect(this.destination);
-            source.buffer = bufferLoader.getAudioData(bassSounds[note.style].getResources(note)[0]);
-            var duration = note.length? this.subbeatTime*note.length*16 : this.subbeatTime;
-            if (note.dotted) {
-              duration *= 1.5;
-            }
-            if (note.staccato) {
-              duration = 0.8*duration;
-            }
-            var startTime = context.currentTime;
-            gain.gain.setValueAtTime(note.volume, startTime);
-            gain.gain.setValueAtTime(note.volume, startTime+duration-0.05);
-            source.start(startTime, 0, duration+0.05);
-            gain.gain.linearRampToValueAtTime(0.001, startTime+duration);
-            // gain.gain.exponentialRampToValueAtTime(0.001, startTime+duration);
+            var audioData = this.bufferLoader.loadResource(bassSounds[sound.style].getResources(note)[0]);
+            //console.log(this.bufferLoader.loadedResources);
+            if (audioData) {
+              source.buffer = audioData;
+              var duration = sound.noteLength.length? this.subbeatTime*sound.noteLength.length*16 : this.subbeatTime;
+              if (sound.noteLength.dotted) {
+                duration *= 1.5;
+              }
+              if (sound.noteLength.staccato) {
+                duration = 0.8*duration;
+              }
+              var startTime = context.currentTime;
+              gain.gain.setValueAtTime(sound.volume, startTime);
+              gain.gain.setValueAtTime(sound.volume, startTime+duration-0.05);
+              source.start(startTime, 0, duration+0.05);
+              gain.gain.linearRampToValueAtTime(0.001, startTime+duration);
+              // gain.gain.exponentialRampToValueAtTime(0.001, startTime+duration);
 
-            var sound = {
-              note: note,
-              source: source,
-              gain: gain,
-              startTime: startTime,
-              endTime: startTime+duration,
-            };
-            this.playingNotes.push(sound);
+              var sound = {
+                note: note,
+                source: source,
+                gain: gain,
+                startTime: startTime,
+                endTime: startTime+duration,
+              };
+              this.playingNotes.push(sound);
+            }
           }, this);
           this.subbeatIndex++;
         }
@@ -157,41 +149,39 @@
       this.subbeatTime = beatTime/4;
     }
 
+    AudioPlayer.prototype.fetchSoundResources = function(sound) {
+      if (sound.style && sound.note) {
+        var resources = bassSounds[sound.style].getResources(sound.note);
+        this.bufferLoader.loadResources(resources);
+      }
+    }
+
     AudioPlayer.prototype.play = function(bar, beatCallback) {
+      console.log('PLAY');
       var player = this;
       this.beatCallback = angular.isFunction(beatCallback)? beatCallback : angular.noop;
-      function afterLoad(bufferList) {
+      function afterLoad() {
         player._play(bar);
       }
 
       var resources = [];
-      var resourcesIndexes = {};
+      // var resourcesIndexes = {};
       var subbeat, string;
       for (subbeat=0; subbeat<16; subbeat++) {
         for (string=0; string<4; string++) {
-          var note = bar.notes[subbeat][string].note;
-          if (note.name && note.style) {
-            var subbeatResources = bassSounds[note.style].getResources(note);
-            var filename;
+          var bassSound = bar.notes[subbeat][string];
+          if (bassSound.note.name && bassSound.style) {
+            var subbeatResources = bassSounds[bassSound.style].getResources(bassSound.note);
             subbeatResources.forEach(function(resource) {
-              filename = soundsUrl+resource+'.ogg'
-              if (resources.indexOf(filename) === -1) {
-                resourcesIndexes[resource] = resources.length;
-                resources.push(filename);
+              if (resources.indexOf(resource) === -1) {
+                resources.push(resource);
               }
             });
           }
         }
       }
-      bufferLoader = new BufferLoader(
-        context,
-        resources,
-        afterLoad
-      );
-      bufferLoader.getAudioData = function(resource) {
-        return bufferLoader.bufferList[resourcesIndexes[resource]];
-      };
-      bufferLoader.load();
+
+      this.bufferLoader.loadResources(resources, afterLoad);
     };
 
     AudioPlayer.prototype.stop = function(noteLength) {
@@ -200,7 +190,66 @@
         playingNote.gain.gain.value = 0;
         // playingNote.source.stop();
       });
-    }
+    };
+
+    AudioPlayer.prototype.playSound = function(bassSound) {
+      console.log(bassSound);
+      var resources = bassSounds[bassSound.style].getResources(bassSound.note);
+      console.log(resources);
+      var player = this;
+      function afterLoad(audioBuffer) {
+        console.log('------------------');
+        /*
+        if (player.playing) {
+          player.gain.gain.linearRampToValueAtTime(0.001, context.currentTime+0.03);
+          //player.source.stop();
+        }*/
+        if (player.source && player.source.playing) {
+          // player.source.stop();
+          player.source.gain.gain.setValueAtTime(bassSound.volume, context.currentTime);
+          player.source.gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime+0.05);
+          var fadingSource = player.source;
+          setTimeout(function() {
+            // fadingSource.stop();
+          }, 55);
+        }
+        var source = context.createBufferSource();
+        var gain = context.createGain();
+
+        source.buffer = audioBuffer;
+        source.connect(gain);
+        gain.connect(context.destination);
+
+        //var beatTime = 60/bpm;
+        //this.subbeatTime = beatTime/4;
+        var subbeatTime = 1/4;
+
+        var duration = bassSound.noteLength.length? subbeatTime*bassSound.noteLength.length*16 : subbeatTime;
+        if (bassSound.noteLength.dotted) {
+          duration *= 1.5;
+        }
+        if (bassSound.noteLength.staccato) {
+          duration = 0.8*duration;
+        }
+        var startTime = context.currentTime;
+        startTime+= 0.05;
+        gain.gain.setValueAtTime(bassSound.volume, startTime);
+        source.start(startTime, 0, duration+0.05);
+        //source.playbackRate.value = 2;
+        gain.gain.linearRampToValueAtTime(0.001, startTime+duration);
+        player.source = source;
+        player.gain = gain;
+        player.playing = true;
+        source.playing = true;
+        source.gain = gain;
+        source.addEventListener('ended', function(evt) {
+          evt.target.playing = false;
+          player.playing = false;
+        });
+      }
+
+      this.bufferLoader.loadResource(resources[0], afterLoad);
+    };
 
     return new AudioPlayer();
   }

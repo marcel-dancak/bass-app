@@ -1,0 +1,84 @@
+.fretboard-menu {
+  height: 52px;
+}
+.md-button.fretboard-menu {
+  min-width: 32px;
+  padding: 0;
+  margin: 12px 4px 0 14px;
+}
+
+.fretboard {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.fretboard .md-button {
+  min-width: 32px;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+}
+
+.fret-box {
+  min-width: 64px!important;
+  height: 32px;
+  line-height: 32px;
+  border: solid #fff;
+  border-width: 1px 1px 0 0;
+  text-align: center;
+  color: #333;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  outline: none;
+  font-size: 14px;
+}
+
+/*
+.fret-box md-option {
+  padding: 0;
+  display: inline-block;
+  text-align: center;
+  line-height: 40px;
+  height: 40px;
+  width: 65px;
+}
+
+.fret-box md-option .md-text {
+  font-size: 14px;
+}*/
+.fret-box .md-button {
+  font-size: 13px;
+}
+
+.fret-box.octave-1 {
+  background-color: #ff5722;
+}
+.fret-box.octave-2 {
+  background-color: #ff9800;
+}
+.fret-box.octave-3 {
+  background-color: #ffc107;
+}
+.fret-box.octave-4 {
+  background-color: #ffeb3b;
+}
+
+.fretboard .fret-index {
+  display: inline-block;
+  min-width: 64px;
+  text-align: center;
+  border: solid #fff;
+  border-width: 1px 1px 0 0;
+  background-color: #555;
+  color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.second-button::before {
+  content: "/";
+  position: absolute;
+  left: -2px;
+}

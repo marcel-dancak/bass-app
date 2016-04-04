@@ -24,7 +24,7 @@
 .bar-container {
   position: relative;
   margin-bottom: 10px;
-  height: 130px;
+  height: 100px;
 }
 
 .bar .time-signature-button {
@@ -61,6 +61,7 @@
 md-menu-content.subbeat-form-container {
   background-color: white;
   font-size: 15px;
+  max-height: 400px;
 }
 
 .subbeat-form {
@@ -75,6 +76,7 @@ md-menu-content.subbeat-form-container {
   border-radius: 7px;
   padding: 4px;
   min-width: 250px;
+  width: 280px;
 }
 
 .subbeat-form-container.closed {
@@ -83,7 +85,7 @@ md-menu-content.subbeat-form-container {
   transform: translate3d(-100px, -120px, 0px) scale3d(0.5, 0.25, 1);
 }
 
-.subbeat-form-container md-input-container.volume-field {
+.subbeat-form-container .volume-field md-input-container {
   width: 65px;
   height: 35px;
   margin-top: 20px;
@@ -91,7 +93,7 @@ md-menu-content.subbeat-form-container {
 }
 .subbeat-form-container md-slider {
   margin: 2px 8px 0 10px;
-  height: 50px;
+  height: 46px;
   border-bottom: 1px solid #ddd;
 }
 
@@ -99,11 +101,10 @@ md-menu-content.subbeat-form-container {
   width: 8px;
 }
 
-.subbeat-form-container .clear-button {
-  margin: 4px 0px 4px 10px;
+.subbeat-form-container .play-button {
+  margin: 2px;
   padding: 0px;
   min-width: 40px;
-  height: 44px;
 }
 .subbeat-form-container .clear-button.md-focused,
 .subbeat-form-container .clear-button:hover:not([disabled]) {
@@ -129,9 +130,19 @@ md-menu-content.subbeat-form-container {
   max-width: 18px;
 }
 
-.volume-field:not(.md-input-focused):not(.md-input-has-value) label {
+.volume-field md-input-container:not(.md-input-focused):not(.md-input-has-value) label {
   font-size: 12px;
 }
+.volume-field md-slider {
+  margin-top: 10px;
+}
+md-slider .md-focus-ring {
+  width: 40px;
+  height: 40px;
+  left: -20px;
+  top: 4px;
+}
+
 .md-button.md-raised.hammer,
 .md-button.md-raised.pull {
   border-top-left-radius: 0;
@@ -182,6 +193,7 @@ md-menu-content.subbeat-form-container {
 
 .subbeat-form md-input-container {
   margin-bottom: 4px;
+  height: 42px;
 }
 
 .subbeat-form md-checkbox {
@@ -190,6 +202,10 @@ md-menu-content.subbeat-form-container {
   line-height: 30px;
   height: 30px;
   bottom: 0;
+}
+
+.subbeat-form input {
+  height: 34px;
 }
 
 .note-symbol {
@@ -201,4 +217,40 @@ md-menu-content.subbeat-form-container {
 }
 .md-select-value .note-length-title {
   display: none;
+}
+
+.buttons-spinner {
+  margin-top: 10px;
+  height: 48px;
+}
+.buttons-spinner .md-button {
+  margin: 0;
+  padding: 2px;
+  min-width: 20px;
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+  line-height: 16px;
+  margin-top: 2px;
+}
+.buttons-spinner md-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.md-select-menu-container.note-select-menu {
+  min-width: 220px!important;
+}
+.md-select-menu-container.note-select-menu md-content {
+  overflow-x: hidden;
+}
+
+.note-select-menu .fret-index {
+  padding: 0 5px;
+}
+
+.note-select-menu span {
+  line-height: 44px;
+  color: #777;
+  font-size: 14px;
 }
