@@ -9,7 +9,7 @@ var connect = require('gulp-connect');
 var path = require('path');
 
 
-var TARGET = 'dist/v3/';
+var TARGET = 'dist/v4/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -118,7 +118,7 @@ gulp.task('build', ['index-page', 'uglify', 'csss']);
 
 gulp.task('serve-deploy', function() {
   connect.server({
-    root: ['dist/v3'],
+    root: [TARGET],
     port: 3300,
     livereload: true
   });
