@@ -1,0 +1,40 @@
+.drums-container {
+  margin: 20px 30px 0 65px;
+}
+.drums-labels-container {
+  position: absolute;
+  left: 0;
+  width: 65px;
+}
+
+.drums-labels-container .md-button {
+  text-transform: none;
+  margin: 0;
+  padding: 0 8px;
+  min-width: 60px;
+  min-height: 44px;
+  height: 44px;
+  line-height: 44px;
+  text-align: right;
+}
+
+.drum-sound-box {
+  height: 40px;
+  text-align: center;
+  z-index: 50;
+  position: relative;
+  margin: 2px 6px;
+  padding: 0;
+  outline: none;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.drum-sound-box .drum-sound {
+  width: 32px;
+  height: 32px;
+  display: inline-block;
+  border-radius: 16px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}

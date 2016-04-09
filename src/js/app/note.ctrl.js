@@ -89,7 +89,7 @@
 
     $timeout(function() {
       $scope.menu.element = angular.element(document.getElementById('subbeat-menu'));
-    }, 300);
+    }, 500);
 
     var dragNote, dragElement;
     $scope.playingStyles = ['finger', 'slap', 'pop', 'tap', 'hammer', 'pull'];
@@ -321,19 +321,6 @@
       var index = $scope.notesLabels.indexOf(subbeat.note.name)+1;
       index = index % $scope.notesLabels.length;
       subbeat.note.name = $scope.notesLabels[index];
-    };
-
-    $scope.noteQuerySearch = function(notes, searchText) {
-      if (!searchText) {
-        return notes;
-      }
-      var query = searchText.replace('#', '♯');//.replace('b', '♭');
-      query = query.toUpperCase();
-      console.log(query);
-      return notes.filter(function(note) {
-        console.log(note.label.join('')+': '+note.label.join('').indexOf(query));
-        return note.label.join('').indexOf(query) !== -1;
-      });
     };
 
     $scope.playSound = function(sound) {

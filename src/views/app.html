@@ -6,10 +6,46 @@
   <div
     layout="row"
     class="control-panel">
+
+    <div
+      layout="row"
+      class="instruments-field">
+      <md-button
+        flex
+        md-no-ink
+        class="no-hover"
+        ng-class="{
+          active: instrumentIndex===0
+        }"
+        ng-click="instrumentIndex=0">
+        Bass
+        <md-icon md-svg-icon="bass-guitar"></md-icon>
+      </md-button>
+      <md-button
+        flex
+        md-no-ink
+        class="no-hover"
+        ng-class="{
+          active: instrumentIndex===1
+        }"
+        ng-click="instrumentIndex=1">
+        Drums
+        <md-icon md-svg-icon="drums"></md-icon>
+      </md-button>
+      <md-ink-bar
+        ng-class="{
+          'md-left': instrumentIndex === 0,
+          'md-right': instrumentIndex === 1
+        }">
+      </md-ink-bar>
+    </div>
+
+    <div flex></div>
+
     <div
       class="bpm-field">
       <md-input-container>
-        <label>BPM</label>
+        <label>bpm</label>
         <input
           type="number"
           min="30"
@@ -96,22 +132,37 @@
     <div id="time-marker" class="time-marker"></div>
   </div>
 
-  <div class="audio-graph-container">
-    <canvas
-      id="canvas"
-      class="audio-graph">
-    </canvas>
-  </div>
+  <md-tabs
+    md-no-ink
+    layout-fill
+    class="instruments-tabs"
+    md-selected="instrumentIndex"
+    ng-init="instrumentIndex=1">
+    <md-tab label="bass">
+      <div class="audio-graph-container">
+        <canvas
+          id="canvas"
+          class="audio-graph">
+        </canvas>
+      </div>
 
-  <div
-    ng-controller="NoteController"
-    ng-include src="'views/tabs2.html'">
-  </div>
+      <div
+        ng-controller="NoteController"
+        ng-include src="'views/bass_board.html'">
+      </div>
 
-  <div
-    style="margin-bottom: 20px;"
-    ng-include src="'views/fretboard.html'">
-  </div>
+      <div
+        style="margin-bottom: 20px;"
+        ng-include src="'views/fretboard.html'">
+      </div>
+    </md-tab>
+
+    <md-tab label="drums">
+      <div
+        ng-include src="'views/drums_board.html'">
+      </div>
+    </md-tab>
+  </md-tabs>
 
   <div flex></div>
 </div>

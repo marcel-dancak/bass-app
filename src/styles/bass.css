@@ -1,12 +1,8 @@
-.tabs-container {
-  margin: 20px 0 40px 0;
+.bass-board {
+  margin: 20px 30px 40px 65px;
   position: relative;
 }
 
-.tab-string-container {
-  height: 36px;
-  position: relative;
-}
 
 .tabs-tunning-button {
   position: absolute;
@@ -22,12 +18,23 @@
   height: 36px;
 }
 
-.tab-string {
+.string-container {
   position: absolute;
-  height: 1px;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.tab-string {
+  xposition: absolute;
+  height: 36px;
+  margin: 16px 0;
   width: 100%;
-  background-color: #CCC;
+  background-color: #eee;
   top: 18px;
+  z-index: 1;
+  opacity: 0.8;
 }
 
 .tab-note-container {
@@ -111,31 +118,37 @@
 
 .tab-button {
   position: absolute;
-  left: 0;
+  left: 3px;
   top: 0;
   min-width: 32px;
-  min-height: 32px;
+  min-height: 30px;
   width: 32px;
   height: 32px;
-  line-height: 32px;
+  line-height: 30px;
   margin: 0;
-  padding: 0;
+  padding: 0 2px;
   text-transform: none;
   color: #777;
-  background-color: transparent;
-  opacity: 0.5;
+  background-color: #fff;
   border-radius: 16px;
-  border: 1px solid rgba(50,0,0,0.25);
+  border: 1px solid #ccc;
+
+  outline-color: white;
+  outline-style: solid;
 }
 .tab-button:hover:not([disabled]) {
-  background-color: transparent;
+  background-color: #fff;
   opacity: 1;
 }
 
 .tab-button md-icon {
   width: 18px;
   height: 18px;
-  xpointer-events: none;
+  color: #ccc;
+}
+.tab-note-container.active md-icon {
+  color: #444;
+  margin-bottom: 2px;
 }
 
 .tab-note-container {
@@ -145,10 +158,13 @@
 .tab-note-container.active .tab-button {
   color: #333;
   opacity: 0;
-  border-radius: 0;
-  border-width: 0 1px 0 0;
-  border-color: rgba(50, 50, 50, 0.5);
+  xborder-radius: 0;
+  xborder-width: 0 1px 0 0;
+  xborder-color: rgba(50, 50, 50, 0.5);
+  border: none;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  outline: none;
+  background-color: transparent;
 }
 .tab-note-container.active:hover .rg-right,
 .tab-note-container.active:hover .tab-button {

@@ -1,0 +1,42 @@
+<div
+  ng-controller="DrumsController"
+  class="drums-container"
+  ng-keyup="$event.keyCode == 46 && clearNote(selected.subbeat)">
+  <div
+    layout="column"
+    class="drums-labels-container">
+    <md-button
+      aria-label="{{ ::drum.label }}"
+      class="drum-label"
+      ng-repeat="drum in drums">
+      {{ ::drum.label }}
+    </md-button>
+  </div>
+
+  <div
+    layout="row">
+    <div
+      layout="column"
+      class="drums-column"
+      style="width: 100%;"
+      ng-repeat="subbeats in drumsData">
+
+      <md-button
+        flex
+        md-no-ink
+        aria-label="Drum sound"
+        ng-repeat="subbeat in subbeats"
+
+        ng-click="toggle($event, subbeat)"
+        class="drum-sound-box no-hover"
+        ng-class="{
+          active: subbeat.note.name
+        }">
+        <div
+          class="drum-sound">
+        </div>
+      </md-button>
+    </div>
+  </div>
+
+</div>

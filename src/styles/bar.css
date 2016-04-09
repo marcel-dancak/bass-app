@@ -6,6 +6,9 @@
   height: 50px;
 }
 
+.bar {
+  padding: 0 30px 0 65px;
+}
 .bar-end,
 .subbeat-1 {
   border-left: 2px solid #aaa;
@@ -30,7 +33,7 @@
 .bar .time-signature-button {
   position: absolute;
   min-width: 36px;
-  left: -48px;
+  left: 15px;
   top: 0;
   font-size: 20px;
   margin: 0 3px;
@@ -38,7 +41,7 @@
 }
 
 /**
- * Settings form styles
+ * form styles
  */
 .bar-settings-container {
   position: absolute;
