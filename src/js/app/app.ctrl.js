@@ -357,19 +357,15 @@
       audioPlayer.stop();
     };
 
-    $scope.playBassNote = function(bassNote) {
-      audioPlayer.playSound({
+    $scope.playBassSound = function(bassSound) {
+      var sound = angular.extend({
         style: 'finger',
-        note: {
-          name: bassNote.label[0],
-          octave: bassNote.octave,
-          code: bassNote.label[0]+bassNote.octave
-        },
         noteLength: {
           length: 1/4
         },
         volume: 0.75
-      });
+      }, bassSound);
+      audioPlayer.playSound(sound);
     };
 
     $scope.newBar = function() {

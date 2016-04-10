@@ -14,6 +14,12 @@
     class="ghost-notes">
     <div
       ng-repeat="string in bass.strings"
+      ng-click="playBassSound({
+        note: {
+          name: 'x'
+        },
+        string: string
+      })"
       ui-draggable="true"
       drag="{
         source: 'fretboard',
@@ -37,7 +43,14 @@
     layout="row">
     <div
       flex
-      ng-click="playBassNote(note)"
+      xng-click="playBassNote(note)"
+      ng-click="playBassSound({
+        note: {
+          name: note.label[0],
+          octave: note.octave
+        },
+        string: string
+      })"
       class="fret-box octave-{{ ::note.octave }}"
       ng-repeat="note in string.notes"
 

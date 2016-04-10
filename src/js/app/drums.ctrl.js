@@ -6,7 +6,7 @@
     .controller('DrumsController', DrumsController);
 
   function DrumsController($scope, $timeout, audioPlayer) {
-    var drumsVolumeLevels = [0.0, 0.85, 0.5];
+    var drumsVolumeLevels = [0.0, 0.85, 0.4];
 
     $scope.drums = [
       {
@@ -35,6 +35,10 @@
         duration: 0.27
       }
     ];
+    var resources = $scope.drums.map(function(drum) {
+      return drum.filename;
+    });
+    audioPlayer.bufferLoader.loadResources(resources);
 
     var drumsData = $scope.drumsData;
     var beat, subbeat;

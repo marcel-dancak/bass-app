@@ -214,9 +214,7 @@
     };
 
     AudioPlayer.prototype.playSound = function(bassSound) {
-      console.log(bassSound);
       var resources = bassSounds[bassSound.style].getResources(bassSound);
-      console.log(resources);
       var player = this;
       function afterLoad(audioBuffer) {
         console.log('------------------');
