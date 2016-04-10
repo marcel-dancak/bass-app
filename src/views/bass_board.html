@@ -23,7 +23,6 @@
     <div
       class="subbeat-tab"
       layout="column"
-      style="width: {{ 1 * 100 }}%;"
       ng-repeat="bassSubbeat in bassData">
 
       <div
@@ -46,7 +45,8 @@
         class="tab-note-container"
         ng-class="{
           active: subbeat.note.name,
-          selected: selected.subbeat===subbeat
+          selected: selected.subbeat===subbeat,
+          ghost: subbeat.note.name==='x'
         }"
         ng-style="{
           width: 
@@ -72,7 +72,10 @@
           </md-icon>
         </md-button>
         <label>
-          {{ subbeat.note.name }}<sub>{{ subbeat.note.octave }}</sub> &nbsp( {{ subbeat.fret }} )
+          {{ subbeat.note.name }}<sub>{{ subbeat.note.octave }}</sub>
+        </label>
+        <label class="fret">
+          &nbsp( {{ subbeat.fret }} )
         </label>
       </div>
     </div>
@@ -289,7 +292,7 @@
     class="drop-note-area"
     ng-style="{
       width: dropNote.width+'px',
-      left: dropNote.left+'px',
+      left: dropNote.left===3? '-200px' : dropNote.left+'px',
       top: dropNote.top+'px',
       opacity: dropNote.visible? 1 : 0
     }">

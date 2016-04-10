@@ -83,3 +83,18 @@
   position: absolute;
   left: -2px;
 }
+
+.fretboard .ghost-notes {
+  position: absolute;
+  left: 14px;
+}
+
+.fretboard .ghost-notes > div {
+  height: 31px;
+  line-height: 31px;
+  background-color: #bbb;
+  width: 48px;
+  text-align: center;
+  border: solid #fff;
+  border-width: 1px 1px 0 0
+}

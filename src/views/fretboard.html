@@ -8,6 +8,30 @@
       {{ $index }}
     </span>
   </div>
+
+  <div
+    layout="column"
+    class="ghost-notes">
+    <div
+      ng-repeat="string in bass.strings"
+      ui-draggable="true"
+      drag="{
+        source: 'fretboard',
+        style: 'finger',
+        note: {
+          label: ['x'],
+          octave: ''
+        },
+        noteLength: {
+          length: 1/16
+        },
+        volume: 0.75,
+        string: string
+      }">
+      x
+    </div>
+  </div>
+
   <div
     ng-repeat="string in bass.strings"
     layout="row">

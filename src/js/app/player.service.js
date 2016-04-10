@@ -36,13 +36,14 @@
 
     var bassSounds = {
       finger: {
-        getResources: function(note) {
+        getResources: function(sound) {
+          var note = sound.note;
           if (note.name === 'x') {
-            return ['sounds/bass/finger/X{1}'.format(noteFileName[note.name], '1')];
+            return ['sounds/bass/finger/X{1}'.format(noteFileName[note.name], sound.string.index+1)];
           }
           return ['sounds/bass/finger/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
         }
-      },
+      },/*
       hammer: {
         getResources: function(note) {
           return ['sounds/tap-{0}{1}'.format(noteFileName[note.name], note.octave||'')];
@@ -57,7 +58,7 @@
         getResources: function(note) {
           return ['sounds/pull-{0}{1}'.format(noteFileName[note.name], note.octave||'')];
         }
-      }
+      }*/
     };
 
     AudioPlayer.prototype.initialize = function(destination) {
@@ -106,7 +107,7 @@
 
             source.connect(gain);
             gain.connect(this.destination);
-            var audioData = this.bufferLoader.loadResource(bassSounds[sound.style].getResources(note)[0]);
+            var audioData = this.bufferLoader.loadResource(bassSounds[sound.style].getResources(sound)[0]);
             //console.log(this.bufferLoader.loadedResources);
             if (audioData) {
               source.buffer = audioData;
@@ -168,7 +169,7 @@
 
     AudioPlayer.prototype.fetchSoundResources = function(sound) {
       if (sound.style && sound.note) {
-        var resources = bassSounds[sound.style].getResources(sound.note);
+        var resources = bassSounds[sound.style].getResources(sound);
         this.bufferLoader.loadResources(resources);
       }
     }
@@ -188,7 +189,7 @@
         for (string=0; string<4; string++) {
           var bassSound = bar.bass[subbeat][string];
           if (bassSound.note.name && bassSound.style) {
-            var subbeatResources = bassSounds[bassSound.style].getResources(bassSound.note);
+            var subbeatResources = bassSounds[bassSound.style].getResources(bassSound);
             subbeatResources.forEach(function(resource) {
               if (resources.indexOf(resource) === -1) {
                 resources.push(resource);
@@ -214,7 +215,7 @@
 
     AudioPlayer.prototype.playSound = function(bassSound) {
       console.log(bassSound);
-      var resources = bassSounds[bassSound.style].getResources(bassSound.note);
+      var resources = bassSounds[bassSound.style].getResources(bassSound);
       console.log(resources);
       var player = this;
       function afterLoad(audioBuffer) {
