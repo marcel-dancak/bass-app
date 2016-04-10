@@ -6,25 +6,37 @@
     .controller('DrumsController', DrumsController);
 
   function DrumsController($scope, $timeout, audioPlayer) {
-    console.log('NOTE CONTROLLER');
+    var drumsVolumeLevels = [0.0, 0.85, 0.5];
 
     $scope.drums = [
       {
-        label: 'Tom 1'
+        label: 'Tom 1',
+        filename: 'sounds/drums/acoustic-kit/tom1',
+        duration: 0.41
       }, {
-        label: 'Tom 2'
+        label: 'Tom 2',
+        filename: 'sounds/drums/acoustic-kit/tom2',
+        duration: 0.6
       }, {
-        label: 'Tom 3'
+        label: 'Tom 3',
+        filename: 'sounds/drums/acoustic-kit/tom3',
+        duration: 1.0
       }, {
-        label: 'Hi-Hat'
+        label: 'Hi-Hat',
+        filename: 'sounds/drums/acoustic-kit/hihat',
+        duration: 0.25
       }, {
-        label: 'Snare'
+        label: 'Snare',
+        filename: 'sounds/drums/acoustic-kit/snare',
+        duration: 0.36
       }, {
-        label: 'Kick'
+        label: 'Kick',
+        filename: 'sounds/drums/acoustic-kit/kick',
+        duration: 0.27
       }
     ];
 
-    var drumsData = [];
+    var drumsData = $scope.drumsData;
     var beat, subbeat;
     for (beat = 0; beat < $scope.bar.timeSignature.top; beat++) {
       for (subbeat = 0; subbeat < 4; subbeat++) {
@@ -33,15 +45,19 @@
           list[index] = {
             beat: beat,
             subbeat: subbeat,
-            drum: drum
+            drum: drum,
+            volume: 0.0
           };
         });
         drumsData.push(list);
       }
     }
 
-    $scope.drumsData =drumsData;
-
+    $scope.toggleDrum = function(sound) {
+      var index = drumsVolumeLevels.indexOf(sound.volume);
+      var nextIndex = (index+1) % drumsVolumeLevels.length;
+      sound.volume = drumsVolumeLevels[nextIndex];
+    };
 
     $scope.playSound = function(sound) {
       audioPlayer.playSound(sound);

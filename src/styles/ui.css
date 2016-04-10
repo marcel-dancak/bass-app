@@ -150,54 +150,55 @@ md-backdrop.md-select-backdrop {
   top: 0;
 }
 
+md-tab-content:not(.md-active) {
+  pointer-events: none;
+}
+
 md-tab-content.md-right:not(.md-active) {
   -webkit-transform: translateX(50%);
   transform: translateX(50%);
-  animation: 0.55s ease 0s normal none 0.55 running md-tab-content-hide;
 }
 
 md-tab-content.md-left:not(.md-active) {
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
-  -webkit-animation: 0.55s md-tab-content-hide;
-  animation: 0.55s md-tab-content-hide;
 }
 
 md-tab-content {
-  xtransition-property: opacity, -webkit-transform;
-  transition-property: opacity, transform;
+  transition-property: transform;
   transition: all 0.55s cubic-bezier(0.35, 0, 0.25, 1);
-  xtransition: transform 0.55s cubic-bezier(0.35, 0, 0.25, 1), opacity 0.1s cubic-bezier(0.35, 0, 0.25, 1);
-  xtransition: opacity 0.5s cubic-bezier(0.35, 0, 0.25, 1);
-  xtransition: opacity 0.5s ease-out, transform 0.55s ease 0.1s;
 }
 
-md-tab-content.md-right:not(.md-active) * {
-  transition: visibility 0s linear 0.15s;
-  visibility: hidden;
+md-tab-content.md-left:not(.md-active) > div,
+md-tab-content.md-right:not(.md-active) > div {
+  transition: opacity 0.5s cubic-bezier(0.35, 0, 0.25, 1);
 }
-md-tab-content.md-left:not(.md-active) * {
-  transition: visibility 0s linear 0.35s;
-  visibility: hidden;
+
+md-tab-content > div {
+  transition: opacity 0.5s cubic-bezier(0.35, 0, 0.25, 1);
+  opacity: 1.0;
+}
+md-tab-content:not(.md-active) > div {
+  opacity: 0.01;
 }
 
 .instruments-field {
   position: relative;
   border: 1px solid #ccc;
   border-radius: 7px;
-  xmargin-right: 40px;
 }
 
 .instruments-field .md-button {
   text-transform: none;
   margin: 0;
+  padding: 0 10px;
   height: 100%;
   flex: 1 1 0;
   opacity: 0.6;
   line-height: 46px;
 }
 .instruments-field .md-button.active {
-  color: #ff5722;
+  color: rgb(63,81,181);
   opacity: 1;
 }
 
@@ -209,13 +210,13 @@ md-tab-content.md-left:not(.md-active) * {
 }
 
 .instruments-field .md-button.active md-icon {
-  color: #ff5722;
+  color: rgb(63,81,181);
   opacity: 0.85
 }
 
 .instruments-field md-ink-bar {
   position: absolute;
-  background-color: #ff5722;
+  background-color: rgb(63,81,181);
   margin: 0 4px;
   height: 2px;
   bottom: 3px;

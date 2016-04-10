@@ -16,9 +16,9 @@
   <div
     layout="row">
     <div
+      flex
       layout="column"
       class="drums-column"
-      style="width: 100%;"
       ng-repeat="subbeats in drumsData">
 
       <md-button
@@ -27,13 +27,19 @@
         aria-label="Drum sound"
         ng-repeat="subbeat in subbeats"
 
-        ng-click="toggle($event, subbeat)"
+        ng-click="toggleDrum(subbeat)"
         class="drum-sound-box no-hover"
         ng-class="{
           active: subbeat.note.name
         }">
         <div
           class="drum-sound">
+          <div
+            class="volume-meter"
+            style="transform: scale({{ subbeat.volume }}, {{ subbeat.volume }});"
+            xng-style="{
+              transform: 'scale('+subbeat.volume+','+subbeat.volume+')'
+            }"></div>
         </div>
       </md-button>
     </div>

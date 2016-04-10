@@ -38,9 +38,9 @@
       finger: {
         getResources: function(note) {
           if (note.name === 'x') {
-            return ['sounds/finger/X{1}'.format(noteFileName[note.name], '1')];
+            return ['sounds/bass/finger/X{1}'.format(noteFileName[note.name], '1')];
           }
-          return ['sounds/finger/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
+          return ['sounds/bass/finger/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
         }
       },
       hammer: {
@@ -75,8 +75,24 @@
             this.beatCallback(this.bpm, (this.beatIndex % 4)+1);
             this.beatIndex++;
           }
+          var drumsSounds = this.bar.drums[subbeat];
+          drumsSounds.forEach(function(sound) {
+            if (sound.volume > 0) {
+              var audioData = this.bufferLoader.loadResource(sound.drum.filename);
+              if (audioData) {
+                var source = context.createBufferSource();
+                source.buffer = audioData;
+                var gain = context.createGain();
+                gain.gain.value = sound.volume;
+                source.connect(gain);
+                gain.connect(context.destination);
+                source.start(context.currentTime, 0, sound.drum.duration);
+              }
+            }
+          }, this);
+
           // console.log('subbeat: '+subbeat);
-          var stringsSounds = this.bar.notes[subbeat];
+          var stringsSounds = this.bar.bass[subbeat];
           // console.log(stringsSounds);
           var sounds = stringsSounds.filter(function(sound) {
             if (!sound.style || !sound.note.name) {
@@ -99,7 +115,7 @@
                 duration *= 1.5;
               }
               if (sound.noteLength.staccato) {
-                duration = 0.8*duration;
+                duration = 0.92*duration-this.subbeatTime*0.2;
               }
               var startTime = context.currentTime;
               gain.gain.setValueAtTime(sound.volume, startTime);
@@ -170,7 +186,7 @@
       var subbeat, string;
       for (subbeat=0; subbeat<16; subbeat++) {
         for (string=0; string<4; string++) {
-          var bassSound = bar.notes[subbeat][string];
+          var bassSound = bar.bass[subbeat][string];
           if (bassSound.note.name && bassSound.style) {
             var subbeatResources = bassSounds[bassSound.style].getResources(bassSound.note);
             subbeatResources.forEach(function(resource) {
@@ -181,8 +197,11 @@
           }
         }
       }
-
-      this.bufferLoader.loadResources(resources, afterLoad);
+      if (resources.length) {
+        this.bufferLoader.loadResources(resources, afterLoad);
+      } else {
+        player._play(bar);
+      }
     };
 
     AudioPlayer.prototype.stop = function(noteLength) {

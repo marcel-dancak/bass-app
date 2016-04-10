@@ -1,10 +1,12 @@
 function BufferLoader(context, serverUrl) {
   this.context = context;
   this.serverUrl = serverUrl;
+  this.format = 'ogg';
 
   this.loadedResources = {};
   this.loadingResources = [];
 }
+
 
 BufferLoader.prototype.loadResource = function(url, callback) {
   if (angular.isDefined(this.loadedResources[url])) {
@@ -21,7 +23,7 @@ BufferLoader.prototype.loadResource = function(url, callback) {
 
   // Load buffer asynchronously
   var request = new XMLHttpRequest();
-  request.open("GET", this.serverUrl+url+'.ogg', true);
+  request.open("GET", this.serverUrl+url+'.'+this.format, true);
   request.responseType = "arraybuffer";
 
   request.onload = function() {

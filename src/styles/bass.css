@@ -24,17 +24,18 @@
   top: 0;
   right: 0;
   bottom: 0;
+  pointer-events: none;
 }
 
 .tab-string {
-  xposition: absolute;
   height: 36px;
-  margin: 16px 0;
+  margin: 19px 0 15px 0;
   width: 100%;
   background-color: #eee;
   top: 18px;
   z-index: 1;
   opacity: 0.8;
+  pointer-events: none;
 }
 
 .tab-note-container {

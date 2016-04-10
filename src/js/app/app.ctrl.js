@@ -306,6 +306,7 @@
       volume: 0.75
     };*/
     $scope.bassData = data;
+    $scope.drumsData = [];
 
     $scope.bar = bar;
 
@@ -316,7 +317,8 @@
         audioPlayer.play(
           {
             timeSignature: timeSignature,
-            notes: $scope.bassData
+            bass: $scope.bassData,
+            drums: $scope.drumsData
           },
           audioVisualiser.beatSync.bind(audioVisualiser)
         );
@@ -343,7 +345,8 @@
       audioPlayer.play(
         {
           timeSignature: timeSignature,
-          notes: $scope.bassData
+          bass: $scope.bassData,
+          drums: $scope.drumsData
         },
         audioVisualiser.beatSync.bind(audioVisualiser)
       );
