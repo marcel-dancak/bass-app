@@ -328,6 +328,24 @@
       }
     });
 
+    var timelineElem = document.getElementById('time-marker');
+    timelineElem.style.visibility = "hidden";
+    function timelineRedraw() {
+      var elapsed = context.currentTime - audioPlayer.startTime;
+      var beatTime = 60 / $scope.player.bpm;
+      var barTime = beatTime * 4;
+      var barStartTime = parseInt(elapsed/barTime) * barTime;
+      var fraction = (elapsed - barStartTime) / barTime;
+
+      if ($scope.player.playing) {
+        timelineElem.style.left = 100*fraction+'%';
+        // timelineElem.setAttribute('style', 'left: '+(100*fraction)+'%');
+        requestAnimationFrame(timelineRedraw);
+      } else {
+        timelineElem.style.left = 0;
+        timelineElem.style.visibility = "hidden";
+      }
+    }
     $scope.play = function() {
       // var elem = document.getElementById('time-marker');
       // var ngElem = angular.element(elem);
@@ -345,6 +363,7 @@
       $scope.player.playing = true;
       audioVisualiser.reset();
       audioPlayer.setBpm($scope.player.bpm);
+      audioVisualiser.enabled = true;
       audioPlayer.play(
         {
           timeSignature: timeSignature,
@@ -353,11 +372,14 @@
         },
         audioVisualiser.beatSync.bind(audioVisualiser)
       );
+      timelineElem.style.visibility = "visible";
+      timelineRedraw();
     };
 
     $scope.stop = function() {
       $scope.player.playing = false;
       audioPlayer.stop();
+      audioVisualiser.enabled = false;
     };
 
     $scope.toggleVolumeMute = function(instrument) {

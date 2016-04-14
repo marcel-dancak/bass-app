@@ -23,6 +23,8 @@
 
         this.dataArray = new Uint8Array(analyser.frequencyBinCount);
         this.analyser = analyser;
+
+        this.enabled = true;
         // this._analyze = this._analyze.bind(this);
     };
 
@@ -43,7 +45,7 @@
 
     function analyze() {
       var time = this.visualiser.analyser.context.currentTime;
-      if (time < this.beat.endTime) {
+      if (this.visualiser.enabled && time < this.beat.endTime) {
         this.visualiser.draw();
         requestAnimationFrame(analyze.bind({
           visualiser: this.visualiser,

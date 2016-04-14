@@ -5,14 +5,15 @@
 }
 
 .time-marker {
-  width: 6px;
-  height: 50px;
-  opacity: 0.3;
-  background-color: red;
+  width: 3px;
+  height: 400px;
+  opacity: 0.5;
+  background-color: gray;
   position: absolute;
   top: 0;
   left: 0;
-  display: none;
+  xdisplay: none;
+  z-index: 200;
 }
 
 .audio-graph-container {

@@ -112,7 +112,7 @@
       // console.log('onResizeStart');
       // console.log(info);
       var length = subbeat.noteLength.dotted? subbeat.noteLength.length*1.5 : subbeat.noteLength.length;
-      var subbeatWidth = (info.width+2)/length;
+      var subbeatWidth = (info.width+4)/length;
       var noteLengths = [
         {
           length: 1,
