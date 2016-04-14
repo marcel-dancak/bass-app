@@ -433,20 +433,6 @@
       localStorage.setItem(storageKey, JSON.stringify(data));
     };
 
-    function printSubbeat(stringsSubbeats) {
-      var i;
-      for (i=0; i < 4; i++) {
-        if (stringsSubbeats[i] && stringsSubbeats[i].note && stringsSubbeats[i].note.name) {
-          console.log(i+': {0} {1}'.format(
-            stringsSubbeats[i].note.name, stringsSubbeats[i].note.length)
-          );
-        } else {
-          console.log(i+': - ');
-        }
-      }
-      console.log('--------------');
-    }
-
     $scope.loadBassPresent = function(present) {
       if (present && present !== $scope.bass.present) {
         console.log('Load: '+present.name);

@@ -96,16 +96,7 @@
 
     $scope.clearNote = function(subbeat) {
       subbeat.note = {};
-      // subbeat.length = 0;
-      if (subbeat.width > 1) {
-        var count = subbeat.width-1;
-        var subbeat = subbeat;
-        while(count--) {
-          subbeat = subbeat.bar.nextSubbeat(subbeat);
-          subbeat.width = 1;
-        }
-      }
-      subbeat.width = 1;
+      subbeat.noteLength.length = 1/16;
       $scope.updateNote(subbeat);
       $scope.selected.subbeat = null;
     };
