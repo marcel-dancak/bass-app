@@ -40,6 +40,74 @@
       </md-ink-bar>
     </div>
 
+    <md-menu
+      md-offset="56 10">
+      <md-button
+        class="instruments-prefferences"
+        ng-click="$mdOpenMenu($event)">
+        <md-icon
+          md-svg-icon="preferences">
+        </md-icon>
+      </md-button>
+
+      <md-menu-content
+        width="4"
+        class="instruments-prefferences md-whiteframe-16dp">
+        <md-list>
+          <md-list-item
+            class="bass volume-field">
+            <label>Bass Volume</label>
+            <md-slider
+              class="md-primary"
+              ng-model="player.bass.audio.gain.value"
+              ng-disabled="player.bass.muted"
+              aria-label="Volume"
+              min="0"
+              max="1"
+              step="0.01"
+              flex>
+            </md-slider>
+            <md-button
+              md-no-ink
+              class="mute-button"
+              ng-class="{active: !player.bass.muted}"
+              md-prevent-menu-close
+              ng-click="toggleVolumeMute(player.bass)">
+              <md-icon
+                md-svg-icon="{{ player.bass.muted? 'volume-mute' : 'volume-medium' }}">
+              </md-icon>
+            </md-button>
+          </md-list-item>
+
+          <md-list-item
+            class="bass volume-field">
+            <label>Drums Volume</label>
+            <md-slider
+              class="md-primary"
+              ng-model="player.drums.audio.gain.value"
+              ng-disabled="player.drums.muted"
+              aria-label="Volume"
+              min="0"
+              max="1"
+              step="0.01"
+              flex>
+            </md-slider>
+            <md-button
+              md-no-ink
+              class="mute-button"
+              ng-class="{active: !player.drums.muted}"
+              md-prevent-menu-close
+              ng-click="toggleVolumeMute(player.drums)">
+              <md-icon
+                md-svg-icon="{{ player.drums.muted? 'volume-mute' : 'volume-medium' }}">
+              </md-icon>
+            </md-button>
+          </md-list-item>
+        </md-list>
+
+      </md-menu-content>
+    </md-menu>
+
     <div flex></div>
 
     <div

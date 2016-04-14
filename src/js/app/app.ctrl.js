@@ -12,7 +12,8 @@
       analyser = context.createAnalyser();
       analyser.fftSize = 1024;
       analyser.connect(context.destination);
-      audioPlayer.initialize(analyser);
+      audioPlayer.bass.audio.connect(analyser);
+      audioPlayer.drums.audio.connect(context.destination);
 
       audioVisualiser.initialize(
         document.getElementById("canvas"),
@@ -22,7 +23,9 @@
 
     $scope.player = {
       playing: false,
-      bpm: 60
+      bpm: 60,
+      bass: audioPlayer.bass,
+      drums: audioPlayer.drums
     };
 
     function stringNotes(notes, note, frets) {
@@ -355,6 +358,16 @@
     $scope.stop = function() {
       $scope.player.playing = false;
       audioPlayer.stop();
+    };
+
+    $scope.toggleVolumeMute = function(instrument) {
+      if (!instrument.muted) {
+        instrument._volume = instrument.audio.gain.value;
+        instrument.audio.gain.value = 0;
+      } else {
+        instrument.audio.gain.value = instrument._volume;
+      }
+      instrument.muted = !instrument.muted;
     };
 
     $scope.playBassSound = function(bassSound) {

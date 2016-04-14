@@ -32,6 +32,16 @@
       this.playback = this.playback.bind(this);
       this.setBpm(60);
       this.bufferLoader = new BufferLoader(context, soundsUrl);
+      this.playingNotes = [];
+
+      this.bass = {
+        muted: false,
+        audio: context.createGain()
+      };
+      this.drums = {
+        muted: false,
+        audio: context.createGain()
+      };
     }
 
     var bassSounds = {
@@ -61,12 +71,6 @@
       }*/
     };
 
-    AudioPlayer.prototype.initialize = function(destination) {
-      this.destination = destination;
-      this.playingNotes = [];
-    };
-
-
     AudioPlayer.prototype.playback = function(arg) {
       if (this.playing) {
         var playTime = context.currentTime-this.startTime;
@@ -86,7 +90,7 @@
                 var gain = context.createGain();
                 gain.gain.value = sound.volume;
                 source.connect(gain);
-                gain.connect(context.destination);
+                gain.connect(this.drums.audio);
                 source.start(context.currentTime, 0, sound.drum.duration);
               }
             }
@@ -106,7 +110,7 @@
             var gain = context.createGain();
 
             source.connect(gain);
-            gain.connect(this.destination);
+            gain.connect(this.bass.audio);
             var audioData = this.bufferLoader.loadResource(bassSounds[sound.style].getResources(sound)[0]);
             //console.log(this.bufferLoader.loadedResources);
             if (audioData) {
@@ -258,12 +262,11 @@
         gain.gain.linearRampToValueAtTime(0.001, startTime+duration);
         player.source = source;
         player.gain = gain;
-        player.playing = true;
+
         source.playing = true;
         source.gain = gain;
         source.addEventListener('ended', function(evt) {
           evt.target.playing = false;
-          player.playing = false;
         });
       }
 

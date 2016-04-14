@@ -231,3 +231,37 @@ md-tab-content:not(.md-active) > div {
   left: 50%;
   right: 0;
 }
+
+.instruments-prefferences.md-button {
+  min-width: 48px;
+  margin: 0 5px;
+  padding: 6px 0;
+  border-radius: 7px;
+}
+
+.instruments-prefferences md-list {
+  padding: 2px 10px;
+}
+.instruments-prefferences .volume-field label {
+  position: absolute;
+  font-size: 13px;
+  color: #777;
+}
+
+.instruments-prefferences .volume-field .md-button {
+  min-width: 48px;
+  margin: 0 5px;
+  padding: 6px 0;
+  background-color: transparent;
+}
+.instruments-prefferences .volume-field .md-button.active md-icon {
+  color: rgb(63,81,181);
+}
+
+.instruments-prefferences .volume-field md-slider {
+  margin: 16px 12px 0px 12px;
+}
+.instruments-prefferences md-list-item {
+  border-bottom: 1px solid #eee;
+  margin-top: 6px;
+}
