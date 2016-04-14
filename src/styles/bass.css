@@ -267,9 +267,8 @@
   position: absolute;
   height: 30px;
   padding: 0;
-  border: 2px solid orange;
+  border: 2px solid rgb(63,81,181);
   border-radius: 4px;
-  xbox-sizing: border-box;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   z-index: 100;
   left: 0px;

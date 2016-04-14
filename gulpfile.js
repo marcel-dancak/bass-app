@@ -9,7 +9,7 @@ var connect = require('gulp-connect');
 var path = require('path');
 
 
-var TARGET = 'dist/v4/';
+var TARGET = 'dist/v5/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -77,6 +77,8 @@ gulp.task('uglify', function() {
       'bower_components/angular-material/angular-material.js',
       'bower_components/angular-native-dragdrop/draganddrop.js',
       'bower_components/angular-resizable/src/angular-resizable.js',
+      'bower_components/hamsterjs/hamster.js',
+      'bower_components/angular-mousewheel/mousewheel.js',
 
       'src/**/*.module.js',
       'src/**/*.js',

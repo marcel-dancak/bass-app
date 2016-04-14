@@ -21,27 +21,33 @@
       class="drums-column"
       ng-repeat="subbeats in drumsData">
 
-      <md-button
+      <div
         flex
-        md-no-ink
         aria-label="Drum sound"
         ng-repeat="subbeat in subbeats"
 
-        ng-click="toggleDrum(subbeat)"
-        class="drum-sound-box no-hover"
-        ng-class="{
-          active: subbeat.note.name
-        }">
+        class="drum-sound-box no-hover">
         <div
-          class="drum-sound">
+          class="drum-sound"
+          msd-wheel="volumeControl(subbeat, $delta/10)"
+          ng-click="toggleDrum(subbeat)"
+
+          ui-draggable="true"
+          drag-channel="{{ ::subbeat.drum.label }}"
+          drop-channel="{{ ::subbeat.drum.label }}"
+          drag="subbeat"
+          ui-on-drop="onDrop($event, $data, subbeat, drumsData)"
+
+          >
           <div
             class="volume-meter"
             style="transform: scale({{ subbeat.volume }}, {{ subbeat.volume }});"
             xng-style="{
               transform: 'scale('+subbeat.volume+','+subbeat.volume+')'
-            }"></div>
+            }">
+          </div>
         </div>
-      </md-button>
+      </div>
     </div>
   </div>
 

@@ -9,6 +9,7 @@
         'ngMaterial',
         'ngSanitize',
         'ang-drag-drop',
-        'angularResizable'
+        'angularResizable',
+        'monospaced.mousewheel'
     ]);
 })();

@@ -19,24 +19,28 @@
 }
 
 .drum-sound-box {
+  min-height: 40px;
+  max-height: 40px;
   height: 40px;
   text-align: center;
   z-index: 50;
   position: relative;
+  line-height: 40px;
   margin: 2px 6px;
   padding: 0;
   outline: none;
-  box-sizing: border-box;
   overflow: hidden;
 }
 
 .drum-sound-box .drum-sound {
   width: 32px;
   height: 32px;
+  margin: 4px 0;
   display: inline-block;
   border-radius: 16px;
   border: 1px solid #ccc;
   box-sizing: border-box;
+  outline: none;
 }
 .volume-meter {
   background-color: #ff5722;
@@ -44,4 +48,8 @@
   width: 30px;
   height: 30px;
   transition: transform 0.3s cubic-bezier(0.35, 0.8, 0.25, 1) 0s
+}
+
+.drum-sound.on-drag-hover {
+  border: 2px solid rgb(63,81,181);
 }
