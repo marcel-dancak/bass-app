@@ -42,7 +42,7 @@
 
     var drumsData = $scope.drumsData;
     var beat, subbeat;
-    for (beat = 0; beat < $scope.bar.timeSignature.top; beat++) {
+    for (beat = 0; beat < 12; beat++) {
       for (subbeat = 0; subbeat < 4; subbeat++) {
         var list = new Array($scope.bass.strings);
         $scope.drums.forEach(function(drum, index) {

@@ -23,7 +23,7 @@
     <div
       class="subbeat-tab"
       layout="column"
-      ng-repeat="bassSubbeat in bassData">
+      ng-repeat="bassSubbeat in bassData | limitTo: bar.timeSignature.top*4">
 
       <div
         class="tab-top-marker"
@@ -49,8 +49,7 @@
           ghost: subbeat.note.name==='x'
         }"
         ng-style="{
-          width: 
-            (100*subbeat.noteLength.length*16*(subbeat.noteLength.dotted? 1.5 : 1))+'%'
+          width: subbeat.ui.width
         }">
         <div
           class="resize-container"
@@ -221,7 +220,7 @@
             <label class="md-label">Length</label>
             <md-select
               ng-model="menu.subbeat.noteLength.length"
-              md-on-close="checkMeasure(menu.subbeat)"
+              md-on-close="updateBassSound(menu.subbeat)"
               ng-disabled="!menu.subbeat.note.name || menu.subbeat.note.name==='x'">
               <md-option
                 ng-repeat="value in [
@@ -233,7 +232,7 @@
                 ]"
                 ng-value="{{ value[2] }}">
                 <span class="note-symbol">{{ ::value[0] }}</span>
-                <span class="note-length-title"> {{ value[1] }}</span>
+                <span class="note-length-title"> {{ ::value[1] }}</span>
               </md-option>
             </md-select>
           </md-input-container>
@@ -242,7 +241,8 @@
             class="md-primary"
             aria-label="Staccato"
             ng-model="menu.subbeat.noteLength.dotted"
-            ng-disabled="menu.subbeat.note.name==='x'">
+            ng-disabled="menu.subbeat.note.name==='x'"
+            ng-change="updateBassSound(menu.subbeat)">
             Dotted
           </md-checkbox>
           <md-checkbox

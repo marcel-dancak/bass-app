@@ -192,7 +192,6 @@
         subbeat.beat = i;
         subbeat.index = index+1;
         subbeat.bar = bar;
-        subbeat.width = 1;
         subbeat.note = {
           volume: 0.75
         };
@@ -200,22 +199,12 @@
       bar.subbeats = bar.subbeats.concat(subbeats);
     }
 
-    var subbeat = {
-      note: {
-        style: 'finger', // finger, slap, pop, tap
-        name: 'A', // 'x' - ghost note
-        octave: 2,
-        length: 1/8,
-        staccato: false, // staccato or legato
-        string: 1 // string index 
-      }
-    };
-
     function newBar() {
       var data = [];
-      var beat;
-      for (beat=0; beat<bar.timeSignature.top; beat++) {
-        for (subbeat=0; subbeat<4; subbeat++) {
+      var beat, subbeat;
+      //for (beat = 0; beat < bar.timeSignature.top; beat++) {
+      for (beat = 0; beat < 12; beat++) {
+        for (subbeat = 0; subbeat < 4; subbeat++) {
           var list = new Array($scope.bass.strings);
           $scope.bass.strings.forEach(function(string) {
             list[string.index] = {
@@ -265,49 +254,8 @@
         length: 1/8,
       },
       volume: 0.75
-    });
-    data[4][2].note = {
-      style: 'finger',
-      name: 'E',
-      octave: 2,
-      length: 1/8,
-      volume: 0.75
-    };
-    data[6][2].note = {
-      style: 'finger',
-      name: 'F',
-      octave: 2,
-      length: 1/8,
-      volume: 0.75
-    };
-    data[8][2].note = {
-      style: 'finger',
-      name: 'G',
-      octave: 2,
-      length: 1/8,
-      volume: 0.75
-    };
-    data[10][3].note = {
-      style: 'finger',
-      name: 'A',
-      octave: 2,
-      length: 1/8,
-      volume: 0.75
-    };
-    data[12][3].note = {
-      style: 'finger',
-      name: 'B',
-      octave: 2,
-      length: 1/8,
-      volume: 0.75
-    };
-    data[14][3].note = {
-      style: 'finger',
-      name: 'C',
-      octave: 3,
-      length: 1/8,
-      volume: 0.75
-    };*/
+    });*/
+
     $scope.bassData = data;
     $scope.drumsData = [];
 
@@ -333,7 +281,7 @@
     function timelineRedraw() {
       var elapsed = context.currentTime - audioPlayer.startTime;
       var beatTime = 60 / $scope.player.bpm;
-      var barTime = beatTime * 4;
+      var barTime = beatTime * bar.timeSignature.top;
       var barStartTime = parseInt(elapsed/barTime) * barTime;
       var fraction = (elapsed - barStartTime) / barTime;
 

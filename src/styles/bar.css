@@ -4,6 +4,7 @@
   vertical-align: middle;
   text-align: center;
   height: 50px;
+  xtransition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
 .bar-end,
@@ -25,6 +26,8 @@
   position: relative;
   height: 100px;
   margin: 0 30px 10px 65px;
+  transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  xwidth: 90%;
 }
 
 .bar .time-signature-button {
@@ -115,6 +118,9 @@ md-menu-content.subbeat-form-container {
   height: 26px;
 }
 
+.bar-settings-container md-input-container {
+  margin
+}
 .bar-settings-container label, 
 .control-panel label {
   margin-top: 16px;
@@ -253,4 +259,9 @@ md-slider .md-focus-ring {
   line-height: 44px;
   color: #777;
   font-size: 14px;
+}
+
+.prefferences md-list-item.time-signature-field input,
+.prefferences md-list-item.time-signature-field {
+  text-align: center;
 }

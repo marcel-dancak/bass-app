@@ -97,12 +97,8 @@
     $scope.clearNote = function(subbeat) {
       subbeat.note = {};
       subbeat.noteLength.length = 1/16;
-      $scope.updateNote(subbeat);
+      $scope.updateBassSound(subbeat);
       $scope.selected.subbeat = null;
-    };
-
-    $scope.updateNoteLength = function(subbeat) {
-      
     };
 
     var notesWidths;
@@ -161,6 +157,7 @@
     $scope.onResizeEnd = function(subbeat, info) {
       info.element.css('width', '');
       angular.extend(subbeat.noteLength, widthToLength[closestWidth]);
+      $scope.updateBassSound(subbeat);
       $scope.dropNote.visible = false;
       $scope.$apply();
     };
@@ -197,6 +194,7 @@
       console.log('find fret of '+subbeat.note.name+' od string '+subbeat.string.index);
 
       subbeat.fret = $scope.bass.stringFret(subbeat.string, subbeat.note);
+      $scope.updateBassSound(subbeat);
       console.log(subbeat.string);
       audioPlayer.fetchSoundResources(subbeat);
       // subbeat.note = $data.note;
@@ -204,18 +202,22 @@
       $scope.dropNote.visible = false;
     };
 
-    $scope.updateNote = function(subbeat) {
-      // $scope.$root.$broadcast('subbeatChanged', subbeat);
-      if (subbeat.note.name === 'x') {
-        subbeat.noteLength.length = 1/16;
+    $scope.updateBassSound = function(sound) {
+      if (sound.note.name === 'x') {
+        sound.noteLength.length = 1/16;
       }
-      if (!subbeat.$form) {
-        subbeat.$form = {};
+      var length = sound.noteLength.length;
+      if (sound.noteLength.dotted) {
+        length *= 1.5;
       }
-      var range = $scope.bass.noteStringOctaves(subbeat.note.name, subbeat.string);
-      subbeat.$form.minOctave = range[0];
-      subbeat.$form.maxOctave = range[range.length-1];
-      console.log(subbeat.$form.minOctave);
+      if (sound.noteLength.staccato) {
+        //length -= 0.1;
+      }
+      if (!sound.hasOwnProperty('ui')) {
+        sound.ui = {};
+      }
+      sound.ui.width = 100*(length*$scope.bar.timeSignature.bottom*4)+'%';
+      console.log(sound.ui.width);
     };
 
     $scope.onDragEnter = function(evt, $data) {
@@ -298,7 +300,6 @@
       $scope.menu.element.css('left', box.left+'px');
       $scope.menu.element.css('top', 32+box.top+'px');
 
-      $scope.updateNote(subbeat);
       $mdMenu.hide().then(function() {
         $scope.menu.subbeat = subbeat;
         $timeout(function() {

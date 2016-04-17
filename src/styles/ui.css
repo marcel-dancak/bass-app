@@ -233,36 +233,62 @@ md-tab-content:not(.md-active) > div {
   right: 0;
 }
 
-.instruments-prefferences.md-button {
+.prefferences.md-button {
   min-width: 48px;
   margin: 0 5px;
   padding: 6px 0;
   border-radius: 7px;
 }
 
-.instruments-prefferences md-list {
+.prefferences md-list {
   padding: 2px 10px;
 }
-.instruments-prefferences .volume-field label {
+.prefferences md-list-item > label {
   position: absolute;
   font-size: 13px;
   color: #777;
+  top: 0;
+  left: 0;
 }
 
-.instruments-prefferences .volume-field .md-button {
+.prefferences .volume-field .md-button {
   min-width: 48px;
   margin: 0 5px;
   padding: 6px 0;
   background-color: transparent;
 }
-.instruments-prefferences .volume-field .md-button.active md-icon {
+.prefferences .volume-field .md-button.active md-icon {
   color: rgb(63,81,181);
 }
 
-.instruments-prefferences .volume-field md-slider {
+.prefferences .volume-field md-slider {
   margin: 16px 12px 0px 12px;
 }
-.instruments-prefferences md-list-item {
-  border-bottom: 1px solid #eee;
+.prefferences md-list-item {
   margin-top: 6px;
+}
+
+.prefferences .bottom-border {
+  border-bottom: 1px solid #eee;
+}
+.prefferences md-input-container {
+  margin: 16px 0 6px 0;
+  padding: 0;
+  width: 100%;
+}
+
+.prefferences md-input-container .md-errors-spacer {
+  max-height: 0;
+  min-height: 0;
+}
+.prefferences md-input-container input {
+  padding-top: 8px;
+  height: 34px;
+  text-align: right;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  margin-left: 6px;
+  left: 10px;
 }

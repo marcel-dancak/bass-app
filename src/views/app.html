@@ -52,10 +52,10 @@
 
       <md-menu-content
         width="4"
-        class="instruments-prefferences md-whiteframe-16dp">
+        class="prefferences md-whiteframe-16dp">
         <md-list>
           <md-list-item
-            class="bass volume-field">
+            class="bass volume-field bottom-border">
             <label>Bass Volume</label>
             <md-slider
               class="md-primary"
@@ -80,7 +80,7 @@
           </md-list-item>
 
           <md-list-item
-            class="bass volume-field">
+            class="bass volume-field bottom-border">
             <label>Drums Volume</label>
             <md-slider
               class="md-primary"
@@ -117,7 +117,7 @@
         <input
           type="number"
           min="30"
-          max="160"
+          max="200"
           step="5"
           ng-model="player.bpm">
       </md-input-container>
@@ -174,7 +174,8 @@
             md-svg-icon="menu-dots">
           </md-icon>
         </md-button>
-        <md-menu-content>
+        <md-menu-content
+          class="md-whiteframe-16dp">
           <md-menu-item>
             <md-button
               ng-click="newBar()">
@@ -205,7 +206,7 @@
     layout-fill
     class="instruments-tabs"
     md-selected="instrumentIndex"
-    ng-init="instrumentIndex=1">
+    xng-init="instrumentIndex=1">
     <md-tab label="bass">
       <div class="audio-graph-container">
         <canvas

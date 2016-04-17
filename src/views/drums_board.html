@@ -19,7 +19,7 @@
       flex
       layout="column"
       class="drums-column"
-      ng-repeat="subbeats in drumsData">
+      ng-repeat="subbeats in drumsData | limitTo : bar.timeSignature.top*4">
 
       <div
         flex

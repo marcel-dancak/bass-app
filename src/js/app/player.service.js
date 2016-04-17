@@ -75,9 +75,13 @@
       if (this.playing) {
         var playTime = context.currentTime-this.startTime;
         if (playTime > this.subbeatIndex*this.subbeatTime) {
-          var subbeat = (this.subbeatIndex % 16);
+          var subbeat = (this.subbeatIndex % (4*this.bar.timeSignature.top));
           if (subbeat % 4 === 0) {
-            this.beatCallback(this.bpm, (this.beatIndex % 4)+1);
+            this.beatCallback(
+              this.bpm,
+              (this.beatIndex % this.bar.timeSignature.top)+1,
+              this.bar.timeSignature
+            );
             this.beatIndex++;
           }
           var drumsSounds = this.bar.drums[subbeat];
@@ -115,7 +119,9 @@
             //console.log(this.bufferLoader.loadedResources);
             if (audioData) {
               source.buffer = audioData;
-              var duration = sound.noteLength.length? this.subbeatTime*sound.noteLength.length*16 : this.subbeatTime;
+              var duration = sound.noteLength.length?
+                this.subbeatTime*sound.noteLength.length*this.bar.timeSignature.bottom*4 :
+                this.subbeatTime;
               if (sound.noteLength.dotted) {
                 duration *= 1.5;
               }
@@ -189,8 +195,8 @@
       var resources = [];
       // var resourcesIndexes = {};
       var subbeat, string;
-      for (subbeat=0; subbeat<16; subbeat++) {
-        for (string=0; string<4; string++) {
+      for (subbeat = 0; subbeat < bar.timeSignature.top*4; subbeat++) {
+        for (string = 0; string < 4; string++) {
           var bassSound = bar.bass[subbeat][string];
           if (bassSound.note.name && bassSound.style) {
             var subbeatResources = bassSounds[bassSound.style].getResources(bassSound);

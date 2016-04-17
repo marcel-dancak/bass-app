@@ -54,7 +54,7 @@
       }
     }
 
-    AudioVisualiser.prototype.beatSync = function(bpm, beat) {
+    AudioVisualiser.prototype.beatSync = function(bpm, beat, timeSignature) {
       // console.log('BEAT Sync '+bpm);
       if (beat === 1) {
         this.reset();
@@ -71,6 +71,7 @@
         endTime: beatStart + beatTime
       }
       this.beat = beat;
+      this.timeSignature = timeSignature;
       requestAnimationFrame(analyze.bind({
         visualiser: this,
         beat: beat
@@ -93,7 +94,7 @@
       var time = this.analyser.context.currentTime;
       var relativeOffset = (time - this.beat.startTime) / (this.beat.endTime-this.beat.startTime);
 
-      var beatWidth = Math.round(this.width/4);
+      var beatWidth = Math.round(this.width/this.timeSignature.top);
       var beatStartPx = Math.round(beatWidth * (this.beat.index-1));
       var toPx = Math.round(beatStartPx + relativeOffset*beatWidth);
       // var step = parseInt(3300/this.beat.bpm);
