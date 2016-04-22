@@ -1,9 +1,13 @@
 .bass-board {
+  position: relative;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+
+.bass-board-container {
   margin: 20px 30px 40px 65px;
   position: relative;
 }
-
-
 .tabs-tunning-button {
   position: absolute;
   min-width: 36px;
@@ -61,6 +65,8 @@
   max-height: 32px;
   line-height: 32px;
   padding-left: 6px;
+  xtransform: scale(0.95, 1);
+  xtransform-origin: 0 0 0;
 }
 .tab-note-container.active label {
   padding-left: 5px;
@@ -150,6 +156,7 @@
   width: 18px;
   height: 18px;
   color: #ccc;
+  pointer-events: none;
 }
 .tab-note-container.active md-icon {
   color: #444;
@@ -256,15 +263,8 @@
   text-align: left;
 }
 
-.tab-note-container:hover {
-  xborder: 1px solid rgb(0, 170, 212);
-}
-.on-drag-hover .tab-button {
-  xborder: 1px solid rgb(0, 170, 212);
-}
-
 .drop-note-area {
-  position: absolute;
+  position: fixed;
   height: 30px;
   padding: 0;
   border: 2px solid rgb(63,81,181);
@@ -318,4 +318,9 @@ md-select-menu {
 md-select-menu:not(.md-overflow) md-content {
   padding: 0;
   border-radius: 5px;
+}
+
+.bass-board-container .swiper-container {
+  xheight: 144px;
+  min-height: 144px;
 }

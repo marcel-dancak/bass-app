@@ -9,7 +9,7 @@ var connect = require('gulp-connect');
 var path = require('path');
 
 
-var TARGET = 'dist/v5/';
+var TARGET = 'dist/v6/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -70,6 +70,7 @@ gulp.task('uglify', function() {
 
   return series(
     gulp.src([
+      'bower_components/swiper/dist/js/swiper.js',
       'bower_components/angular/angular.min.js',
       'bower_components/angular-aria/angular-aria.min.js',
       'bower_components/angular-animate/angular-animate.min.js',
@@ -79,6 +80,8 @@ gulp.task('uglify', function() {
       'bower_components/angular-resizable/src/angular-resizable.js',
       'bower_components/hamsterjs/hamster.js',
       'bower_components/angular-mousewheel/mousewheel.js',
+      'bower_components/angular-swiper/dist/angular-swiper.js',
+
 
       'src/**/*.module.js',
       'src/**/*.js',
@@ -99,6 +102,7 @@ gulp.task('csss', function() {
   return gulp.src([
     'bower_components/angular-material/angular-material.css',
     'bower_components/angular-resizable/src/angular-resizable.css',
+    'bower_components/swiper/dist/css/swiper.min.css',
     'src/styles/**/*.css'
   ])
     .pipe(minifyCss())

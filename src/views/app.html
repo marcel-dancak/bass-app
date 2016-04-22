@@ -3,6 +3,7 @@
   class="main-page"
   ng-controller="AppController">
   <!-- <div flex></div> -->
+
   <div
     layout="row"
     class="control-panel">
@@ -43,7 +44,7 @@
     <md-menu
       md-offset="56 10">
       <md-button
-        class="instruments-prefferences"
+        class="prefferences"
         ng-click="$mdOpenMenu($event)">
         <md-icon
           md-svg-icon="preferences">
@@ -192,16 +193,87 @@
       </md-menu>
     </div>
   </div>
-  <div
-    flex="none"
-    class="bar-container">
-    <ng-include
-      src="'views/bar.html'">
-    </ng-include>
-    <div id="time-marker" class="time-marker"></div>
+
+  <div class="bar-container">
+    <ks-swiper-container
+      swiper="swiper"
+      on-ready="onBarSwiper(swiper)"
+      initial-slide="0"
+      loop="false"
+      show-nav-buttons="true"
+      slides-per-view="2"
+      space-between="0"
+      pagination-clickable="true">
+
+      <ks-swiper-slide ng-repeat="bar in barsBlock.bars">
+        <div
+          ng-include src="'views/bar.html'">
+        </div>
+      </ks-swiper-slide>
+    </ks-swiper-container>
   </div>
 
+  <div
+    class="bass-board-container"
+    ng-controller="NoteController">
+    <md-button
+      aria-label="Tunning"
+      class="tabs-tunning-button">
+      <p ng-repeat="string in bass.strings">
+        {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
+      </p>
+    </md-button>
+
+    <div
+      class="drop-note-area"
+      ng-style="{
+        width: dropNote.width+'px',
+        left: dropNote.left===3? '-5000px' : dropNote.left+'px',
+        top: dropNote.top+'px',
+        opacity: dropNote.visible? 1 : 0
+      }">
+    </div>
+
+    <div
+      ng-include src="'views/bass_sound_form.html'">
+    </div>
+    <ks-swiper-container
+      swiper="swiper"
+      on-ready="onBassSwiper(swiper)"
+      initial-slide="0"
+      loop="false"
+
+      show-nav-buttons="false"
+      slides-per-view="2"
+      space-between="0"
+      pagination-clickable="true">
+
+      <ks-swiper-slide
+        class="swiper-no-swiping"
+        ng-repeat="bar in barsBlock.bars"
+        style="z-index: {{ ::50-$index}};">
+        <div
+          ng-include src="'views/bass_board_block.html'">
+        </div>
+        <div class="audio-graph-container">
+          <canvas
+            id="canvas_{{ ::$index+1 }}"
+            class="audio-graph">
+          </canvas>
+        </div>
+      </ks-swiper-slide>
+    </ks-swiper-container>
+  </div>
+
+  <div
+    style="margin-bottom: 20px;"
+    ng-include src="'views/fretboard.html'">
+  </div>
+
+  <div id="time-marker" class="time-marker"></div>
+
   <md-tabs
+    ng-if="xxx"
     md-no-ink
     layout-fill
     class="instruments-tabs"

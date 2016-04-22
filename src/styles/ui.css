@@ -19,7 +19,8 @@
 .audio-graph-container {
   border: 1px solid #ccc;
   background-color: #eee;
-  margin: 0 30px 0 65px;
+  xmargin: 0 30px 0 65px;
+  margin: 10px 0;
 }
 
 .md-button.no-hover.md-focused,

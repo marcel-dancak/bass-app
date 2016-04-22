@@ -7,19 +7,12 @@
     .value('context', new AudioContext());
 
   function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel) {
-    var analyser;
-    setTimeout(function() {
-      analyser = context.createAnalyser();
-      analyser.fftSize = 1024;
-      analyser.connect(context.destination);
-      audioPlayer.bass.audio.connect(analyser);
-      audioPlayer.drums.audio.connect(context.destination);
-
-      audioVisualiser.initialize(
-        document.getElementById("canvas"),
-        analyser
-      );
-    }, 200);
+    var analyser = context.createAnalyser();
+    analyser.fftSize = 1024;
+    analyser.connect(context.destination);
+    audioPlayer.bass.audio.connect(analyser);
+    audioPlayer.drums.audio.connect(context.destination);
+    audioVisualiser.initialize(analyser);
 
     $scope.player = {
       playing: false,
@@ -153,7 +146,7 @@
     console.log($scope.bass);
 
     var timeSignature = {
-      top: 4,
+      top: 3,
       bottom: 4
     };
 
@@ -173,33 +166,23 @@
     for (var subbeat=1; beat < subbeatsCount; subbeat++) {
       subbeats.push({});
     }*/
-    var bar = {
+    var barLabels = {
       timeSignature: timeSignature,
       subbeats: [],
-      nextSubbeat: function(subbeat) {
-        //TODO: subdivision count
-        return this.subbeats[subbeat._index+1];
-      },
-      prevSubbeat: function(subbeat) {
-        return this.subbeats[subbeat._index-1];
-      }
     };
     for (var i=1; i <= 12; i++) {
       var subbeats = angular.copy(beatTemplate);
       subbeats[0].name = '{0}'.format(i);
       subbeats.forEach(function(subbeat, index) {
-        subbeat._index = (i-1)*subbeats.length+index;
         subbeat.beat = i;
         subbeat.index = index+1;
-        subbeat.bar = bar;
-        subbeat.note = {
-          volume: 0.75
-        };
       });
-      bar.subbeats = bar.subbeats.concat(subbeats);
+      barLabels.subbeats = barLabels.subbeats.concat(subbeats);
     }
+    $scope.barLabels = barLabels;
 
-    function newBar() {
+    function newBar(barIndex) {
+
       var data = [];
       var beat, subbeat;
       //for (beat = 0; beat < bar.timeSignature.top; beat++) {
@@ -209,6 +192,7 @@
           $scope.bass.strings.forEach(function(string) {
             list[string.index] = {
               string: string,
+              index: barIndex,
               beat: beat,
               subbeat: subbeat,
               note: {
@@ -222,44 +206,27 @@
           data.push(list);
         }
       }
-      return data;
+      return {
+        bassData: data,
+        bass: data,
+        nextSubbeat: function(subbeat) {
+          //TODO: subdivision count
+          return this.bassData[subbeat._index+1];
+        },
+        prevSubbeat: function(subbeat) {
+          return this.bassData[subbeat._index-1];
+        }
+      };
     }
     var data = newBar();
-    /**
-     * test data
-     */
-     /*
-    angular.extend(data[0][1], {
-      style: 'finger',
-      fret: 3,
-      note: {
-        name: 'C',
-        octave: 2,
-        code: 'C2'
-      },
-      noteLength: {
-        length: 1/8
-      },
-      volume: 0.75
-    });
-    angular.extend(data[2][1], {
-      style: 'finger',
-      fret: 5,
-      note: {
-        name: 'D',
-        octave: 2,
-        code: 'D2'
-      },
-      noteLength: {
-        length: 1/8,
-      },
-      volume: 0.75
-    });*/
 
-    $scope.bassData = data;
+
     $scope.drumsData = [];
 
-    $scope.bar = bar;
+    $scope.barsBlock = {
+      timeSignature: timeSignature,
+      bars: [newBar(1), newBar(2), newBar(3), newBar(4)]
+    };
 
     $scope.$watch('player.bpm', function(value) {
       if (audioPlayer.playing) {
@@ -294,34 +261,32 @@
         timelineElem.style.visibility = "hidden";
       }
     }
+    function beatSync(barIndex, beat, timeSignature, bpm) {
+      console.log('BEAT');
+      audioVisualiser.beatSync(barIndex, beat, timeSignature, bpm);
+      // if (beat === timeSignature.top) {
+      //   $scope.barSwiper.slideNext(false, 1000);
+      // }
+      if (beat === 1) {
+        $scope.barSwiper.slideTo(barIndex-1, 300, false);
+        // $scope.barSwiper.slideNext(false, 1000);
+      }
+    }
     $scope.play = function() {
-      // var elem = document.getElementById('time-marker');
-      // var ngElem = angular.element(elem);
-      // Velocity(
-      //   elem, {
-      //     left: ngElem.parent()[0].offsetWidth,
-      //   }, {
-      //     duration: 4000,
-      //     easing: "linear",
-      //     begin: function() {
-      //       ngElem.css('left', 0+'px');
-      //     }
-      //   }
-      // );
       $scope.player.playing = true;
-      audioVisualiser.reset();
+      // audioVisualiser.reset();
       audioPlayer.setBpm($scope.player.bpm);
       audioVisualiser.enabled = true;
       audioPlayer.play(
         {
-          timeSignature: timeSignature,
-          bass: $scope.bassData,
-          drums: $scope.drumsData
+          timeSignature: $scope.barsBlock.timeSignature,
+          bars: $scope.barsBlock.bars,
         },
-        audioVisualiser.beatSync.bind(audioVisualiser)
+        //audioVisualiser.beatSync.bind(audioVisualiser)
+        beatSync
       );
-      timelineElem.style.visibility = "visible";
-      timelineRedraw();
+      // timelineElem.style.visibility = "visible";
+      // timelineRedraw();
     };
 
     $scope.stop = function() {
@@ -350,7 +315,7 @@
       }, bassSound);
       audioPlayer.playSound(sound);
     };
-
+    /*
     $scope.newBar = function() {
       $scope.bass.present = {
         name: 'New',
@@ -362,12 +327,12 @@
 
     function deleteObsoletePresents() {
       var actualPresentsKeys = $scope.bass.presents.map(function(present) {
-        return 'bass.present.'+present.name;
+        return 'v5.bass.present.'+present.name;
       });
       var i;
       for (i=0; i<localStorage.length; i++) {
         var key = localStorage.key(i);
-        if (key.startsWith('bass.present.') && actualPresentsKeys.indexOf(key) === -1) {
+        if (key.startsWith('v5.bass.present.') && actualPresentsKeys.indexOf(key) === -1) {
           console.log('delete: '+key);
           localStorage.removeItem(key);
           break;
@@ -389,7 +354,7 @@
 
     $scope.saveBar = function() {
       deleteObsoletePresents();
-      var storageKey = 'bass.present.'+$scope.bass.present.name;
+      var storageKey = 'v5.bass.present.'+$scope.bass.present.name;
       $scope.bass.present.data = $scope.bassData;
       console.log($scope.bass.present);
 
@@ -412,12 +377,12 @@
     };
 
     function loadSavedBars() {
-      var storageKey = 'bass.presents';
+      var storageKey = 'v5.bass.presents';
       var presents = [];
       var i;
       for (i=0; i<localStorage.length; i++) {
         var key = localStorage.key(i);
-        if (key.startsWith('bass.present.')) {
+        if (key.startsWith('v5.bass.present.')) {
           var present = JSON.parse(localStorage.getItem(key));
           presents.push(present);
         }
@@ -434,5 +399,21 @@
     }
 
     loadSavedBars();
+    */
+
+    // $scope.swiper = {};
+
+    $scope.onBarSwiper = function(swiper) {
+      console.log('Bar');
+      console.log(swiper);
+      $scope.barSwiper = swiper;
+    };
+    $scope.onBassSwiper = function(swiper) {
+      console.log('Bass');
+      console.log(swiper);
+      //swiper.params.control = $scope.barSwiper;
+      $scope.barSwiper.params.control = swiper;
+      // console.log($scope.barSwiper);
+    };
   }
 })();

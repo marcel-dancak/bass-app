@@ -7,10 +7,25 @@
   xtransition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
+.bar-label {
+  margin-bottom: 6px;
+  height: 20px;
+  display: inline-block;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+}
+
 .bar-end,
 .subbeat-1 {
   border-left: 2px solid #aaa;
   height: 80px;
+}
+.bar label {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -moz-user-select: none;      /* Firefox */
+  user-select: none;           /* Non-prefixed version, currently */
 }
 
 .subbeat label {
@@ -27,7 +42,6 @@
   height: 100px;
   margin: 0 30px 10px 65px;
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  xwidth: 90%;
 }
 
 .bar .time-signature-button {
@@ -264,4 +278,27 @@ md-slider .md-focus-ring {
 .prefferences md-list-item.time-signature-field input,
 .prefferences md-list-item.time-signature-field {
   text-align: center;
+}
+
+
+/***** Swiper *******/
+.swiper-container {
+  width: 100%;
+  xborder: 1px solid #aa7777;
+}
+
+.bar-container .swiper-container {
+  height: 100px;
+}
+
+.swiper-container .bar-container {
+  margin: 0;
+}
+
+.bar-container .swiper-button-prev,
+.bar-container .swiper-button-next {
+  top: 95%;
+  width: 24px;
+  height: 24px;
+  padding-left: 10px;
 }

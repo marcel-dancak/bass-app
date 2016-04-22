@@ -10,6 +10,7 @@
         'ngSanitize',
         'ang-drag-drop',
         'angularResizable',
-        'monospaced.mousewheel'
+        'monospaced.mousewheel',
+        'ksSwiper'
     ]);
 })();
