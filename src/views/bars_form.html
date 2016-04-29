@@ -1,0 +1,77 @@
+<md-menu>
+  <md-button
+    ng-click="$mdOpenMenu($event)">
+    {{ section.timeSignature.top }}<br>{{ section.timeSignature.bottom }}
+  </md-button>
+  <md-menu-content
+    width="4"
+    class="prefferences md-whiteframe-16dp">
+    <md-list>
+      <md-list-item
+        layout="row"
+        class="time-signature-field">
+        <label>Time signature</label>
+        <md-input-container>
+          <input
+            type="number"
+            min="2"
+            max="12"
+            step="1"
+            ng-model="section.timeSignature.top"
+            ng-change="timeSignatureChanged()">
+        </md-input-container>
+        <span style="margin: 20px 4px 0 6px;">/</span>
+        <md-input-container>
+          <md-select
+            ng-model="section.timeSignature.bottom"
+            class="time-signature">
+            <md-option
+              ng-repeat="value in [2,4,8,16]"
+              ng-value="{{ value }}">
+              {{ value }}
+            </md-option>
+          </md-select>
+        </md-input-container>
+      </md-list-item>
+
+      <md-list-item xlayout="row">
+        <label>Bars</label>
+        <md-input-container>
+          <input
+            type="number"
+            min="1"
+            max="12"
+            step="1"
+            ng-model="section.length"
+            ng-change="barsCountChanged()">
+        </md-input-container>
+      </md-list-item>
+
+      <md-list-item>
+        <label>Beats per Slide</label>
+        <md-input-container>
+          <input
+            type="number"
+            min="1"
+            max="8"
+            step="1"
+            ng-model="section.beatsPerSlide"
+            ng-change="beatsPerSlideChenged()">
+        </md-input-container>
+      </md-list-item>
+
+      <md-list-item>
+        <label>Slides per View</label>
+        <md-input-container>
+          <input
+            type="number"
+            min="1"
+            max="8"
+            step="0.5"
+            ng-model="section.slidesPerView"
+            ng-change="slidesPerViewChanged()">
+        </md-input-container>
+      </md-list-item>
+    </md-list>
+  </md-menu-content>
+</md-menu>

@@ -8,33 +8,6 @@
   function DrumsController($scope, $timeout, audioPlayer) {
     var drumsVolumeLevels = [0.0, 0.85, 0.4];
 
-    $scope.drums = [
-      {
-        label: 'Tom 1',
-        filename: 'sounds/drums/acoustic-kit/tom1',
-        duration: 0.41
-      }, {
-        label: 'Tom 2',
-        filename: 'sounds/drums/acoustic-kit/tom2',
-        duration: 0.6
-      }, {
-        label: 'Tom 3',
-        filename: 'sounds/drums/acoustic-kit/tom3',
-        duration: 1.0
-      }, {
-        label: 'Hi-Hat',
-        filename: 'sounds/drums/acoustic-kit/hihat',
-        duration: 0.25
-      }, {
-        label: 'Snare',
-        filename: 'sounds/drums/acoustic-kit/snare',
-        duration: 0.36
-      }, {
-        label: 'Kick',
-        filename: 'sounds/drums/acoustic-kit/kick',
-        duration: 0.27
-      }
-    ];
     var resources = $scope.drums.map(function(drum) {
       return drum.filename;
     });

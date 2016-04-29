@@ -1,0 +1,19 @@
+<label class="bar-label">
+  Bar: {{ beat.bar }}
+</label>
+<div
+  layout="row"
+  class="bar">
+  <div
+    ng-repeat="subbeat in beat.subbeats"
+    layout="column"
+    class="subbeat subbeat-{{ ::$index+1 }}"
+    flex>
+      <label class="subbeat-label">
+        {{ ::subbeat }}
+      </label>
+      <div class="note-container"></div>
+  </div>
+  <div class="bar-end">
+  </div>
+</div>

@@ -91,12 +91,14 @@
               this.bpm
             );
           }
+          /*
           console.log('bar: '+(this.barIndex+1));
           console.log('beat: '+this.beatIndex);
           console.log('subbeat: '+(subbeat+1));
+          */
           var bar = this.composition.bars[this.barIndex];
-          /*
-          var drumsSounds = this.bar.drums[subbeat];
+          
+          var drumsSounds = bar.drums[subbeat];
           drumsSounds.forEach(function(sound) {
             if (sound.volume > 0) {
               var audioData = this.bufferLoader.loadResource(sound.drum.filename);
@@ -111,7 +113,6 @@
               }
             }
           }, this);
-          */
 
           // console.log('subbeat: '+subbeat);
           var stringsSounds = bar.bass[subbeat];

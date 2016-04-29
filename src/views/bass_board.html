@@ -1,14 +1,6 @@
 <div
   class="bass-board"
   ng-keyup="$event.keyCode == 46 && clearNote(selected.subbeat)">
-  <md-button
-    aria-label="Tunning"
-    class="tabs-tunning-button">
-    <p ng-repeat="string in bass.strings">
-      {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
-    </p>
-  </md-button>
-
   <div
     layout="column"
     class="string-container">
@@ -23,7 +15,7 @@
     <div
       class="subbeat-tab"
       layout="column"
-      ng-repeat="bassSubbeat in bassData | limitTo: bar.timeSignature.top*4">
+      ng-repeat="bassSubbeat in bar.bassData | limitTo: section.timeSignature.top*4">
 
       <div
         class="tab-top-marker"
@@ -35,7 +27,7 @@
         ng-repeat="subbeat in bassSubbeat | orderBy:string.index:'-'"
         ui-draggable="true"
         drag="subbeat"
-        ui-on-drop="onDrop($event, $data, subbeat, bassData)"
+        ui-on-drop="onDrop($event, $data, subbeat, section)"
         drop-validate="dropValidation(subbeat, $data)"
         ui-on-drag-enter="onDragEnter($event, subbeat)"
         ui-on-drag-leave="onDragLeave($event, subbeat)"
@@ -80,7 +72,7 @@
     </div>
   </div>
 
-  <md-menu id="subbeat-menu">
+  <md-menu id="subbeat-menu" md-ofset="0 0" md-position-mode="target target">
     <md-button
       ng-init="menu.open=$mdOpenMenu"
       ng-click="$mdOpenMenu($event)"
@@ -104,49 +96,6 @@
             </md-select>
           </md-input-container>
         </div>
-
-<!--         <div layout="row">
-          <md-input-container flex>
-            <label class="md-label">Note</label>
-            <md-select
-              ng-model="menu.subbeat.note.name"
-              md-on-close="menu.subbeat.string=string.index;updateNote(menu.subbeat)">
-              <md-option
-                ng-repeat="noteLabel in notesLabels"
-                ng-value="noteLabel">
-                {{ noteLabel }}
-              </md-option>
-              <md-option value="x">
-                Ghost
-              </md-option>
-            </md-select>
-          </md-input-container>
-          <div class="horizontal-space"></div>
-          <md-input-container flex>
-            <label class="md-label">Octave</label>
-            <input
-              ng-if="menu.subbeat"
-              ng-model="menu.subbeat.note.octave"
-              type="number"
-              min="{{ menu.subbeat.$form.minOctave }}"
-              max="{{ menu.subbeat.$form.maxOctave }}"
-              ng-disabled="!menu.subbeat.note.name || menu.subbeat.note.name==='x'">
-            </input>
-          </md-input-container>
-          <div
-            class="buttons-spinner"
-            layout="column">
-            <md-button
-              md-prevent-menu-close
-              ng-click="nextNoteLabel(menu.subbeat)">
-              <md-icon md-svg-icon="plus"></md-icon>
-            </md-button>
-            <md-button
-              md-prevent-menu-close>
-              <md-icon md-svg-icon="minus"></md-icon>
-            </md-button>
-          </div>
-        </div> -->
 
         <div layout="row">
           <md-input-container flex>

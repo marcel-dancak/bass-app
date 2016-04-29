@@ -195,24 +195,46 @@
   </div>
 
   <div class="bar-container">
+    <div
+      class="time-signature-button"
+      ng-include src="'views/bars_form.html'">
+    </div>
     <ks-swiper-container
+      id="barSwiper"
       swiper="swiper"
       on-ready="onBarSwiper(swiper)"
       initial-slide="0"
       loop="false"
       show-nav-buttons="true"
-      slides-per-view="2"
+      slides-per-view="section.slidesPerView"
       space-between="0"
       pagination-clickable="true">
 
-      <ks-swiper-slide ng-repeat="bar in barsBlock.bars">
+<!--       <ks-swiper-slide ng-repeat="barSlide in slides.bars">
         <div
           ng-include src="'views/bar.html'">
+        </div>
+      </ks-swiper-slide> -->
+      <ks-swiper-slide ng-repeat="beat in slides.bars track by beat.id">
+        <div
+          class="beat"
+          ng-class="{
+            'beat-1': beat.subbeats[0]===1,
+            last: $last
+          }"
+          ng-include src="'views/bar_slide.html'">
         </div>
       </ks-swiper-slide>
     </ks-swiper-container>
   </div>
 
+  <md-tabs
+    md-no-ink
+    layout-fill
+    class="instruments-tabs"
+    md-selected="instrumentIndex"
+    xng-init="instrumentIndex=1">
+    <md-tab label="bass">
   <div
     class="bass-board-container"
     ng-controller="NoteController">
@@ -244,24 +266,38 @@
       loop="false"
 
       show-nav-buttons="false"
-      slides-per-view="2"
-      space-between="0"
-      pagination-clickable="true">
+      slides-per-view="section.slidesPerView"
+      space-between="0">
 
       <ks-swiper-slide
         class="swiper-no-swiping"
-        ng-repeat="bar in barsBlock.bars"
+        ng-repeat="beat in slides.bass track by beat.id"
         style="z-index: {{ ::50-$index}};">
-        <div
-          ng-include src="'views/bass_board_block.html'">
-        </div>
         <div class="audio-graph-container">
           <canvas
-            id="canvas_{{ ::$index+1 }}"
+            id="canvas_{{ ::beat[0][0].index }}_{{ ::beat[0][0].beat+1 }}"
             class="audio-graph">
           </canvas>
         </div>
+        <div
+          ng-include src="'views/bass_board_slide.html'">
+        </div>
       </ks-swiper-slide>
+
+      <!-- <ks-swiper-slide
+        class="swiper-no-swiping"
+        ng-repeat="beat in slides.bass"
+        style="z-index: {{ ::50-$index}};">
+        <div class="audio-graph-container">
+          <canvas
+            id="canvas_{{ ::beat[0][0].index }}_{{ ::beat[0][0].beat+1 }}"
+            class="audio-graph">
+          </canvas>
+        </div>
+        <div
+          ng-include src="'views/bass_board_slide.html'">
+        </div>
+      </ks-swiper-slide> -->
     </ks-swiper-container>
   </div>
 
@@ -269,6 +305,43 @@
     style="margin-bottom: 20px;"
     ng-include src="'views/fretboard.html'">
   </div>
+  </md-tab>
+    <md-tab
+      label="drums">
+      <div
+        class="drums-container"
+        ng-controller="DrumsController">
+        <div
+          layout="column"
+          class="drums-labels-container">
+          <md-button
+            aria-label="{{ ::drum.label }}"
+            class="drum-label"
+            ng-repeat="drum in drums">
+            {{ ::drum.label }}
+          </md-button>
+        </div>
+        <ks-swiper-container
+          swiper="swiper"
+          on-ready="onDrumsSwiper(swiper)"
+          initial-slide="0"
+          loop="false"
+
+          show-nav-buttons="false"
+          slides-per-view="section.slidesPerView"
+          space-between="0">
+
+          <ks-swiper-slide
+            class="swiper-no-swiping"
+            ng-repeat="beat in slides.drums">
+            <div
+              ng-include src="'views/drums_board_slide.html'">
+            </div>
+          </ks-swiper-slide>
+        </ks-swiper-container>
+      </div>
+    </md-tab>
+  </md-tabs>
 
   <div id="time-marker" class="time-marker"></div>
 

@@ -15,7 +15,7 @@
     <div
       class="subbeat-tab"
       layout="column"
-      ng-repeat="bassSubbeat in bar.bassData | limitTo: section.timeSignature.top*4">
+      ng-repeat="bassSubbeats in beat">
 
       <div
         class="tab-top-marker"
@@ -24,7 +24,7 @@
       </div>
       <div
         flex
-        ng-repeat="subbeat in bassSubbeat | orderBy:string.index:'-'"
+        ng-repeat="subbeat in bassSubbeats | orderBy:string.index:'-'"
         ui-draggable="true"
         drag="subbeat"
         ui-on-drop="onDrop($event, $data, subbeat, section)"

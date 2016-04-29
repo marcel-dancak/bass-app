@@ -8,20 +8,21 @@
   function audioVisualiser() {
     function AudioVisualiser() {}
 
-    AudioVisualiser.prototype.initializeBar = function(barIndex) {
-      console.log('initializeBar: '+barIndex)
-        var canvas = document.getElementById('canvas_'+barIndex);
-        this.width = canvas.offsetWidth;
-        this.height = canvas.offsetHeight;
-        canvas.setAttribute('width', this.width);
-        canvas.setAttribute('height', this.height);
-        this.x = 0;
-        this.y = this.height/2;
-        this.ctx = canvas.getContext("2d");
-        this.ctx.fillStyle = 'rgb(240, 240, 240)';
-        this.ctx.lineWidth = 1;
-        this.ctx.strokeStyle = 'rgb(180, 0, 0)';
-        // this.ctx.translate(0, 0);
+    AudioVisualiser.prototype.initializeBar = function(barIndex, beat) {
+      console.log('initializeBar: '+barIndex+'_'+beat);
+      var canvas = document.getElementById('canvas_'+barIndex+'_'+beat);
+
+      this.width = canvas.offsetWidth;
+      this.height = canvas.offsetHeight;
+      canvas.setAttribute('width', this.width);
+      canvas.setAttribute('height', this.height);
+      this.x = 0;
+      this.y = this.height/2;
+      this.ctx = canvas.getContext("2d");
+      this.ctx.fillStyle = 'rgb(240, 240, 240)';
+      this.ctx.lineWidth = 1;
+      this.ctx.strokeStyle = 'rgb(180, 0, 0)';
+      // this.ctx.translate(0, 0);
     }
     AudioVisualiser.prototype.initialize = function(analyser) {
         this.dataArray = new Uint8Array(analyser.frequencyBinCount);
@@ -59,14 +60,13 @@
 
     AudioVisualiser.prototype.beatSync = function(barIndex, beat, timeSignature, bpm) {
       // console.log('BEAT Sync '+bpm);
-      if (beat === 1) {
-        this.initializeBar(barIndex);
-        this.reset();
+      // if (this.ctx) {
+      //   this.draw();
+      // }
 
-        // console.log(this.analyser.frequencyBinCount);
-        // console.log(this.width/4);
-        // console.log(60000/bpm);
-      }
+      this.initializeBar(barIndex, beat);
+      this.reset();
+
       var beatTime = 60/bpm;
       var beatStart = this.analyser.context.currentTime;
       var beat = {
@@ -99,10 +99,11 @@
       var time = this.analyser.context.currentTime;
       var relativeOffset = (time - this.beat.startTime) / (this.beat.endTime-this.beat.startTime);
 
-      var beatWidth = Math.round(this.width/this.timeSignature.top);
-      var beatStartPx = Math.round(beatWidth * (this.beat.index-1));
+      // var beatWidth = Math.round(this.width/this.timeSignature.top);
+      // var beatStartPx = Math.round(beatWidth * (this.beat.index-1));
+      var beatWidth = this.width;
+      var beatStartPx = 0;
       var toPx = Math.round(beatStartPx + relativeOffset*beatWidth);
-      // var step = parseInt(3300/this.beat.bpm);
       var steps = toPx - this.x;
       for(var i = 0; i < steps; i+=1) {
         var dataIndex= parseInt((i+1)*this.analyser.frequencyBinCount/steps);

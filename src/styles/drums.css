@@ -1,6 +1,9 @@
 .drums-container {
   margin: 20px 30px 0 65px;
 }
+.drums-beat-container {
+  border-right: 1px solid #ccc;
+}
 .drums-labels-container {
   position: absolute;
   left: 0;

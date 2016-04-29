@@ -141,12 +141,39 @@
         }
       }
     };
+    $scope.drums = [
+      {
+        label: 'Tom 1',
+        filename: 'sounds/drums/acoustic-kit/tom1',
+        duration: 0.41
+      }, {
+        label: 'Tom 2',
+        filename: 'sounds/drums/acoustic-kit/tom2',
+        duration: 0.6
+      }, {
+        label: 'Tom 3',
+        filename: 'sounds/drums/acoustic-kit/tom3',
+        duration: 1.0
+      }, {
+        label: 'Hi-Hat',
+        filename: 'sounds/drums/acoustic-kit/hihat',
+        duration: 0.25
+      }, {
+        label: 'Snare',
+        filename: 'sounds/drums/acoustic-kit/snare',
+        duration: 0.36
+      }, {
+        label: 'Kick',
+        filename: 'sounds/drums/acoustic-kit/kick',
+        duration: 0.27
+      }
+    ];
     $scope.bass.presents = [];
     // stringNotes($scope.bass.notes, 'E1', 24)
     console.log($scope.bass);
 
     var timeSignature = {
-      top: 3,
+      top: 4,
       bottom: 4
     };
 
@@ -181,16 +208,21 @@
     }
     $scope.barLabels = barLabels;
 
+
     function newBar(barIndex) {
 
-      var data = [];
+      var labels = [];
+      var bassData = [];
+      var drumsData = [];
+      var bassBeats = [];
       var beat, subbeat;
       //for (beat = 0; beat < bar.timeSignature.top; beat++) {
       for (beat = 0; beat < 12; beat++) {
+        var bassSubbeats = [];
         for (subbeat = 0; subbeat < 4; subbeat++) {
-          var list = new Array($scope.bass.strings);
+          var bassSubbeatData = new Array($scope.bass.strings);
           $scope.bass.strings.forEach(function(string) {
-            list[string.index] = {
+            bassSubbeatData[string.index] = {
               string: string,
               index: barIndex,
               beat: beat,
@@ -203,12 +235,31 @@
               width: 1
             };
           });
-          data.push(list);
+          var drumsSubbeatData = $scope.drums.map(function(drum) {
+            return {
+              beat: beat,
+              subbeat: subbeat,
+              drum: drum,
+              volume: 0.0
+            }
+          });
+          bassData.push(bassSubbeatData);
+          drumsData.push(drumsSubbeatData);
+
+          bassSubbeats.push(bassSubbeatData);
         }
+        bassBeats.push(bassSubbeats);
+        labels.push({
+          id: barIndex+'_'+beat,
+          bar: barIndex,
+          subbeats: [beat, 'i', 'and', 'a']
+        });
       }
       return {
-        bassData: data,
-        bass: data,
+        labels: labels,
+        bass: bassData,
+        drums: drumsData,
+        bassBeats: bassBeats,
         nextSubbeat: function(subbeat) {
           //TODO: subdivision count
           return this.bassData[subbeat._index+1];
@@ -223,10 +274,184 @@
 
     $scope.drumsData = [];
 
-    $scope.barsBlock = {
+    $scope.section = {
       timeSignature: timeSignature,
-      bars: [newBar(1), newBar(2), newBar(3), newBar(4)]
+      bars: [],
+      beatsPerSlide: 4,
+      slidesPerView: 5,
+      length: 4
     };
+
+    $scope.slides = {
+      bars: [],
+      barsData: [],
+      bass: [],
+      drums: [],
+      bassBars: []
+    };
+    /*
+    $scope.rebuildBarsDown = function() {
+      console.log('rebuildBars -');
+      function shiftFrom(index) {
+        var i;
+        for (i = index; i < $scope.slides.bars.length; i++) {
+          var beatData = $scope.slides.bars[i].shift();
+          $scope.slides.bars[i-1].push(beatData);
+        }
+        if ($scope.slides.bars[i-1][0].subbeats.length === 0) {
+          console.log('empty ');
+          $scope.slides.bars.pop();
+        } else {
+          $scope.slides.bars[i-1].push({
+            subbeats: []
+          });
+        }
+      }
+      var i;
+      for (i = 1; i < $scope.slides.bars.length; i++) {
+        shiftFrom(i);
+      }
+    };
+
+
+    $scope.rebuildBars = function() {
+      console.log('rebuildBars +');
+      function shiftFrom(index) {
+        var i;
+        for (i = index; i < $scope.slides.bars.length-1; i++) {
+          var beatData = $scope.slides.bars[i].pop();
+          $scope.slides.bars[i+1].unshift(beatData);
+        }
+        if ($scope.slides.bars[i].length > $scope.slides.bars[0].length) {
+          console.log('new slide ');
+          $scope.slides.bars.push($scope.slides.bars[i].pop());
+        }
+      }
+      var i;
+      for (i = 0; i < $scope.slides.bars.length-1; i++) {
+        shiftFrom(i);
+      }
+    };*/
+
+
+    function buildSlides() {
+      var timeSignature = $scope.section.timeSignature;
+      $scope.slides.bars = [];
+      $scope.slides.bass = [];
+      $scope.slides.drums = [];
+
+      var bar = 1;
+      var beat = 1;
+      var barData = $scope.section.bars[bar-1];
+      if (!angular.isDefined(barData)) {
+        barData = newBar(bar);
+        $scope.section.bars.push(barData);
+      }
+      
+      var i = 0;
+      while (bar <= $scope.section.length) {
+        // $scope.slides.bars.push(barBeatData);
+        
+        if (!$scope.slides.bass[i]) {
+          var start = (beat-1)*4;
+          var bassData = barData.bass.slice(start, start+4);
+          bassData.id = bassData[0][0].index+'_'+bassData[0][0].beat;
+          $scope.slides.bass.push(bassData);
+          $scope.slides.drums.push(barData.drums.slice(start, start+4));
+          $scope.slides.bars.push(barData.labels[beat]);
+          console.log(barData.labels[beat]);
+        }
+
+        if (beat === timeSignature.top) {
+          bar++;
+          var barData = $scope.section.bars[bar-1];
+          if (!angular.isDefined(barData)) {
+            barData = newBar(bar);
+            $scope.section.bars.push(barData);
+          }
+          beat = 1;
+        } else {
+          beat++;
+        }
+        i++;
+      }
+      console.log($scope.slides.bass);
+    }
+
+    $scope.timeSignatureChanged = function() {
+      var container = angular.element(document.querySelector("#barSwiper .swiper-wrapper"));
+      console.log(container);
+      // container.prepend(angular.element('<div class="swiper-slide">new slide</div>'));
+      var prevTop = $scope.slides.bars.length/$scope.section.length;
+      var bar;
+      for (bar = 1; bar <= $scope.section.length; bar++) {
+        var index = (bar-1)*$scope.section.timeSignature.top+prevTop;
+        $scope.slides.bars.splice(index, 0, {
+          bar: bar,
+          subbeats: [prevTop+1, 'W', 'T', 'F']
+        });
+      }
+      $timeout(function() {
+        $scope.barSwiper.update();
+      });
+      // $scope.barSwiper.init();
+    };
+
+    $scope.barsCountChanged = function() {
+      buildSlides();
+      $timeout(function() {
+        $scope.barSwiper.init();
+        $scope.bassSwiper.init();
+        $scope.drumsSwiper.init();
+      });
+      return;
+
+      console.log($scope.slides.bars);
+      var newBeatsCount = $scope.section.length*$scope.section.timeSignature.top;
+      if (newBeatsCount === $scope.slides.bars.length) {
+        return;
+      }
+
+      if (newBeatsCount < $scope.slides.bars.length) {
+        var count = $scope.slides.bars.length-newBeatsCount;
+        $scope.slides.bars.splice(-count, count);
+      } else {
+        var bar = $scope.slides.bars[$scope.slides.bars.length-1].bar+1;
+        var beat = 1;
+        while ($scope.slides.bars.length < newBeatsCount) {
+          console.log(beat);
+          var barBeatData = {
+            bar: bar,
+            subbeats: [beat, 'i', 'and', 'a']
+          };
+          if (beat === $scope.section.timeSignature.top) {
+            beat = 1;
+            bar++;
+          } else {
+            beat++;
+          }
+          $scope.slides.bars.push(barBeatData);
+        }
+      }
+      $timeout(function() {
+        $scope.barSwiper.update();
+      });
+    };
+
+    $scope.beatsPerSlideChenged = function() {
+      console.log($scope.barSwiper.params);
+      $scope.barSwiper.params.slidesPerGroup = $scope.section.beatsPerSlide;
+      $scope.barSwiper.updateSlidesSize();
+    };
+
+    $scope.slidesPerViewChanged = function() {
+      $scope.barSwiper.params.slidesPerView = $scope.section.slidesPerView;
+      $scope.bassSwiper.params.slidesPerView = $scope.section.slidesPerView;
+      $scope.barSwiper.updateSlidesSize();
+      $scope.bassSwiper.updateSlidesSize();
+    };
+
+    buildSlides();
 
     $scope.$watch('player.bpm', function(value) {
       if (audioPlayer.playing) {
@@ -267,10 +492,9 @@
       // if (beat === timeSignature.top) {
       //   $scope.barSwiper.slideNext(false, 1000);
       // }
-      if (beat === 1) {
-        $scope.barSwiper.slideTo(barIndex-1, 300, false);
+      var slide = (barIndex-1)*timeSignature.top+beat-1;
+      $scope.barSwiper.slideTo(slide, 300, false);
         // $scope.barSwiper.slideNext(false, 1000);
-      }
     }
     $scope.play = function() {
       $scope.player.playing = true;
@@ -279,8 +503,8 @@
       audioVisualiser.enabled = true;
       audioPlayer.play(
         {
-          timeSignature: $scope.barsBlock.timeSignature,
-          bars: $scope.barsBlock.bars,
+          timeSignature: $scope.section.timeSignature,
+          bars: $scope.section.bars,
         },
         //audioVisualiser.beatSync.bind(audioVisualiser)
         beatSync
@@ -407,13 +631,20 @@
       console.log('Bar');
       console.log(swiper);
       $scope.barSwiper = swiper;
+      $scope.beatsPerSlideChenged();
     };
     $scope.onBassSwiper = function(swiper) {
       console.log('Bass');
       console.log(swiper);
-      //swiper.params.control = $scope.barSwiper;
-      $scope.barSwiper.params.control = swiper;
-      // console.log($scope.barSwiper);
+      $scope.bassSwiper = swiper;
+      $scope.barSwiper.params.control = [swiper];
     };
+    $scope.onDrumsSwiper = function(swiper) {
+      console.log('Drums');
+      console.log(swiper);
+      $scope.drumsSwiper = swiper;
+      $scope.barSwiper.params.control.push(swiper);
+    };
+    
   }
 })();
