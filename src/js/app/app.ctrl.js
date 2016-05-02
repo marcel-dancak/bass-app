@@ -217,7 +217,7 @@
       var bassBeats = [];
       var beat, subbeat;
       //for (beat = 0; beat < bar.timeSignature.top; beat++) {
-      for (beat = 0; beat < 12; beat++) {
+      for (beat = 0; beat < 13; beat++) {
         var bassSubbeats = [];
         for (subbeat = 0; subbeat < 4; subbeat++) {
           var bassSubbeatData = new Array($scope.bass.strings);
@@ -289,49 +289,6 @@
       drums: [],
       bassBars: []
     };
-    /*
-    $scope.rebuildBarsDown = function() {
-      console.log('rebuildBars -');
-      function shiftFrom(index) {
-        var i;
-        for (i = index; i < $scope.slides.bars.length; i++) {
-          var beatData = $scope.slides.bars[i].shift();
-          $scope.slides.bars[i-1].push(beatData);
-        }
-        if ($scope.slides.bars[i-1][0].subbeats.length === 0) {
-          console.log('empty ');
-          $scope.slides.bars.pop();
-        } else {
-          $scope.slides.bars[i-1].push({
-            subbeats: []
-          });
-        }
-      }
-      var i;
-      for (i = 1; i < $scope.slides.bars.length; i++) {
-        shiftFrom(i);
-      }
-    };
-
-
-    $scope.rebuildBars = function() {
-      console.log('rebuildBars +');
-      function shiftFrom(index) {
-        var i;
-        for (i = index; i < $scope.slides.bars.length-1; i++) {
-          var beatData = $scope.slides.bars[i].pop();
-          $scope.slides.bars[i+1].unshift(beatData);
-        }
-        if ($scope.slides.bars[i].length > $scope.slides.bars[0].length) {
-          console.log('new slide ');
-          $scope.slides.bars.push($scope.slides.bars[i].pop());
-        }
-      }
-      var i;
-      for (i = 0; i < $scope.slides.bars.length-1; i++) {
-        shiftFrom(i);
-      }
-    };*/
 
 
     function buildSlides() {
@@ -355,9 +312,12 @@
         if (!$scope.slides.bass[i]) {
           var start = (beat-1)*4;
           var bassData = barData.bass.slice(start, start+4);
-          bassData.id = bassData[0][0].index+'_'+bassData[0][0].beat;
+          var drumsData = barData.drums.slice(start, start+4);
+          var beatId = bassData[0][0].index+'_'+bassData[0][0].beat;
+          bassData.id = beatId;
+          drumsData.id = beatId;
           $scope.slides.bass.push(bassData);
-          $scope.slides.drums.push(barData.drums.slice(start, start+4));
+          $scope.slides.drums.push(drumsData);
           $scope.slides.bars.push(barData.labels[beat]);
           console.log(barData.labels[beat]);
         }
@@ -378,64 +338,20 @@
       console.log($scope.slides.bass);
     }
 
-    $scope.timeSignatureChanged = function() {
-      var container = angular.element(document.querySelector("#barSwiper .swiper-wrapper"));
-      console.log(container);
-      // container.prepend(angular.element('<div class="swiper-slide">new slide</div>'));
-      var prevTop = $scope.slides.bars.length/$scope.section.length;
-      var bar;
-      for (bar = 1; bar <= $scope.section.length; bar++) {
-        var index = (bar-1)*$scope.section.timeSignature.top+prevTop;
-        $scope.slides.bars.splice(index, 0, {
-          bar: bar,
-          subbeats: [prevTop+1, 'W', 'T', 'F']
-        });
-      }
-      $timeout(function() {
-        $scope.barSwiper.update();
-      });
-      // $scope.barSwiper.init();
+    $scope.renderingBar = function(index) {
+      console.log('Rendering Bar: '+index);
     };
 
-    $scope.barsCountChanged = function() {
-      buildSlides();
-      $timeout(function() {
-        $scope.barSwiper.init();
-        $scope.bassSwiper.init();
-        $scope.drumsSwiper.init();
-      });
-      return;
-
-      console.log($scope.slides.bars);
-      var newBeatsCount = $scope.section.length*$scope.section.timeSignature.top;
-      if (newBeatsCount === $scope.slides.bars.length) {
-        return;
+    $scope.sectionConfigChanged = function() {
+      if ($scope.section.length > 0 && $scope.section.length < 20 &&
+        $scope.section.timeSignature.top > 1 && $scope.section.timeSignature.top < 13) {
+        buildSlides();
+        $timeout(function() {
+          $scope.barSwiper.init();
+          $scope.bassSwiper.init();
+          $scope.drumsSwiper.init();
+        });
       }
-
-      if (newBeatsCount < $scope.slides.bars.length) {
-        var count = $scope.slides.bars.length-newBeatsCount;
-        $scope.slides.bars.splice(-count, count);
-      } else {
-        var bar = $scope.slides.bars[$scope.slides.bars.length-1].bar+1;
-        var beat = 1;
-        while ($scope.slides.bars.length < newBeatsCount) {
-          console.log(beat);
-          var barBeatData = {
-            bar: bar,
-            subbeats: [beat, 'i', 'and', 'a']
-          };
-          if (beat === $scope.section.timeSignature.top) {
-            beat = 1;
-            bar++;
-          } else {
-            beat++;
-          }
-          $scope.slides.bars.push(barBeatData);
-        }
-      }
-      $timeout(function() {
-        $scope.barSwiper.update();
-      });
     };
 
     $scope.beatsPerSlideChenged = function() {
@@ -447,8 +363,10 @@
     $scope.slidesPerViewChanged = function() {
       $scope.barSwiper.params.slidesPerView = $scope.section.slidesPerView;
       $scope.bassSwiper.params.slidesPerView = $scope.section.slidesPerView;
+      $scope.drumsSwiper.params.slidesPerView = $scope.section.slidesPerView;
       $scope.barSwiper.updateSlidesSize();
       $scope.bassSwiper.updateSlidesSize();
+      $scope.drumsSwiper.updateSlidesSize();
     };
 
     buildSlides();

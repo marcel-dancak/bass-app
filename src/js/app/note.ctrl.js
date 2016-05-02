@@ -218,8 +218,8 @@
         sound.ui = {};
       }
       sound.fret = $scope.bass.stringFret(sound.string, sound.note);
-      sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
-      console.log(sound.ui.width);
+      // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
+      sound.ui.width = 100*(length*4);
     };
 
     $scope.onDragEnter = function(evt, $data) {

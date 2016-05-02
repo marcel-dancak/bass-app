@@ -28,16 +28,17 @@
 
 .beat .bar {
   border-left: 2px solid #aaa;
-  height: 80px;
+  height: 75px;
 }
 
 .beat-1 .bar {
   border-left: 4px solid #aaa;
-  height: 80px;
+  height: 75px;
 }
 .last .bar {
   border-right: 4px solid #aaa;
 }
+
 .bar label {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none;   /* Chrome/Safari/Opera */
@@ -56,8 +57,8 @@
 }
 .bar-container {
   position: relative;
-  height: 100px;
-  margin: 0 30px 10px 65px;
+  height: 120px;
+  margin: 0 30px 15px 65px;
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
@@ -307,7 +308,7 @@ md-slider .md-focus-ring {
 }
 
 .bar-container .swiper-container {
-  height: 100px;
+  height: 130px;
 }
 
 .swiper-container .bar-container {
@@ -316,7 +317,8 @@ md-slider .md-focus-ring {
 
 .bar-container .swiper-button-prev,
 .bar-container .swiper-button-next {
-  top: 95%;
+  top: auto;
+  bottom: 0;
   width: 24px;
   height: 24px;
   padding-left: 10px;

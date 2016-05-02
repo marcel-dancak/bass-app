@@ -333,7 +333,7 @@
 
           <ks-swiper-slide
             class="swiper-no-swiping"
-            ng-repeat="beat in slides.drums">
+            ng-repeat="beat in slides.drums track by beat.id">
             <div
               ng-include src="'views/drums_board_slide.html'">
             </div>

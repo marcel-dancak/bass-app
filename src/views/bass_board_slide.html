@@ -41,7 +41,7 @@
           ghost: subbeat.note.name==='x'
         }"
         ng-style="{
-          width: subbeat.ui.width
+          width: (subbeat.ui.width*section.timeSignature.bottom)+'%'
         }">
         <div
           class="resize-container"
