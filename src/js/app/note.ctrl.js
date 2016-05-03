@@ -5,10 +5,9 @@
     .module('bd.app')
     .controller('NoteController', NoteController);
 
-  function NoteController($scope, $element, $timeout, $mdMenu, audioPlayer) {
+  function NoteController($scope, $timeout, $mdMenu, audioPlayer) {
     console.log('NOTE CONTROLLER');
     console.log($scope);
-    console.log($element[0]);
     $scope.selected = {subbeat: null};
 
     $scope.bass.strings.forEach(function(string) {
@@ -207,19 +206,21 @@
       if (sound.note.name === 'x') {
         sound.noteLength.length = 1/16;
       }
-      var length = sound.noteLength.length;
-      if (sound.noteLength.dotted) {
-        length *= 1.5;
-      }
-      if (sound.noteLength.staccato) {
-        //length -= 0.1;
-      }
-      if (!sound.hasOwnProperty('ui')) {
-        sound.ui = {};
-      }
       sound.fret = $scope.bass.stringFret(sound.string, sound.note);
-      // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
-      sound.ui.width = 100*(length*4);
+      if (sound.noteLength) {
+        var length = sound.noteLength.length;
+        if (sound.noteLength.dotted) {
+          length *= 1.5;
+        }
+        if (sound.noteLength.staccato) {
+          //length -= 0.1;
+        }
+        if (!sound.hasOwnProperty('ui')) {
+          sound.ui = {};
+        }
+        // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
+        sound.ui.width = 100*(length*4);
+      }
     };
 
     $scope.onDragEnter = function(evt, $data) {
@@ -315,16 +316,18 @@
       });
     };
 
-    $scope.nextNoteLabel = function(subbeat) {
-      console.log(subbeat.note.name);
-      var index = $scope.notesLabels.indexOf(subbeat.note.name)+1;
-      index = index % $scope.notesLabels.length;
-      subbeat.note.name = $scope.notesLabels[index];
-    };
-
     $scope.playSound = function(sound) {
       audioPlayer.playSound(sound);
     };
+
+    $scope.section.bars.forEach(function(bar) {
+      console.log(bar);
+      bar.bass.forEach(function(subbeats) {
+        subbeats.forEach(function(subbeat) {
+          $scope.updateBassSound(subbeat);
+        });
+      });
+    });
   }
 
 })();

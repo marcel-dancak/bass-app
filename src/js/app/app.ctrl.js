@@ -177,38 +177,6 @@
       bottom: 4
     };
 
-    var beatTemplate = [
-      {
-        name: '',
-      }, {
-        name: 'i',
-      }, {
-        name: 'and'
-      }, {
-        name: 'a'
-      }
-    ];
-    /*
-    var subbeatsCount = timeSignature.bottom / 16;
-    for (var subbeat=1; beat < subbeatsCount; subbeat++) {
-      subbeats.push({});
-    }*/
-    var barLabels = {
-      timeSignature: timeSignature,
-      subbeats: [],
-    };
-    for (var i=1; i <= 12; i++) {
-      var subbeats = angular.copy(beatTemplate);
-      subbeats[0].name = '{0}'.format(i);
-      subbeats.forEach(function(subbeat, index) {
-        subbeat.beat = i;
-        subbeat.index = index+1;
-      });
-      barLabels.subbeats = barLabels.subbeats.concat(subbeats);
-    }
-    $scope.barLabels = barLabels;
-
-
     function newBar(barIndex) {
 
       var labels = [];
@@ -269,10 +237,6 @@
         }
       };
     }
-    var data = newBar();
-
-
-    $scope.drumsData = [];
 
     $scope.section = {
       timeSignature: timeSignature,
@@ -319,7 +283,6 @@
           $scope.slides.bass.push(bassData);
           $scope.slides.drums.push(drumsData);
           $scope.slides.bars.push(barData.labels[beat]);
-          console.log(barData.labels[beat]);
         }
 
         if (beat === timeSignature.top) {
@@ -407,12 +370,8 @@
     function beatSync(barIndex, beat, bpm) {
       console.log('BEAT');
       audioVisualiser.beatSync(barIndex, beat, bpm);
-      // if (beat === timeSignature.top) {
-      //   $scope.barSwiper.slideNext(false, 1000);
-      // }
       var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
       $scope.barSwiper.slideTo(slide, 300, false);
-        // $scope.barSwiper.slideNext(false, 1000);
     }
     $scope.play = function() {
       $scope.player.playing = true;

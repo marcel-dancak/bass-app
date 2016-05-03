@@ -13,23 +13,6 @@
     });
     audioPlayer.bufferLoader.loadResources(resources);
 
-    var drumsData = $scope.drumsData;
-    var beat, subbeat;
-    for (beat = 0; beat < 12; beat++) {
-      for (subbeat = 0; subbeat < 4; subbeat++) {
-        var list = new Array($scope.bass.strings);
-        $scope.drums.forEach(function(drum, index) {
-          list[index] = {
-            beat: beat,
-            subbeat: subbeat,
-            drum: drum,
-            volume: 0.0
-          };
-        });
-        drumsData.push(list);
-      }
-    }
-
     $scope.toggleDrum = function(sound) {
       var index = drumsVolumeLevels.indexOf(sound.volume);
       var nextIndex = (index+1) % drumsVolumeLevels.length;
