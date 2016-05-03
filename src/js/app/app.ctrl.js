@@ -352,33 +352,42 @@
     var timelineElem = document.getElementById('time-marker');
     timelineElem.style.visibility = "hidden";
     function timelineRedraw() {
-      var elapsed = context.currentTime - audioPlayer.startTime;
-      var beatTime = 60 / $scope.player.bpm;
-      var barTime = beatTime * bar.timeSignature.top;
-      var barStartTime = parseInt(elapsed/barTime) * barTime;
-      var fraction = (elapsed - barStartTime) / barTime;
+      if ($scope.barSlideElement) {
+        var elapsed = context.currentTime - $scope.barSlideStartTime;
+        var beatTime = 60 / $scope.player.bpm;
+        var fraction = elapsed / beatTime;
 
-      if ($scope.player.playing) {
-        timelineElem.style.left = 100*fraction+'%';
-        // timelineElem.setAttribute('style', 'left: '+(100*fraction)+'%');
-        requestAnimationFrame(timelineRedraw);
-      } else {
-        timelineElem.style.left = 0;
-        timelineElem.style.visibility = "hidden";
+        var barBox = $scope.barSlideElement.getBoundingClientRect();
+        if ($scope.player.playing) {
+          timelineElem.style.left = barBox.left+fraction*barBox.width+'px';
+          requestAnimationFrame(timelineRedraw);
+        } else {
+          timelineElem.style.left = 0;
+          timelineElem.style.visibility = "hidden";
+        }
       }
     }
     function beatSync(barIndex, beat, bpm) {
-      console.log('BEAT');
       audioVisualiser.beatSync(barIndex, beat, bpm);
       var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
       $scope.barSwiper.slideTo(slide, 300, false);
+      var barSlideElement = $scope.barSwiper.$('.swiper-slide')[slide];
+      $scope.barSlideStartTime = context.currentTime;
+      if (!$scope.barSlideElement) {
+        $scope.barSlideElement = barSlideElement;
+        timelineRedraw();
+      } else {
+        $scope.barSlideElement = barSlideElement;
+      }
     }
+
     $scope.play = function() {
       $scope.player.playing = true;
       // audioVisualiser.reset();
       audioPlayer.setBpm($scope.player.bpm);
       audioVisualiser.enabled = true;
       audioVisualiser.beat = null;
+      $scope.barSlideElement = null;
       audioPlayer.play(
         {
           timeSignature: $scope.section.timeSignature,
@@ -388,8 +397,7 @@
         //audioVisualiser.beatSync.bind(audioVisualiser)
         beatSync
       );
-      // timelineElem.style.visibility = "visible";
-      // timelineRedraw();
+      timelineElem.style.visibility = "visible";
     };
 
     $scope.stop = function() {
