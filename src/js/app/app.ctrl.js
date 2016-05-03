@@ -8,7 +8,7 @@
 
   function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel) {
     var analyser = context.createAnalyser();
-    analyser.fftSize = 1024;
+    analyser.fftSize = 4096;
     analyser.connect(context.destination);
     audioPlayer.bass.audio.connect(analyser);
     audioPlayer.drums.audio.connect(context.destination);
@@ -377,11 +377,11 @@
         audioPlayer.setBpm($scope.player.bpm);
         audioPlayer.play(
           {
-            timeSignature: timeSignature,
-            bass: $scope.bassData,
-            drums: $scope.drumsData
+            timeSignature: $scope.section.timeSignature,
+            bars: $scope.section.bars,
+            length: $scope.section.length
           },
-          audioVisualiser.beatSync.bind(audioVisualiser)
+          beatSync
         );
       }
     });
@@ -404,13 +404,13 @@
         timelineElem.style.visibility = "hidden";
       }
     }
-    function beatSync(barIndex, beat, timeSignature, bpm) {
+    function beatSync(barIndex, beat, bpm) {
       console.log('BEAT');
-      audioVisualiser.beatSync(barIndex, beat, timeSignature, bpm);
+      audioVisualiser.beatSync(barIndex, beat, bpm);
       // if (beat === timeSignature.top) {
       //   $scope.barSwiper.slideNext(false, 1000);
       // }
-      var slide = (barIndex-1)*timeSignature.top+beat-1;
+      var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
       $scope.barSwiper.slideTo(slide, 300, false);
         // $scope.barSwiper.slideNext(false, 1000);
     }
@@ -419,10 +419,12 @@
       // audioVisualiser.reset();
       audioPlayer.setBpm($scope.player.bpm);
       audioVisualiser.enabled = true;
+      audioVisualiser.beat = null;
       audioPlayer.play(
         {
           timeSignature: $scope.section.timeSignature,
           bars: $scope.section.bars,
+          length: $scope.section.length
         },
         //audioVisualiser.beatSync.bind(audioVisualiser)
         beatSync

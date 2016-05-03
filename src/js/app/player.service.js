@@ -73,7 +73,7 @@
 
     AudioPlayer.prototype.playback = function(arg) {
       var timeSignature = this.composition.timeSignature;
-      var barsCount = this.composition.bars.length;
+      var barsCount = this.composition.length;
       if (this.playing) {
         var playTime = context.currentTime-this.startTime;
         if (playTime > this.subbeatIndex*this.subbeatTime) {
@@ -84,18 +84,15 @@
               this.beatIndex = 1;
               this.barIndex = (this.barIndex +1) % barsCount;
             }
+            // console.log('bar: '+(this.barIndex+1)+' / '+barsCount);
+            // console.log('beat: '+this.beatIndex);
+            // console.log('subbeat: '+(subbeat+1));
             this.beatCallback(
               this.barIndex+1,
               this.beatIndex,
-              timeSignature,
               this.bpm
             );
           }
-          /*
-          console.log('bar: '+(this.barIndex+1));
-          console.log('beat: '+this.beatIndex);
-          console.log('subbeat: '+(subbeat+1));
-          */
           var bar = this.composition.bars[this.barIndex];
           
           var drumsSounds = bar.drums[subbeat];
@@ -210,7 +207,7 @@
       var resources = [];
       // var resourcesIndexes = {};
       var barIndex, bar, subbeatIndex, string;
-      for (barIndex = 0; barIndex < composition.bars.length; barIndex++) {
+      for (barIndex = 0; barIndex < composition.length; barIndex++) {
         bar = composition.bars[barIndex];
         for (subbeatIndex = 0; subbeatIndex < composition.timeSignature.top*4; subbeatIndex++) {
           for (string = 0; string < 4; string++) {
