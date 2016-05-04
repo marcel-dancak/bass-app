@@ -293,9 +293,3 @@ input[type=number]::-webkit-inner-spin-button {
   margin-left: 6px;
   left: 10px;
 }
-
-
-.swiper-slide {
-  xborder: solid red;
-  xborder-width: 0 1px;
-}

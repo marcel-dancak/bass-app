@@ -318,15 +318,19 @@
     };
 
     $scope.beatsPerSlideChenged = function() {
-      console.log($scope.barSwiper.params);
       $scope.barSwiper.params.slidesPerGroup = $scope.section.beatsPerSlide;
+      $scope.bassSwiper.params.slidesPerGroup = $scope.section.beatsPerSlide;
+      $scope.drumsSwiper.params.slidesPerGroup = $scope.section.beatsPerSlide;
       $scope.barSwiper.updateSlidesSize();
+      $scope.bassSwiper.updateSlidesSize();
+      $scope.drumsSwiper.updateSlidesSize();
     };
 
     $scope.slidesPerViewChanged = function() {
       $scope.barSwiper.params.slidesPerView = $scope.section.slidesPerView;
       $scope.bassSwiper.params.slidesPerView = $scope.section.slidesPerView;
       $scope.drumsSwiper.params.slidesPerView = $scope.section.slidesPerView;
+
       $scope.barSwiper.updateSlidesSize();
       $scope.bassSwiper.updateSlidesSize();
       $scope.drumsSwiper.updateSlidesSize();
@@ -518,7 +522,6 @@
       console.log('Bar');
       console.log(swiper);
       $scope.barSwiper = swiper;
-      $scope.beatsPerSlideChenged();
     };
     $scope.onBassSwiper = function(swiper) {
       console.log('Bass');
@@ -531,7 +534,7 @@
       console.log(swiper);
       $scope.drumsSwiper = swiper;
       $scope.barSwiper.params.control.push(swiper);
+      $scope.beatsPerSlideChenged();
     };
-    
   }
 })();
