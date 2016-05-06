@@ -47,10 +47,10 @@
 }
 .volume-meter {
   background-color: #ff5722;
-  border-radius: 15px;
   width: 30px;
   height: 30px;
-  transition: transform 0.3s cubic-bezier(0.35, 0.8, 0.25, 1) 0s
+  border-radius: 15px;
+  transition: transform 0.3s ease 0s;
 }
 
 .drum-sound.on-drag-hover {

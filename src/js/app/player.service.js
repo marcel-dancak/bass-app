@@ -51,6 +51,7 @@
           if (note.name === 'x') {
             return ['sounds/bass/finger/X{1}'.format(noteFileName[note.name], sound.string.index+1)];
           }
+          // return ['sounds/bass/finger/sine'.format(noteFileName[note.name], note.octave||'')];
           return ['sounds/bass/finger/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
         }
       },/*
@@ -94,9 +95,10 @@
             );
           }
           var bar = this.composition.bars[this.barIndex];
-          
-          var drumsSounds = bar.drums[subbeat];
-          drumsSounds.forEach(function(sound) {
+          var drumsSounds = bar.drumsBeats[this.beatIndex-1].subbeats[subbeat % 4];
+          var drumName;
+          for (drumName in drumsSounds) {
+            var sound = drumsSounds[drumName];
             if (sound.volume > 0) {
               var audioData = this.bufferLoader.loadResource(sound.drum.filename);
               if (audioData) {
@@ -109,7 +111,7 @@
                 source.start(context.currentTime, 0, sound.drum.duration);
               }
             }
-          }, this);
+          };
 
           // console.log('subbeat: '+subbeat);
           var stringsSounds = bar.bass[subbeat];

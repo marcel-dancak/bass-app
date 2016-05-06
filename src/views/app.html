@@ -139,29 +139,29 @@
       layout="row"
       class="present-field">
       <md-input-container>
-        <label>Bar</label>
+        <label>Section</label>
         <input
           type="text"
-          ng-model="bass.present.name">
+          ng-model="section.name">
       </md-input-container>
       <md-input-container>
         <md-select
-          ng-show="bass.presents.length > 1"
-          aria-label="Bar Present"
+          ng-show="project.sections.length > 0"
+          aria-label="Section"
           class="select-editable"
-          ng-model="bass.$selectedPresent"
-          md-on-close="loadBassPresent(bass.$selectedPresent)">
+          ng-model="project.selectedSection"
+          md-on-close="loadSection(project.selectedSection)">
           <md-option
-            ng-repeat="present in bass.presents"
-            ng-value="present">
-            {{ present.name }}
+            ng-repeat="section in project.sections"
+            ng-value="section">
+            {{ section }}
           </md-option>
         </md-select>
       </md-input-container>
       <md-button
         aria-label="Save"
         class="toolbar-button"
-        ng-click="saveBar()">
+        ng-click="saveSection()">
         <md-icon
           md-svg-icon="pen">
         </md-icon>
@@ -179,13 +179,13 @@
           class="md-whiteframe-16dp">
           <md-menu-item>
             <md-button
-              ng-click="newBar()">
+              ng-click="newSection()">
               New
             </md-button>
           </md-menu-item>
           <md-menu-item>
             <md-button
-              ng-click="deleteBar(bass.$selectedPresent)">
+              ng-click="deleteSection(bass.$selectedPresent)">
               Delete
             </md-button>
           </md-menu-item>
@@ -213,11 +213,6 @@
         roundLengths: true
       }">
 
-<!--       <ks-swiper-slide ng-repeat="barSlide in slides.bars">
-        <div
-          ng-include src="'views/bar.html'">
-        </div>
-      </ks-swiper-slide> -->
       <ks-swiper-slide ng-repeat="beat in slides.bars track by beat.id">
         <div
           class="beat"
@@ -289,21 +284,6 @@
           ng-include src="'views/bass_board_slide.html'">
         </div>
       </ks-swiper-slide>
-
-      <!-- <ks-swiper-slide
-        class="swiper-no-swiping"
-        ng-repeat="beat in slides.bass"
-        style="z-index: {{ ::50-$index}};">
-        <div class="audio-graph-container">
-          <canvas
-            id="canvas_{{ ::beat[0][0].index }}_{{ ::beat[0][0].beat+1 }}"
-            class="audio-graph">
-          </canvas>
-        </div>
-        <div
-          ng-include src="'views/bass_board_slide.html'">
-        </div>
-      </ks-swiper-slide> -->
     </ks-swiper-container>
   </div>
 
@@ -353,39 +333,6 @@
   </md-tabs>
 
   <div id="time-marker" class="time-marker"></div>
-
-  <md-tabs
-    ng-if="xxx"
-    md-no-ink
-    layout-fill
-    class="instruments-tabs"
-    md-selected="instrumentIndex"
-    xng-init="instrumentIndex=1">
-    <md-tab label="bass">
-      <div class="audio-graph-container">
-        <canvas
-          id="canvas"
-          class="audio-graph">
-        </canvas>
-      </div>
-
-      <div
-        ng-controller="NoteController"
-        ng-include src="'views/bass_board.html'">
-      </div>
-
-      <div
-        style="margin-bottom: 20px;"
-        ng-include src="'views/fretboard.html'">
-      </div>
-    </md-tab>
-
-    <md-tab label="drums">
-      <div
-        ng-include src="'views/drums_board.html'">
-      </div>
-    </md-tab>
-  </md-tabs>
 
   <div flex></div>
 </div>

@@ -6,36 +6,41 @@
       flex
       layout="column"
       class="drums-column"
-      ng-repeat="drumSubbeats in beat">
+      ng-repeat="drumSubbeats in beat.subbeats">
 
       <div
         flex
         aria-label="Drum sound"
-        ng-repeat="subbeat in drumSubbeats"
+        class="drum-sound-box no-hover"
 
-        class="drum-sound-box no-hover">
+        ng-repeat="drum in drums"
+        ng-init="subbeat=drumSubbeats[drum.name]">
         <div
           class="drum-sound"
           msd-wheel="volumeControl(subbeat, $delta/10)"
           ng-click="toggleDrum(subbeat)"
 
           ui-draggable="true"
-          drag-channel="{{ ::subbeat.drum.label }}"
-          drop-channel="{{ ::subbeat.drum.label }}"
-          drag="subbeat"
-          ui-on-drop="onDrop($event, $data, subbeat, drumsData)"
-
+          drag-channel="{{ ::drum.label }}"
+          drop-channel="{{ ::drum.label }}"
+          drag="{
+            sound: subbeat,
+            bar: beat.bar,
+            beat: beat.beat,
+            subbeat: $parent.$index+1
+          }"
+          ui-on-drop="onDrop($event, $data, subbeat, section)"
           >
           <div
             class="volume-meter"
-            style="transform: scale({{ subbeat.volume }}, {{ subbeat.volume }});"
-            xng-style="{
+            xstyle="transform: scale({{ subbeat.volume }}, {{ subbeat.volume }});"
+            ng-style="{
               transform: 'scale('+subbeat.volume+','+subbeat.volume+')'
             }">
+            <span>&nbsp</span>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>

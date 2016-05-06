@@ -32,14 +32,12 @@
       }
     };
 
-    $scope.onDrop = function($event, $data, subbeat, drumsData) {
-      subbeat.volume = $data.volume;
-
+    $scope.onDrop = function($event, $data, subbeat, section) {
+      subbeat.volume = $data.sound.volume;
+      console.log($data);
       if (angular.isDefined($data.beat) && $event.dataTransfer.dropEffect === "move") {
-        var srcSubbeat = drumsData[$data.beat*4+$data.subbeat].find(function(s) {
-          return s.drum.label === subbeat.drum.label;
-        });
-        srcSubbeat.volume = 0;
+        var srcBeat = section.bars[$data.bar-1].drumsBeats[$data.beat-1];
+        srcBeat.subbeats[$data.subbeat-1][$data.sound.drum.name].volume = 0;
       }
     };
 
