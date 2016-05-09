@@ -15,58 +15,64 @@
     <div
       class="subbeat-tab"
       layout="column"
-      ng-repeat="bassSubbeats in beat">
+      ng-repeat="bassSubbeats in beat.subbeats">
 
-      <div
+<!--       <div
         class="tab-top-marker"
         ng-show="subbeat.noteLength.staccato">
         .
-      </div>
+      </div> -->
       <div
         flex
-        ng-repeat="subbeat in bassSubbeats | orderBy:string.index:'-'"
+        ng-repeat="string in bass.strings | orderBy:string.index:'-'"
+        ng-init="grid={
+          bar: beat.bar,
+          beat: beat.beat,
+          subbeat: $parent.$index+1,
+          string: string.index,
+          sound: bassSubbeats[string.index].sound
+        }"
         ui-draggable="true"
-        drag="subbeat"
-        ui-on-drop="onDrop($event, $data, subbeat, section)"
-        drop-validate="dropValidation(subbeat, $data)"
-        ui-on-drag-enter="onDragEnter($event, subbeat)"
-        ui-on-drag-leave="onDragLeave($event, subbeat)"
+        drag="grid"
+        drop-validate="dropValidation(grid, $data)"
+        ui-on-drag-enter="onDragEnter($event, grid)"
+        ui-on-drag-leave="onDragLeave($event, grid)"
+        ui-on-drop="onDrop($event, $data, grid, section)"
 
-        ng-click="selected.subbeat=subbeat"
-        ng-attr-octave="{{ subbeat.note.octave }}"
+        ng-click="selected.grid=grid"
+        ng-attr-octave="{{ grid.sound.note.octave }}"
         class="tab-note-container"
         ng-class="{
-          active: subbeat.note.name,
-          selected: selected.subbeat===subbeat,
-          ghost: subbeat.note.name==='x'
+          active: grid.sound.note.name,
+          selected: selected.grid===grid,
+          ghost: grid.sound.note.name==='x'
         }"
         ng-style="{
-          width: (subbeat.ui.width*section.timeSignature.bottom)+'%'
+          width: (100*section.timeSignature.bottom*grid.sound.noteLength.beatLength)+'%'
         }">
         <div
           class="resize-container"
-          ng-if="subbeat.note.name && subbeat.note.name !== 'x'"
+          ng-if="grid.sound && grid.sound.note && grid.sound.note.name !== 'x'"
           resizable
           r-directions="['right']"
-          on-resize="onResize(subbeat, info)"
-          on-resize-start="onResizeStart(subbeat, info)"
-          on-resize-end="onResizeEnd(subbeat, info)">
+          on-resize="onResize(grid, info)"
+          on-resize-start="onResizeStart(grid, info)"
+          on-resize-end="onResizeEnd(grid, info)">
         </div>
         <md-button
           md-no-ink
           aria-label="Subbeat"
           class="tab-button"
-          xng-mouseover="setSubbeatMenu(subbeat)"
-          ng-click="openSubbeatMenu($event, subbeat)">
+          ng-click="openBassSoundMenu($event, grid)">
           <md-icon
-            md-svg-icon="{{ subbeat.note.name? 'menu-dots' : 'plus' }}">
+            md-svg-icon="{{ grid.sound.note? 'menu-dots' : 'plus' }}">
           </md-icon>
         </md-button>
         <label>
-          {{ subbeat.note.name }}<sub>{{ subbeat.note.octave }}</sub>
+          {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
         </label>
         <label class="fret">
-          &nbsp( {{ subbeat.fret }} )
+          &nbsp( {{ grid.sound.fret }} )
         </label>
       </div>
     </div>

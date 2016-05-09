@@ -6,7 +6,7 @@
     .controller('AppController', AppController)
     .value('context', new AudioContext());
 
-  function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel) {
+  function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel, Section) {
     var analyser = context.createAnalyser();
     analyser.fftSize = 4096;
     analyser.connect(context.destination);
@@ -33,11 +33,10 @@
         });
         return octaves;
       },
-      stringFret: function(string, note) {
+      stringFret: function(stringIndex, note) {
         var noteName = note.name + note.octave;
-        // console.log(noteName+' on '+string.label);
         var index = bassNotes.list.indexOf(bassNotes.map[noteName]);
-        var fret = index - string.noteIndex;
+        var fret = index - $scope.bass.strings[stringIndex].noteIndex;
         return (fret >= 0 && fret <= 24)? fret : -1;
       },
       strings: [
@@ -170,89 +169,20 @@
       }
     ];
 
-    function newBar(barIndex) {
-
-      var labels = [];
-      var bassData = [];
-      var drumsData = [];
-      var bassBeats = [];
-      var drumsBeats = [];
-      var beat, subbeat;
-      for (beat = 0; beat < 13; beat++) {
-        var bassSubbeats = [];
-        var drumsBeat = {
-          subdivision: 4,
-          bar: barIndex,
-          beat: beat+1,
-          subbeats: []
-        };
-        for (subbeat = 0; subbeat < 4; subbeat++) {
-          var bassSubbeatData = new Array($scope.bass.strings);
-          $scope.bass.strings.forEach(function(string) {
-            bassSubbeatData[string.index] = {
-              string: string,
-              index: barIndex,
-              beat: beat,
-              subbeat: subbeat,
-              note: {
-                style: 'finger',
-                length: 1/8,
-                volume: 0.75
-              },
-              width: 1
-            };
-          });
-          var drumSubbeatGrid = {};
-          $scope.drums.forEach(function(drum) {
-            drumSubbeatGrid[drum.name] = {
-              // bar: barIndex,
-              // beat: beat+1,
-              // subbeat: subbeat+1,
-              drum: drum,
-              volume: 0.0
-            }
-          });
-          bassData.push(bassSubbeatData);
-          // drumsData.push(drumSubbeatGrid);
-          drumsBeat.subbeats.push(drumSubbeatGrid);
-        }
-        drumsBeats.push(drumsBeat);
-        labels.push({
-          id: barIndex+'_'+beat,
-          bar: barIndex,
-          subbeats: [beat, 'i', 'and', 'a']
-        });
-      }
-      return {
-        labels: labels,
-        bass: bassData,
-        drumsBeats: drumsBeats,
-
-        nextSubbeat: function(subbeat) {
-          //TODO: subdivision count
-          return this.bassData[subbeat._index+1];
-        },
-        prevSubbeat: function(subbeat) {
-          return this.bassData[subbeat._index-1];
-        }
-      };
-    }
-
-    $scope.section = {
+    $scope.section = new Section($scope.bass, $scope.drums, {
       timeSignature: {
         top: 4,
         bottom: 4
       },
-      bars: [],
-      beatsPerSlide: 2,
-      slidesPerView: 5,
       length: 2
-    };
+    });
 
     $scope.slides = {
       bars: [],
       bass: [],
-      drums: []
+      drums: [],
+      beatsPerSlide: 2,
+      slidesPerView: 5
     };
 
     function updateSlides() {
@@ -261,43 +191,18 @@
       $scope.slides.bass = [];
       $scope.slides.drums = [];
 
-      var bar = 1;
-      var beat = 1;
-      var barData = $scope.section.bars[bar-1];
-      if (!angular.isDefined(barData)) {
-        barData = newBar(bar);
-        $scope.section.bars.push(barData);
-      }
-      
-      var i = 0;
-      while (bar <= $scope.section.length) {
-        
-        if (!$scope.slides.bass[i]) {
-          var start = (beat-1)*4;
-          var bassData = barData.bass.slice(start, start+4);
-          var drumsBeat = barData.drumsBeats[beat-1];
-          var beatId = bassData[0][0].index+'_'+bassData[0][0].beat;
-          bassData.id = beatId;
-          drumsBeat.id = beatId;
-          $scope.slides.bass.push(bassData);
-          $scope.slides.drums.push(drumsBeat);
-          console.log(drumsBeat);
-          $scope.slides.bars.push(barData.labels[beat]);
-        }
-
-        if (beat === timeSignature.top) {
-          bar++;
-          var barData = $scope.section.bars[bar-1];
-          if (!angular.isDefined(barData)) {
-            barData = newBar(bar);
-            $scope.section.bars.push(barData);
-          }
-          beat = 1;
-        } else {
-          beat++;
-        }
-        i++;
-      }
+      $scope.section.forEachBeat(function(beat) {
+        var beatId = beat.bar+'_'+beat.index;
+        beat.bass.id = beatId;
+        beat.drums.id = beatId;
+        $scope.slides.bass.push(beat.bass);
+        $scope.slides.drums.push(beat.drums);
+        $scope.slides.bars.push({
+          id: beatId,
+          bar: beat.bar,
+          subbeats: [beat.index, 'i', 'and', 'a']
+        });
+      });
     }
 
     $scope.renderingBar = function(index) {
@@ -305,6 +210,8 @@
     };
 
     $scope.sectionConfigChanged = function() {
+      console.log($scope.section.length);
+      $scope.section.setLength($scope.section.length);
       if ($scope.section.length > 0 && $scope.section.length < 20 &&
         $scope.section.timeSignature.top > 1 && $scope.section.timeSignature.top < 13) {
         updateSlides();
@@ -317,18 +224,18 @@
     };
 
     $scope.beatsPerSlideChenged = function() {
-      $scope.barSwiper.params.slidesPerGroup = $scope.section.beatsPerSlide;
-      $scope.bassSwiper.params.slidesPerGroup = $scope.section.beatsPerSlide;
-      $scope.drumsSwiper.params.slidesPerGroup = $scope.section.beatsPerSlide;
+      $scope.barSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+      $scope.bassSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+      $scope.drumsSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
       $scope.barSwiper.updateSlidesSize();
       $scope.bassSwiper.updateSlidesSize();
       $scope.drumsSwiper.updateSlidesSize();
     };
 
     $scope.slidesPerViewChanged = function() {
-      $scope.barSwiper.params.slidesPerView = $scope.section.slidesPerView;
-      $scope.bassSwiper.params.slidesPerView = $scope.section.slidesPerView;
-      $scope.drumsSwiper.params.slidesPerView = $scope.section.slidesPerView;
+      $scope.barSwiper.params.slidesPerView = $scope.slides.slidesPerView;
+      $scope.bassSwiper.params.slidesPerView = $scope.slides.slidesPerView;
+      $scope.drumsSwiper.params.slidesPerView = $scope.slides.slidesPerView;
 
       $scope.barSwiper.updateSlidesSize();
       $scope.bassSwiper.updateSlidesSize();
@@ -356,11 +263,7 @@
         audioPlayer.stop();
         audioPlayer.setBpm($scope.player.bpm);
         audioPlayer.play(
-          {
-            timeSignature: $scope.section.timeSignature,
-            bars: $scope.section.bars,
-            length: $scope.section.length
-          },
+          $scope.section,
           beatSync
         );
       }
@@ -387,7 +290,7 @@
     function beatSync(barIndex, beat, bpm) {
       audioVisualiser.beatSync(barIndex, beat, bpm);
       var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
-      $scope.barSwiper.slideTo(slide, 300, false);
+      $scope.barSwiper.slideTo(slide, 100, false);
       var barSlideElement = $scope.barSwiper.$('.swiper-slide')[slide];
       $scope.barSlideStartTime = context.currentTime;
       if (!$scope.barSlideElement) {
@@ -405,11 +308,7 @@
       audioVisualiser.beat = null;
       $scope.barSlideElement = null;
       audioPlayer.play(
-        {
-          timeSignature: $scope.section.timeSignature,
-          bars: $scope.section.bars,
-          length: $scope.section.length
-        },
+        $scope.section,
         beatSync
       );
       timelineElem.style.visibility = "visible";
@@ -519,27 +418,23 @@
       $scope.section.timeSignature = sectionData.timeSignature;
 
       // clear current section data
-      $scope.section.bars.forEach(function(bar, barIndex) {
-        var beatIndex;
-        for (beatIndex = 0; beatIndex < sectionData.timeSignature.top; beatIndex++) {
-          var drumsBeat = bar.drumsBeats[beatIndex];
-          drumsBeat.subbeats.forEach(function(subbeat) {
-            var drumName, drumSound;
-              for (drumName in subbeat) {
-                if (!drumName.startsWith('$$')) {
-                  drumSound = subbeat[drumName]
-                  drumSound.volume = 0;
-                }
-              }
-          });
-        }
+      $scope.section.forEachBeat(function(beat) {
+        beat.drums.subbeats.forEach(function(subbeat) {
+          var drumName, drumSound;
+          for (drumName in subbeat) {
+            if (!drumName.startsWith('$$')) {
+              drumSound = subbeat[drumName]
+              drumSound.volume = 0;
+            }
+          }
+        });
       });
 
-      // override loading section data
+      // override selected section data
       sectionData.beats.forEach(function(beat) {
         beat.drums.sounds.forEach(function(drumSound) {
-          console.log(drumSound);
-          $scope.section.bars[beat.bar-1].drumsBeats[beat.beat-1].subbeats[drumSound.subbeat-1][drumSound.drum].volume = drumSound.volume;
+          var subbeat = $scope.section.drumsSubbeat(beat.bar, beat.beat, drumSound.subbeat);
+          subbeat[drumSound.drum].volume = drumSound.volume;
         });
       });
 
@@ -548,107 +443,6 @@
         $scope.sectionConfigChanged();
       }
     }
-
-    /*
-    console.log('-------------');
-    angular.extend($scope.section.bars[0].bass[0][1], {
-      style: 'finger',
-      volume: 0.75,
-      note: {
-        name: 'C',
-        octave: 2,
-        code: 'C2'
-      },
-      noteLength: {
-        length: 1/8
-      }
-    });
-    $scope.newBar = function() {
-      $scope.bass.present = {
-        name: 'New',
-        data: newBar()
-      };
-      $scope.bass.presents.push($scope.bass.present);
-      $scope.bassData = $scope.bass.present.data;
-    };
-
-    function deleteObsoletePresents() {
-      var actualPresentsKeys = $scope.bass.presents.map(function(present) {
-        return 'v5.bass.present.'+present.name;
-      });
-      var i;
-      for (i=0; i<localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (key.startsWith('v5.bass.present.') && actualPresentsKeys.indexOf(key) === -1) {
-          console.log('delete: '+key);
-          localStorage.removeItem(key);
-          break;
-        }
-      }
-    }
-
-    $scope.deleteBar = function(present) {
-      var index = $scope.bass.presents.indexOf(present);
-      $scope.bass.presents.splice(index, 1);
-      deleteObsoletePresents();
-      if ($scope.bass.presents) {
-        $scope.loadBassPresent($scope.bass.presents[0]);
-      } else {
-        $scope.bass.present = {name: ''};
-        $scope.bass.presents = [$scope.bass.present];
-      }
-    };
-
-    $scope.saveBar = function() {
-      deleteObsoletePresents();
-      var storageKey = 'v5.bass.present.'+$scope.bass.present.name;
-      $scope.bass.present.data = $scope.bassData;
-      console.log($scope.bass.present);
-
-      //var data = $scope.bass.presents.map(function(bar) {
-      var bar = $scope.bass.present;
-      var data = {
-        name: bar.name,
-        data: bar.data
-      };
-      console.log(data);
-      localStorage.setItem(storageKey, JSON.stringify(data));
-    };
-
-    $scope.loadBassPresent = function(present) {
-      if (present && present !== $scope.bass.present) {
-        console.log('Load: '+present.name);
-        $scope.bassData = present.data;
-        $scope.bass.present = present;
-      }
-    };
-
-    function loadSavedBars() {
-      var storageKey = 'v5.bass.presents';
-      var presents = [];
-      var i;
-      for (i=0; i<localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (key.startsWith('v5.bass.present.')) {
-          var present = JSON.parse(localStorage.getItem(key));
-          presents.push(present);
-        }
-      }
-      // console.log(presents);
-      // presents = null;
-      if (presents) {
-        $scope.bass.presents = presents;
-        $scope.loadBassPresent(presents[0]);
-      } else {
-        $scope.bass.present = {name: ''};
-        $scope.bass.presents = [$scope.bass.present];
-      }
-    }
-
-    loadSavedBars();
-    */
-
-    // $scope.swiper = {};
 
     $scope.onBarSwiper = function(swiper) {
       console.log('Bar');

@@ -49,7 +49,7 @@
         getResources: function(sound) {
           var note = sound.note;
           if (note.name === 'x') {
-            return ['sounds/bass/finger/X{1}'.format(noteFileName[note.name], sound.string.index+1)];
+            return ['sounds/bass/finger/X{1}'.format(noteFileName[note.name], sound.string+1)];
           }
           // return ['sounds/bass/finger/sine'.format(noteFileName[note.name], note.octave||'')];
           return ['sounds/bass/finger/{0}{1}'.format(noteFileName[note.name], note.octave||'')];
@@ -94,8 +94,7 @@
               this.bpm
             );
           }
-          var bar = this.composition.bars[this.barIndex];
-          var drumsSounds = bar.drumsBeats[this.beatIndex-1].subbeats[subbeat % 4];
+          var drumsSounds = this.composition.drumsSubbeat(this.barIndex+1, this.beatIndex, (subbeat % 4)+1);
           var drumName;
           for (drumName in drumsSounds) {
             var sound = drumsSounds[drumName];
@@ -113,12 +112,13 @@
             }
           };
 
-          // console.log('subbeat: '+subbeat);
-          var stringsSounds = bar.bass[subbeat];
+          var stringsSounds = this.composition.bassSubbeat(this.barIndex+1, this.beatIndex, (subbeat % 4)+1)
           // console.log(stringsSounds);
-          var sounds = stringsSounds.filter(function(sound) {
-            if (!sound.style || !sound.note.name) {
-              return;
+          var string, sound;
+          for (string = 0; string < 4; string++) {
+            sound = stringsSounds[string].sound;
+            if (!sound.style || !sound.note) {
+              continue;
             }
             var note = sound.note;
             // console.log(note.style+' '+note.name);
@@ -157,7 +157,7 @@
               };
               this.playingNotes.push(sound);
             }
-          }, this);
+          }
           this.subbeatIndex++;
         }
         if (this.playingNotes.length) {
@@ -198,38 +198,34 @@
       }
     }
 
-    AudioPlayer.prototype.play = function(composition, beatCallback) {
+    AudioPlayer.prototype.play = function(section, beatCallback) {
       console.log('PLAY');
       var player = this;
       this.beatCallback = angular.isFunction(beatCallback)? beatCallback : angular.noop;
       function afterLoad() {
-        player._play(composition);
+        player._play(section);
       }
 
       var resources = [];
-      // var resourcesIndexes = {};
-      var barIndex, bar, subbeatIndex, string;
-      for (barIndex = 0; barIndex < composition.length; barIndex++) {
-        bar = composition.bars[barIndex];
-        for (subbeatIndex = 0; subbeatIndex < composition.timeSignature.top*4; subbeatIndex++) {
-          for (string = 0; string < 4; string++) {
-            var bassSound = bar.bass[subbeatIndex][string];
-            if (bassSound.note.name && bassSound.style) {
-              var subbeatResources = bassSounds[bassSound.style].getResources(bassSound);
-              subbeatResources.forEach(function(resource) {
-                if (resources.indexOf(resource) === -1) {
-                  resources.push(resource);
-                }
-              });
-            }
+      section.forEachBassSubbeat(function(subbeat) {
+        var string;
+        for (string = 0; string < 4; string++) {
+          var bassSound = subbeat.data[string].sound;
+          if (bassSound.note && bassSound.style) {
+            var subbeatResources = bassSounds[bassSound.style].getResources(bassSound);
+            subbeatResources.forEach(function(resource) {
+              if (resources.indexOf(resource) === -1) {
+                resources.push(resource);
+              }
+            });
           }
         }
-      }
+      });
       console.log(resources);
       if (resources.length) {
         this.bufferLoader.loadResources(resources, afterLoad);
       } else {
-        player._play(composition);
+        player._play(section);
       }
     };
 

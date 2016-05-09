@@ -12,8 +12,8 @@
           <label class="md-label">Style</label>
           <md-select
             flex
-            ng-model="menu.subbeat.style"
-            md-on-close="updateNote(menu.subbeat)">
+            ng-model="menu.sound.style"
+            md-on-close="updateNote(menu.sound)">
             <md-option
               ng-repeat="style in playingStyles"
               ng-value="style">
@@ -28,9 +28,9 @@
           <label class="md-label">Note</label>
           <md-select
             md-container-class="note-select-menu"
-            ng-model="menu.subbeat.note"
+            ng-model="menu.sound.note"
             ng-model-options="{trackBy: '$value.code'}"
-            md-on-close="updateNote(menu.subbeat)">
+            md-on-close="updateNote(menu.sound)">
             <div layout="row">
             <span class="fret-index">( X )</span>
             <md-option
@@ -43,7 +43,7 @@
             </md-option>
             </div>
             <div
-              ng-repeat="note in menu.subbeat.string.notes"
+              ng-repeat="note in bass.strings[menu.grid.string].notes"
               layout="row">
               <span class="fret-index">( {{ $index }} )</span>
               
@@ -94,9 +94,9 @@
         <md-input-container flex="30">
           <label class="md-label">Length</label>
           <md-select
-            ng-model="menu.subbeat.noteLength.length"
-            md-on-close="updateBassSound(menu.subbeat)"
-            ng-disabled="!menu.subbeat.note.name || menu.subbeat.note.name==='x'">
+            ng-model="menu.sound.noteLength.length"
+            md-on-close="updateBassSound(menu.sound)"
+            ng-disabled="!menu.sound.note.name || menu.sound.note.name==='x'">
             <md-option
               ng-repeat="value in [
                 ['𝅝', 'Whole', 1],
@@ -115,17 +115,17 @@
           flex="30"
           class="md-primary"
           aria-label="Staccato"
-          ng-model="menu.subbeat.noteLength.dotted"
-          ng-disabled="menu.subbeat.note.name==='x'"
-          ng-change="updateBassSound(menu.subbeat)">
+          ng-model="menu.sound.noteLength.dotted"
+          ng-disabled="menu.sound.note.name==='x'"
+          ng-change="updateBassSound(menu.sound)">
           Dotted
         </md-checkbox>
         <md-checkbox
           flex="40"
           class="md-primary"
           aria-label="Staccato"
-          ng-model="menu.subbeat.noteLength.staccato"
-          ng-disabled="menu.subbeat.note.name==='x'">
+          ng-model="menu.sound.noteLength.staccato"
+          ng-disabled="menu.sound.note.name==='x'">
           Staccato
         </md-checkbox>
       </div>
@@ -141,11 +141,11 @@
             min="0"
             max="1"
             step="0.01"
-            ng-model="menu.subbeat.volume">
+            ng-model="menu.sound.volume">
         </md-input-container>
         <md-slider
           class="md-primary"
-          ng-model="menu.subbeat.volume"
+          ng-model="menu.sound.volume"
           aria-label="Volume"
           min="0"
           max="1"
@@ -155,7 +155,7 @@
         <md-button
           class="play-button"
           md-prevent-menu-close
-          ng-click="playSound(menu.subbeat)">
+          ng-click="playSound(menu.sound)">
           <md-icon md-svg-icon="play"></md-icon>
         </md-button>
       </div>

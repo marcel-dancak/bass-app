@@ -92,22 +92,21 @@
     var dragNote, dragElement;
     $scope.playingStyles = ['finger', 'slap', 'pop', 'tap', 'hammer', 'pull'];
 
-    $scope.clearNote = function(subbeat) {
-      console.log(subbeat);
-      subbeat.note = {};
-      subbeat.noteLength.length = 1/16;
-      $scope.updateBassSound(subbeat);
+    $scope.clearSound = function(subbeat) {
+      delete subbeat.note;
+      delete subbeat.noteLength;
       $scope.selected.subbeat = null;
     };
 
     var notesWidths;
     var widthToLength = {};
     var closestWidth;
-    $scope.onResizeStart = function(subbeat, info) {
+    $scope.onResizeStart = function(grid, info) {
       // console.log('onResizeStart');
       // console.log(info);
-      var length = subbeat.noteLength.dotted? subbeat.noteLength.length*1.5 : subbeat.noteLength.length;
-      var subbeatWidth = (info.width+4)/length;
+      var sound = grid.sound;
+      var length = sound.noteLength.beatLength/4;
+      var gridWidth = (info.width+4)/length;
       var noteLengths = [
         {
           length: 1,
@@ -141,7 +140,7 @@
       widthToLength = {};
       notesWidths = noteLengths.map(function(noteLength) {
         var length = noteLength.dotted? noteLength.length*1.5 : noteLength.length;
-        var width = length*subbeatWidth-2;
+        var width = length*gridWidth-2;
         widthToLength[width] = noteLength;
         return width;
       });
@@ -155,15 +154,15 @@
       $scope.$apply();
     };
 
-    $scope.onResizeEnd = function(subbeat, info) {
+    $scope.onResizeEnd = function(grid, info) {
       info.element.css('width', '');
-      angular.extend(subbeat.noteLength, widthToLength[closestWidth]);
-      $scope.updateBassSound(subbeat);
+      angular.extend(grid.sound.noteLength, widthToLength[closestWidth]);
+      $scope.updateBassSound(grid.sound);
       $scope.dropNote.visible = false;
       $scope.$apply();
     };
 
-    $scope.onResize = function(subbeat, info) {
+    $scope.onResize = function(grid, info) {
       var delta;
       var minDelta = notesWidths[0];
       notesWidths.forEach(function(width) {
@@ -177,29 +176,23 @@
       $scope.$apply();
     };
 
-    $scope.onDrop = function($event, $data, subbeat, section) {
+    $scope.onDrop = function($event, $data, grid, section) {
       // console.log('onDrop');
-      // console.log($event);
-      if (angular.isDefined($data.beat) && $event.dataTransfer.dropEffect === "move") {
-        console.log('MOVE');
-        //bar[$data.beat*4+$data.subbeat][$data.string.index].note = {};
-        //bar[$data.beat*4+$data.subbeat][$data.string.index].noteLength = {};
-        $scope.clearNote(section.bars[$data.index-1].bass[$data.beat*4+$data.subbeat][$data.string.index]);
-      }
-      //subbeat.note = $data.note;
-      delete $data.index;
-      delete $data.beat;
-      delete $data.subbeat;
-      delete $data.string;
-      angular.extend(subbeat, $data);
-      console.log('find fret of '+subbeat.note.name+' od string '+subbeat.string.index);
+      // console.log($data);
+      // console.log(grid);
 
-      $scope.updateBassSound(subbeat);
-      console.log(subbeat);
-      audioPlayer.fetchSoundResources(subbeat);
-      // subbeat.note = $data.note;
-      $scope.selected.subbeat = subbeat;
+      // grid.sound = angular.copy($data.sound? $data.sound : $data);
+      angular.extend(grid.sound, $data.sound? $data.sound : $data);
+      grid.sound.string = grid.string;
+      $scope.updateBassSound(grid.sound);
+      audioPlayer.fetchSoundResources(grid.sound);
+      $scope.selected.subbeat = grid;
       $scope.dropNote.visible = false;
+
+      if (angular.isDefined($data.beat) && $event.dataTransfer.dropEffect === "move") {
+        var sourceSound = section.bars[$data.bar-1].bassBeats[$data.beat-1].subbeats[$data.subbeat-1][$data.string].sound;
+        $scope.clearSound(sourceSound);
+      }
     };
 
     $scope.updateBassSound = function(sound) {
@@ -215,15 +208,14 @@
         if (sound.noteLength.staccato) {
           //length -= 0.1;
         }
-        if (!sound.hasOwnProperty('ui')) {
-          sound.ui = {};
-        }
         // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
-        sound.ui.width = 100*(length*4);
+        sound.noteLength.beatLength = length*4;
       }
     };
 
     $scope.onDragEnter = function(evt, $data) {
+      console.log('enter');
+
       var target = evt.target || evt.originalTarget;
       if (target.tagName === 'BUTTON') {
         // target = target.parentElement.parentElement;
@@ -234,7 +226,6 @@
         var box = target.getBoundingClientRect();
         $scope.dropNote.left = box.left;
         $scope.dropNote.top = box.top;
-        box
         if ($scope.dropNote.width === -1) {
           $scope.dropNote.width = target.clientWidth;
         }
@@ -247,25 +238,27 @@
 
     $scope.$root.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
       console.log('ANGULAR_DRAG_START');
+      console.log(data);
       dragNote = data.data;
+      var sound = data.data.sound;
       if (dragNote.source === 'fretboard') {
-        if (dragNote.note.label.length > 1 && e.clientX > e.target.offsetLeft+e.target.clientWidth/2) {
-          dragNote.note.name = dragNote.note.label[1];
+        if (sound.note.label.length > 1 && e.clientX > e.target.offsetLeft+e.target.clientWidth/2) {
+          sound.note.name = sound.note.label[1];
         } else {
-          dragNote.note.name = dragNote.note.label[0];
+          sound.note.name = sound.note.label[0];
         }
-        dragNote.note.code = dragNote.note.name+dragNote.note.octave;
-        delete dragNote.source;
+        sound.note.code = sound.note.name+sound.note.octave;
         // update transfer data
-        var transferDataText = angular.toJson(data);
+        console.log(sound.string);
+        console.log($scope.bass.strings);
+        var transferDataText = angular.toJson({data: sound});
         e.dataTransfer.setData('text', transferDataText);
-
-        // $scope.dropNote.width = e.target.clientWidth*(25/16);
+        console.log(transferDataText);
         $scope.dropNote.width = -1;
       } else {
         $scope.dropNote.width = e.target.clientWidth;
       }
-      if (!dragNote.noteLength) {
+      if (!sound.noteLength) {
         return;
       }
 
@@ -274,7 +267,6 @@
         setTimeout(function() {
           dragElement.addClass('drag-element');
         }, 100);
-        // $scope.bassData[dragNote.beat*4+dragNote.subbeat][dragNote.string.index].note = {};
       }
       $scope.$apply();
     });
@@ -287,29 +279,29 @@
       $scope.dropNote.visible = false;
     });
 
-    $scope.dropValidation = function(subbeat, $data) {
-      if (subbeat.note.name && subbeat.noteLength) {
+    $scope.dropValidation = function(grid, $data) {
+      // console.log(grid);
+      // console.log($data);
+      if (grid.sound.note) {
         return false;
       }
-      if ($data.note.name === 'x') {
+      if ($data.sound.note.name === 'x') {
         return true;
       }
-      var fret = $scope.bass.stringFret(subbeat.string, $data.note);
+      var fret = $scope.bass.stringFret(grid.string, $data.sound.note);
       return fret !== -1;
     };
 
-    $scope.setSubbeatMenu = function(subbeat) {
-      console.log('setSubbeatMenu');
-      $scope.menu.subbeat = subbeat;
-    };
-
-    $scope.openSubbeatMenu = function(evt, subbeat) {
+    $scope.openBassSoundMenu = function(evt, grid) {
+      console.log('openBassSoundMenu');
       var box = evt.target.getBoundingClientRect();
       $scope.menu.element.css('left', box.left+'px');
       $scope.menu.element.css('top', 32+box.top+'px');
 
       $mdMenu.hide().then(function() {
-        $scope.menu.subbeat = subbeat;
+        grid.sound.string = grid.string;
+        $scope.menu.sound = grid.sound;
+        $scope.menu.grid = grid;
         $timeout(function() {
           $scope.menu.open(evt);
         });
@@ -319,7 +311,7 @@
     $scope.playSound = function(sound) {
       audioPlayer.playSound(sound);
     };
-
+    /*
     $scope.section.bars.forEach(function(bar) {
       console.log(bar);
       bar.bass.forEach(function(subbeats) {
@@ -327,7 +319,7 @@
           $scope.updateBassSound(subbeat);
         });
       });
-    });
+    });*/
   }
 
 })();

@@ -23,16 +23,18 @@
       ui-draggable="true"
       drag="{
         source: 'fretboard',
-        style: 'finger',
-        note: {
-          label: ['x'],
-          octave: ''
-        },
-        noteLength: {
-          length: 1/16
-        },
-        volume: 0.75,
-        string: string
+        sound: {
+          style: 'finger',
+          note: {
+            label: ['x'],
+            octave: ''
+          },
+          noteLength: {
+            length: 1/16
+          },
+          volume: 0.75,
+          string: string.index
+        }
       }">
       x
     </div>
@@ -43,13 +45,12 @@
     layout="row">
     <div
       flex
-      xng-click="playBassNote(note)"
       ng-click="playBassSound({
         note: {
           name: note.label[0],
           octave: note.octave
         },
-        string: string
+        string: string.index
       })"
       class="fret-box octave-{{ ::note.octave }}"
       ng-repeat="note in string.notes"
@@ -57,17 +58,19 @@
       ui-draggable="true"
       drag="{
         source: 'fretboard',
-        style: 'finger',
-        note: {
-          label: note.label,
-          octave: note.octave
-        },
-        noteLength: {
-          length: 1/16
-        },
-        volume: 0.75,
-        string: string,
-        fret: $index
+        sound: {
+          style: 'finger',
+          note: {
+            label: note.label,
+            octave: note.octave
+          },
+          noteLength: {
+            length: 1/16
+          },
+          volume: 0.75,
+          string: string.index,
+          fret: $index
+        }
       }"
       >
       {{ ::note.label.join(' / ') }}
