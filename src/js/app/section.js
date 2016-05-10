@@ -33,7 +33,7 @@
       var bassBeats = [];
       var drumsBeats = [];
       var beat, subbeat;
-      for (beat = 0; beat < 13; beat++) {
+      for (beat = 0; beat < 12; beat++) {
         var bassSubbeats = [];
         var drumsBeat = {
           subdivision: 4,

@@ -142,18 +142,18 @@
         <label>Section</label>
         <input
           type="text"
-          ng-model="section.name">
+          ng-model="project.sectionName">
       </md-input-container>
       <md-input-container>
         <md-select
           ng-show="project.sections.length > 0"
           aria-label="Section"
           class="select-editable"
-          ng-model="project.selectedSection"
-          md-on-close="loadSection(project.selectedSection)">
+          ng-model="project.selectedSectionIndex"
+          md-on-close="loadSection(project.selectedSectionIndex)">
           <md-option
             ng-repeat="section in project.sections"
-            ng-value="section">
+            ng-value="$index">
             {{ section }}
           </md-option>
         </md-select>
@@ -161,7 +161,7 @@
       <md-button
         aria-label="Save"
         class="toolbar-button"
-        ng-click="saveSection()">
+        ng-click="saveSection(project.selectedSectionIndex, project.sectionName)">
         <md-icon
           md-svg-icon="pen">
         </md-icon>
@@ -179,13 +179,13 @@
           class="md-whiteframe-16dp">
           <md-menu-item>
             <md-button
-              ng-click="newSection()">
+              ng-click="clearSection()">
               New
             </md-button>
           </md-menu-item>
           <md-menu-item>
             <md-button
-              ng-click="deleteSection(bass.$selectedPresent)">
+              ng-click="deleteSection(project.selectedSectionIndex)">
               Delete
             </md-button>
           </md-menu-item>
