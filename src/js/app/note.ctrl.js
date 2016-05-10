@@ -8,7 +8,7 @@
   function NoteController($scope, $timeout, $mdMenu, audioPlayer) {
     console.log('NOTE CONTROLLER');
     console.log($scope);
-    $scope.selected = {subbeat: null};
+    $scope.selected = {grid: null};
 
     $scope.bass.strings.forEach(function(string) {
       // console.log($scope.bass.notes.list);
@@ -92,10 +92,10 @@
     var dragNote, dragElement;
     $scope.playingStyles = ['finger', 'slap', 'pop', 'tap', 'hammer', 'pull'];
 
-    $scope.clearSound = function(subbeat) {
-      delete subbeat.note;
-      delete subbeat.noteLength;
-      $scope.selected.subbeat = null;
+    $scope.clearSound = function(sound) {
+      delete sound.note;
+      delete sound.noteLength;
+      $scope.selected.grid = null;
     };
 
     var notesWidths;
@@ -186,7 +186,7 @@
       grid.sound.string = grid.string;
       $scope.updateBassSound(grid.sound);
       audioPlayer.fetchSoundResources(grid.sound);
-      $scope.selected.subbeat = grid;
+      $scope.selected.grid = grid;
       $scope.dropNote.visible = false;
 
       if (angular.isDefined($data.beat) && $event.dataTransfer.dropEffect === "move") {
@@ -249,8 +249,6 @@
         }
         sound.note.code = sound.note.name+sound.note.octave;
         // update transfer data
-        console.log(sound.string);
-        console.log($scope.bass.strings);
         var transferDataText = angular.toJson({data: sound});
         e.dataTransfer.setData('text', transferDataText);
         console.log(transferDataText);
@@ -282,7 +280,7 @@
     $scope.dropValidation = function(grid, $data) {
       // console.log(grid);
       // console.log($data);
-      if (grid.sound.note) {
+      if (grid.sound.note || !$data.sound.note) {
         return false;
       }
       if ($data.sound.note.name === 'x') {
