@@ -15,7 +15,10 @@
     <div
       class="subbeat-tab"
       layout="column"
-      ng-repeat="bassSubbeats in beat.subbeats">
+      ng-repeat="bassSubbeats in beat.subbeats"
+      ng-class="{
+        hidden: slides.visibleSubbeats.indexOf($index+1) === -1
+      }">
 
 <!--       <div
         class="tab-top-marker"
@@ -41,7 +44,7 @@
 
         ng-click="selected.grid=grid"
         ng-attr-octave="{{ grid.sound.note.octave }}"
-        class="tab-note-container"
+        class="bass-sound-container"
         ng-class="{
           active: grid.sound.note.name,
           selected: selected.grid===grid,
@@ -62,7 +65,7 @@
         <md-button
           md-no-ink
           aria-label="Subbeat"
-          class="tab-button"
+          class="bass-button"
           ng-click="openBassSoundMenu($event, grid)">
           <md-icon
             md-svg-icon="{{ grid.sound.note? 'menu-dots' : 'plus' }}">

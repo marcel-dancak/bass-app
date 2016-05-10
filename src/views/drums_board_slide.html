@@ -5,8 +5,11 @@
     <div
       flex
       layout="column"
+      ng-repeat="drumSubbeats in beat.subbeats"
       class="drums-column"
-      ng-repeat="drumSubbeats in beat.subbeats">
+      ng-class="{
+        hidden: slides.visibleSubbeats.indexOf($index+1) === -1
+      }">
 
       <div
         flex

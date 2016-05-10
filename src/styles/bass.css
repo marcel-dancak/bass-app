@@ -42,7 +42,7 @@
   pointer-events: none;
 }
 
-.tab-note-container {
+.bass-sound-container {
   height: 100%;
   text-align: center;
   z-index: 50;
@@ -51,14 +51,14 @@
   margin: 2px 2px;
   outline: none;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
-.tab-note-container label {
+.bass-sound-container label {
   display: none;
   font-size: 15px;
 }
 
-.tab-note-container.active {
+.bass-sound-container.active {
   background-color: #bbb;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
   border: 1px solid #777;
@@ -68,27 +68,27 @@
   xtransform: scale(0.95, 1);
   xtransform-origin: 0 0 0;
 }
-.tab-note-container.active label {
+.bass-sound-container.active label {
   padding-left: 5px;
   display: inline-block;
 }
-.tab-note-container.ghost label.fret {
+.bass-sound-container.ghost label.fret {
   display: none;
 }
-.tab-note-container.active[octave="1"] {
+.bass-sound-container.active[octave="1"] {
   background-color: #ff5722;
 }
-.tab-note-container.active[octave="2"] {
+.bass-sound-container.active[octave="2"] {
   background-color: #ff9800;
 }
-.tab-note-container.active[octave="3"] {
+.bass-sound-container.active[octave="3"] {
   background-color: #ffc107;
 }
-.tab-note-container.active[octave="4"] {
+.bass-sound-container.active[octave="4"] {
   background-color: #ffeb3b;
 }
 
-.tab-note-container.active.selected {
+.bass-sound-container.active.selected {
   border: 2px solid #333;
   margin: 1px 1px 1px 2px;
   border-radius: 4px;
@@ -127,9 +127,9 @@
   border-bottom: 1px solid #ddd;
 }
 
-.tab-button {
+.bass-button {
   position: absolute;
-  left: 3px;
+  left: 2px;
   top: 0;
   min-width: 32px;
   min-height: 30px;
@@ -147,27 +147,27 @@
   outline-color: white;
   outline-style: solid;
 }
-.tab-button:hover:not([disabled]) {
+.bass-button:hover:not([disabled]) {
   background-color: #fff;
   opacity: 1;
 }
 
-.tab-button md-icon {
+.bass-button md-icon {
   width: 18px;
   height: 18px;
   color: #ccc;
   pointer-events: none;
 }
-.tab-note-container.active md-icon {
+.bass-sound-container.active md-icon {
   color: #444;
   margin-bottom: 2px;
 }
 
-.tab-note-container {
+.bass-sound-container {
   text-align: center;
 }
 
-.tab-note-container.active .tab-button {
+.bass-sound-container.active .bass-button {
   color: #333;
   opacity: 0;
   xborder-radius: 0;
@@ -178,8 +178,8 @@
   outline: none;
   background-color: transparent;
 }
-.tab-note-container.active:hover .rg-right,
-.tab-note-container.active:hover .tab-button {
+.bass-sound-container.active:hover .rg-right,
+.bass-sound-container.active:hover .bass-button {
   opacity: 1;
 }
 
@@ -248,12 +248,12 @@
   font-size: 14px;
 }
 
-.tab-note-container {
+.bass-sound-container {
   z-index: 50;
   transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
-.tab-note-container.active {
+.bass-sound-container.active {
   z-index: 100;
 }
 .md-menu {
@@ -299,7 +299,7 @@
   pointer-events: none;
 }
 
-.tab-note-container.drag-element {
+.bass-sound-container.drag-element {
   background-color: rgb(250, 220, 220);
 }
 
@@ -321,6 +321,9 @@ md-select-menu:not(.md-overflow) md-content {
 }
 
 .bass-board-container .swiper-container {
-  xheight: 144px;
   min-height: 144px;
+}
+
+.hidden .bass-sound-container:not(.active) {
+  display: none;
 }

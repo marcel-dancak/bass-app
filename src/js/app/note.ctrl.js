@@ -227,7 +227,7 @@
         $scope.dropNote.left = box.left;
         $scope.dropNote.top = box.top;
         if ($scope.dropNote.width === -1) {
-          $scope.dropNote.width = target.clientWidth;
+          $scope.dropNote.width = 2*target.clientWidth;
         }
       });
     };

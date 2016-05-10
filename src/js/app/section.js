@@ -51,8 +51,7 @@
           var bassSubbeatGrid = {};
           this.bass.strings.forEach(function(string) {
             bassSubbeatGrid[string.index] = {
-              sound: {},
-              width: 1
+              sound: {}
             };
           });
           var drumSubbeatGrid = {};

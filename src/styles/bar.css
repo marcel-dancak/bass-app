@@ -55,6 +55,11 @@
   font-weight: bold;
   font-size: 20px;
 }
+
+.subbeat.hidden {
+  display: none;
+}
+
 .bar-container {
   position: relative;
   height: 120px;

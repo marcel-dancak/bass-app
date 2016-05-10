@@ -1,5 +1,5 @@
 <label class="bar-label">
-  Bar: {{ beat.bar }}
+  {{ beat.bar }}
 </label>
 <div
   layout="row"
@@ -8,6 +8,9 @@
     ng-repeat="subbeat in beat.subbeats"
     layout="column"
     class="subbeat subbeat-{{ ::$index+1 }}"
+    ng-class="{
+      hidden: slides.visibleSubbeats.indexOf($index+1) === -1
+    }"
     flex>
       <label class="subbeat-label">
         {{ ::subbeat }}

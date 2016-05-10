@@ -194,7 +194,12 @@
     </div>
   </div>
 
-  <div class="bar-container">
+  <div
+    class="bar-container"
+    msd-wheel="
+      slides.beatsPerView=slides.beatsPerView+$delta;
+      beatsPerViewChanged()
+    ">
     <div
       class="time-signature-button"
       ng-include src="'views/bars_form.html'">
@@ -206,7 +211,7 @@
       initial-slide="0"
       loop="false"
       show-nav-buttons="true"
-      slides-per-view="slides.slidesPerView"
+      slides-per-view="slides.beatsPerView"
       space-between="0"
       pagination-clickable="true"
       override-parameters="{
@@ -265,7 +270,7 @@
       loop="false"
 
       show-nav-buttons="false"
-      slides-per-view="slides.slidesPerView"
+      slides-per-view="slides.beatsPerView"
       space-between="0"
       override-parameters="{
         roundLengths: true
@@ -316,7 +321,7 @@
           loop="false"
 
           show-nav-buttons="false"
-          slides-per-view="slides.slidesPerView"
+          slides-per-view="slides.beatsPerView"
           space-between="0"
           override-parameters="{
             roundLengths: true
