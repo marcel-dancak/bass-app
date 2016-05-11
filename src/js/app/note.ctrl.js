@@ -42,19 +42,20 @@
       subbeat: null, // set when opened
       searchText: '',
       nextNote: function() {
-        $scope.menu.subbeat.fret = $scope.menu.subbeat.fret || 0;
-        if ($scope.menu.subbeat.fret < 24) {
-          var currentNote = $scope.menu.subbeat.string.notes[$scope.menu.subbeat.fret];
-          if (currentNote.label.length === 2 && $scope.menu.subbeat.note.code === currentNote.label[0]+currentNote.octave) {
-            $scope.menu.subbeat.note = {
+        $scope.menu.sound.fret = $scope.menu.sound.fret || 0;
+        var string = $scope.bass.strings[$scope.menu.grid.string];
+        if ($scope.menu.sound.fret < 24) {
+          var currentNote = string.notes[$scope.menu.sound.fret];
+          if (currentNote.label.length === 2 && $scope.menu.sound.note.code === currentNote.label[0]+currentNote.octave) {
+            $scope.menu.sound.note = {
               code: currentNote.label[1]+currentNote.octave,
               name: currentNote.label[1],
               octave: currentNote.octave
             };
           } else {
-            $scope.menu.subbeat.fret++;
-            var nextNote = $scope.menu.subbeat.string.notes[$scope.menu.subbeat.fret];
-            $scope.menu.subbeat.note = {
+            $scope.menu.sound.fret++;
+            var nextNote = string.notes[$scope.menu.sound.fret];
+            $scope.menu.sound.note = {
               code: nextNote.label[0]+nextNote.octave,
               name: nextNote.label[0],
               octave: nextNote.octave
@@ -63,19 +64,20 @@
         }
       },
       prevNote: function() {
-        $scope.menu.subbeat.fret = $scope.menu.subbeat.fret || 0;
-        if ($scope.menu.subbeat.fret > 0) {
-          var currentNote = $scope.menu.subbeat.string.notes[$scope.menu.subbeat.fret];
-          if (currentNote.label.length === 2 && $scope.menu.subbeat.note.code === currentNote.label[1]+currentNote.octave) {
-            $scope.menu.subbeat.note = {
+        $scope.menu.sound.fret = $scope.menu.sound.fret || 0;
+        var string = $scope.bass.strings[$scope.menu.grid.string];
+        if ($scope.menu.sound.fret > 0) {
+          var currentNote = string.notes[$scope.menu.sound.fret];
+          if (currentNote.label.length === 2 && $scope.menu.sound.note.code === currentNote.label[1]+currentNote.octave) {
+            $scope.menu.sound.note = {
               code: currentNote.label[0]+currentNote.octave,
               name: currentNote.label[0],
               octave: currentNote.octave
             };
           } else {
-            $scope.menu.subbeat.fret--;
-            var prevNote = $scope.menu.subbeat.string.notes[$scope.menu.subbeat.fret];
-            $scope.menu.subbeat.note = {
+            $scope.menu.sound.fret--;
+            var prevNote = string.notes[$scope.menu.sound.fret];
+            $scope.menu.sound.note = {
               code: prevNote.label[prevNote.label.length-1]+prevNote.octave,
               name: prevNote.label[prevNote.label.length-1],
               octave: prevNote.octave
