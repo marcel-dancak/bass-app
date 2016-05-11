@@ -76,7 +76,6 @@
   xtransform-origin: 0 0 0;
 }
 .bass-sound-container.active label {
-  padding-left: 5px;
   display: inline-block;
 }
 .bass-sound-container.ghost label.fret {
@@ -156,7 +155,6 @@
 }
 .bass-button:hover:not([disabled]) {
   background-color: #fff;
-  opacity: 1;
 }
 
 .bass-button md-icon {
@@ -165,28 +163,15 @@
   color: #ccc;
   pointer-events: none;
 }
-.bass-sound-container.active md-icon {
-  color: #444;
-  margin-bottom: 2px;
-}
 
 .bass-sound-container {
   text-align: center;
 }
 
 .bass-sound-container.active .bass-button {
-  color: #333;
-  opacity: 0;
-  xborder-radius: 0;
-  xborder-width: 0 1px 0 0;
-  xborder-color: rgba(50, 50, 50, 0.5);
-  border: none;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  outline: none;
-  background-color: transparent;
+  display: none;
 }
-.bass-sound-container.active:hover .rg-right,
-.bass-sound-container.active:hover .bass-button {
+.bass-sound-container.active:hover .rg-right {
   opacity: 1;
 }
 
@@ -260,6 +245,13 @@
   transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
+.bass-sound-container p {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+  xdisplay: none;
+}
 .bass-sound-container.active {
   z-index: 100;
 }
@@ -295,12 +287,13 @@
 }
 
 .rg-right {
-  right: 16px;
+  right: 0;
   opacity: 0;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 .rg-right > span {
   border-color: #333;
+  background-color: white;
 }
 .drag-element {
   pointer-events: none;

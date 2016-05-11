@@ -4,7 +4,18 @@
   angular
     .module('bd.app')
     .controller('AppController', AppController)
-    .value('context', new AudioContext());
+    .value('context', new AudioContext())
+    .directive('ngRightClick', function($parse) {
+        return function(scope, element, attrs) {
+            var fn = $parse(attrs.ngRightClick);
+            element.bind('contextmenu', function(event) {
+                scope.$apply(function() {
+                    event.preventDefault();
+                    fn(scope, {$event:event});
+                });
+            });
+        };
+    });
 
   function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel, Section) {
     var analyser = context.createAnalyser();

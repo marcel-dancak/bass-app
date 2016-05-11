@@ -42,7 +42,6 @@
         ui-on-drag-leave="onDragLeave($event, grid)"
         ui-on-drop="onDrop($event, $data, grid, section)"
 
-        ng-click="selected.grid=grid"
         ng-attr-octave="{{ grid.sound.note.octave }}"
         class="bass-sound-container"
         ng-class="{
@@ -52,7 +51,12 @@
         }"
         ng-style="{
           width: (100*section.timeSignature.bottom*grid.sound.noteLength.beatLength)+'%'
-        }">
+        }"
+        ng-click="selected.grid=grid"
+        ng-right-click="
+          selected.grid=grid;
+          openBassSoundMenu($event, grid)
+        ">
         <div
           class="resize-container"
           ng-if="grid.sound && grid.sound.note && grid.sound.note.name !== 'x'"
@@ -64,19 +68,21 @@
         </div>
         <md-button
           md-no-ink
-          aria-label="Subbeat"
+          aria-label="Sound"
           class="bass-button"
           ng-click="openBassSoundMenu($event, grid)">
           <md-icon
-            md-svg-icon="{{ grid.sound.note? 'menu-dots' : 'plus' }}">
+            md-svg-icon="plus">
           </md-icon>
         </md-button>
-        <label>
-          {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
-        </label>
-        <label class="fret">
-          &nbsp( {{ grid.sound.fret }} )
-        </label>
+        <p>
+          <label>
+            {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
+          </label>
+          <label class="fret">
+            &nbsp( {{ grid.sound.fret }} )
+          </label>
+        </p>
       </div>
     </div>
   </div>
