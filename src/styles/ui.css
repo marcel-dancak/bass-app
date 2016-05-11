@@ -12,17 +12,22 @@
   position: fixed;
   top: 140px;
   left: 0;
-  xdisplay: none;
   z-index: 200;
 }
 
 .audio-graph-container {
-  border: 1px solid #ccc;
+  border: solid #ccc;
+  border-width: 1px 1px 1px 0;
   background-color: #eee;
-  xmargin: 0 30px 0 65px;
   margin: 10px 0;
 }
 
+.beat-1 .audio-graph-container {
+  border-left: 3px solid #ccc;
+}
+.swiper-wrapper > .swiper-slide:last-child .audio-graph-container {
+  border-right: 3px solid #ccc;
+}
 .md-button.no-hover.md-focused,
 .md-button.no-hover:hover {
   background-color: transparent;

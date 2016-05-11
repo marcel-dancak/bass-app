@@ -24,15 +24,6 @@
     var bassNotes = new NotesModel('B0', 'G4');
     $scope.bass = {
       notes: bassNotes,
-      noteStringOctaves: function(noteName, string) {
-        var octaves = [];
-        bassNotes.list.slice(string.noteIndex, string.noteIndex+24).filter(function(note) {
-          if (note.label.indexOf(noteName) !== -1) {
-            octaves.push(note.octave);
-          }
-        });
-        return octaves;
-      },
       stringFret: function(stringIndex, note) {
         var noteName = note.name + note.octave;
         var index = bassNotes.list.indexOf(bassNotes.map[noteName]);
@@ -201,9 +192,30 @@
         $scope.slides.bars.push({
           id: beatId,
           bar: beat.bar,
+          beat: beat.index,
           subbeats: [beat.index, 'i', 'and', 'a']
         });
       });
+    }
+
+    function updateSlidesSize() {
+      $scope.barSwiper.updateSlidesSize();
+      $scope.bassSwiper.updateSlidesSize();
+      $scope.drumsSwiper.updateSlidesSize();
+    }
+
+    function updateSubbeatsVisibility() {
+      var slideWidth = $scope.barSwiper.size / $scope.slides.beatsPerView;
+      // console.log(slideWidth);
+      var visibleSubbeats;
+      if (slideWidth > 240) {
+        visibleSubbeats = [1, 2, 3, 4];
+      } else if (slideWidth > 120) {
+        visibleSubbeats = [1, 3];
+      } else {
+        visibleSubbeats = [1];
+      }
+      $scope.slides.visibleSubbeats = visibleSubbeats;
     }
 
     $scope.renderingBar = function(index) {
@@ -228,9 +240,7 @@
       $scope.barSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
       $scope.bassSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
       $scope.drumsSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
-      $scope.barSwiper.updateSlidesSize();
-      $scope.bassSwiper.updateSlidesSize();
-      $scope.drumsSwiper.updateSlidesSize();
+      updateSlidesSize();
     };
 
     $scope.beatsPerViewChanged = function() {
@@ -246,21 +256,8 @@
       $scope.barSwiper.params.slidesPerView = beatsPerView;
       $scope.bassSwiper.params.slidesPerView = beatsPerView;
       $scope.drumsSwiper.params.slidesPerView = beatsPerView;
-
-      $scope.barSwiper.updateSlidesSize();
-      $scope.bassSwiper.updateSlidesSize();
-      $scope.drumsSwiper.updateSlidesSize();
-      var slideWidth = $scope.barSwiper.size / beatsPerView;
-      // console.log(slideWidth);
-      var visibleSubbeats;
-      if (slideWidth > 240) {
-        visibleSubbeats = [1, 2, 3, 4];
-      } else if (slideWidth > 120) {
-        visibleSubbeats = [1, 3];
-      } else {
-        visibleSubbeats = [1];
-      }
-      $scope.slides.visibleSubbeats = visibleSubbeats;
+      updateSlidesSize();
+      updateSubbeatsVisibility();
     };
 
     $scope.onBarSwiper = function(swiper) {
@@ -279,11 +276,10 @@
       console.log(swiper);
       $scope.drumsSwiper = swiper;
       $scope.barSwiper.params.control.push(swiper);
-      $scope.beatsPerSlideChanged();
+      updateSubbeatsVisibility();
     };
 
     updateSlides();
-
 
     $scope.$watch('player.bpm', function(value) {
       if (audioPlayer.playing) {
@@ -477,7 +473,10 @@
       var data = {
         timeSignature: section.timeSignature,
         length: section.length,
-        beats: sectionStorageBeats
+        beats: sectionStorageBeats,
+        // other section configuration
+        beatsPerView: $scope.slides.beatsPerView,
+        beatsPerSlide: $scope.slides.beatsPerSlide,
       }
       console.log(JSON.stringify(data));
       localStorage.setItem(storageKey, JSON.stringify(data));
@@ -497,9 +496,27 @@
 
       $scope.section.setLength(sectionData.length);
       $scope.section.timeSignature = sectionData.timeSignature;
-      if (sectionConfigChanged) {
+
+      var updateBeatsPerView = sectionData.beatsPerView !== $scope.slides.beatsPerView;
+      if (updateBeatsPerView) {
+        $scope.slides.beatsPerView = sectionData.beatsPerView;
+        $scope.barSwiper.params.slidesPerView = sectionData.beatsPerView;
+        $scope.bassSwiper.params.slidesPerView = sectionData.beatsPerView;
+        $scope.drumsSwiper.params.slidesPerView = sectionData.beatsPerView;
+      }
+      if ($scope.slides.beatsPerSlide !== sectionData.beatsPerSlide) {
+        $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;
+        $scope.barSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+        $scope.bassSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+        $scope.drumsSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+      }
+      if (sectionConfigChanged || updateBeatsPerView) {
         $scope.sectionConfigChanged();
       }
+      if (updateBeatsPerView) {
+        $timeout(updateSubbeatsVisibility, 10);
+      }
+
       $scope.clearSection();
 
       // override selected section data

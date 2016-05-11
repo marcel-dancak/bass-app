@@ -215,17 +215,15 @@
       space-between="0"
       pagination-clickable="true"
       override-parameters="{
+        slidesPerGroup: slides.beatsPerSlide,
         roundLengths: true
       }">
 
-      <ks-swiper-slide ng-repeat="beat in slides.bars track by beat.id">
+      <ks-swiper-slide
+        ng-repeat="beat in slides.bars track by beat.id"
+        class="beat beat-{{ ::beat.beat }}">
         <div
           xng-init="renderingBar($index)"
-          class="beat"
-          ng-class="{
-            'beat-1': beat.subbeats[0]===1,
-            last: $last
-          }"
           ng-include src="'views/bar_slide.html'">
         </div>
       </ks-swiper-slide>
@@ -273,12 +271,13 @@
       slides-per-view="slides.beatsPerView"
       space-between="0"
       override-parameters="{
+        slidesPerGroup: slides.beatsPerSlide,
         roundLengths: true
       }">
 
       <ks-swiper-slide
-        class="swiper-no-swiping"
         ng-repeat="beat in slides.bass track by beat.id"
+        class="swiper-no-swiping beat-{{ ::beat.beat }}"
         style="z-index: {{ ::100-$index}};">
         <div class="audio-graph-container">
           <canvas
@@ -324,6 +323,7 @@
           slides-per-view="slides.beatsPerView"
           space-between="0"
           override-parameters="{
+            slidesPerGroup: slides.beatsPerSlide,
             roundLengths: true
           }">
 

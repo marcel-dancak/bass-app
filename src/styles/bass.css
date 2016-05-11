@@ -1,7 +1,14 @@
 .bass-board {
   position: relative;
-  border-left: 1px solid #ccc;
+  xborder-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
+}
+
+.beat-1 .bass-board {
+  border-left: 3px solid #ccc;
+}
+.swiper-wrapper > .swiper-slide:last-child .bass-board {
+  border-right: 3px solid #ccc;
 }
 
 .bass-board-container {
