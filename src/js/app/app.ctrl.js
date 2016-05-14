@@ -178,6 +178,8 @@
       },
       length: 2
     });
+    // Reference for debugging
+    window.section = $scope.section;
 
     $scope.slides = {
       bars: [],
@@ -380,7 +382,7 @@
       var sound = angular.extend({
         style: 'finger',
         noteLength: {
-          length: 1/4
+          beatLength: 1/2
         },
         volume: 0.75
       }, bassSound);

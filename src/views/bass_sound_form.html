@@ -13,11 +13,32 @@
           <md-select
             flex
             ng-model="menu.sound.style"
-            md-on-close="updateNote(menu.sound)">
+            md-on-close="">
             <md-option
               ng-repeat="style in playingStyles"
               ng-value="style">
               {{ bass.playingStyles[style].label }}
+            </md-option>
+          </md-select>
+        </md-input-container>
+
+        <md-input-container flex>
+          <label class="md-label">Note type</label>
+          <md-select
+            flex
+            ng-model="menu.sound.note.type"
+            md-on-close="">
+            <md-option value="regular">
+              Regular
+            </md-option>
+            <md-option value="ghost">
+              Ghost
+            </md-option>
+            <md-option value="slide">
+              Slide
+            </md-option>
+            <md-option value="grace">
+              Grace
             </md-option>
           </md-select>
         </md-input-container>
@@ -27,21 +48,11 @@
         <md-input-container flex>
           <label class="md-label">Note</label>
           <md-select
+            ng-disabled="menu.sound.note.type==='ghost'"
             md-container-class="note-select-menu"
             ng-model="menu.sound.note"
             ng-model-options="{trackBy: '$value.code'}"
-            md-on-close="updateNote(menu.sound)">
-            <div layout="row">
-            <span class="fret-index">( X )</span>
-            <md-option
-              flex
-              ng-value="{
-                name: 'x',
-                code: 'x'
-              }">
-              Ghost
-            </md-option>
-            </div>
+            md-on-close="">
             <div
               ng-repeat="note in bass.strings[menu.grid.string].notes"
               layout="row">
@@ -53,7 +64,9 @@
                 ng-value="{
                   name: note.label[0],
                   octave: note.octave,
-                  code: note.label[0]+note.octave
+                  code: note.label[0]+note.octave,
+                  type: menu.sound.note.type,
+                  slide: menu.sound.note.slide
                 }">
                 {{ note.label[0] }} <sub>{{ note.octave }}</sub>
               </md-option>
@@ -66,7 +79,9 @@
                 ng-value="{
                   name: note.label[1],
                   octave: note.octave,
-                  code: note.label[1]+note.octave
+                  code: note.label[1]+note.octave,
+                  type: menu.sound.note.type,
+                  slide: menu.sound.note.slide
                 }">
                 {{ note.label[1] }} <sub>{{ note.octave }}</sub>
               </md-option>
@@ -88,6 +103,26 @@
           </md-button>
         </div>
 
+        <md-input-container
+          flex="50"
+          class="slide-field"
+          ng-if="menu.sound.note.type === 'slide'"
+          ng-init="menu.updateSlide()">
+          <label class="md-label">Slide semitones</label>
+          <input
+            type="number"
+            min="-24"
+            max="24"
+            xstep="1"
+            ng-model="menu.sound.note.slide"
+            ng-change="menu.updateSlide()">
+          <span
+            ng-show="menu.sound.note.slide">
+            ({{ menu.sound.note.slide < 0? 'down to' : 'up to' }}
+            {{ menu.slideEndNote.label[0] }}
+            <sub>{{ menu.slideEndNote.octave }}</sub>)
+          </span>
+        </md-input-container>
       </div>
 
       <div layout="row">
@@ -96,7 +131,7 @@
           <md-select
             ng-model="menu.sound.noteLength.length"
             md-on-close="updateBassSound(menu.sound)"
-            ng-disabled="!menu.sound.note.name || menu.sound.note.name==='x'">
+            ng-disabled="menu.sound.note.type === 'ghost'">
             <md-option
               ng-repeat="value in [
                 ['𝅝', 'Whole', 1],
@@ -116,7 +151,7 @@
           class="md-primary"
           aria-label="Staccato"
           ng-model="menu.sound.noteLength.dotted"
-          ng-disabled="menu.sound.note.name==='x'"
+          ng-disabled="menu.sound.note.type==='ghost'"
           ng-change="updateBassSound(menu.sound)">
           Dotted
         </md-checkbox>
@@ -125,7 +160,7 @@
           class="md-primary"
           aria-label="Staccato"
           ng-model="menu.sound.noteLength.staccato"
-          ng-disabled="menu.sound.note.name==='x'">
+          ng-disabled="menu.sound.note.type==='ghost'">
           Staccato
         </md-checkbox>
       </div>

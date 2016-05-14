@@ -20,11 +20,6 @@
         hidden: slides.visibleSubbeats.indexOf($index+1) === -1
       }">
 
-<!--       <div
-        class="tab-top-marker"
-        ng-show="subbeat.noteLength.staccato">
-        .
-      </div> -->
       <div
         flex
         ng-repeat="string in bass.strings | orderBy:string.index:'-'"
@@ -47,7 +42,8 @@
         ng-class="{
           active: grid.sound.note.name,
           selected: selected.grid===grid,
-          ghost: grid.sound.note.name==='x'
+          ghost: grid.sound.note.type==='ghost',
+          staccato: grid.sound.noteLength.staccato
         }"
         ng-style="{
           width: (100*section.timeSignature.bottom*grid.sound.noteLength.beatLength)+'%'
@@ -58,13 +54,21 @@
           openBassSoundMenu($event, grid)
         ">
         <div
+          ng-show="grid.sound.note.type !== 'ghost'"
+          class="resize-handler">
+          <md-icon md-svg-icon="arrow-left-fill"></md-icon>
+          <md-icon md-svg-icon="arrow-right-fill"></md-icon>
+        </div>
+        <div
+          ng-if="grid.sound && grid.sound.note && grid.sound.note.type !== 'ghost'"
           class="resize-container"
-          ng-if="grid.sound && grid.sound.note && grid.sound.note.name !== 'x'"
           resizable
           r-directions="['right']"
-          on-resize="onResize(grid, info)"
+          on-resize="onResize(grid, info, $event)"
           on-resize-start="onResizeStart(grid, info)"
-          on-resize-end="onResizeEnd(grid, info)">
+          on-resize-end="onResizeEnd(grid, info, $event)"
+          r-grabber="<div></div>"
+          xng-if-end>
         </div>
         <md-button
           md-no-ink
@@ -75,14 +79,38 @@
             md-svg-icon="plus">
           </md-icon>
         </md-button>
-        <p>
-          <label>
-            {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
-          </label>
-          <label class="fret">
-            &nbsp( {{ grid.sound.fret }} )
-          </label>
-        </p>
+
+        <div
+          class="label-wrapper"
+          ng-switch="grid.sound.note.type">
+          <p ng-switch-when="regular">
+            <label>
+              {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
+            </label>
+            <label class="fret">
+              &nbsp( {{ grid.sound.fret }} )
+            </label>
+          </p>
+          <p ng-switch-when="slide">
+            <label>
+              {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
+            </label>
+            <label class="fret">
+              &nbsp( {{ grid.sound.fret }} )
+            </label>
+            <label class="slide-slash">
+              {{ grid.sound.note.slide > 0? '/' : '\\' }}
+            </label>
+            <label>
+              {{ string.notes[grid.sound.fret+grid.sound.note.slide].label[0] }}
+              <sub>{{ string.notes[grid.sound.fret+grid.sound.note.slide].octave }}</sub>
+            </label>
+            <label class="fret">
+              &nbsp( {{ grid.sound.fret+grid.sound.note.slide }} )
+            </label>
+          </p>
+        </div>
+
       </div>
     </div>
   </div>

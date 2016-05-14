@@ -72,6 +72,90 @@
       }*/
     };
 
+    AudioPlayer.prototype._createDrumsSound = function(sound) {};
+
+    AudioPlayer.prototype._playBassSound = function(sound) {
+      // var timeSignature = this.composition.timeSignature;
+      var note = sound.note;
+      // console.log(note.style+' '+note.name);
+      var source = context.createBufferSource();
+      var gain = context.createGain();
+
+      source.connect(gain);
+      gain.connect(this.bass.audio);
+      var audioData = this.bufferLoader.loadResource(bassSounds[sound.style].getResources(sound)[0]);
+      //console.log(this.bufferLoader.loadedResources);
+      if (audioData) {
+        source.buffer = audioData;
+        // var duration = sound.noteLength.length?
+        //   this.subbeatTime*sound.noteLength.length*timeSignature.bottom*4 :
+        //   this.subbeatTime;
+        // if (sound.noteLength.dotted) {
+        //   duration *= 1.5;
+        // }
+        var duration = sound.noteLength.beatLength*this.beatTime;
+        if (sound.noteLength.staccato) {
+          duration = 0.92*duration-this.subbeatTime*0.2;
+        }
+        var startTime = context.currentTime;
+        gain.gain.setValueAtTime(sound.volume, startTime);
+        gain.gain.setValueAtTime(sound.volume, startTime+duration-0.05);
+
+        var playingSound = {
+          note: note,
+          source: source,
+          gain: gain,
+          startTime: startTime,
+          endTime: startTime+duration
+        };
+        if (note.type === 'slide') {
+          /*
+          var fft = 4096;
+          // var processorNode = context.createJavaScriptNode(fft, 1, 1);
+          var processorNode = context.createScriptProcessor(fft, 1, 1);
+
+          var shifter = new Pitchshift(fft, context.sampleRate, 'FFT');
+          shifter.shiftSteps = sound.slideFrets;
+          shifter.shiftValue = 1;
+          processorNode.onaudioprocess = function(event) {
+            // Get left/right input and output arrays
+            var outputArray = [];
+            outputArray[0] = event.outputBuffer.getChannelData(0);
+            var inputArray = [];
+            inputArray[0] = event.inputBuffer.getChannelData(0);
+            // console.log ("input is long: ", inputArray[0].length);
+            var data = inputArray[0];
+            shifter.process (this.shiftValue, data.length, 4, data);
+
+            var out_data = outputArray[0];
+            var i;
+            for (i = 0; i < out_data.length; ++i) {
+                out_data[i] = shifter.outdata[i];
+            }
+          }.bind(shifter);
+
+          gain.disconnect();
+          gain.connect(processorNode);
+          processorNode.connect(this.bass.audio);
+          playingSound.shifter = shifter;
+          */
+
+          source.start(startTime, 0, playingSound.endTime);
+          gain.gain.linearRampToValueAtTime(0.001, playingSound.endTime);
+          var semitoneRatio = Math.pow(2, 1/12);
+          var endRate = Math.pow(semitoneRatio, note.slide);
+          source.playbackRate.setValueAtTime(1, startTime+duration/5);
+          source.playbackRate.linearRampToValueAtTime(endRate, playingSound.endTime);
+
+        } else {
+          source.start(startTime, 0, duration+0.05);
+          gain.gain.linearRampToValueAtTime(0.001, playingSound.endTime);
+        }
+        this.playingNotes.push(playingSound);
+        return playingSound;
+      }
+    };
+
     AudioPlayer.prototype.playback = function(arg) {
       var timeSignature = this.composition.timeSignature;
       var barsCount = this.composition.length;
@@ -120,43 +204,7 @@
             if (!sound.style || !sound.note) {
               continue;
             }
-            var note = sound.note;
-            // console.log(note.style+' '+note.name);
-            // console.log(note);
-            var source = context.createBufferSource();
-            var gain = context.createGain();
-
-            source.connect(gain);
-            gain.connect(this.bass.audio);
-            var audioData = this.bufferLoader.loadResource(bassSounds[sound.style].getResources(sound)[0]);
-            //console.log(this.bufferLoader.loadedResources);
-            if (audioData) {
-              source.buffer = audioData;
-              var duration = sound.noteLength.length?
-                this.subbeatTime*sound.noteLength.length*timeSignature.bottom*4 :
-                this.subbeatTime;
-              if (sound.noteLength.dotted) {
-                duration *= 1.5;
-              }
-              if (sound.noteLength.staccato) {
-                duration = 0.92*duration-this.subbeatTime*0.2;
-              }
-              var startTime = context.currentTime;
-              gain.gain.setValueAtTime(sound.volume, startTime);
-              gain.gain.setValueAtTime(sound.volume, startTime+duration-0.05);
-              source.start(startTime, 0, duration+0.05);
-              gain.gain.linearRampToValueAtTime(0.001, startTime+duration);
-              // gain.gain.exponentialRampToValueAtTime(0.001, startTime+duration);
-
-              var sound = {
-                note: note,
-                source: source,
-                gain: gain,
-                startTime: startTime,
-                endTime: startTime+duration,
-              };
-              this.playingNotes.push(sound);
-            }
+            this._playBassSound(sound);
           }
           this.subbeatIndex++;
         }
@@ -165,7 +213,7 @@
           this.playingNotes = this.playingNotes.filter(function(playingNote) {
             if (currentTime > playingNote.endTime) {
               // maybe some cleanup
-              playingNote.gain.gain.value = 0.001;
+              // playingNote.gain.gain.value = 0.0001;
               return false;
             }
             return true;
@@ -183,12 +231,21 @@
       this.barIndex = 0;
       this.composition = composition;
       this.playback();
+
+      var oscillator = context.createOscillator();
+      var oscGain = context.createGain();
+      oscGain.gain.value = 0.0001;
+      oscillator.connect(oscGain);
+      oscGain.connect(this.bass.audio);
+      oscillator.frequency.value = 0;
+      oscillator.start();
+      this.oscillator = oscillator;
     };
 
     AudioPlayer.prototype.setBpm = function(bpm) {
       this.bpm = bpm;
-      var beatTime = 60/bpm;
-      this.subbeatTime = beatTime/4;
+      this.beatTime = 60/bpm;
+      this.subbeatTime = this.beatTime/4;
     }
 
     AudioPlayer.prototype.fetchSoundResources = function(sound) {
@@ -231,65 +288,33 @@
 
     AudioPlayer.prototype.stop = function(noteLength) {
       this.playing = false;
+      var currentTime = context.currentTime;
       this.playingNotes.forEach(function(playingNote) {
-        playingNote.gain.gain.value = 0;
-        // playingNote.source.stop();
+        playingNote.gain.gain.cancelScheduledValues(currentTime);
+        playingNote.gain.gain.setValueAtTime(playingNote.gain.gain.value, currentTime);
+        playingNote.gain.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
       });
+      this.oscillator.stop();
     };
 
     AudioPlayer.prototype.playSound = function(bassSound) {
       var resources = bassSounds[bassSound.style].getResources(bassSound);
       var player = this;
-      function afterLoad(audioBuffer) {
-        console.log('------------------');
-        /*
-        if (player.playing) {
-          player.gain.gain.linearRampToValueAtTime(0.001, context.currentTime+0.03);
-          //player.source.stop();
-        }*/
-        if (player.source && player.source.playing) {
-          // player.source.stop();
-          player.source.gain.gain.setValueAtTime(bassSound.volume, context.currentTime);
-          player.source.gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime+0.05);
-          var fadingSource = player.source;
-          setTimeout(function() {
-            // fadingSource.stop();
-          }, 55);
-        }
-        var source = context.createBufferSource();
-        var gain = context.createGain();
-
-        source.buffer = audioBuffer;
-        source.connect(gain);
-        gain.connect(context.destination);
-
-        //var beatTime = 60/bpm;
-        //this.subbeatTime = beatTime/4;
-        var subbeatTime = 1/4;
-
-        var duration = bassSound.noteLength.length? subbeatTime*bassSound.noteLength.length*16 : subbeatTime;
-        if (bassSound.noteLength.dotted) {
-          duration *= 1.5;
-        }
-        if (bassSound.noteLength.staccato) {
-          duration = 0.8*duration;
-        }
-        var startTime = context.currentTime;
-        startTime+= 0.05;
-        gain.gain.setValueAtTime(bassSound.volume, startTime);
-        source.start(startTime, 0, duration+0.05);
-        //source.playbackRate.value = 2;
-        gain.gain.linearRampToValueAtTime(0.001, startTime+duration);
-        player.source = source;
-        player.gain = gain;
-
-        source.playing = true;
-        source.gain = gain;
-        source.addEventListener('ended', function(evt) {
-          evt.target.playing = false;
-        });
+      if (player.playingBassSample && player.playingBassSample.source.playing) {
+        var currentTime = context.currentTime;
+        player.playingBassSample.gain.gain.cancelScheduledValues(currentTime);
+        player.playingBassSample.gain.gain.setValueAtTime(bassSound.volume, currentTime);
+        player.playingBassSample.gain.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
       }
-
+      function afterLoad(audioBuffer) {
+        //setTimeout(function() {
+          player.playingBassSample = player._playBassSound(bassSound);
+          player.playingBassSample.source.playing = true;
+          player.playingBassSample.source.addEventListener('ended', function(evt) {
+            evt.target.playing = false;
+          });
+        //}, 50);
+      }
       this.bufferLoader.loadResource(resources[0], afterLoad);
     };
 

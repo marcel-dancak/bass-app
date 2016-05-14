@@ -39,8 +39,8 @@
     $scope.menu = {
       element: null,
       open: angular.noop,
-      subbeat: null, // set when opened
-      searchText: '',
+      grid: null, // set when opened,
+      sound: null,
       nextNote: function() {
         $scope.menu.sound.fret = $scope.menu.sound.fret || 0;
         var string = $scope.bass.strings[$scope.menu.grid.string];
@@ -84,6 +84,15 @@
             };
           }
         }
+      },
+      updateSlide: function() {
+        var endindex = this.sound.fret+this.sound.note.slide;
+        if (endindex < 0) {
+          this.sound.note.slide += -(endindex);
+        } else if (endindex > 24) {
+          this.sound.note.slide -= endindex-24;
+        }
+        this.slideEndNote = this.stringNotes[this.sound.fret+this.sound.note.slide];
       }
     };
 
@@ -108,7 +117,7 @@
       // console.log(info);
       var sound = grid.sound;
       var length = sound.noteLength.beatLength/4;
-      var gridWidth = (info.width+4)/length;
+      var gridWidth = (info.width+3)/length;
       var noteLengths = [
         {
           length: 1,
@@ -156,7 +165,31 @@
       $scope.$apply();
     };
 
-    $scope.onResizeEnd = function(grid, info) {
+    $scope.onResizeEnd = function(grid, info, evt) {
+      // var box = info.element[0].getBoundingClientRect();
+      // console.log(box);
+      var resizeElem  = info.element[0];
+      console.log(resizeElem.style);
+      resizeElem.style.display = "none";
+      var x = $scope.dropNote.left+$scope.dropNote.width-10;
+      var elem = document.elementFromPoint(x, $scope.dropNote.top+10);
+      resizeElem.style.display = "";
+      console.log(elem);
+      console.log(angular.element(elem.parentElement).scope());
+      var targetGrid = angular.element(elem.parentElement).scope().grid;
+      if (targetGrid) {
+        var targetSound = targetGrid.sound;
+        if (targetSound && targetSound.note) {
+          if (grid !== targetGrid) {
+            console.log('CONVERT TO SLIDE');
+            // info.element.css('width', '');
+            // $scope.dropNote.visible = false;
+            grid.sound.note.type = 'slide';
+            grid.sound.note.slide = targetSound.fret-grid.sound.fret;
+            $scope.clearSound(targetSound);
+          }
+        }
+      }
       info.element.css('width', '');
       angular.extend(grid.sound.noteLength, widthToLength[closestWidth]);
       $scope.updateBassSound(grid.sound);
@@ -198,7 +231,7 @@
     };
 
     $scope.updateBassSound = function(sound) {
-      if (sound.note.name === 'x') {
+      if (sound.note.type === 'ghost') {
         sound.noteLength.length = 1/16;
       }
       sound.fret = $scope.bass.stringFret(sound.string, sound.note);
@@ -285,9 +318,10 @@
       if (grid.sound.note || !$data.sound.note) {
         return false;
       }
-      if ($data.sound.note.name === 'x') {
+      if ($data.sound.note.type === 'ghost') {
         return true;
       }
+      console.log('grid.string '+grid.string);
       var fret = $scope.bass.stringFret(grid.string, $data.sound.note);
       return fret !== -1;
     };
@@ -295,13 +329,16 @@
     $scope.openBassSoundMenu = function(evt, grid) {
       console.log('openBassSoundMenu');
       var box = evt.target.getBoundingClientRect();
-      $scope.menu.element.css('left', box.left+'px');
+      // $scope.menu.element.css('left', box.left+'px');
+      // $scope.menu.element.css('top', 32+box.top+'px');
+      $scope.menu.element.css('left', (evt.clientX-20)+'px');
       $scope.menu.element.css('top', 32+box.top+'px');
 
       $mdMenu.hide().then(function() {
         grid.sound.string = grid.string;
         $scope.menu.sound = grid.sound;
         $scope.menu.grid = grid;
+        $scope.menu.stringNotes = $scope.bass.strings[grid.string].notes;
         $timeout(function() {
           $scope.menu.open(evt);
         });
@@ -311,15 +348,6 @@
     $scope.playSound = function(sound) {
       audioPlayer.playSound(sound);
     };
-    /*
-    $scope.section.bars.forEach(function(bar) {
-      console.log(bar);
-      bar.bass.forEach(function(subbeats) {
-        subbeats.forEach(function(subbeat) {
-          $scope.updateBassSound(subbeat);
-        });
-      });
-    });*/
   }
 
 })();

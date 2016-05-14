@@ -62,11 +62,10 @@
 }
 .bass-sound-container label {
   display: none;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .bass-sound-container.active {
-  background-color: #bbb;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
   border: 1px solid #777;
   max-height: 32px;
@@ -93,7 +92,9 @@
 .bass-sound-container.active[octave="4"] {
   background-color: #ffeb3b;
 }
-
+.bass-sound-container.active.ghost {
+  background-color: #bbb;
+}
 .bass-sound-container.active.selected {
   border: 2px solid #333;
   margin: 1px 1px 1px 2px;
@@ -249,9 +250,37 @@
   padding: 0;
   margin: 0;
   overflow: hidden;
-  height: 100%;
-  xdisplay: none;
+  height: 30px;
+  line-height: 36px;
 }
+
+.bass-sound-container.staccato p::before {
+  content: "•";
+  position: absolute;
+  top: -11px;
+  padding-left: 2px;
+}
+
+.bass-sound-container .resize-handler {
+  position: absolute;
+  display: block;
+  width: 10px;
+  right: 0;
+  padding: 4px 0;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  pointer-events: none;
+}
+
+.bass-sound-container.active:hover .resize-handler {
+  opacity: 1;
+}
+.bass-sound-container.active .resize-handler md-icon {
+  width: 10px;
+  height: 12px;
+  display: block;
+}
+
 .bass-sound-container.active {
   z-index: 100;
 }
@@ -287,14 +316,9 @@
 }
 
 .rg-right {
-  right: 0;
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  right: 14px;
 }
-.rg-right > span {
-  border-color: #333;
-  background-color: white;
-}
+
 .drag-element {
   pointer-events: none;
 }
@@ -325,5 +349,40 @@ md-select-menu:not(.md-overflow) md-content {
 }
 
 .hidden .bass-sound-container:not(.active) {
-  display: none;
+  /*display: none;*/
+  visibility: hidden;
+}
+
+.buttons-spinner .md-button.md-focused:not(:hover) {
+  background-color: transparent;
+}
+
+md-input-container.slide-field {
+  margin-left: 15px;
+  position: relative;
+}
+
+md-input-container.slide-field input {
+  padding: 6px 2px 1px 10px; 
+  line-height: 45px;
+}
+
+md-input-container.slide-field > span {
+  position: absolute;
+  right: 30px;
+  font-size: 12px;
+  line-height: 36px;
+  color: #555;
+  text-align: right;
+  pointer-events: none;
+}
+
+.bass-sound-container .label-wrapper {
+  display: inline;
+}
+
+.bass-sound-container .slide-slash {
+  transform: scale(4, 1);
+  padding: 0 10px;
+  font-weight: 300;
 }
