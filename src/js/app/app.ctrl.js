@@ -63,7 +63,7 @@
           index: 3,
           noteIndex: bassNotes.list.indexOf(bassNotes.map['G2'])
         }
-      ].reverse(),
+      ],
       playingStyles: {
         finger: {
           name: 'finger',

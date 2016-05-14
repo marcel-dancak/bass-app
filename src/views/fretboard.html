@@ -41,7 +41,7 @@
   </div>
 
   <div
-    ng-repeat="string in bass.strings"
+    ng-repeat="string in bass.strings | orderBy:string.index:'-'"
     layout="row">
     <div
       flex

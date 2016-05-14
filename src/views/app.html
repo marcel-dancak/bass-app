@@ -243,7 +243,7 @@
     <md-button
       aria-label="Tunning"
       class="tabs-tunning-button">
-      <p ng-repeat="string in bass.strings">
+      <p ng-repeat="string in bass.strings | orderBy:string.index:'-'">
         {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
       </p>
     </md-button>
