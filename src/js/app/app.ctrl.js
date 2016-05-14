@@ -259,9 +259,16 @@
       // restrict beats per view to meaningful values
       beatsPerView = Math.max(beatsPerView, 1);
       beatsPerView = Math.min(beatsPerView, 16);
-      beatsPerView = Math.min(beatsPerView, $scope.section.timeSignature.top*$scope.section.length);
-      if (beatsPerView !== $scope.slides.beatsPerView) {
-        $scope.slides.beatsPerView = beatsPerView;
+      var minSlidesCount = $scope.section.timeSignature.top*$scope.section.length;
+      beatsPerView = Math.min(beatsPerView, minSlidesCount);
+      $scope.slides.beatsPerView = beatsPerView;
+      if (beatsPerView === minSlidesCount) {
+        $scope.barSwiper.slideReset();
+        $scope.bassSwiper.slideReset();
+        $scope.drumsSwiper.slideReset();
+        $scope.barSwiper.lockSwipes();
+      } else {
+        $scope.barSwiper.unlockSwipes();
       }
 
       $scope.barSwiper.params.slidesPerView = beatsPerView;
@@ -269,6 +276,11 @@
       $scope.drumsSwiper.params.slidesPerView = beatsPerView;
       updateSlidesSize();
       updateSubbeatsVisibility();
+
+      if ($scope.barSwiper.getWrapperTranslate() < $scope.barSwiper.maxTranslate()) {
+        // fix slides when scrolled to much
+        $scope.barSwiper.slideTo($scope.barSwiper.activeIndex, 500, false);
+      }
     };
 
     $scope.onBarSwiper = function(swiper) {
