@@ -8,6 +8,13 @@
   function NoteController($scope, $timeout, $mdMenu, audioPlayer) {
     console.log('NOTE CONTROLLER');
     console.log($scope);
+    var noteLengthSymbols = {
+      1: '𝅝',
+      0.5: '𝅗𝅥',
+      0.25: '𝅘𝅥',
+      0.125: '𝅘𝅥𝅮',
+      0.0625: '𝅘𝅥𝅯'
+    };
     $scope.selected = {grid: null};
 
     $scope.bass.strings.forEach(function(string) {
@@ -199,6 +206,7 @@
       info.element.css('width', '');
       angular.extend(grid.sound.noteLength, widthToLength[closestWidth]);
       $scope.updateBassSound(grid.sound);
+      $scope.dropNote.resizeNoteLength = '';
       $scope.dropNote.visible = false;
       $scope.$apply();
     };
@@ -214,6 +222,8 @@
         }
       });
       $scope.dropNote.width = closestWidth;
+      var noteLength = widthToLength[closestWidth];
+      $scope.dropNote.resizeNoteLength = noteLengthSymbols[noteLength.length]+(noteLength.dotted? '.' : '');
       $scope.$apply();
     };
 
@@ -300,6 +310,10 @@
         $scope.dropNote.width = -1;
       } else {
         $scope.dropNote.width = e.target.clientWidth;
+        // set opacity with delay, to avoid opacity in drag image
+        setTimeout(function() {
+          e.target.style.opacity = 0.65;
+        }, 100);
       }
       if (!sound.noteLength) {
         return;
@@ -319,6 +333,7 @@
         dragElement.removeClass('drag-element');
         dragElement = null;
       }
+      e.target.style.opacity = 1;
       $scope.dropNote.visible = false;
     });
 

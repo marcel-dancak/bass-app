@@ -282,19 +282,23 @@
 
 .bass-sound-container .resize-handler {
   position: absolute;
-  display: block;
+  display: none;
   width: 10px;
   right: 0;
   padding: 4px 0;
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   pointer-events: none;
+}
+
+.bass-sound-container.active .resize-handler {
+  display: block;
+  opacity: 0;
 }
 
 .bass-sound-container.active:hover .resize-handler {
   opacity: 1;
 }
-.bass-sound-container.active .resize-handler md-icon {
+.bass-sound-container .resize-handler md-icon {
   width: 10px;
   height: 12px;
   display: block;
@@ -321,6 +325,20 @@
   left: 0px;
   top: 0;
   pointer-events: none;
+}
+.drop-note-area label {
+  position: absolute;
+  right: 0;
+  top: -30px;
+  font-size: 20px;
+  width: 26px;
+  height: 26px;
+  text-align: center;
+  background-color: rgba(63,81,181, 0.65);
+  border-radius: 5px;
+}
+.drop-note-area label:empty {
+  display: none;
 }
 
 .resize-container {
