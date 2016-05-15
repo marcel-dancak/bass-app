@@ -576,5 +576,10 @@
       sections: loadSavedSectionsNames(),
       selectedSectionIndex: null
     };
+
+    // Prevent default context menu
+    window.oncontextmenu = function() {
+      return false;
+    }
   }
 })();

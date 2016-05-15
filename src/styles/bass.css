@@ -1,3 +1,21 @@
+.audio-graph-container {
+  border: solid #ccc;
+  border-width: 1px 1px 1px 0;
+  background-color: #eee;
+  margin: 15px 0 20px 0;
+}
+
+.beat-1 .audio-graph-container {
+  border-left: 3px solid #ccc;
+}
+.swiper-wrapper > .swiper-slide:last-child .audio-graph-container {
+  border-right: 3px solid #ccc;
+}
+.audio-graph {
+  height: 85px;
+  width: 100%;
+}
+
 .bass-board {
   position: relative;
   xborder-left: 1px solid #ccc;
@@ -15,16 +33,16 @@
   margin: 0px 30px 40px 65px;
   position: relative;
 }
-.tabs-tunning-button {
+.bass-tunning-button {
   position: absolute;
   min-width: 36px;
   left: -48px;
-  top: 110px;
+  top: 125px;
   font-size: 20px;
   margin: 0 3px;
   padding: 0;
 }
-.tabs-tunning-button p {
+.bass-tunning-button p {
   margin: 0;
   height: 36px;
 }
@@ -38,7 +56,7 @@
   pointer-events: none;
 }
 
-.tab-string {
+.bass-string {
   height: 36px;
   margin: 19px 0 15px 0;
   width: 100%;
@@ -94,6 +112,7 @@
 }
 .bass-sound-container.active.ghost {
   background-color: #bbb;
+  max-width: 100%;
 }
 .bass-sound-container.active.selected {
   border: 2px solid #333;

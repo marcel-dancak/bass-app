@@ -19,11 +19,16 @@
 
 .bar-label {
   margin-bottom: 6px;
-  height: 20px;
   display: inline-block;
-  color: #333;
-  font-weight: 500;
+  font-weight: bold;
   font-size: 14px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  min-width: 20px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 10px;
 }
 
 .beat .bar {
@@ -313,7 +318,7 @@ md-slider .md-focus-ring {
 }
 
 .bar-container .swiper-container {
-  height: 130px;
+  height: 135px;
 }
 
 .swiper-container .bar-container {
@@ -327,4 +332,10 @@ md-slider .md-focus-ring {
   width: 24px;
   height: 24px;
   padding-left: 10px;
+}
+.bar-container .swiper-button-prev {
+  left: 0;
+}
+.bar-container .swiper-button-next {
+  right: 0;
 }

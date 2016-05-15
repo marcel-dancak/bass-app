@@ -15,27 +15,9 @@
   z-index: 200;
 }
 
-.audio-graph-container {
-  border: solid #ccc;
-  border-width: 1px 1px 1px 0;
-  background-color: #eee;
-  margin: 10px 0;
-}
-
-.beat-1 .audio-graph-container {
-  border-left: 3px solid #ccc;
-}
-.swiper-wrapper > .swiper-slide:last-child .audio-graph-container {
-  border-right: 3px solid #ccc;
-}
 .md-button.no-hover.md-focused,
 .md-button.no-hover:hover {
   background-color: transparent;
-}
-
-.audio-graph {
-  height: 85px;
-  width: 100%;
 }
 
 md-select {
@@ -297,4 +279,11 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   margin-left: 6px;
   left: 10px;
+}
+
+.md-select-menu-container.md-active {
+  box-shadow:
+    0px 8px 10px -5px rgba(0, 0, 0, 0.2),
+    0px 16px 24px 2px rgba(0, 0, 0, 0.14),
+    0px 6px 30px 5px rgba(0, 0, 0, 0.12);
 }

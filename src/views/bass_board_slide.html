@@ -6,7 +6,7 @@
     class="string-container">
     <div
       ng-repeat="string in bass.strings"
-      class="tab-string">
+      class="bass-string">
     </div>
   </div>
 
@@ -38,11 +38,10 @@
         ui-on-drop="onDrop($event, $data, grid, section)"
 
         ng-attr-octave="{{ grid.sound.note.octave }}"
-        class="bass-sound-container"
+        class="bass-sound-container {{ grid.sound.note.type }}"
         ng-class="{
-          active: grid.sound.note.name,
+          active: grid.sound.note.type,
           selected: selected.grid===grid,
-          ghost: grid.sound.note.type==='ghost',
           staccato: grid.sound.noteLength.staccato
         }"
         ng-style="{
