@@ -37,8 +37,11 @@
             <md-option value="slide">
               Slide
             </md-option>
-            <md-option value="grace">
+            <md-option value="grace" ng-disabled="true">
               Grace
+            </md-option>
+            <md-option value="bended" ng-disabled="true">
+              Bended
             </md-option>
           </md-select>
         </md-input-container>
@@ -51,8 +54,7 @@
             ng-disabled="menu.sound.note.type==='ghost'"
             md-container-class="note-select-menu"
             ng-model="menu.sound.note"
-            ng-model-options="{trackBy: '$value.code'}"
-            md-on-close="">
+            ng-model-options="{trackBy: '$value.code'}">
             <div
               ng-repeat="note in bass.strings[menu.grid.string].notes"
               layout="row">
@@ -66,7 +68,8 @@
                   octave: note.octave,
                   code: note.label[0]+note.octave,
                   type: menu.sound.note.type,
-                  slide: menu.sound.note.slide
+                  slide: menu.sound.note.slide,
+                  fret: $index
                 }">
                 {{ note.label[0] }} <sub>{{ note.octave }}</sub>
               </md-option>
@@ -81,7 +84,8 @@
                   octave: note.octave,
                   code: note.label[1]+note.octave,
                   type: menu.sound.note.type,
-                  slide: menu.sound.note.slide
+                  slide: menu.sound.note.slide,
+                  fret: $index
                 }">
                 {{ note.label[1] }} <sub>{{ note.octave }}</sub>
               </md-option>

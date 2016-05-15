@@ -83,34 +83,40 @@
         <div
           class="label-wrapper"
           ng-switch="grid.sound.note.type">
+          <!-- Regular note label -->
           <p ng-switch-when="regular">
             <label>
               {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
             </label>
             <label class="fret">
-              &nbsp( {{ grid.sound.fret }} )
+              &nbsp( {{ grid.sound.note.fret }} )
             </label>
           </p>
+
+          <!-- Ghost note label -->
+          <p ng-switch-when="ghost">x</p>
+
+          <!-- Slide note label -->
           <p ng-switch-when="slide">
             <label>
               {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
             </label>
             <label class="fret">
-              &nbsp( {{ grid.sound.fret }} )
+              &nbsp( {{ grid.sound.note.fret }} )
             </label>
             <label class="slide-slash">
               {{ grid.sound.note.slide > 0? '/' : '\\' }}
             </label>
             <label>
-              {{ string.notes[grid.sound.fret+grid.sound.note.slide].label[0] }}
-              <sub>{{ string.notes[grid.sound.fret+grid.sound.note.slide].octave }}</sub>
+              {{ string.notes[grid.sound.note.fret+grid.sound.note.slide].label[0] }}
+              <sub>{{ string.notes[grid.sound.note.fret+grid.sound.note.slide].octave }}</sub>
             </label>
             <label class="fret">
-              &nbsp( {{ grid.sound.fret+grid.sound.note.slide }} )
+              &nbsp( {{ grid.sound.note.fret+grid.sound.note.slide }} )
             </label>
           </p>
-        </div>
 
+        </div>
       </div>
     </div>
   </div>

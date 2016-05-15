@@ -42,59 +42,63 @@
       grid: null, // set when opened,
       sound: null,
       nextNote: function() {
-        $scope.menu.sound.fret = $scope.menu.sound.fret || 0;
-        var string = $scope.bass.strings[$scope.menu.grid.string];
-        if ($scope.menu.sound.fret < 24) {
-          $scope.menu.sound.note = angular.copy($scope.menu.sound.note);
-          var currentNote = string.notes[$scope.menu.sound.fret];
-          if (currentNote.label.length === 2 && $scope.menu.sound.note.code === currentNote.label[0]+currentNote.octave) {
-            angular.extend($scope.menu.sound.note, {
+        var fret = this.sound.note.fret || 0;
+        var string = $scope.bass.strings[this.grid.string];
+        if (fret < 24) {
+          this.sound.note = angular.copy(this.sound.note);
+          var currentNote = string.notes[fret];
+          if (currentNote.label.length === 2 && this.sound.note.code === currentNote.label[0]+currentNote.octave) {
+            angular.extend(this.sound.note, {
               code: currentNote.label[1]+currentNote.octave,
               name: currentNote.label[1],
-              octave: currentNote.octave
+              octave: currentNote.octave,
+              fret: fret
             });
           } else {
-            $scope.menu.sound.fret++;
-            var nextNote = string.notes[$scope.menu.sound.fret];
-            angular.extend($scope.menu.sound.note, {
+            fret++;
+            var nextNote = string.notes[fret];
+            angular.extend(this.sound.note, {
               code: nextNote.label[0]+nextNote.octave,
               name: nextNote.label[0],
-              octave: nextNote.octave
+              octave: nextNote.octave,
+              fret: fret
             });
           }
         }
       },
       prevNote: function() {
-        $scope.menu.sound.fret = $scope.menu.sound.fret || 0;
-        var string = $scope.bass.strings[$scope.menu.grid.string];
-        if ($scope.menu.sound.fret > 0) {
-          $scope.menu.sound.note = angular.copy($scope.menu.sound.note);
-          var currentNote = string.notes[$scope.menu.sound.fret];
-          if (currentNote.label.length === 2 && $scope.menu.sound.note.code === currentNote.label[1]+currentNote.octave) {
-            angular.extend($scope.menu.sound.note, {
+        var fret = this.sound.note.fret || 0;
+        var string = $scope.bass.strings[this.grid.string];
+        if (fret > 0) {
+          this.sound.note = angular.copy(this.sound.note);
+          var currentNote = string.notes[fret];
+          if (currentNote.label.length === 2 && this.sound.note.code === currentNote.label[1]+currentNote.octave) {
+            angular.extend(this.sound.note, {
               code: currentNote.label[0]+currentNote.octave,
               name: currentNote.label[0],
-              octave: currentNote.octave
+              octave: currentNote.octave,
+              fret: fret
             });
           } else {
-            $scope.menu.sound.fret--;
-            var prevNote = string.notes[$scope.menu.sound.fret];
-            angular.extend($scope.menu.sound.note, {
+            fret--;
+            var prevNote = string.notes[fret];
+            angular.extend(this.sound.note, {
               code: prevNote.label[prevNote.label.length-1]+prevNote.octave,
               name: prevNote.label[prevNote.label.length-1],
-              octave: prevNote.octave
+              octave: prevNote.octave,
+              fret: fret
             });
           }
         }
       },
       updateSlide: function() {
-        var endindex = this.sound.fret+this.sound.note.slide;
+        var endindex = this.sound.note.fret+this.sound.note.slide;
         if (endindex < 0) {
           this.sound.note.slide += -(endindex);
         } else if (endindex > 24) {
           this.sound.note.slide -= endindex-24;
         }
-        this.slideEndNote = this.stringNotes[this.sound.fret+this.sound.note.slide];
+        this.slideEndNote = this.stringNotes[this.sound.note.fret+this.sound.note.slide];
       }
     };
 
@@ -187,7 +191,7 @@
             // info.element.css('width', '');
             // $scope.dropNote.visible = false;
             grid.sound.note.type = 'slide';
-            grid.sound.note.slide = targetSound.fret-grid.sound.fret;
+            grid.sound.note.slide = targetSound.note.fret-grid.sound.note.fret;
             $scope.clearSound(targetSound);
           }
         }
@@ -234,9 +238,11 @@
 
     $scope.updateBassSound = function(sound) {
       if (sound.note.type === 'ghost') {
-        sound.noteLength.length = 1/16;
+        sound.noteLength = {
+          length: 1/16
+        };
       }
-      sound.fret = $scope.bass.stringFret(sound.string, sound.note);
+      // sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
       if (sound.noteLength) {
         var length = sound.noteLength.length;
         if (sound.noteLength.dotted) {
@@ -279,12 +285,14 @@
       dragNote = data.data;
       var sound = data.data.sound;
       if (dragNote.source === 'fretboard') {
-        if (sound.note.label.length > 1 && e.clientX > e.target.offsetLeft+e.target.clientWidth/2) {
-          sound.note.name = sound.note.label[1];
-        } else {
-          sound.note.name = sound.note.label[0];
+        if (sound.note.type !== 'ghost') {
+          if (sound.note.label.length > 1 && e.clientX > e.target.offsetLeft+e.target.clientWidth/2) {
+            sound.note.name = sound.note.label[1];
+          } else {
+            sound.note.name = sound.note.label[0];
+          }
+          sound.note.code = sound.note.name+sound.note.octave;
         }
-        sound.note.code = sound.note.name+sound.note.octave;
         // update transfer data
         var transferDataText = angular.toJson({data: sound});
         e.dataTransfer.setData('text', transferDataText);
@@ -323,19 +331,16 @@
       if ($data.sound.note.type === 'ghost') {
         return true;
       }
-      console.log('grid.string '+grid.string);
       var fret = $scope.bass.stringFret(grid.string, $data.sound.note);
       return fret !== -1;
     };
 
     $scope.openBassSoundMenu = function(evt, grid) {
-      console.log('openBassSoundMenu');
       var box = evt.target.getBoundingClientRect();
       // $scope.menu.element.css('left', box.left+'px');
       // $scope.menu.element.css('top', 32+box.top+'px');
       $scope.menu.element.css('left', (evt.clientX-20)+'px');
       $scope.menu.element.css('top', 32+box.top+'px');
-
       $mdMenu.hide().then(function() {
         grid.sound.string = grid.string;
         $scope.menu.sound = grid.sound;

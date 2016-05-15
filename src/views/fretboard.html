@@ -13,10 +13,10 @@
     layout="column"
     class="ghost-notes">
     <div
-      ng-repeat="string in bass.strings"
+      ng-repeat="string in bass.strings | orderBy:string.index:'-'"
       ng-click="playBassSound({
         note: {
-          name: 'x'
+          type: 'ghost'
         },
         string: string.index
       })"
@@ -26,11 +26,7 @@
         sound: {
           style: 'finger',
           note: {
-            type: 'ghost',
-            label: ['x']
-          },
-          noteLength: {
-            length: 1/16
+            type: 'ghost'
           },
           volume: 0.75,
           string: string.index
@@ -63,14 +59,14 @@
           note: {
             type: 'regular',
             label: note.label,
-            octave: note.octave
+            octave: note.octave,
+            fret: $index
           },
           noteLength: {
             length: 1/8
           },
           volume: 0.75,
-          string: string.index,
-          fret: $index
+          string: string.index
         }
       }"
       >
