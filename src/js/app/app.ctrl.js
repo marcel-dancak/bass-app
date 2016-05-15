@@ -187,6 +187,7 @@
       drums: [],
       beatsPerSlide: 2,
       beatsPerView: 5,
+      animationDuration: 300,
       visibleSubbeats: [1, 2, 3, 4]
     };
 
@@ -338,7 +339,7 @@
     function beatSync(barIndex, beat, bpm) {
       audioVisualiser.beatSync(barIndex, beat, bpm);
       var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
-      $scope.barSwiper.slideTo(slide, 100, false);
+      $scope.barSwiper.slideTo(slide, $scope.slides.animationDuration, false);
       var barSlideElement = $scope.barSwiper.$('.swiper-slide')[slide];
       $scope.barSlideStartTime = context.currentTime;
       if (!$scope.barSlideElement) {
@@ -502,6 +503,7 @@
         // other section configuration
         beatsPerView: $scope.slides.beatsPerView,
         beatsPerSlide: $scope.slides.beatsPerSlide,
+        animationDuration: $scope.slides.animationDuration
       }
       console.log(JSON.stringify(data));
       localStorage.setItem(storageKey, JSON.stringify(data));
@@ -517,6 +519,9 @@
       console.log(storageKey);
       var sectionData = JSON.parse(localStorage.getItem(storageKey));
       console.log(sectionData);
+      if (sectionData.animationDuration) {
+        $scope.section.animationDuration = sectionData.animationDuration;
+      }
       var sectionConfigChanged = $scope.section.timeSignature.top !== sectionData.timeSignature.top;
 
       $scope.section.setLength(sectionData.length);

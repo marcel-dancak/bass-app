@@ -62,7 +62,16 @@
       </md-list-item>
 
       <md-list-item>
-        <label>Beats per Slide</label>
+        <label>Duration / Beats per Slide</label>
+        <md-input-container>
+          <input
+            type="number"
+            min="0"
+            max="1500"
+            step="50"
+            ng-model="slides.animationDuration">
+        </md-input-container>
+        <span>&nbsp&nbsp</span>
         <md-input-container>
           <input
             type="number"
