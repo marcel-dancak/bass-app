@@ -18,14 +18,13 @@
             max="12"
             step="1"
             ng-model="section.timeSignature.top"
-            ng-change="sectionConfigChanged()">
+            ng-change="updateSwipers()">
         </md-input-container>
         <span style="margin: 20px 4px 0 6px;">/</span>
         <md-input-container>
           <md-select
-            ng-model="section.timeSignature.bottom"
-            ng-change="timeSignatureBottomChanged()"
-            class="time-signature">
+            class="time-signature"
+            ng-model="section.timeSignature.bottom">
             <md-option
               ng-repeat="value in [2,4,8,16]"
               ng-value="{{ value }}">
@@ -44,7 +43,7 @@
             max="12"
             step="1"
             ng-model="section.length"
-            ng-change="sectionConfigChanged()">
+            ng-change="updateSwipers()">
         </md-input-container>
       </md-list-item>
 
@@ -57,7 +56,7 @@
             max="16"
             step="1"
             ng-model="slides.beatsPerView"
-            ng-change="beatsPerViewChanged()">
+            ng-change="updateSwipers()">
         </md-input-container>
       </md-list-item>
 
@@ -79,7 +78,7 @@
             max="8"
             step="1"
             ng-model="slides.beatsPerSlide"
-            ng-change="beatsPerSlideChanged()">
+            ng-change="updateSwipers()">
         </md-input-container>
       </md-list-item>
 

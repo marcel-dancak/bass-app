@@ -27,7 +27,7 @@
 
     $scope.player = {
       playing: false,
-      bpm: 60,
+      bpm: 80,
       bass: audioPlayer.bass,
       drums: audioPlayer.drums
     };
@@ -186,9 +186,17 @@
       bass: [],
       drums: [],
       beatsPerSlide: 2,
-      beatsPerView: 5,
+      beatsPerView: 10,
       animationDuration: 300,
-      visibleSubbeats: [1, 2, 3, 4]
+      visibleSubbeats: [1, 2, 3, 4],
+      swiperConfig: {}
+    };
+    // set initial swiper config
+    $scope.slides.swiperConfig = {
+      beatsPerView: $scope.slides.beatsPerView,
+      beatsPerSlide: $scope.slides.beatsPerSlide,
+      barBeatsCount: $scope.section.timeSignature.top,
+      barsCount: $scope.section.length
     };
 
     function updateSlides() {
@@ -212,12 +220,6 @@
       });
     }
 
-    function updateSlidesSize() {
-      $scope.barSwiper.updateSlidesSize();
-      $scope.bassSwiper.updateSlidesSize();
-      $scope.drumsSwiper.updateSlidesSize();
-    }
-
     function updateSubbeatsVisibility() {
       var slideWidth = $scope.barSwiper.size / $scope.slides.beatsPerView;
       // console.log(slideWidth);
@@ -232,58 +234,91 @@
       $scope.slides.visibleSubbeats = visibleSubbeats;
     }
 
-    $scope.renderingBar = function(index) {
-      console.log('Rendering Bar: '+index);
-    };
+    $scope.updateSwipers = function(options) {
+      var reinitializeSlides = false;
+      var updateSlidesSize = false;
 
-    $scope.sectionConfigChanged = function() {
-      console.log($scope.section.length);
-      $scope.section.setLength($scope.section.length);
-      if ($scope.section.length > 0 && $scope.section.length < 20 &&
-        $scope.section.timeSignature.top > 1 && $scope.section.timeSignature.top < 13) {
+      var swiperConfig = $scope.slides.swiperConfig;
+      if ($scope.section.length !== swiperConfig.barsCount) {
+        if ($scope.section.length > 0 && $scope.section.length < 20) {
+          $scope.section.setLength($scope.section.length);
+          console.log('* barsCount changed');
+          swiperConfig.barsCount = $scope.section.length;
+          $scope.section.setLength($scope.section.length);
+          reinitializeSlides = true;
+        } else {
+          $scope.section.length = swiperConfig.barsCount;
+        }
+      }
+      if ($scope.section.timeSignature.top !== swiperConfig.barBeatsCount) {
+        if ($scope.section.timeSignature.top > 1 && $scope.section.timeSignature.top < 13) {
+          console.log('* barBeatsCount changed');
+          swiperConfig.barBeatsCount = $scope.section.timeSignature.top;
+          reinitializeSlides = true;
+        } else {
+          $scope.section.timeSignature.top = swiperConfig.barBeatsCount;
+        }
+      }
+
+      // restrict beats per view to meaningful values
+      var allSlidesCount = $scope.section.timeSignature.top * $scope.section.length;
+      var maxSlidesPerView = Math.min(allSlidesCount, 16);
+      if ($scope.slides.beatsPerView > maxSlidesPerView) {
+        $scope.slides.beatsPerView = maxSlidesPerView;
+      }
+      if ($scope.slides.beatsPerView < 1) {
+        $scope.slides.beatsPerView = 1;
+      }
+      if ($scope.slides.beatsPerView !== swiperConfig.beatsPerView) {
+        console.log('* beatsPerView changed');
+        swiperConfig.beatsPerView = $scope.slides.beatsPerView;
+        $scope.barSwiper.params.slidesPerView = $scope.slides.beatsPerView;
+        $scope.bassSwiper.params.slidesPerView = $scope.slides.beatsPerView;
+        $scope.drumsSwiper.params.slidesPerView = $scope.slides.beatsPerView;
+        if ($scope.slides.beatsPerView === allSlidesCount) {
+          $scope.barSwiper.slideReset();
+          $scope.bassSwiper.slideReset();
+          $scope.drumsSwiper.slideReset();
+          $scope.barSwiper.lockSwipes();
+        } else {
+          $scope.barSwiper.unlockSwipes();
+        }
+        updateSlidesSize = true;
+      }
+      if ($scope.slides.beatsPerSlide !== swiperConfig.beatsPerSlide) {
+        console.log('* beatsPerSlide changed');
+        swiperConfig.beatsPerSlide = $scope.slides.beatsPerSlide;
+        $scope.barSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+        $scope.bassSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+        $scope.drumsSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
+        updateSlidesSize = true;
+      }
+      if (reinitializeSlides) {
         updateSlides();
+        // no need to update slides size after re-initialization
+        updateSlidesSize = false;
         $timeout(function() {
           $scope.barSwiper.init();
           $scope.bassSwiper.init();
           $scope.drumsSwiper.init();
+          updateSubbeatsVisibility();
         });
       }
+      if (updateSlidesSize) {
+        $scope.barSwiper.updateSlidesSize();
+        $scope.bassSwiper.updateSlidesSize();
+        $scope.drumsSwiper.updateSlidesSize();
+        updateSubbeatsVisibility();
+
+        if ($scope.barSwiper.getWrapperTranslate() < $scope.barSwiper.maxTranslate()) {
+          // fix slides when scrolled to much
+          $scope.barSwiper.slideTo($scope.barSwiper.activeIndex, 500, false);
+        }
+      }
     };
 
-    $scope.beatsPerSlideChanged = function() {
-      $scope.barSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
-      $scope.bassSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
-      $scope.drumsSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
-      updateSlidesSize();
-    };
-
-    $scope.beatsPerViewChanged = function() {
-      var beatsPerView = $scope.slides.beatsPerView;
-      // restrict beats per view to meaningful values
-      beatsPerView = Math.max(beatsPerView, 1);
-      beatsPerView = Math.min(beatsPerView, 16);
-      var minSlidesCount = $scope.section.timeSignature.top*$scope.section.length;
-      beatsPerView = Math.min(beatsPerView, minSlidesCount);
-      $scope.slides.beatsPerView = beatsPerView;
-      if (beatsPerView === minSlidesCount) {
-        $scope.barSwiper.slideReset();
-        $scope.bassSwiper.slideReset();
-        $scope.drumsSwiper.slideReset();
-        $scope.barSwiper.lockSwipes();
-      } else {
-        $scope.barSwiper.unlockSwipes();
-      }
-
-      $scope.barSwiper.params.slidesPerView = beatsPerView;
-      $scope.bassSwiper.params.slidesPerView = beatsPerView;
-      $scope.drumsSwiper.params.slidesPerView = beatsPerView;
-      updateSlidesSize();
-      updateSubbeatsVisibility();
-
-      if ($scope.barSwiper.getWrapperTranslate() < $scope.barSwiper.maxTranslate()) {
-        // fix slides when scrolled to much
-        $scope.barSwiper.slideTo($scope.barSwiper.activeIndex, 500, false);
-      }
+    $scope.renderingBar = function(index) {
+      console.log('Rendering Bar: '+index);
     };
 
     $scope.onBarSwiper = function(swiper) {
@@ -302,7 +337,7 @@
       console.log(swiper);
       $scope.drumsSwiper = swiper;
       $scope.barSwiper.params.control.push(swiper);
-      updateSubbeatsVisibility();
+      $scope.updateSwipers();
     };
 
     updateSlides();
@@ -516,7 +551,6 @@
       }
       $scope.project.sectionName = sectionName;
       var storageKey = 'v8.section.'+sectionName;
-      console.log(storageKey);
       var sectionData = JSON.parse(localStorage.getItem(storageKey));
       console.log(sectionData);
       if (sectionData.animationDuration) {
@@ -526,26 +560,9 @@
 
       $scope.section.setLength(sectionData.length);
       $scope.section.timeSignature = sectionData.timeSignature;
-
-      var updateBeatsPerView = sectionData.beatsPerView !== $scope.slides.beatsPerView;
-      if (updateBeatsPerView) {
-        $scope.slides.beatsPerView = sectionData.beatsPerView;
-        $scope.barSwiper.params.slidesPerView = sectionData.beatsPerView;
-        $scope.bassSwiper.params.slidesPerView = sectionData.beatsPerView;
-        $scope.drumsSwiper.params.slidesPerView = sectionData.beatsPerView;
-      }
-      if ($scope.slides.beatsPerSlide !== sectionData.beatsPerSlide) {
-        $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;
-        $scope.barSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
-        $scope.bassSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
-        $scope.drumsSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
-      }
-      if (sectionConfigChanged || updateBeatsPerView) {
-        $scope.sectionConfigChanged();
-      }
-      if (updateBeatsPerView) {
-        $timeout(updateSubbeatsVisibility, 10);
-      }
+      $scope.slides.beatsPerView = sectionData.beatsPerView;
+      $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;
+      $scope.updateSwipers();
 
       $scope.clearSection();
 

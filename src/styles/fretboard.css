@@ -36,19 +36,7 @@
   font-size: 14px;
 }
 
-/*
-.fret-box md-option {
-  padding: 0;
-  display: inline-block;
-  text-align: center;
-  line-height: 40px;
-  height: 40px;
-  width: 65px;
-}
 
-.fret-box md-option .md-text {
-  font-size: 14px;
-}*/
 .fret-box .md-button {
   font-size: 13px;
 }
@@ -96,5 +84,6 @@
   width: 48px;
   text-align: center;
   border: solid #fff;
-  border-width: 1px 1px 0 0
+  border-width: 1px 1px 0 0;
+  outline: none;
 }
