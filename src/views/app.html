@@ -204,30 +204,32 @@
       class="time-signature-button"
       ng-include src="'views/bars_form.html'">
     </div>
-    <ks-swiper-container
-      id="barSwiper"
-      swiper="swiper"
-      on-ready="onBarSwiper(swiper)"
-      initial-slide="0"
-      loop="false"
-      show-nav-buttons="true"
-      slides-per-view="slides.beatsPerView"
-      space-between="0"
-      pagination-clickable="true"
-      override-parameters="{
-        slidesPerGroup: slides.beatsPerSlide,
-        roundLengths: true
-      }">
+    <div class="bar-swiper">
+      <ks-swiper-container
+        id="barSwiper"
+        swiper="swiper"
+        on-ready="onBarSwiper(swiper)"
+        initial-slide="0"
+        loop="false"
+        show-nav-buttons="true"
+        slides-per-view="slides.beatsPerView"
+        space-between="0"
+        pagination-clickable="true"
+        override-parameters="{
+          slidesPerGroup: slides.beatsPerSlide,
+          roundLengths: true
+        }">
 
-      <ks-swiper-slide
-        ng-repeat="beat in slides.bars track by beat.id"
-        class="beat beat-{{ ::beat.beat }}">
-        <div
-          xng-init="renderingBar($index)"
-          ng-include src="'views/bar_slide.html'">
-        </div>
-      </ks-swiper-slide>
-    </ks-swiper-container>
+        <ks-swiper-slide
+          ng-repeat="beat in slides.bars track by beat.id"
+          class="beat beat-{{ ::beat.beat }}">
+          <div
+            xng-init="renderingBar($index)"
+            ng-include src="'views/bar_slide.html'">
+          </div>
+        </ks-swiper-slide>
+      </ks-swiper-container>
+    </div>
   </div>
 
   <md-tabs

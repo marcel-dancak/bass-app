@@ -4,8 +4,8 @@
   vertical-align: middle;
   text-align: center;
   height: 50px;
-  xtransition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
+
 .beat .subbeat:first-child {
   border: none;
 }
@@ -17,9 +17,16 @@
   visibility: visible;
 }
 
+.bar-swiper {
+  padding-top: 26px;
+  padding-left: 8px;
+  padding-right: 8px;
+  overflow: hidden;
+}
 .bar-label {
-  margin-bottom: 6px;
-  display: inline-block;
+  position: absolute;
+  left: -8px;
+  top: -26px;
   font-weight: bold;
   font-size: 14px;
   background-color: #555;
@@ -29,6 +36,17 @@
   height: 20px;
   line-height: 20px;
   border-radius: 10px;
+}
+
+.bar-swiper .swiper-container {
+  overflow: visible;
+}
+
+.bar-container {
+  position: relative;
+  height: 120px;
+  margin: 0 24px 15px 57px;
+  transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
 .beat .bar {
@@ -65,12 +83,6 @@
   display: none;
 }
 
-.bar-container {
-  position: relative;
-  height: 120px;
-  margin: 0 30px 15px 65px;
-  transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-}
 
 .time-signature-button {
   position: absolute;
@@ -328,7 +340,7 @@ md-slider .md-focus-ring {
 .bar-container .swiper-button-prev,
 .bar-container .swiper-button-next {
   top: auto;
-  bottom: 0;
+  bottom: 26px;
   width: 24px;
   height: 24px;
   padding-left: 10px;
