@@ -1,6 +1,7 @@
 .main-page {
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   height: 100%;
 }
 
@@ -65,7 +66,7 @@ md-input-container.input-inline-label label {
 }
 
 .control-panel {
-  margin: 20px 30px 50px 65px;
+  margin: 10px 30px 15px 65px;
   min-height: 48px;
   height: 48px;
 }
@@ -128,8 +129,9 @@ md-backdrop.md-select-backdrop {
   z-index: 101;
 }
 
-.instruments-tabs {
+md-tabs.instruments-tabs {
   overflow: visible;
+  min-height: 480px!important;
 }
 .instruments-tabs md-tabs-wrapper {
   display: none;
@@ -138,7 +140,9 @@ md-backdrop.md-select-backdrop {
 .instruments-tabs md-tabs-content-wrapper {
   top: 0;
 }
-
+.instruments-tabs md-tabs-content-wrapper > md-tab-content {
+  overflow: hidden;
+}
 md-tab-content:not(.md-active) {
   pointer-events: none;
 }

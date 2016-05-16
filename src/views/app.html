@@ -194,6 +194,8 @@
     </div>
   </div>
 
+  <div flex style="max-height: 50px;"></div>
+
   <div
     class="bar-container"
     msd-wheel="
@@ -225,6 +227,7 @@
           class="beat beat-{{ ::beat.beat }}">
           <div
             xng-init="renderingBar($index)"
+            style="height:100%;"
             ng-include src="'views/bar_slide.html'">
           </div>
         </ks-swiper-slide>
@@ -234,10 +237,9 @@
 
   <md-tabs
     md-no-ink
-    layout-fill
+    md-no-pagination
     class="instruments-tabs"
-    md-selected="instrumentIndex"
-    xng-init="instrumentIndex=1">
+    md-selected="instrumentIndex">
     <md-tab label="bass">
   <div
     class="bass-board-container"

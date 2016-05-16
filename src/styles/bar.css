@@ -3,7 +3,7 @@
   border-left: 2px solid #ccc;
   vertical-align: middle;
   text-align: center;
-  height: 50px;
+  height: 60%;
 }
 
 .beat .subbeat:first-child {
@@ -44,19 +44,17 @@
 
 .bar-container {
   position: relative;
-  height: 120px;
-  margin: 0 24px 15px 57px;
+  margin: 0 22px 0px 57px;
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
 .beat .bar {
   border-left: 2px solid #aaa;
-  height: 75px;
+  height: 80%;
 }
 
 .beat-1 .bar {
   border-left: 4px solid #aaa;
-  height: 75px;
 }
 .swiper-wrapper > .swiper-slide:last-child .bar {
   border-right: 4px solid #aaa;
@@ -330,7 +328,7 @@ md-slider .md-focus-ring {
 }
 
 .bar-container .swiper-container {
-  height: 135px;
+  height: 10vh;
 }
 
 .swiper-container .bar-container {
@@ -340,14 +338,15 @@ md-slider .md-focus-ring {
 .bar-container .swiper-button-prev,
 .bar-container .swiper-button-next {
   top: auto;
-  bottom: 26px;
-  width: 24px;
-  height: 24px;
-  padding-left: 10px;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
 }
 .bar-container .swiper-button-prev {
   left: 0;
+  padding: 2px 10px 2px 30px;
 }
 .bar-container .swiper-button-next {
   right: 0;
+  padding: 2px 30px 2px 10px;
 }

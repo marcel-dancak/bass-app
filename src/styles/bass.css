@@ -2,7 +2,7 @@
   border: solid #ccc;
   border-width: 1px 1px 1px 0;
   background-color: #eee;
-  margin: 15px 0 20px 0;
+  margin: 15px 0 30px 0;
 }
 
 .beat-1 .audio-graph-container {
@@ -12,7 +12,8 @@
   border-right: 3px solid #ccc;
 }
 .audio-graph {
-  height: 85px;
+  height: 10vh;
+  max-height: 85px;
   width: 100%;
 }
 
@@ -419,7 +420,7 @@ md-input-container.slide-field > span {
 }
 
 .bass-sound-container .slide-slash {
-  transform: scale(4, 1);
+  transform: scale3d(4, 1, 1);
   padding: 0 10px;
   font-weight: 300;
 }
