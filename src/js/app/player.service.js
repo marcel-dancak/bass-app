@@ -98,7 +98,7 @@
       //console.log(this.bufferLoader.loadedResources);
       if (audioData) {
         source.buffer = audioData;
-        var duration = sound.noteLength.beatLength*this.beatTime;
+        var duration = sound.noteLength.beatLength*(this.composition.timeSignature.bottom)*this.beatTime;
         if (sound.noteLength.staccato) {
           duration = 0.92*duration-(this.beatTime/4)*0.2;
         }
@@ -148,7 +148,7 @@
           source.start(startTime, 0, playingSound.endTime);
           gain.gain.linearRampToValueAtTime(0.001, playingSound.endTime);
           var semitoneRatio = Math.pow(2, 1/12);
-          var endRate = Math.pow(semitoneRatio, note.slide);
+          var endRate = Math.pow(semitoneRatio, note.slide || 0);
           source.playbackRate.setValueAtTime(1, startTime);
           source.playbackRate.linearRampToValueAtTime(endRate, playingSound.endTime);
 

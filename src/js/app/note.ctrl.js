@@ -127,10 +127,6 @@
     var closestWidth;
     $scope.onResizeStart = function(grid, info) {
       // console.log('onResizeStart');
-      // console.log(info);
-      var sound = grid.sound;
-      var length = sound.noteLength.beatLength/4;
-      var gridWidth = (info.width+3)/length;
       var noteLengths = [
         {
           length: 1,
@@ -161,10 +157,13 @@
           dotted: false
         }
       ];
+      var beatWidth = $scope.barSwiper.size / $scope.slides.beatsPerView;
+      beatWidth = parseInt(beatWidth);
+
       widthToLength = {};
       notesWidths = noteLengths.map(function(noteLength) {
         var length = noteLength.dotted? noteLength.length*1.5 : noteLength.length;
-        var width = length*gridWidth-2;
+        var width = length*$scope.section.timeSignature.bottom*beatWidth;
         widthToLength[width] = noteLength;
         return width;
       });
@@ -262,7 +261,7 @@
           //length -= 0.1;
         }
         // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
-        sound.noteLength.beatLength = length*4;
+        sound.noteLength.beatLength = length;
       }
     };
 
@@ -280,7 +279,11 @@
         $scope.dropNote.left = box.left;
         $scope.dropNote.top = box.top;
         if ($scope.dropNote.width === -1) {
-          $scope.dropNote.width = 2*target.clientWidth;
+          var beatWidth = target.clientWidth * $scope.slides.visibleSubbeats.length;
+          var width = (dragNote.sound.noteLength)?
+            dragNote.sound.noteLength.length * $scope.section.timeSignature.bottom * beatWidth :
+            beatWidth / 4;
+          $scope.dropNote.width = width;
         }
       });
     };

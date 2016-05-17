@@ -1,16 +1,48 @@
 .audio-graph-container {
   border: solid #ccc;
-  border-width: 1px 1px 1px 0;
+  border-width: 1px 0;
   background-color: #eee;
-  margin: 15px 0 30px 0;
+  xheight: 100%;
+  position: relative;
+  margin-top: 15px;
+  margin-bottom: 30px;
+}
+.audio-graph-container canvas {
+  z-index: 200;
 }
 
-.beat-1 .audio-graph-container {
-  border-left: 3px solid #ccc;
+.audio-graph-container::before,
+.bass-board::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  content: "";
+  width: 1px;
+  background-color: #ccc;
+  z-index: 199;
 }
-.swiper-wrapper > .swiper-slide:last-child .audio-graph-container {
-  border-right: 3px solid #ccc;
+
+.beat-1 .audio-graph-container::before,
+.beat-1 .bass-board::before {
+  width: 3px;
+  background-color: #555;
+  opacity: 0.3;
 }
+
+.bass-swiper:last-child .audio-graph-container::after,
+.bass-swiper:last-child .bass-board::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  content: "";
+  width: 3px;
+  background-color: #555;
+  opacity: 0.3;
+  z-index: 199;
+}
+
 .audio-graph {
   height: 10vh;
   max-height: 85px;
@@ -18,16 +50,9 @@
 }
 
 .bass-board {
+  width: 100%;
+  height: 144px;
   position: relative;
-  xborder-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-}
-
-.beat-1 .bass-board {
-  border-left: 3px solid #ccc;
-}
-.swiper-wrapper > .swiper-slide:last-child .bass-board {
-  border-right: 3px solid #ccc;
 }
 
 .bass-board-container {
@@ -38,7 +63,7 @@
   position: absolute;
   min-width: 36px;
   left: -48px;
-  top: 125px;
+  bottom: 0;
   font-size: 20px;
   margin: 0 3px;
   padding: 0;
@@ -74,7 +99,7 @@
   z-index: 50;
   position: relative;
   border-radius: 3px;
-  margin: 2px 2px;
+  margin: 2px 1px;
   outline: none;
   box-sizing: border-box;
   overflow: visible;
@@ -89,7 +114,6 @@
   border: 1px solid #777;
   max-height: 32px;
   line-height: 32px;
-  padding-left: 6px;
   xtransform: scale(0.95, 1);
   xtransform-origin: 0 0 0;
 }
@@ -113,11 +137,11 @@
 }
 .bass-sound-container.active.ghost {
   background-color: #bbb;
-  max-width: 100%;
+  max-width: 25%;
 }
 .bass-sound-container.active.selected {
   border: 2px solid #333;
-  margin: 1px 1px 1px 2px;
+  margin: 1px 1px 1px 1px;
   border-radius: 4px;
   line-height: 32px;
   max-height: 34px;
@@ -156,7 +180,7 @@
 
 .bass-button {
   position: absolute;
-  left: 2px;
+  left: 3px;
   top: 0;
   min-width: 32px;
   min-height: 30px;
@@ -239,11 +263,15 @@
   transform: rotate(-90deg);
 }
 
-.subbeat-tab {
+.subbeats-container {
   width: 100%;
-  height: 144px;
+  height: 100%;
   xmargin: 2px;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0
+  bottom: 0;
+  right: 0;
 }
 
 .tab-top-marker {
@@ -277,8 +305,9 @@
 .bass-sound-container.staccato p::before {
   content: "•";
   position: absolute;
-  top: -11px;
+  top: 0;
   padding-left: 2px;
+  line-height: 12px;
 }
 
 .bass-sound-container .resize-handler {
@@ -306,7 +335,7 @@
 }
 
 .bass-sound-container.active {
-  z-index: 100;
+  z-index: 200;
 }
 .md-menu {
   padding: 0;
@@ -317,15 +346,16 @@
 
 .drop-note-area {
   position: fixed;
-  height: 30px;
+  height: 34px;
   padding: 0;
   border: 2px solid rgb(63,81,181);
   border-radius: 4px;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  z-index: 100;
+  z-index: 199;
   left: 0px;
   top: 0;
   pointer-events: none;
+  box-sizing: border-box;
 }
 .drop-note-area label {
   position: absolute;
