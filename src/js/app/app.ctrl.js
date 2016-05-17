@@ -269,20 +269,21 @@
       if ($scope.slides.beatsPerView < 1) {
         $scope.slides.beatsPerView = 1;
       }
+      if ($scope.slides.beatsPerView === allSlidesCount) {
+        $scope.barSwiper.slideReset();
+        $scope.bassSwiper.slideReset();
+        $scope.drumsSwiper.slideReset();
+        $scope.barSwiper.lockSwipes();
+      } else {
+        $scope.barSwiper.unlockSwipes();
+      }
+
       if ($scope.slides.beatsPerView !== swiperConfig.beatsPerView) {
         console.log('* beatsPerView changed');
         swiperConfig.beatsPerView = $scope.slides.beatsPerView;
         $scope.barSwiper.params.slidesPerView = $scope.slides.beatsPerView;
         $scope.bassSwiper.params.slidesPerView = $scope.slides.beatsPerView;
         $scope.drumsSwiper.params.slidesPerView = $scope.slides.beatsPerView;
-        if ($scope.slides.beatsPerView === allSlidesCount) {
-          $scope.barSwiper.slideReset();
-          $scope.bassSwiper.slideReset();
-          $scope.drumsSwiper.slideReset();
-          $scope.barSwiper.lockSwipes();
-        } else {
-          $scope.barSwiper.unlockSwipes();
-        }
         updateSlidesSize = true;
       }
       if ($scope.slides.beatsPerSlide !== swiperConfig.beatsPerSlide) {
@@ -293,6 +294,7 @@
         $scope.drumsSwiper.params.slidesPerGroup = $scope.slides.beatsPerSlide;
         updateSlidesSize = true;
       }
+
       if (reinitializeSlides) {
         updateSlides();
         // no need to update slides size after re-initialization
