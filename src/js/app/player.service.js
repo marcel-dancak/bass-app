@@ -86,7 +86,6 @@
     };
 
     AudioPlayer.prototype._playBassSound = function(sound) {
-      // var timeSignature = this.composition.timeSignature;
       var note = sound.note;
       // console.log(note.style+' '+note.name);
       var source = context.createBufferSource();
@@ -98,7 +97,7 @@
       //console.log(this.bufferLoader.loadedResources);
       if (audioData) {
         source.buffer = audioData;
-        var duration = sound.noteLength.beatLength*(this.composition.timeSignature.bottom)*this.beatTime;
+        var duration = sound.noteLength.beatLength*(this.timeSignature.bottom)*this.beatTime;
         if (sound.noteLength.staccato) {
           duration = 0.92*duration-(this.beatTime/4)*0.2;
         }
@@ -162,7 +161,7 @@
     };
 
     AudioPlayer.prototype.playback = function(arg) {
-      var timeSignature = this.composition.timeSignature;
+      var timeSignature = this.timeSignature;
       var barsCount = this.composition.length;
       if (this.playing) {
         var playTime = context.currentTime-this.startTime;
@@ -293,6 +292,9 @@
     };
 
     AudioPlayer.prototype.playSound = function(bassSound) {
+      if (!this.timeSignature) {
+        this.timeSignature = {top:4, bottom: 4};
+      }
       var resources = bassSounds[bassSound.style].getResources(bassSound);
       var player = this;
       if (player.playingBassSample && player.playingBassSample.source.playing) {

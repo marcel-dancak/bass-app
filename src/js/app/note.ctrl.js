@@ -181,13 +181,12 @@
       // var box = info.element[0].getBoundingClientRect();
       // console.log(box);
       var resizeElem  = info.element[0];
-      console.log(resizeElem.style);
       resizeElem.style.display = "none";
       var x = $scope.dropNote.left+$scope.dropNote.width-10;
       var elem = document.elementFromPoint(x, $scope.dropNote.top+10);
       resizeElem.style.display = "";
-      console.log(elem);
-      console.log(angular.element(elem.parentElement).scope());
+
+      // console.log(angular.element(elem.parentElement).scope());
       var targetGrid = angular.element(elem.parentElement).scope().grid;
       if (targetGrid) {
         var targetSound = targetGrid.sound;
@@ -246,22 +245,21 @@
     };
 
     $scope.updateBassSound = function(sound) {
-      if (sound.note.type === 'ghost') {
-        sound.noteLength = {
-          length: 1/16
-        };
-      }
-      // sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
-      if (sound.noteLength) {
-        var length = sound.noteLength.length;
-        if (sound.noteLength.dotted) {
-          length *= 1.5;
+      if (sound.note.type !== 'ghost') {
+        sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
+        console.log(sound.note.fret);
+
+        if (sound.noteLength) {
+          var length = sound.noteLength.length;
+          if (sound.noteLength.dotted) {
+            length *= 1.5;
+          }
+          if (sound.noteLength.staccato) {
+            //length -= 0.1;
+          }
+          // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
+          sound.noteLength.beatLength = length;
         }
-        if (sound.noteLength.staccato) {
-          //length -= 0.1;
-        }
-        // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
-        sound.noteLength.beatLength = length;
       }
     };
 
