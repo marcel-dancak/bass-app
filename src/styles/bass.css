@@ -11,6 +11,8 @@
   z-index: 200;
 }
 
+
+.drums-beat-container::before,
 .audio-graph-container::before,
 .bass-board::before {
   position: absolute;
@@ -22,7 +24,7 @@
   background-color: #ccc;
   z-index: 199;
 }
-
+.beat-1 .drums-beat-container::before,
 .beat-1 .audio-graph-container::before,
 .beat-1 .bass-board::before {
   width: 3px;
@@ -30,15 +32,17 @@
   opacity: 0.3;
 }
 
-.bass-swiper:last-child .audio-graph-container::after,
-.bass-swiper:last-child .bass-board::after {
+.drums-slide:last-child .drums-beat-container::after,
+.bass-slide:last-child .audio-graph-container::after,
+.bass-slide:last-child .bass-board::after {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   content: "";
-  width: 3px;
-  background-color: #555;
+  width: 1px;
+  border: solid #555;
+  border-width: 0 2px;
   opacity: 0.3;
   z-index: 199;
 }
@@ -300,6 +304,7 @@
   overflow: hidden;
   height: 30px;
   line-height: 36px;
+  vertical-align: bottom;
 }
 
 .bass-sound-container.staccato p::before {

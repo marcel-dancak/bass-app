@@ -64,16 +64,19 @@
 
     AudioVisualiser.prototype.beatSync = function(barIndex, beatIndex, bpm) {
       // console.log('BEAT Sync '+bpm);
-      if (this.ctx) {
-        // this.draw();
-      }
 
       if (barIndex === 1 && beatIndex === 1) {
-        var name;
-        for (name in this.beatDrawElements) {
-          var ctx = this.beatDrawElements[name].getContext('2d');
-          ctx.clearRect(0, 0, this.width, this.height);
-        }
+        setTimeout(function() {
+          var name;
+          for (name in this.beatDrawElements) {
+            // skip first beat in bar, it will be cleared automaticaly
+            if (name !== 'canvas_1_1') {
+              var canvas = this.beatDrawElements[name];
+              var ctx = canvas.getContext('2d');
+              ctx.clearRect(0, 0, this.width, this.height);
+            }
+          }
+        }.bind(this), 60);
       }
 
       var beatTime = 60/bpm;

@@ -224,7 +224,7 @@
 
         <ks-swiper-slide
           ng-repeat="beat in slides.bars track by beat.id"
-          class="beat beat-{{ ::beat.beat }}">
+          class="bar-slide beat-{{ ::beat.beat }}">
           <div
             xng-init="renderingBar($index)"
             style="height:100%;"
@@ -282,7 +282,7 @@
 
       <ks-swiper-slide
         ng-repeat="beat in slides.bass track by beat.id"
-        class="swiper-no-swiping bass-swiper beat-{{ ::beat.beat }}"
+        class="swiper-no-swiping bass-slide beat-{{ ::beat.beat }}"
         style="z-index: {{ ::100-$index}};">
         <div class="audio-graph-container">
           <canvas
@@ -333,8 +333,8 @@
           }">
 
           <ks-swiper-slide
-            class="swiper-no-swiping"
-            ng-repeat="beat in slides.drums track by beat.id">
+            ng-repeat="beat in slides.drums track by beat.id"
+            class="swiper-no-swiping drums-slide beat-{{ ::beat.beat }}">
             <div
               ng-include src="'views/drums_board_slide.html'">
             </div>

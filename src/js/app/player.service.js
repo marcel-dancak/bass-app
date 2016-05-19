@@ -225,6 +225,7 @@
       this.beatIndex = 0;
       this.barIndex = 0;
       this.composition = composition;
+      this.timeSignature = composition.timeSignature;
       this.playback();
 
       var oscillator = context.createOscillator();

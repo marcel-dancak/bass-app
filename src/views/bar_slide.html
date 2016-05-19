@@ -3,11 +3,11 @@
 </label>
 <div
   layout="row"
-  class="bar">
+  class="bar-beat">
   <div
     ng-repeat="subbeat in beat.subbeats"
     layout="column"
-    class="subbeat subbeat-{{ ::$index+1 }}"
+    class="subbeat"
     ng-class="{
       hidden: slides.visibleSubbeats.indexOf($index+1) === -1
     }"

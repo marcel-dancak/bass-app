@@ -1,13 +1,47 @@
-.subbeat {
-  box-sizing: border-box;
-  border-left: 2px solid #ccc;
+.bar-beat .subbeat {
   vertical-align: middle;
   text-align: center;
-  height: 60%;
+  height: 100%;
+  position: relative;
 }
 
-.beat .subbeat:first-child {
-  border: none;
+
+.bar-beat .subbeat::before {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 60%;
+  content: "";
+  width: 1px;
+  background-color: #ccc;
+  z-index: 199;
+}
+
+.bar-beat .subbeat:first-child::before {
+  background-color: #aaa;
+  width: 2px;
+  height: 85%;
+}
+
+.bar-beat .subbeat:first-child {
+  font-weight: bold;
+  font-size: 20px;
+}
+.beat-1 .bar-beat .subbeat:first-child::before {
+  width: 3px;
+  height: 100%;
+}
+
+.bar-slide:last-child .bar-beat::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  content: "";
+  width: 1px;
+  border: solid #aaa;
+  border-width: 0 2px;
+  z-index: 199;
 }
 
 .bar-label {
@@ -48,19 +82,12 @@
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
-.beat .bar {
-  border-left: 2px solid #aaa;
+.bar-slide .bar-beat {
   height: 80%;
 }
 
-.beat-1 .bar {
-  border-left: 4px solid #aaa;
-}
-.swiper-wrapper > .swiper-slide:last-child .bar {
-  border-right: 4px solid #aaa;
-}
 
-.bar label {
+.bar-beat label {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none;   /* Chrome/Safari/Opera */
   -moz-user-select: none;      /* Firefox */
@@ -72,10 +99,6 @@
   max-height: 20px;
 }
 
-.subbeat-1 label.subbeat-label {
-  font-weight: bold;
-  font-size: 20px;
-}
 
 .subbeat.hidden {
   display: none;
@@ -339,14 +362,14 @@ md-slider .md-focus-ring {
 .bar-container .swiper-button-next {
   top: auto;
   bottom: 0;
-  width: 18px;
+  width: 38px;
   height: 18px;
 }
 .bar-container .swiper-button-prev {
-  left: 0;
-  padding: 2px 10px 2px 30px;
+  left: 10px;
+  padding: 2px 5px 2px 5px;
 }
 .bar-container .swiper-button-next {
-  right: 0;
-  padding: 2px 30px 2px 10px;
+  right: 10px;
+  padding: 2px 5px 2px 5px;
 }

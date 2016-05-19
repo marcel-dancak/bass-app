@@ -225,6 +225,10 @@ md-tab-content:not(.md-active) > div {
   right: 0;
 }
 
+.md-open-menu-container .prefferences {
+  max-width: 300px;
+}
+
 .prefferences.md-button {
   min-width: 48px;
   margin: 0 5px;
