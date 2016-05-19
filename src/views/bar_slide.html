@@ -1,22 +1,11 @@
-<label class="bar-label">
-  {{ beat.bar }}
-</label>
 <div
-  layout="row"
-  class="bar-beat">
-  <div
-    ng-repeat="subbeat in beat.subbeats"
-    layout="column"
-    class="subbeat"
-    ng-class="{
-      hidden: slides.visibleSubbeats.indexOf($index+1) === -1
-    }"
-    flex>
-      <label class="subbeat-label">
-        {{ ::subbeat }}
-      </label>
-      <div class="note-container"></div>
-  </div>
-  <div class="bar-end">
-  </div>
+  ng-repeat="subbeat in beat.subbeats"
+  class="subbeat"
+  ng-class="{
+    hidden: slides.visibleSubbeats.indexOf($index+1) === -1
+  }"
+  flex>
+  <label class="subbeat-label">
+    {{ ::subbeat }}
+  </label>
 </div>

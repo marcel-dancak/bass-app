@@ -226,52 +226,12 @@ md-slider .md-focus-ring {
   top: 4px;
 }
 
-.md-button.md-raised.hammer,
-.md-button.md-raised.pull {
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  margin-left: -6px;
-  box-shadow: 4px 2px 5px 0px rgba(0, 0, 0, 0.26);
-  width: calc(100% + 6px);
-}
-.note-button sup {
-  position: absolute;
-  left: 2px;
-  top: 2px;
-  line-height: 12px;
-}
 .bar-musical-char {
   display: inline-block;
   line-height: 10px;
   font-size: 60px;
   max-height: 38px;
   vertical-align: top;
-}
-.note-button .hammer-top {
-  position: absolute;
-  left: 7px;
-  line-height: 40px;
-  transform: rotate(90deg);
-}
-.note-button .hammer-bottom {
-  position: absolute;
-  left: 5px;
-  bottom: 1px;
-  line-height: 12px;
-  font-size: 11px;
-}
-.note-button .pull-top {
-  position: absolute;
-  left: 6px;
-  line-height: 24px;
-  font-size: 11px;
-}
-
-.note-button .pull-bottom {
-  position: absolute;
-  left: 7px;
-  line-height: 52px;
-  transform: rotate(-90deg);
 }
 
 .subbeat-form md-input-container {

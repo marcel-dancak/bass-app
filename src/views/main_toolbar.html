@@ -1,0 +1,193 @@
+<div
+  layout="row"
+  class="control-panel">
+
+  <div
+    layout="row"
+    class="instruments-field">
+    <md-button
+      flex
+      md-no-ink
+      class="no-hover"
+      ng-class="{
+        active: ui.instrumentIndex===0
+      }"
+      ng-click="ui.instrumentIndex=0">
+      Bass
+      <md-icon md-svg-icon="bass-guitar"></md-icon>
+    </md-button>
+    <md-button
+      flex
+      md-no-ink
+      class="no-hover"
+      ng-class="{
+        active: ui.instrumentIndex===1
+      }"
+      ng-click="ui.instrumentIndex=1">
+      Drums
+      <md-icon md-svg-icon="drums"></md-icon>
+    </md-button>
+    <md-ink-bar
+      ng-class="{
+        'md-left': ui.instrumentIndex === 0,
+        'md-right': ui.instrumentIndex === 1
+      }">
+    </md-ink-bar>
+  </div>
+
+  <md-menu
+    md-offset="56 10">
+    <md-button
+      class="prefferences"
+      ng-click="$mdOpenMenu($event)">
+      <md-icon
+        md-svg-icon="preferences">
+      </md-icon>
+    </md-button>
+
+    <md-menu-content
+      width="4"
+      class="prefferences md-whiteframe-16dp">
+      <md-list>
+        <md-list-item
+          class="bass volume-field bottom-border">
+          <label>Bass Volume</label>
+          <md-slider
+            class="md-primary"
+            ng-model="player.bass.audio.gain.value"
+            ng-disabled="player.bass.muted"
+            aria-label="Volume"
+            min="0"
+            max="1"
+            step="0.01"
+            flex>
+          </md-slider>
+          <md-button
+            md-no-ink
+            class="mute-button"
+            ng-class="{active: !player.bass.muted}"
+            md-prevent-menu-close
+            ng-click="toggleVolumeMute(player.bass)">
+            <md-icon
+              md-svg-icon="{{ player.bass.muted? 'volume-mute' : 'volume-medium' }}">
+            </md-icon>
+          </md-button>
+        </md-list-item>
+
+        <md-list-item
+          class="bass volume-field bottom-border">
+          <label>Drums Volume</label>
+          <md-slider
+            class="md-primary"
+            ng-model="player.drums.audio.gain.value"
+            ng-disabled="player.drums.muted"
+            aria-label="Volume"
+            min="0"
+            max="1"
+            step="0.01"
+            flex>
+          </md-slider>
+          <md-button
+            md-no-ink
+            class="mute-button"
+            ng-class="{active: !player.drums.muted}"
+            md-prevent-menu-close
+            ng-click="toggleVolumeMute(player.drums)">
+            <md-icon
+              md-svg-icon="{{ player.drums.muted? 'volume-mute' : 'volume-medium' }}">
+            </md-icon>
+          </md-button>
+        </md-list-item>
+      </md-list>
+
+    </md-menu-content>
+  </md-menu>
+
+  <div flex></div>
+
+  <div
+    class="bpm-field">
+    <md-input-container>
+      <label>bpm</label>
+      <input
+        type="number"
+        min="30"
+        max="200"
+        step="5"
+        ng-model="player.bpm">
+    </md-input-container>
+  </div>
+
+  <md-button
+    class="play-stop-button"
+    ng-click="player.playing? stop() : play()">
+    <md-icon
+      md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
+    </md-icon>
+    {{ player.playing? 'Stop' : 'Play' }}
+  </md-button>
+
+  <md-button ng-click="connectInput()">
+    Input Test
+  </md-button>
+
+  <div flex></div>
+
+  <div
+    layout="row"
+    class="present-field">
+    <md-input-container>
+      <label>Section</label>
+      <input
+        type="text"
+        ng-model="project.sectionName">
+    </md-input-container>
+    <md-input-container>
+      <md-select
+        ng-show="project.sections.length > 0"
+        aria-label="Section"
+        class="select-editable"
+        ng-model="project.selectedSectionIndex"
+        md-on-close="loadSection(project.selectedSectionIndex)">
+        <md-option
+          ng-repeat="section in project.sections"
+          ng-value="$index">
+          {{ section }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <md-button
+      aria-label="Save"
+      class="toolbar-button"
+      ng-click="saveSection(project.selectedSectionIndex, project.sectionName)">
+      <md-icon
+        md-svg-icon="pen">
+      </md-icon>
+    </md-button>
+    <md-menu md-position-mode="target-right target">
+      <md-button
+        aria-label="Menu"
+        class="toolbar-button"
+        ng-click="$mdOpenMenu($event)">
+        <md-icon
+          md-svg-icon="menu-dots">
+        </md-icon>
+      </md-button>
+      <md-menu-content
+        class="md-whiteframe-16dp">
+        <md-menu-item>
+          <md-button
+            ng-click="clearSection()">
+            New
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button
+            ng-click="deleteSection(project.selectedSectionIndex)">
+            Delete
+          </md-button>
+        </md-menu-item>
+      </md-menu-content>
+    </md-menu>
+  </div>
+</div>

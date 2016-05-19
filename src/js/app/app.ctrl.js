@@ -6,15 +6,15 @@
     .controller('AppController', AppController)
     .value('context', new AudioContext())
     .directive('ngRightClick', function($parse) {
-        return function(scope, element, attrs) {
-            var fn = $parse(attrs.ngRightClick);
-            element.bind('contextmenu', function(event) {
-                scope.$apply(function() {
-                    event.preventDefault();
-                    fn(scope, {$event:event});
-                });
-            });
-        };
+      return function(scope, element, attrs) {
+        var fn = $parse(attrs.ngRightClick);
+        element.bind('contextmenu', function(event) {
+          scope.$apply(function() {
+            event.preventDefault();
+            fn(scope, {$event:event});
+          });
+        });
+      };
     });
 
   function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel, Section) {
@@ -67,73 +67,27 @@
       playingStyles: {
         finger: {
           name: 'finger',
-          label: 'Finger',
-          noteLabel: function(subbeat) {
-            if (subbeat.note.name) {
-              return "{0}<sub>{1}</sub>".format(
-                subbeat.note.name,
-                subbeat.note.octave || ''
-              );
-            }
-          }
+          label: 'Finger'
         },
         slap: {
           name: 'slap',
-          label: 'Slap',
-          noteLabel: function(subbeat) {
-            if (subbeat.note.name) {
-              return "<sup>(Slap)</sup> {0}<sub>{1}</sub>".format(
-                subbeat.note.name,
-                subbeat.note.octave || ''
-              );
-            }
-          }
+          label: 'Slap'
         },
         pop: {
           name: 'pop',
-          label: 'Pop',
-          noteLabel: function(subbeat) {
-            if (subbeat.note.name) {
-              return "<sup>(Pop)</sup> {0}<sub>{1}</sub>".format(
-                subbeat.note.name,
-                subbeat.note.octave || ''
-              );
-            }
-          }
+          label: 'Pop'
         },
         tap: {
           name: 'tap',
-          label: 'Tap',
-          noteLabel: function(subbeat) {
-            if (subbeat.note.name) {
-              return "<sup>(Tap)</sup> {0}<sub>{1}</sub>".format(
-                subbeat.note.name,
-                subbeat.note.octave || ''
-              );
-            }
-          }
+          label: 'Tap'
         },
         hammer: {
           name: 'hammer-on',
-          label: 'Hammer on',
-          noteLabel: function(subbeat) {
-            if (subbeat.note.name) {
-              return '<span class="hammer-top">)</span>\
-                <span class="hammer-bottom">h</span>{0}<sub>{1}</sub>'
-                .format(subbeat.note.name, subbeat.note.octave||'');
-            }
-          }
+          label: 'Hammer on'
         },
         pull: {
           name: 'pull-of',
-          label: 'Pull of',
-          noteLabel: function(subbeat) {
-            if (subbeat.note.name) {
-              return '<span class="pull-top">p</span>\
-                <span class="pull-bottom">)</span>{0}<sub>{1}</sub>'
-                .format(subbeat.note.name, subbeat.note.octave||'');
-            }
-          }
+          label: 'Pull of'
         }
       }
     };
@@ -215,7 +169,7 @@
           id: beatId,
           bar: beat.bar,
           beat: beat.index,
-          subbeats: [beat.index, 'i', 'and', 'a']
+          subbeats: [beat.index, 'e', 'and', 'a']
         });
       });
     }
@@ -376,7 +330,11 @@
     function beatSync(barIndex, beat, bpm) {
       audioVisualiser.beatSync(barIndex, beat, bpm);
       var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
-      $scope.barSwiper.slideTo(slide, $scope.slides.animationDuration, false);
+      $scope.barSwiper.slideTo(
+        slide,
+        (slide === 0)? 0 : $scope.slides.animationDuration,
+        false
+      );
       var barSlideElement = $scope.barSwiper.$('.swiper-slide')[slide];
       $scope.barSlideStartTime = context.currentTime;
       if (!$scope.barSlideElement) {
@@ -409,7 +367,8 @@
     $scope.toggleVolumeMute = function(instrument) {
       if (!instrument.muted) {
         instrument._volume = instrument.audio.gain.value;
-        instrument.audio.gain.value = 0;
+        // zero gain value would cause invalid drawing of audio signal
+        instrument.audio.gain.value = 0.01;
       } else {
         instrument.audio.gain.value = instrument._volume;
       }
