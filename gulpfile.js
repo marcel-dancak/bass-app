@@ -5,11 +5,12 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var watch = require('gulp-watch');
 var connect = require('gulp-connect');
+var merge = require('merge-stream');
 
 var path = require('path');
 
 
-var TARGET = 'dist/v6/';
+var TARGET = 'dist/latest/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -99,15 +100,24 @@ gulp.task('uglify', function() {
  */
 gulp.task('csss', function() {
   var minifyCss = require('gulp-minify-css');
-  return gulp.src([
-    'bower_components/angular-material/angular-material.css',
-    'bower_components/angular-resizable/src/angular-resizable.css',
-    'bower_components/swiper/dist/css/swiper.min.css',
-    'src/styles/**/*.css'
-  ])
-    .pipe(minifyCss())
-    .pipe(concat('styles.min.css'))
-    .pipe(gulp.dest(TARGET + 'styles'));
+  return merge(
+      gulp.src([
+      'bower_components/angular-material/angular-material.css',
+      'bower_components/angular-resizable/src/angular-resizable.css',
+      'bower_components/swiper/dist/css/swiper.min.css',
+      'src/styles/**/*.css',
+      '!src/styles/fonts.css'
+    ])
+      .pipe(minifyCss())
+      .pipe(concat('styles.min.css'))
+      .pipe(gulp.dest(TARGET + 'styles')),
+
+    gulp.src('src/styles/icons.svg')
+      .pipe(gulp.dest(TARGET + 'styles'))
+
+    // gulp.src('src/styles/fonts/*')
+    //   .pipe(gulp.dest(TARGET + 'styles/fonts'))
+  );
 });
 
 /**
