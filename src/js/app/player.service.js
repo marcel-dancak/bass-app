@@ -85,7 +85,7 @@
       }
     };
 
-    AudioPlayer.prototype._playBassSound = function(sound) {
+    AudioPlayer.prototype._playBassSound = function(sound, timeSignature, beatTime) {
       var note = sound.note;
       // console.log(note.style+' '+note.name);
       var source = context.createBufferSource();
@@ -97,9 +97,9 @@
       //console.log(this.bufferLoader.loadedResources);
       if (audioData) {
         source.buffer = audioData;
-        var duration = sound.noteLength.beatLength*(this.timeSignature.bottom)*this.beatTime;
+        var duration = sound.noteLength.beatLength*(timeSignature.bottom)*beatTime;
         if (sound.noteLength.staccato) {
-          duration = 0.92*duration-(this.beatTime/4)*0.2;
+          duration = 0.92*duration-(beatTime/4)*0.2;
         }
         var startTime = context.currentTime;
         gain.gain.setValueAtTime(sound.volume, startTime);
@@ -161,28 +161,35 @@
     };
 
     AudioPlayer.prototype.playback = function(arg) {
-      var timeSignature = this.timeSignature;
-      var barsCount = this.composition.length;
       if (this.playing) {
-        var playTime = context.currentTime-this.startTime;
-        if (playTime > this.subbeatIndex*this.beatTime/4) {
-          var subbeat = (this.subbeatIndex % (4*timeSignature.top));
-          if (subbeat % 4 === 0) {
-            this.beatIndex++;
-            if (this.beatIndex-1 === timeSignature.top) {
-              this.beatIndex = 1;
-              this.barIndex = (this.barIndex +1) % barsCount;
-            }
-            // console.log('bar: '+(this.barIndex+1)+' / '+barsCount);
-            // console.log('beat: '+this.beatIndex);
-            // console.log('subbeat: '+(subbeat+1));
-            this.beatCallback(
-              this.barIndex+1,
-              this.beatIndex,
-              this.bpm
-            );
-          }
-          var drumsSounds = this.composition.drumsSubbeat(this.barIndex+1, this.beatIndex, (subbeat % 4)+1);
+        var timeSignature = this.composition.timeSignature;
+        var currentTime = context.currentTime;
+        var beatElapsedTime = currentTime - this.currentBeat.startTime;
+
+        if (beatElapsedTime >= this.beatTime) {
+          var wasLastBeatInBar = this.currentBeat.beatIndex+1 === timeSignature.top;
+          var wasLastBar = wasLastBeatInBar && this.currentBeat.barIndex+1 === this.composition.length;
+          this.currentBeat = {
+            barIndex: wasLastBar? 0 : wasLastBeatInBar? this.currentBeat.barIndex+1 : this.currentBeat.barIndex,
+            beatIndex: wasLastBeatInBar? 0 : this.currentBeat.beatIndex+1,
+            bassSubbeatIndex: 0,
+            drumsSubbeatIndex: 0,
+            startTime: this.currentBeat.startTime+this.beatTime
+          };
+          beatElapsedTime = currentTime - this.currentBeat.startTime;
+          this.beatCallback(
+            this.currentBeat.barIndex+1,
+            this.currentBeat.beatIndex+1,
+            this.bpm
+          );
+        }
+        if (beatElapsedTime >= this.currentBeat.drumsSubbeatIndex*this.beatTime/4) {
+          // play drums subbeats
+          var drumsSounds = this.composition.drumsSubbeat(
+            this.currentBeat.barIndex+1,
+            this.currentBeat.beatIndex+1,
+            this.currentBeat.drumsSubbeatIndex+1
+          );
           var drumName;
           for (drumName in drumsSounds) {
             var sound = drumsSounds[drumName];
@@ -190,8 +197,17 @@
               this._playDrumsSound(sound);
             }
           };
+          this.currentBeat.drumsSubbeatIndex++;
+        }
 
-          var stringsSounds = this.composition.bassSubbeat(this.barIndex+1, this.beatIndex, (subbeat % 4)+1)
+        var bassBeat = this.composition.bassBeat(this.currentBeat.barIndex+1, this.currentBeat.beatIndex+1);
+        if (beatElapsedTime >= this.currentBeat.bassSubbeatIndex*this.beatTime/bassBeat.subdivision) {
+          // play bass subbeats
+          var stringsSounds = this.composition.bassSubbeat(
+            this.currentBeat.barIndex+1,
+            this.currentBeat.beatIndex+1,
+            this.currentBeat.bassSubbeatIndex+1
+          );
           // console.log(stringsSounds);
           var string, sound;
           for (string = 0; string < 4; string++) {
@@ -199,10 +215,13 @@
             if (!sound.style || !sound.note) {
               continue;
             }
-            this._playBassSound(sound);
+
+            var beatTime = bassBeat.subdivision === 3? this.beatTime*(2/3) : this.beatTime;
+            this._playBassSound(sound, this.composition.timeSignature, beatTime);
           }
-          this.subbeatIndex++;
+          this.currentBeat.bassSubbeatIndex++;
         }
+
         if (this.playingNotes.length) {
           var currentTime = context.currentTime;
           this.playingNotes = this.playingNotes.filter(function(playingNote) {
@@ -220,14 +239,8 @@
 
     AudioPlayer.prototype._play = function(composition) {
       this.playing = true;
-      this.startTime = context.currentTime;
-      this.subbeatIndex = 0;
-      this.beatIndex = 0;
-      this.barIndex = 0;
-      this.composition = composition;
-      this.timeSignature = composition.timeSignature;
-      this.playback();
-
+      // setup 'silent' source, it's needed for proper graph
+      // visualization when no other source is playing
       var oscillator = context.createOscillator();
       var oscGain = context.createGain();
       oscGain.gain.value = 0.0001;
@@ -236,6 +249,21 @@
       oscillator.frequency.value = 0;
       oscillator.start();
       this.oscillator = oscillator;
+
+      this.composition = composition;
+      this.currentBeat = {
+        barIndex: 0,
+        beatIndex: 0,
+        bassSubbeatIndex: 0,
+        drumsSubbeatIndex: 0,
+        startTime: context.currentTime
+      };
+      this.beatCallback(
+        this.currentBeat.barIndex+1,
+        this.currentBeat.beatIndex+1,
+        this.bpm
+      );
+      this.playback();
     };
 
     AudioPlayer.prototype.setBpm = function(bpm) {
@@ -293,9 +321,6 @@
     };
 
     AudioPlayer.prototype.playSound = function(bassSound) {
-      if (!this.timeSignature) {
-        this.timeSignature = {top:4, bottom: 4};
-      }
       var resources = bassSounds[bassSound.style].getResources(bassSound);
       var player = this;
       if (player.playingBassSample && player.playingBassSample.source.playing) {
@@ -306,7 +331,7 @@
       }
       function afterLoad(audioBuffer) {
         setTimeout(function() {
-          player.playingBassSample = player._playBassSound(bassSound);
+          player.playingBassSample = player._playBassSound(bassSound, {top:4, bottom: 4}, 0.25);
           player.playingBassSample.source.playing = true;
           player.playingBassSample.source.addEventListener('ended', function(evt) {
             evt.target.playing = false;

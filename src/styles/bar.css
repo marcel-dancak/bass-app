@@ -5,7 +5,6 @@
   position: relative;
 }
 
-
 .bar-beat .subbeat::before {
   position: absolute;
   left: 0;
@@ -44,6 +43,23 @@
   z-index: 199;
 }
 
+.bar-slide {
+  padding: 0 0 14px 0;
+  height: calc(100% - 16px);
+  border-width: 0 0 2px 0;
+  border-style: solid;
+  transition: 0s border;
+  border-color: transparent;
+}
+.bar-slide:hover {
+  transition-delay: 0.5s;
+  border-color: rgba(63,81,181,0.6);
+}
+
+.bar-slide .bar-beat {
+  height: 100%;
+}
+
 .bar-label {
   visibility: hidden;
 }
@@ -78,14 +94,9 @@
 
 .bar-container {
   position: relative;
-  margin: 0 22px 0px 57px;
+  margin: 0 22px 3vh 57px;
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
-
-.bar-slide .bar-beat {
-  height: 80%;
-}
-
 
 .bar-beat label {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -105,18 +116,29 @@
 }
 
 
-.time-signature-button {
+.bar-preferences .md-menu {
   position: absolute;
-  left: -48px;
+  left: -44px;
   top: 26px;
+  height: calc(85% - 26px);
+  margin-bottom: 16px;
 }
 
-.time-signature-button .md-button {
+.time-signature-button.md-button {
   min-width: 36px;
+  min-height: 48px;
+  height: 100%;
   margin: 0 3px;
   padding: 0;
   font-size: 20px;
+  position: relative;
 }
+
+.time-signature-button.md-button p {
+  margin: 0;
+  line-height: 24px;
+}
+
 /**
  * form styles
  */
@@ -298,8 +320,8 @@ md-slider .md-focus-ring {
   font-size: 14px;
 }
 
-.prefferences md-list-item.time-signature-field input,
-.prefferences md-list-item.time-signature-field {
+.preferences md-list-item.time-signature-field input,
+.preferences md-list-item.time-signature-field {
   text-align: center;
 }
 
@@ -321,7 +343,7 @@ md-slider .md-focus-ring {
 .bar-container .swiper-button-prev,
 .bar-container .swiper-button-next {
   top: auto;
-  bottom: 0;
+  bottom: 8px;
   width: 38px;
   height: 18px;
 }

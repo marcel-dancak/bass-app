@@ -15,7 +15,7 @@
     layout="column"
     ng-repeat="bassSubbeats in beat.subbeats"
     ng-class="{
-      hidden: slides.visibleSubbeats.indexOf($index+1) === -1
+      hidden: beat.visibleSubbeats.indexOf($index+1) === -1
     }">
 
     <div
@@ -43,10 +43,10 @@
         staccato: grid.sound.noteLength.staccato
       }"
       ng-style="{
-        left: (($parent.$index/4)*100)+'%',
+        left: (($parent.$index/beat.subdivision)*100)+'%',
         width: grid.sound.note?
-          (100*section.timeSignature.bottom*grid.sound.noteLength.beatLength)+'%' :
-          (100*1/slides.visibleSubbeats.length)+'%'
+          ( (beat.subdivision===4? 100 : 66.667) * section.timeSignature.bottom * grid.sound.noteLength.beatLength)+'%' :
+          (100*1/beat.visibleSubbeats.length)+'%'
       }"
       ng-click="selected.grid=grid"
       ng-right-click="
@@ -65,7 +65,7 @@
         resizable
         r-directions="['right']"
         on-resize="onResize(grid, info, $event)"
-        on-resize-start="onResizeStart(grid, info)"
+        on-resize-start="onResizeStart(grid, info, beat.subdivision)"
         on-resize-end="onResizeEnd(grid, info, $event)"
         r-grabber="<div></div>"
         xng-if-end>

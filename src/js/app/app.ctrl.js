@@ -142,7 +142,6 @@
       beatsPerSlide: 2,
       beatsPerView: 10,
       animationDuration: 300,
-      visibleSubbeats: [1, 2, 3, 4],
       swiperConfig: {}
     };
     // set initial swiper config
@@ -169,7 +168,9 @@
           id: beatId,
           bar: beat.bar,
           beat: beat.index,
-          subbeats: [beat.index, 'e', 'and', 'a']
+          subbeats: beat.bass.subdivision === 3?
+            [beat.index, 'trip', 'let'] :
+            [beat.index, 'e', 'and', 'a']
         });
       });
     }
@@ -185,6 +186,15 @@
       } else {
         visibleSubbeats = [1];
       }
+      $scope.slides.bars.forEach(function(bar, index) {
+        var bassBeat = $scope.slides.bass[index];
+        if (bassBeat.subdivision === 3) {
+          bar.visibleSubbeats = [1, 2, 3];
+        } else {
+          bar.visibleSubbeats = visibleSubbeats;
+        }
+        bassBeat.visibleSubbeats = bar.visibleSubbeats;
+      });
       $scope.slides.visibleSubbeats = visibleSubbeats;
     }
 
@@ -559,6 +569,20 @@
       sections: loadSavedSectionsNames(),
       selectedSectionIndex: null
     };
+
+    $scope.setBeatSubdivision = function(barBeat, bassBeat, subdivision) {
+      console.log(barBeat);
+      console.log(bassBeat);
+      bassBeat.subdivision = subdivision;
+      if (subdivision === 3) {
+        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'trip', 'let');
+        barBeat.visibleSubbeats = [1, 2, 3];
+        bassBeat.visibleSubbeats = [1, 2, 3];
+      } else {
+        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'e', 'and', 'a');
+        updateSubbeatsVisibility();
+      }
+    }
 
     // Prevent default context menu
     window.oncontextmenu = function() {

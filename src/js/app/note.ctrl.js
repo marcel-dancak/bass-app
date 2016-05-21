@@ -113,7 +113,7 @@
       $scope.menu.element = angular.element(document.getElementById('subbeat-menu'));
     }, 500);
 
-    var dragNote, dragElement;
+    var dragData, dragElement;
     $scope.playingStyles = ['finger', 'slap', 'pop', 'tap', 'hammer', 'pull'];
 
     $scope.clearSound = function(sound) {
@@ -125,7 +125,7 @@
     var notesWidths;
     var widthToLength = {};
     var closestWidth;
-    $scope.onResizeStart = function(grid, info) {
+    $scope.onResizeStart = function(grid, info, subdivision) {
       // console.log('onResizeStart');
       var noteLengths = [
         {
@@ -158,6 +158,9 @@
         }
       ];
       var beatWidth = $scope.barSwiper.size / $scope.slides.beatsPerView;
+      if (subdivision === 3) {
+        beatWidth = beatWidth*(2/3);
+      }
       beatWidth = parseInt(beatWidth);
 
       widthToLength = {};
@@ -271,17 +274,34 @@
         // target = target.parentElement.parentElement;
         target = target.parentElement;
       }
+      var subdivision = $scope.section.bassBeat($data.bar, $data.beat).subdivision;
       $timeout(function() {
         $scope.dropNote.visible = true;
         var box = target.getBoundingClientRect();
         $scope.dropNote.left = box.left;
         $scope.dropNote.top = box.top;
         if ($scope.dropNote.width === -1) {
-          var beatWidth = target.clientWidth * $scope.slides.visibleSubbeats.length;
-          var width = (dragNote.sound.noteLength)?
-            dragNote.sound.noteLength.length * $scope.section.timeSignature.bottom * beatWidth :
+          var beatBarIndex = ($data.bar-1)*$scope.section.timeSignature.top+$data.beat-1;
+          var visibleSubbeatsCount = $scope.slides.bars[beatBarIndex].visibleSubbeats.length;
+          var beatWidth = target.clientWidth * visibleSubbeatsCount;
+          if (subdivision === 3) {
+            beatWidth = beatWidth * (2/3);
+          }
+          var width = (dragData.sound.noteLength)?
+            dragData.sound.noteLength.length * $scope.section.timeSignature.bottom * beatWidth :
             beatWidth / 4;
           $scope.dropNote.width = width;
+          $scope.dropNote.subdivision = subdivision;
+        } else {
+          if ($scope.dropNote.subdivision !== subdivision) {
+            if ($scope.dropNote.subdivision === 4 && subdivision === 3) {
+              $scope.dropNote.width = $scope.dropNote.width * (2/3);
+              $scope.dropNote.subdivision = subdivision;
+            } else {
+              $scope.dropNote.width = $scope.dropNote.width * (3/2);
+              $scope.dropNote.subdivision = subdivision;
+            }
+          }
         }
       });
     };
@@ -293,9 +313,9 @@
     $scope.$root.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
       console.log('ANGULAR_DRAG_START');
       console.log(data);
-      dragNote = data.data;
+      dragData = data.data;
       var sound = data.data.sound;
-      if (dragNote.source === 'fretboard') {
+      if (dragData.source === 'fretboard') {
         if (sound.note.type !== 'ghost') {
           if (sound.note.label.length > 1 && e.clientX > e.target.offsetLeft+e.target.clientWidth/2) {
             sound.note.name = sound.note.label[1];
@@ -308,9 +328,11 @@
         var transferDataText = angular.toJson({data: sound});
         e.dataTransfer.setData('text', transferDataText);
         console.log(transferDataText);
-        $scope.dropNote.width = -1;
+        $scope.dropNote.width = -1; // determine width later - in onDragEnter
       } else {
+        var beat = $scope.section.bassBeat(dragData.bar, dragData.beat);
         $scope.dropNote.width = e.target.clientWidth;
+        $scope.dropNote.subdivision = beat.subdivision;
         // set opacity with delay, to avoid opacity in drag image
         setTimeout(function() {
           e.target.style.opacity = 0.65;

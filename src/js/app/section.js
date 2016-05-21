@@ -73,8 +73,17 @@
       });
     };
 
+
+    Section.prototype.bassBeat = function(bar, beat) {
+      return this.bars[bar-1].bassBeats[beat-1];
+    };
+
     Section.prototype.bassSubbeat = function(bar, beat, subbeat) {
       return this.bars[bar-1].bassBeats[beat-1].subbeats[subbeat-1];
+    };
+
+    Section.prototype.drumsBeat = function(bar, beat) {
+      return this.bars[bar-1].drumsBeats[beat-1];
     };
 
     Section.prototype.drumsSubbeat = function(bar, beat, subbeat) {

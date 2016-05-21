@@ -2,10 +2,58 @@
   ng-repeat="subbeat in beat.subbeats"
   class="subbeat"
   ng-class="{
-    hidden: slides.visibleSubbeats.indexOf($index+1) === -1
+    hidden: beat.visibleSubbeats.indexOf($index+1) === -1
   }"
   flex>
   <label class="subbeat-label">
     {{ ::subbeat }}
   </label>
 </div>
+<md-menu
+  md-position-mode="target target"
+  md-offset="20px 70px"
+  class="beat-menu">
+  <div class="button"
+    aria-label="Menu"
+    ng-right-click="$mdOpenMenu($event)"
+    ng-click="">
+  </div>
+  <md-menu-content width="3" class="md-whiteframe-16dp">
+    <md-menu-item>
+      <md-menu>
+        <md-menu-item>
+          <md-button
+            class="submenu-trigger-button"
+            ng-click="$mdOpenMenu()">
+            Subdivision
+          </md-button>
+          <md-icon class="expand-icon" md-svg-icon="arrow-right-fill"></md-icon>
+        </md-menu-item>
+        <md-menu-content>
+          <md-menu-item class="checkbox-item">
+            <md-icon
+              ng-show="slides.bass[$index].subdivision === 4"
+              md-svg-icon="check">
+            </md-icon>
+            <md-button ng-click="setBeatSubdivision(beat, slides.bass[$index], 4)">
+              Standard
+            </md-button>
+          </md-menu-item>
+          <md-menu-item class="checkbox-item">
+            <md-icon
+              ng-show="slides.bass[$index].subdivision === 3"
+              md-svg-icon="check">
+            </md-icon>
+            <md-button ng-click="setBeatSubdivision(beat, slides.bass[$index], 3)">
+              Triplet
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+    </md-menu-item>
+    <!-- <md-menu-item><md-button>Triplet subdivision</md-button></md-menu-item> -->
+    <md-menu-divider></md-menu-divider>
+    <md-menu-item><md-button ng-disabled="true">Copy</md-button></md-menu-item>
+    <md-menu-item><md-button ng-disabled="true">Paste</md-button></md-menu-item>
+  </md-menu-content>
+</md-menu>
