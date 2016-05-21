@@ -1,11 +1,17 @@
 <md-menu>
   <md-button
+    class="time-signature-button"
     ng-click="$mdOpenMenu($event)">
-    {{ section.timeSignature.top }}<br>{{ section.timeSignature.bottom }}
+    <p>
+      {{ section.timeSignature.top }}
+    </p>
+    <p>
+      {{ section.timeSignature.bottom }}
+    </p>
   </md-button>
   <md-menu-content
     width="4"
-    class="prefferences md-whiteframe-16dp">
+    class="preferences md-whiteframe-16dp">
     <md-list>
       <md-list-item
         layout="row"

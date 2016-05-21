@@ -457,6 +457,42 @@ md-input-container.slide-field > span {
   font-weight: 300;
 }
 
+/* #ff5722, #ff9800, #ffc107, #ffeb3b */
+.bass-sound-container.slide p label {
+  line-height: 30px;
+}
+.bass-sound-container.slide p.s-octave-1.e-octave-2 {
+  background: linear-gradient(to right, #ff5722, #ff5722, #ff9800, #ff9800);
+}
+.bass-sound-container.slide p.s-octave-1.e-octave-3 {
+  background: linear-gradient(to right, #ff5722, #ff5722, #ffc107, #ffc107);
+}
+.bass-sound-container.slide p.s-octave-2.e-octave-3 {
+  background: linear-gradient(to right, #ff9800, #ff9800, #ffc107, #ffc107);
+}
+.bass-sound-container.slide p.s-octave-2.e-octave-4 {
+  background: linear-gradient(to right, #ff9800, #ff9800, #ffeb3b, #ffeb3b);
+}
+.bass-sound-container.slide p.s-octave-3.e-octave-4 {
+  background: linear-gradient(to right, #ffc107, #ffc107, #ffeb3b, #ffeb3b);
+}
+
+.bass-sound-container.slide p.s-octave-2.e-octave-1 {
+  background: linear-gradient(to right, #ff9800, #ff9800, #ff5722, #ff5722);
+}
+.bass-sound-container.slide p.s-octave-3.e-octave-1 {
+  background: linear-gradient(to right, #ffc107, #ffc107, #ff5722, #ff5722);
+}
+.bass-sound-container.slide p.s-octave-3.e-octave-2 {
+  background: linear-gradient(to right, #ffc107, #ffc107, #ff9800, #ff9800);
+}
+.bass-sound-container.slide p.s-octave-4.e-octave-2 {
+  background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ff9800, #ff9800);
+}
+.bass-sound-container.slide p.s-octave-4.e-octave-3 {
+  background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ffc107, #ffc107);
+}
+
 .beat-menu .md-button {
   position: absolute;
   top: -30px;

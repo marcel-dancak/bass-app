@@ -97,7 +97,8 @@
         <p ng-switch-when="ghost">x</p>
 
         <!-- Slide note label -->
-        <p ng-switch-when="slide">
+        <p ng-switch-when="slide"
+          class="s-octave-{{ grid.sound.note.octave}} e-octave-{{string.notes[grid.sound.note.fret+grid.sound.note.slide].octave }}">
           <label>
             {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
           </label>
