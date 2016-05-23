@@ -11,12 +11,16 @@
 </div>
 <md-menu
   md-position-mode="target target"
-  md-offset="20px 70px"
+  md-offset="-5 10"
   class="beat-menu">
   <div class="button"
     aria-label="Menu"
-    ng-right-click="$mdOpenMenu($event)"
+    ng-right-click="openBeatMenu($mdOpenMenu, $event)"
     ng-click="">
+    <offset
+      md-menu-origin
+      style="position:absolute;width:5px;height:5px;">
+    </offset>
   </div>
   <md-menu-content width="3" class="md-whiteframe-16dp">
     <md-menu-item>
@@ -51,9 +55,22 @@
         </md-menu-content>
       </md-menu>
     </md-menu-item>
-    <!-- <md-menu-item><md-button>Triplet subdivision</md-button></md-menu-item> -->
+
     <md-menu-divider></md-menu-divider>
-    <md-menu-item><md-button ng-disabled="true">Copy</md-button></md-menu-item>
-    <md-menu-item><md-button ng-disabled="true">Paste</md-button></md-menu-item>
+
+    <md-menu-item>
+      <md-button
+        ng-click="copyBar(beat.bar)">
+        Copy bar
+      </md-button>
+    </md-menu-item>
+
+    <md-menu-item>
+      <md-button
+        ng-disabled="bassClipboard.length+drumsClipboard.length === 0"
+        ng-click="pasteBar(beat.bar)">
+        Paste bar
+      </md-button>
+    </md-menu-item>
   </md-menu-content>
 </md-menu>

@@ -311,3 +311,17 @@ md-menu-content .checkbox-item .md-button {
   padding-left: 55px;
   padding-right: 20px;
 }
+
+.md-menu .md-button {
+  text-transform: none;
+}
+.md-menu .expand-icon {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  right: 0;
+  padding: 19px 4px;
+}
+.submenu-trigger-button {
+  position: relative;
+}

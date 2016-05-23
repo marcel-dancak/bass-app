@@ -30,12 +30,15 @@
   opacity: 0.3;
 }
 
+.bass-board-container .swiper-container {
+  padding-right: 4px;
+}
 .drums-slide:last-child .drums-beat-container::after,
 .bass-slide:last-child .audio-graph-container::after,
 .bass-slide:last-child .bass-board::after {
   position: absolute;
   top: 0;
-  right: 0;
+  right: -4px;
   bottom: 0;
   content: "";
   width: 1px;
@@ -138,7 +141,7 @@
   background-color: #ffeb3b;
 }
 .bass-sound-container.active.ghost {
-  background-color: #bbb;
+  background-color: #ddd;
   max-width: 25%;
 }
 .bass-sound-container.active.selected {
@@ -491,47 +494,4 @@ md-input-container.slide-field > span {
 }
 .bass-sound-container.slide p.s-octave-4.e-octave-3 {
   background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ffc107, #ffc107);
-}
-
-.beat-menu .md-button {
-  position: absolute;
-  top: -30px;
-  right: 0;
-  margin: 0;
-  padding: 0;
-  z-index: 201;
-  min-width: 32px;
-  min-height: 28px;
-  height: 28px;
-  line-height: 20px;
-  opacity: 0.1;
-}
-
-.bass-board:hover .md-button {
-  opacity: 1;
-}
-
-.beat-menu .button {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  content: "";
-  margin: 0;
-  padding: 0;
-  outline: none;
-}
-.md-menu .md-button {
-  text-transform: none;
-}
-.md-menu .expand-icon {
-  width: 10px;
-  height: 10px;
-  position: absolute;
-  right: 0;
-  padding: 19px 4px;
-}
-.submenu-trigger-button {
-  position: relative;
 }

@@ -14,6 +14,7 @@
   width: 1px;
   background-color: #ccc;
   z-index: 199;
+  pointer-events: none;
 }
 
 .bar-beat .subbeat:first-child::before {
@@ -34,7 +35,7 @@
 .bar-slide:last-child .bar-beat::after {
   position: absolute;
   top: 0;
-  right: 0;
+  right: -4px;
   height: 100%;
   content: "";
   width: 1px;
@@ -44,16 +45,8 @@
 }
 
 .bar-slide {
-  padding: 0 0 14px 0;
+  padding: 0 0 16px 0;
   height: calc(100% - 16px);
-  border-width: 0 0 2px 0;
-  border-style: solid;
-  transition: 0s border;
-  border-color: transparent;
-}
-.bar-slide:hover {
-  transition-delay: 0.5s;
-  border-color: rgba(63,81,181,0.6);
 }
 
 .bar-slide .bar-beat {
@@ -90,6 +83,7 @@
 
 .bar-swiper .swiper-container {
   overflow: visible;
+  padding-right: 4px;
 }
 
 .bar-container {
@@ -354,4 +348,32 @@ md-slider .md-focus-ring {
 .bar-container .swiper-button-next {
   right: 10px;
   padding: 2px 5px 2px 5px;
+}
+
+/**
+ * Beat menu
+ */
+.beat-menu.md-open .button {
+  border-color: rgba(63,81,181,0.6);
+}
+
+.beat-menu .button:hover {
+  transition-delay: 0.5s;
+  border-color: rgba(63,81,181,0.6);
+}
+.beat-menu .button {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 2px);
+  content: "";
+  margin: 0;
+  padding: 0;
+  outline: none;
+
+  border-width: 0 0 2px 0;
+  border-style: solid;
+  transition: 0s border;
+  border-color: transparent;
 }

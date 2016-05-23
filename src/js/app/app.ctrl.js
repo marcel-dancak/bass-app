@@ -17,7 +17,7 @@
       };
     });
 
-  function AppController($scope, $timeout, $mdDialog, context, audioPlayer, audioVisualiser, NotesModel, Section) {
+  function AppController($scope, $timeout, context, audioPlayer, audioVisualiser, NotesModel, Section) {
     var analyser = context.createAnalyser();
     analyser.fftSize = 4096;
     analyser.connect(context.destination);
@@ -484,50 +484,20 @@
       var sectionStorageBeats = [];
 
       section.forEachBeat(function(beat) {
-        var bassBeatSounds = [];
-        var dumsBeatSounds = [];
-        beat.bass.subbeats.forEach(function(subbeat, subbeatIndex) {
-          var string, bassSound;
-          for (string in subbeat) {
-            if (string.startsWith('$')) {
-              continue;
-            }
-            bassSound = subbeat[string].sound;
-            if (bassSound.note) {
-              bassBeatSounds.push({
-                subbeat: subbeatIndex+1,
-                sound: bassSound
-              });
-            }
-          }
-        });
-        beat.drums.subbeats.forEach(function(subbeat, subbeatIndex) {
-          var drumName, drumSound;
-          for (drumName in subbeat) {
-            drumSound = subbeat[drumName];
-            if (drumSound.volume > 0) {
-              // console.log('bar {0} beat {1} subbeat {2}'.format(beat.bar, beat.index, subbeatIndex+1));
-              dumsBeatSounds.push({
-                subbeat: subbeatIndex+1,
-                volume: drumSound.volume,
-                drum: drumName
-              });
-            }
-          }
-        });
         sectionStorageBeats.push({
           bar: beat.bar,
           beat: beat.index,
           bass: {
             subdivision: beat.bass.subdivision,
-            sounds: bassBeatSounds
+            sounds: section.getBassSounds(beat.bass)
           },
           drums: {
             subdivision: beat.drums.subdivision,
-            sounds: dumsBeatSounds
+            sounds: section.getDrumsSounds(beat.drums)
           }
         });
       });
+
       var data = {
         timeSignature: section.timeSignature,
         length: section.length,
@@ -595,20 +565,6 @@
       sections: loadSavedSectionsNames(),
       selectedSectionIndex: null
     };
-
-    $scope.setBeatSubdivision = function(barBeat, bassBeat, subdivision) {
-      console.log(barBeat);
-      console.log(bassBeat);
-      bassBeat.subdivision = subdivision;
-      if (subdivision === 3) {
-        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'trip', 'let');
-        barBeat.visibleSubbeats = [1, 2, 3];
-        bassBeat.visibleSubbeats = [1, 2, 3];
-      } else {
-        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'e', 'and', 'a');
-        updateSubbeatsVisibility();
-      }
-    }
 
     // Prevent default context menu
     window.oncontextmenu = function() {

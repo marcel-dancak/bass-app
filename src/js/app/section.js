@@ -143,6 +143,45 @@
       }
     };
 
+    Section.prototype.getBassSounds = function(bassBeat) {
+      var sounds = [];
+      bassBeat.subbeats.forEach(function(subbeat, subbeatIndex) {
+        var string, bassSound;
+        for (string in subbeat) {
+          if (string.startsWith('$')) {
+            continue;
+          }
+          bassSound = subbeat[string].sound;
+          if (bassSound.note) {
+            sounds.push({
+              subbeat: subbeatIndex+1,
+              sound: bassSound
+            });
+          }
+        }
+      });
+      return sounds;
+    };
+
+    Section.prototype.getDrumsSounds = function(drumsBeat) {
+      var sounds = [];
+      drumsBeat.subbeats.forEach(function(subbeat, subbeatIndex) {
+        var drumName, drumSound;
+        for (drumName in subbeat) {
+          drumSound = subbeat[drumName];
+          if (drumSound.volume > 0) {
+            // console.log('bar {0} beat {1} subbeat {2}'.format(beat.bar, beat.index, subbeatIndex+1));
+            sounds.push({
+              subbeat: subbeatIndex+1,
+              volume: drumSound.volume,
+              drum: drumName
+            });
+          }
+        }
+      });
+      return sounds;
+    };
+
     Section.prototype.get = function() {};
 
     return Section;
