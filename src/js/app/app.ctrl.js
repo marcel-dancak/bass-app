@@ -29,8 +29,11 @@
       playing: false,
       bpm: 80,
       bass: audioPlayer.bass,
-      drums: audioPlayer.drums
+      drums: audioPlayer.drums,
+      input: audioPlayer.input
     };
+    // initial volume for input after un-mute
+    audioPlayer.input._volume = 0.75;
 
     var bassNotes = new NotesModel('B0', 'G4');
     $scope.bass = {
@@ -309,14 +312,7 @@
     updateSlides();
 
     $scope.$watch('player.bpm', function(value) {
-      if (audioPlayer.playing) {
-        audioPlayer.stop();
-        audioPlayer.setBpm($scope.player.bpm);
-        audioPlayer.play(
-          $scope.section,
-          beatSync
-        );
-      }
+      audioPlayer.setBpm($scope.player.bpm);
     });
 
     var timelineElem = document.getElementById('time-marker');
@@ -378,11 +374,41 @@
       if (!instrument.muted) {
         instrument._volume = instrument.audio.gain.value;
         // zero gain value would cause invalid drawing of audio signal
-        instrument.audio.gain.value = 0.01;
+        instrument.audio.gain.value = 0.0001;
       } else {
-        instrument.audio.gain.value = instrument._volume;
+        instrument.audio.gain.value = instrument._volume || instrument.audio.gain.value;
       }
       instrument.muted = !instrument.muted;
+    };
+
+    $scope.toggleInputMute = function(input) {
+      $scope.toggleVolumeMute(input);
+      if (input.muted) {
+        console.log('mute microphone');
+        // input.stream.removeTrack(input.stream.getAudioTracks()[0]);
+        // input.source.disconnect();
+      } else {
+        if (!input.source) {
+          console.log('connect microphone');
+          function gotStream(stream) {
+            input.stream = stream;
+            // Create an AudioNode from the stream.
+            input.source = context.createMediaStreamSource(stream);
+            input.source.connect(input.audio);
+            audioVisualiser.setInputSource(context, input.audio);
+          }
+
+          function error() {
+            alert('Stream generation failed.');
+          }
+
+          navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+          navigator.getUserMedia({ audio: true }, gotStream, error);
+        } else {
+          // input.source.connect(input.audio);
+          // audioVisualiser.setInputSource(context, input.audio);
+        }
+      }
     };
 
     $scope.playBassSound = function(bassSound) {

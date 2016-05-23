@@ -50,7 +50,7 @@
       class="preferences md-whiteframe-16dp">
       <md-list>
         <md-list-item
-          class="bass volume-field bottom-border">
+          class="volume-field bottom-border">
           <label>Bass Volume</label>
           <md-slider
             class="md-primary"
@@ -75,7 +75,7 @@
         </md-list-item>
 
         <md-list-item
-          class="bass volume-field bottom-border">
+          class="volume-field bottom-border">
           <label>Drums Volume</label>
           <md-slider
             class="md-primary"
@@ -95,6 +95,31 @@
             ng-click="toggleVolumeMute(player.drums)">
             <md-icon
               md-svg-icon="{{ player.drums.muted? 'volume-mute' : 'volume-medium' }}">
+            </md-icon>
+          </md-button>
+        </md-list-item>
+
+        <md-list-item
+          class="volume-field bottom-border">
+          <label>Input Volume</label>
+          <md-slider
+            class="md-primary"
+            ng-model="player.input.audio.gain.value"
+            ng-disabled="player.input.muted"
+            aria-label="Volume"
+            min="0"
+            max="1"
+            step="0.01"
+            flex>
+          </md-slider>
+          <md-button
+            md-no-ink
+            class="mute-button"
+            ng-class="{active: !player.input.muted}"
+            md-prevent-menu-close
+            ng-click="toggleInputMute(player.input)">
+            <md-icon
+              md-svg-icon="{{ player.input.muted? 'volume-mute' : 'volume-medium' }}">
             </md-icon>
           </md-button>
         </md-list-item>
@@ -126,10 +151,6 @@
     </md-icon>
     {{ player.playing? 'Stop' : 'Play' }}
   </md-button>
-
-<!--   <md-button ng-click="connectInput()">
-    Input Test
-  </md-button> -->
 
   <div flex></div>
 

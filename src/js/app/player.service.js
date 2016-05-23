@@ -42,6 +42,11 @@
         muted: false,
         audio: context.createGain()
       };
+      this.input = {
+        muted: true,
+        audio: context.createGain()
+      };
+      this.input.audio.gain.value = 0.001;
     }
 
     var bassSounds = {
