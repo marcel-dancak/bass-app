@@ -7,12 +7,11 @@
 
 .time-marker {
   width: 3px;
-  height: 400px;
+  height: 370px;
   opacity: 0.5;
   background-color: gray;
   position: fixed;
-  top: 140px;
-  left: 0;
+  top: 100px;
   z-index: 200;
 }
 
@@ -337,7 +336,6 @@ md-menu-item.menu-group-item md-divider {
 
 md-menu-item.menu-group-item {
   min-height: 16px;
-  line-height: 16px;
   height: 16px;
   color: #bbb;
   font-size: 11px;

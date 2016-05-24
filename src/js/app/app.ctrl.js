@@ -371,11 +371,18 @@
       audioVisualiser.enabled = true;
       audioVisualiser.beat = null;
       $scope.barSlideElement = null;
+      var barTop = $scope.barSwiper.wrapper.offset().top;
+      var instrumentTop = $scope.drumsSwiper.wrapper.offset().top;
+      var height = instrumentTop-barTop+$scope.drumsSwiper.wrapper.height();
+
+      timelineElem.style.top = parseInt(barTop)+'px';
+      timelineElem.style.height = parseInt(height)+'px';
+
+      timelineElem.style.visibility = "visible";
       audioPlayer.play(
         $scope.section,
         beatSync
       );
-      timelineElem.style.visibility = "visible";
     };
 
     $scope.stop = function() {
