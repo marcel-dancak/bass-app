@@ -101,10 +101,15 @@
       var audioData = this.bufferLoader.loadResource(bassSounds[sound.style].getResources(sound)[0]);
       //console.log(this.bufferLoader.loadedResources);
       if (audioData) {
+        var duration;
         source.buffer = audioData;
-        var duration = sound.noteLength.beatLength*(timeSignature.bottom)*beatTime;
-        if (sound.noteLength.staccato) {
-          duration = 0.92*duration-(beatTime/4)*0.2;
+        if (note.type === 'ghost') {
+          duration = 0.25;
+        } else {
+          duration = sound.noteLength.beatLength*(timeSignature.bottom)*beatTime;
+          if (sound.noteLength.staccato) {
+            duration = 0.92*duration-(beatTime/4)*0.2;
+          }
         }
         var startTime = context.currentTime;
         gain.gain.setValueAtTime(sound.volume, startTime);
