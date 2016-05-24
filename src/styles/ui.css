@@ -325,3 +325,29 @@ md-menu-content .checkbox-item .md-button {
 .submenu-trigger-button {
   position: relative;
 }
+
+md-menu-item.menu-group-item md-divider {
+  position: absolute;
+  top: 10px;
+  padding: 0;
+  left: 5px;
+  width: calc(100% - 10px);
+  z-index: 50;
+}
+
+md-menu-item.menu-group-item {
+  min-height: 16px;
+  line-height: 16px;
+  height: 16px;
+  color: #bbb;
+  font-size: 11px;
+  position: relative;
+  width: 100%;
+}
+
+md-menu-item.menu-group-item .group-item-title {
+  background-color: white;
+  padding: 0 10px;
+  width: auto;
+  z-index: 50;
+}

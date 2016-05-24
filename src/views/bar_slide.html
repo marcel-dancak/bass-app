@@ -22,7 +22,19 @@
       style="position:absolute;width:5px;height:5px;">
     </offset>
   </div>
-  <md-menu-content width="3" class="md-whiteframe-16dp">
+  <md-menu-content
+    width="3"
+    class="md-whiteframe-16dp beat-menu-content">
+
+    <md-menu-item class="menu-group-item">
+      <md-divider></md-divider>
+      <div layout="row">
+        <span flex></span>
+        <span flex="none" class="group-item-title">Beat</span>
+        <span flex="5"></span>
+      </div>
+    </md-menu-item>
+
     <md-menu-item>
       <md-menu>
         <md-menu-item>
@@ -56,12 +68,19 @@
       </md-menu>
     </md-menu-item>
 
-    <md-menu-divider></md-menu-divider>
+    <md-menu-item class="menu-group-item">
+      <md-divider></md-divider>
+      <div layout="row">
+        <span flex></span>
+        <span flex="none" class="group-item-title">Bar</span>
+        <span flex="5"></span>
+      </div>
+    </md-menu-item>
 
     <md-menu-item>
       <md-button
         ng-click="copyBar(beat.bar)">
-        Copy bar
+        Copy
       </md-button>
     </md-menu-item>
 
@@ -69,7 +88,14 @@
       <md-button
         ng-disabled="bassClipboard.length+drumsClipboard.length === 0"
         ng-click="pasteBar(beat.bar)">
-        Paste bar
+        Paste
+      </md-button>
+    </md-menu-item>
+
+    <md-menu-item>
+      <md-button
+        ng-click="clearBar(beat.bar)">
+        Clear
       </md-button>
     </md-menu-item>
   </md-menu-content>

@@ -7,20 +7,6 @@
 
   function BarController($scope, $timeout) {
 
-    $scope.setBeatSubdivision = function(barBeat, bassBeat, subdivision) {
-      console.log(barBeat);
-      console.log(bassBeat);
-      bassBeat.subdivision = subdivision;
-      if (subdivision === 3) {
-        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'trip', 'let');
-        barBeat.visibleSubbeats = [1, 2, 3];
-        bassBeat.visibleSubbeats = [1, 2, 3];
-      } else {
-        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'e', 'and', 'a');
-        updateSubbeatsVisibility();
-      }
-    };
-
     $scope.openBeatMenu = function(openFunction, evt) {
       var parentBox = evt.target.offsetParent.getBoundingClientRect();
       var offsetElem = evt.target.getElementsByTagName("offset")[0];
@@ -81,6 +67,16 @@
       });
       // bassClipboard.splice(0, bassClipboard.length);
       // drumsClipboard.splice(0, drumsClipboard.length);
+    };
+
+    $scope.clearBar = function(barIndex) {
+      var bar = $scope.section.bars[barIndex-1];
+      bar.bassBeats.forEach(function(bassBeat) {
+        $scope.section.clearBassBeat(bassBeat);
+      });
+      bar.drumsBeats.forEach(function(drumsBeat) {
+        $scope.section.clearDrumsBeat(drumsBeat);
+      });
     };
 
     $scope.bassClipboard = bassClipboard;

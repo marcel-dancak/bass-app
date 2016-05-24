@@ -182,6 +182,33 @@
       return sounds;
     };
 
+    Section.prototype.clearBassBeat = function(bassBeat) {
+      bassBeat.subbeats.forEach(function(subbeat) {
+        var string, bassSound;
+        for (string in subbeat) {
+          if (!string.startsWith('$')) {
+            bassSound = subbeat[string].sound;
+            delete bassSound.style;
+            delete bassSound.note;
+            delete bassSound.noteLength;
+          }
+        }
+      });
+    };
+
+    Section.prototype.clearDrumsBeat = function(drumsBeat) {
+      drumsBeat.subbeats.forEach(function(subbeat) {
+        var drumName, drumSound;
+        for (drumName in subbeat) {
+          if (!drumName.startsWith('$$')) {
+            drumSound = subbeat[drumName]
+            drumSound.volume = 0;
+          }
+        }
+      });
+    };
+
+
     Section.prototype.get = function() {};
 
     return Section;

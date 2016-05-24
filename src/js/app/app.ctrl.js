@@ -286,6 +286,20 @@
       }
     };
 
+    $scope.setBeatSubdivision = function(barBeat, bassBeat, subdivision) {
+      console.log(barBeat);
+      console.log(bassBeat);
+      bassBeat.subdivision = subdivision;
+      if (subdivision === 3) {
+        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'trip', 'let');
+        barBeat.visibleSubbeats = [1, 2, 3];
+        bassBeat.visibleSubbeats = [1, 2, 3];
+      } else {
+        barBeat.subbeats.splice(1, barBeat.subbeats.length-1, 'e', 'and', 'a');
+        updateSubbeatsVisibility();
+      }
+    };
+
     $scope.renderingBar = function(index) {
       console.log('Rendering Bar: '+index);
     };
@@ -389,8 +403,7 @@
         // input.source.disconnect();
       } else {
         if (!input.source) {
-          console.log('connect microphone');
-          function gotStream(stream) {
+          var gotStream = function(stream) {
             input.stream = stream;
             // Create an AudioNode from the stream.
             input.source = context.createMediaStreamSource(stream);
@@ -398,7 +411,7 @@
             audioVisualiser.setInputSource(context, input.audio);
           }
 
-          function error() {
+          var error = function() {
             alert('Stream generation failed.');
           }
 
@@ -425,26 +438,8 @@
 
     $scope.clearSection = function() {
       $scope.section.forEachBeat(function(beat) {
-        beat.bass.subbeats.forEach(function(subbeat) {
-          var string, bassSound;
-          for (string in subbeat) {
-            if (!string.startsWith('$')) {
-              bassSound = subbeat[string].sound;
-              delete bassSound.style;
-              delete bassSound.note;
-              delete bassSound.noteLength;
-            }
-          }
-        });
-        beat.drums.subbeats.forEach(function(subbeat) {
-          var drumName, drumSound;
-          for (drumName in subbeat) {
-            if (!drumName.startsWith('$$')) {
-              drumSound = subbeat[drumName]
-              drumSound.volume = 0;
-            }
-          }
-        });
+        $scope.section.clearBassBeat(beat.bass);
+        $scope.section.clearDrumsBeat(beat.drums);
       });
     };
 
@@ -536,6 +531,12 @@
       // override selected section data
       sectionData.beats.forEach(function(beat) {
         if (beat.bass) {
+          var destBassBeat = section.bassBeat(beat.bar, beat.beat);
+          if (beat.bass.subdivision !== destBassBeat.subdivision) {
+            var flatIndex = (beat.bar-1)*section.timeSignature.top+beat.beat-1;
+            var barBeat = $scope.slides.bars[flatIndex];
+            $scope.setBeatSubdivision(barBeat, destBassBeat, beat.bass.subdivision);
+          }
           beat.bass.sounds.forEach(function(bassSound) {
             var subbeat = $scope.section.bassSubbeat(beat.bar, beat.beat, bassSound.subbeat);
             angular.extend(subbeat[bassSound.sound.string].sound, bassSound.sound);
