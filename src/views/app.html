@@ -130,9 +130,10 @@
           layout="column"
           class="drums-labels-container">
           <md-button
-            aria-label="{{ ::drum.label }}"
+            ng-repeat="drum in ::drums track by drum.name"
             class="drum-label"
-            ng-repeat="drum in ::drums track by drum.name">
+            aria-label="{{ ::drum.label }}"
+            ng-click="playDrumSound(drum)">
             {{ ::drum.label }}
           </md-button>
         </div>

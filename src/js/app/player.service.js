@@ -330,7 +330,7 @@
       this.oscillator.stop();
     };
 
-    AudioPlayer.prototype.playSound = function(bassSound) {
+    AudioPlayer.prototype.playBassSample = function(bassSound) {
       var resources = bassSounds[bassSound.style].getResources(bassSound);
       var player = this;
       if (player.playingBassSample && player.playingBassSample.source.playing) {
@@ -349,6 +349,10 @@
         }, 50);
       }
       this.bufferLoader.loadResource(resources[0], afterLoad);
+    };
+
+    AudioPlayer.prototype.playDrumSample = function(drumSound) {
+      this._playDrumsSound(drumSound);
     };
 
     return new AudioPlayer();

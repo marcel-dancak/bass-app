@@ -391,7 +391,7 @@
     };
 
     $scope.playSound = function(sound) {
-      audioPlayer.playSound(sound);
+      audioPlayer.playBassSample(sound);
     };
   }
 

@@ -20,7 +20,7 @@
     };
 
     $scope.playSound = function(sound) {
-      audioPlayer.playSound(sound);
+      audioPlayer.playDrumSample(sound);
     };
 
     $scope.volumeControl = function(sound, delta) {

@@ -432,9 +432,15 @@
         },
         volume: 0.75
       }, bassSound);
-      audioPlayer.playSound(sound);
+      audioPlayer.playBassSample(sound);
     };
 
+    $scope.playDrumSound = function(drum) {
+      audioPlayer.playDrumSample({
+        drum: drum,
+        volume: 0.75
+      });
+    };
 
     $scope.clearSection = function() {
       $scope.section.forEachBeat(function(beat) {
