@@ -1,5 +1,6 @@
 <md-menu>
   <md-button
+    aria-label="Time signature"
     class="time-signature-button"
     ng-click="$mdOpenMenu($event)">
     <p>
@@ -19,6 +20,7 @@
         <label>Time signature</label>
         <md-input-container>
           <input
+            aria-label="Top"
             type="number"
             min="2"
             max="12"
@@ -29,6 +31,7 @@
         <span style="margin: 20px 4px 0 6px;">/</span>
         <md-input-container>
           <md-select
+            aria-label="Bottom"
             class="time-signature"
             ng-model="section.timeSignature.bottom">
             <md-option
@@ -44,6 +47,7 @@
         <label>Bars</label>
         <md-input-container>
           <input
+            aria-label="Bars"
             type="number"
             min="1"
             max="12"
@@ -57,6 +61,7 @@
         <label>Beats per Screen</label>
         <md-input-container>
           <input
+            aria-label="Beats per Screen"
             type="number"
             min="1"
             max="16"
@@ -70,6 +75,7 @@
         <label>Duration / Beats per Slide</label>
         <md-input-container>
           <input
+            aria-label="Duration"
             type="number"
             min="0"
             max="1500"
@@ -79,6 +85,7 @@
         <span>&nbsp&nbsp</span>
         <md-input-container>
           <input
+            aria-label="Beats per Slide"
             type="number"
             min="1"
             max="8"

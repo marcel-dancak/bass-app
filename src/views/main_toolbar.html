@@ -8,6 +8,7 @@
     <md-button
       flex
       md-no-ink
+      aria-label="Bass"
       class="no-hover"
       ng-class="{
         active: ui.instrumentIndex===0
@@ -19,6 +20,7 @@
     <md-button
       flex
       md-no-ink
+      aria-label="Drums"
       class="no-hover"
       ng-class="{
         active: ui.instrumentIndex===1
@@ -38,6 +40,7 @@
   <md-menu
     md-offset="56 10">
     <md-button
+      aria-label="Preferences"
       class="preferences"
       ng-click="$mdOpenMenu($event)">
       <md-icon
@@ -64,6 +67,7 @@
           </md-slider>
           <md-button
             md-no-ink
+            aria-label="Mute"
             class="mute-button"
             ng-class="{active: !player.bass.muted}"
             md-prevent-menu-close
@@ -89,6 +93,7 @@
           </md-slider>
           <md-button
             md-no-ink
+            aria-label="Mute"
             class="mute-button"
             ng-class="{active: !player.drums.muted}"
             md-prevent-menu-close
@@ -114,6 +119,7 @@
           </md-slider>
           <md-button
             md-no-ink
+            aria-label="Mute"
             class="mute-button"
             ng-class="{active: !player.input.muted}"
             md-prevent-menu-close
@@ -144,6 +150,7 @@
   </div>
 
   <md-button
+    aria-label="Play"
     class="play-stop-button"
     ng-click="player.playing? stop() : play()">
     <md-icon
