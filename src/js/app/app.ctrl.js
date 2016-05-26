@@ -17,7 +17,7 @@
       };
     });
 
-  function AppController($scope, $timeout, context, audioPlayer, audioVisualiser, NotesModel, Section) {
+  function AppController($scope, $timeout, context, audioPlayer, audioVisualiser, Notes, Section) {
     var analyser = context.createAnalyser();
     analyser.fftSize = 4096;
     analyser.connect(context.destination);
@@ -35,7 +35,7 @@
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
 
-    var bassNotes = new NotesModel('B0', 'G4');
+    var bassNotes = new Notes('B0', 'G4');
     $scope.bass = {
       notes: bassNotes,
       stringFret: function(stringIndex, note) {
