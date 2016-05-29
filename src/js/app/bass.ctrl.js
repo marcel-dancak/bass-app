@@ -125,8 +125,7 @@
       delete sound.style;
 
       if (sound.next) {
-        var next = getGridInfo(sound.next).grid.sound;
-        $scope.clearSound(next);
+        $scope.clearSound(getGridInfo(sound.next).grid.sound);
       }
       if (sound.prev) {
         disconnectGridSound(sound);
@@ -271,21 +270,31 @@
 
         if (sound.next) {
           console.log('resize group');
-          var oldNextGrid = getGridInfo(sound.next).grid;
-          var nextGrid = rightGrid(grid);
-          console.log(nextGrid);
-          angular.extend(nextGrid.sound, oldNextGrid.sound);
-          // sound.next.bar = nextGrid.bar;
-          // sound.next.beat = nextGrid.beat;
-          // sound.next.subbeat = nextGrid.subbeat;
-          $scope.clearSound(oldNextGrid.sound);
-          connectGrids(grid, nextGrid);
+          // create copy of old 'next sounds chain' before deleting
+          var oldNextSounds = [];
+          var next = sound.next;
+          while (next) {
+            var oldNextGrid = getGridInfo(next).grid;
+            oldNextSounds.push(angular.copy(oldNextGrid.sound));
+            next = oldNextGrid.sound.next;
+          }
+          console.log(oldNextSounds);
+          // delete old sounds chain
+          $scope.clearSound(getGridInfo(sound.next).grid.sound);
+
+          // make new 'next sounds chain' on correct positions
+          var prevGrid = grid;
+          oldNextSounds.forEach(function(oldNextSound) {
+            var newNextGrid = rightGrid(prevGrid);
+            angular.extend(newNextGrid.sound, oldNextSound);
+            connectGrids(prevGrid, newNextGrid);
+            prevGrid = newNextGrid;
+          });
         }
       }
     };
 
     $scope.onDragEnter = function(evt, $data) {
-      console.log('enter');
 
       var target = evt.target || evt.originalTarget;
       if (target.tagName === 'BUTTON') {
@@ -382,13 +391,23 @@
       onDragStart: function(evt, dragData, channel) {
         var grids = [dragData];
         var soundElements = [evt.target];
-        var otherGridData = getGridInfo(dragData.sound.next || dragData.sound.prev);
-        grids.push(otherGridData.grid);
-        soundElements.push(otherGridData.element);
-        if (dragData.sound.prev) {
-          soundElements.reverse();
-          grids.reverse();
+
+        var prev = dragData.sound.prev;
+        while (prev) {
+          var prevGridData = getGridInfo(prev);
+          grids.splice(0, 0, prevGridData.grid);
+          soundElements.splice(0, 0, prevGridData.element);
+          prev = prevGridData.grid.sound.prev;
         }
+
+        var next = dragData.sound.next;
+        while (next) {
+          var nextGridData = getGridInfo(next);
+          grids.push(nextGridData.grid);
+          soundElements.push(nextGridData.element);
+          next = nextGridData.grid.sound.next;
+        }
+
         var dragElem = angular.element('<div class="drag-group"></div>')[0];
         soundElements.forEach(function(elem) {
           var clone = elem.cloneNode(true);
@@ -430,20 +449,35 @@
           $scope.updateBassGrid(destGrid);
         }
 
+        console.log(this.sourceSoundGrids);
         var dragSounds = this.sourceSoundGrids.map(function(grid) {
-          return angular.copy(grid.sound);
+          var copy = angular.copy(grid.sound);
+          delete copy.prev;
+          delete copy.next;
+          return copy;
         });
 
         if (evt.dataTransfer.dropEffect === "move") {
-          this.sourceSoundGrids.forEach(function(grid) {
-            $scope.clearSound(grid.sound);
-          });
+          // this.sourceSoundGrids.forEach(function(grid) {
+          //   $scope.clearSound(grid.sound);
+          // });
+          $scope.clearSound(this.sourceSoundGrids[0].sound);
         }
 
+        var prevGrid;
+        dragSounds.forEach(function(dragSound) {
+          copySound(dragSound, dropGrid);
+          if (prevGrid) {
+            connectGrids(prevGrid, dropGrid);
+          }
+          prevGrid = dropGrid;
+          dropGrid = rightGrid(dropGrid);
+        });
+        /*
         copySound(dragSounds[0], dropGrid);
         var nextGrid = rightGrid(dropGrid);
         copySound(dragSounds[1], nextGrid);
-        connectGrids(dropGrid, nextGrid);
+        connectGrids(dropGrid, nextGrid);*/
       }
     };
 
@@ -499,7 +533,6 @@
     }
 
     function getGridInfo(coords) {
-      console.log(coords);
       var id = "bass_{0}_{1}_{2}_{3}".format(
         coords.bar,
         coords.beat,
@@ -610,7 +643,8 @@
         });
       } else {
         if ($scope.selected.grid.sound.prev) {
-          disconnectGridSound($scope.selected.grid.sound);
+          delete getGridInfo($scope.selected.grid.sound.prev).grid.sound.next;
+          delete $scope.selected.grid.sound.prev;
         }
       }
     };

@@ -188,6 +188,8 @@
           delete bassSound.style;
           delete bassSound.note;
           delete bassSound.noteLength;
+          delete bassSound.prev;
+          delete bassSound.next;
         }
       }
     });
