@@ -100,8 +100,7 @@
 
       <ks-swiper-slide
         ng-repeat="beat in slides.bass track by beat.id"
-        class="swiper-no-swiping bass-slide beat-{{ ::beat.beat }}"
-        style="z-index: {{ ::100-$index}};">
+        class="swiper-no-swiping bass-slide beat-{{ ::beat.beat }}">
         <div class="audio-graph-container">
           <canvas
             id="canvas_{{ ::beat.bar }}_{{ ::beat.beat }}"

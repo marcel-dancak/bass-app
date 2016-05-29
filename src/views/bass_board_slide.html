@@ -1,6 +1,6 @@
 <div
   class="bass-board"
-  ng-keyup="$event.keyCode == 46 && clearSound(selected.grid.sound)">
+  ng-keyup="keyPressed($event)">
   <div
     layout="column"
     class="string-container">
@@ -20,6 +20,7 @@
 
     <div
       flex
+      id="bass_{{::beat.bar}}_{{::beat.beat}}_{{::$parent.$index+1}}_{{::string.index}}"
       ng-repeat="string in bass.strings | orderBy:string.index:'-'"
       ng-init="grid={
         bar: beat.bar,
@@ -40,7 +41,8 @@
       ng-class="{
         active: grid.sound.note.type,
         selected: selected.grid===grid,
-        staccato: grid.sound.noteLength.staccato
+        staccato: grid.sound.noteLength.staccato,
+        group: grid.sound.group
       }"
       ng-style="{
         left: (($parent.$index/beat.subdivision)*100)+'%',
@@ -48,9 +50,8 @@
           ( (beat.subdivision===4? 100 : 66.667) * section.timeSignature.bottom * grid.sound.noteLength.beatLength)+'%' :
           (100*1/beat.visibleSubbeats.length)+'%'
       }"
-      ng-click="selected.grid=grid"
+      ng-click="selectGrid($event, grid)"
       ng-right-click="
-        selected.grid=grid;
         openBassSoundMenu($event, grid)
       ">
       <div
@@ -116,6 +117,37 @@
             &nbsp( {{ grid.sound.note.fret+grid.sound.note.slide }} )
           </label>
         </p>
+
+        <p ng-switch-when="grace">
+<!--           <label>
+            <span class="grace">
+              {{ string.notes[grid.sound.note.fret-2].label[0] }}
+              <sub>{{ string.notes[grid.sound.note.fret-2].octave }}</sub>
+              ({{ grid.sound.note.fret-2 }})
+            </span>
+            {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
+
+            &nbsp( {{ grid.sound.note.fret }} )
+          </label> -->
+          <label>
+            <span class="grace">
+              {{ string.notes[grid.sound.note.fret-2].label[0] }}
+              <sub>{{ string.notes[grid.sound.note.fret-2].octave }}</sub>
+            </span>
+            {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
+          </label>
+          <label class="fret">
+            &nbsp( <span class="grace">{{ grid.sound.note.fret-2 }}</span>{{ grid.sound.note.fret }} )
+          </label>
+        </p>
+
+        <div
+          ng-if="grid.sound.style === 'hammer' || grid.sound.style === 'pull'"
+          class="hammer-on-label">
+          <span>)</span>
+          <span>{{ grid.sound.style === 'hammer'? 'H' : 'P'}}</span>
+        </div>
+        <!-- <label style="position:absolute;top:30px;left:0;">{{ grid.sound.noteLength.beatLength }}</label> -->
 
       </div>
     </div>

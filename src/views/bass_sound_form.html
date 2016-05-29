@@ -13,7 +13,7 @@
           <md-select
             flex
             ng-model="menu.sound.style"
-            md-on-close="">
+            md-on-close="soundStyleChanged(menu.sound.style)">
             <md-option
               ng-repeat="style in playingStyles"
               ng-value="style">
@@ -37,7 +37,7 @@
             <md-option value="slide">
               Slide
             </md-option>
-            <md-option value="grace" ng-disabled="true">
+            <md-option value="grace">
               Grace
             </md-option>
             <md-option value="bended" ng-disabled="true">
@@ -136,7 +136,7 @@
           <label class="md-label">Length</label>
           <md-select
             ng-model="menu.sound.noteLength.length"
-            md-on-close="updateBassSound(menu.sound)"
+            md-on-close="updateBassGrid(menu.grid)"
             ng-disabled="menu.sound.note.type === 'ghost'">
             <md-option
               ng-repeat="value in [
@@ -158,7 +158,7 @@
           aria-label="Staccato"
           ng-model="menu.sound.noteLength.dotted"
           ng-disabled="menu.sound.note.type==='ghost'"
-          ng-change="updateBassSound(menu.sound)">
+          ng-change="updateBassGrid(menu.grid)">
           Dotted
         </md-checkbox>
         <md-checkbox

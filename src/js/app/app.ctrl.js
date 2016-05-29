@@ -89,8 +89,8 @@
           label: 'Hammer on'
         },
         pull: {
-          name: 'pull-of',
-          label: 'Pull of'
+          name: 'pull-off',
+          label: 'Pull off'
         }
       }
     };
