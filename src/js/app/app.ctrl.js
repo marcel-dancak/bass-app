@@ -18,12 +18,8 @@
     });
 
   function AppController($scope, $timeout, context, audioPlayer, audioVisualiser, Notes, Section) {
-    var analyser = context.createAnalyser();
-    analyser.fftSize = 4096;
-    analyser.connect(context.destination);
-    audioPlayer.bass.audio.connect(analyser);
     audioPlayer.drums.audio.connect(context.destination);
-    audioVisualiser.initialize(analyser);
+    audioVisualiser.initialize(context, audioPlayer);
 
     $scope.player = {
       playing: false,
@@ -278,10 +274,11 @@
         $scope.bassSwiper.updateSlidesSize();
         $scope.drumsSwiper.updateSlidesSize();
         updateSubbeatsVisibility();
+        audioVisualiser.redraw();
 
         if ($scope.barSwiper.getWrapperTranslate() < $scope.barSwiper.maxTranslate()) {
           // fix slides when scrolled to much
-          $scope.barSwiper.slideTo($scope.barSwiper.activeIndex, 500, false);
+          $scope.barSwiper.slideTo($scope.barSwiper.activeIndex, 0, false);
         }
       }
     };
@@ -369,7 +366,7 @@
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.player.bpm);
       audioVisualiser.enabled = true;
-      audioVisualiser.beat = null;
+      audioVisualiser.setBeatsCount($scope.slides.bars.length);
       $scope.barSlideElement = null;
       var barTop = $scope.barSwiper.wrapper.offset().top;
       var instrumentTop = $scope.drumsSwiper.wrapper.offset().top;
@@ -450,6 +447,7 @@
     };
 
     $scope.clearSection = function() {
+      audioVisualiser.clear();
       $scope.section.forEachBeat(function(beat) {
         $scope.section.clearBassBeat(beat.bass);
         $scope.section.clearDrumsBeat(beat.drums);
