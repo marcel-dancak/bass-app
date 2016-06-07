@@ -365,7 +365,7 @@
     $scope.play = function() {
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.player.bpm);
-      audioVisualiser.enabled = true;
+      audioVisualiser.activate();
       audioVisualiser.setBeatsCount($scope.slides.bars.length);
       $scope.barSlideElement = null;
       var barTop = $scope.barSwiper.wrapper.offset().top;
@@ -385,7 +385,8 @@
     $scope.stop = function() {
       $scope.player.playing = false;
       audioPlayer.stop();
-      audioVisualiser.enabled = false;
+      audioVisualiser.deactivate();
+      timeline.stop();
     };
 
     $scope.toggleVolumeMute = function(instrument) {
