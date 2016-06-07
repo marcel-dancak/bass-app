@@ -17,7 +17,8 @@
       };
     });
 
-  function AppController($scope, $timeout, context, audioPlayer, audioVisualiser, Notes, Section) {
+  function AppController($scope, $timeout, context, audioPlayer, audioVisualiser,
+                         Notes, Section, Timeline, HighlightTimeline) {
     audioPlayer.drums.audio.connect(context.destination);
     audioVisualiser.initialize(context, audioPlayer);
 
@@ -318,6 +319,8 @@
       $scope.drumsSwiper = swiper;
       $scope.barSwiper.params.control.push(swiper);
       $scope.updateSwipers();
+      // timeline = new Timeline(context, $scope.barSwiper, $scope.drumsSwiper);
+      timeline = new HighlightTimeline($scope.slides);
     };
 
     updateSlides();
@@ -326,56 +329,31 @@
       audioPlayer.setBpm($scope.player.bpm);
     });
 
-    var timelineElem = document.getElementById('time-marker');
-    timelineElem.style.visibility = "hidden";
-    function timelineRedraw() {
-      if ($scope.barSlideElement) {
-        var elapsed = context.currentTime - $scope.barSlideStartTime;
-        var beatTime = 60 / $scope.player.bpm;
-        var fraction = elapsed / beatTime;
 
-        var barBox = $scope.barSlideElement.getBoundingClientRect();
-        if ($scope.player.playing) {
-          timelineElem.style.left = barBox.left+fraction*barBox.width+'px';
-          requestAnimationFrame(timelineRedraw);
-        } else {
-          timelineElem.style.left = 0;
-          timelineElem.style.visibility = "hidden";
-        }
-      }
-    }
     function beatSync(barIndex, beat, bpm) {
+      if (barIndex === 1 && beat === 1 && repeats-- === 0) {
+        // $scope.stop();
+      }
+
       audioVisualiser.beatSync(barIndex, beat, bpm);
+      timeline.beatSync($scope.section, barIndex, beat, bpm);
       var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
       $scope.barSwiper.slideTo(
         slide,
         (slide === 0)? 0 : $scope.slides.animationDuration,
         false
       );
-      var barSlideElement = $scope.barSwiper.$('.swiper-slide')[slide];
-      $scope.barSlideStartTime = context.currentTime;
-      if (!$scope.barSlideElement) {
-        $scope.barSlideElement = barSlideElement;
-        timelineRedraw();
-      } else {
-        $scope.barSlideElement = barSlideElement;
-      }
     }
 
+    var repeats;
+    var timeline;
     $scope.play = function() {
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.player.bpm);
       audioVisualiser.activate();
       audioVisualiser.setBeatsCount($scope.slides.bars.length);
-      $scope.barSlideElement = null;
-      var barTop = $scope.barSwiper.wrapper.offset().top;
-      var instrumentTop = $scope.drumsSwiper.wrapper.offset().top;
-      var height = instrumentTop-barTop+$scope.drumsSwiper.wrapper.height();
-
-      timelineElem.style.top = parseInt(barTop)+'px';
-      timelineElem.style.height = parseInt(height)+'px';
-
-      timelineElem.style.visibility = "visible";
+      timeline.start();
+      repeats = 1;
       audioPlayer.play(
         $scope.section,
         beatSync
