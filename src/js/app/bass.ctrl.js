@@ -240,12 +240,13 @@
     };
 
     $scope.onDrop = function(evt, dragData, dropGrid, section) {
-      console.log('onDrop');
-      console.log(dragData);
-      console.log(dropGrid);
+      // console.log('onDrop');
+      // console.log(dragData);
+      // console.log(dropGrid);
       dragHandler.onDrop(evt, dragData, dropGrid);
 
       $scope.selectGrid(evt, dropGrid);
+      findBassContainer(evt.target).focus();
       $scope.dropNote.visible = false;
     };
 
@@ -484,7 +485,7 @@
     var dragHandler;
     $scope.$root.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
       console.log('ANGULAR_DRAG_START');
-      console.log(data);
+      // console.log(data);
       var dragData = data.data;
 
       if (dragData.handler === 'fretboard') {
@@ -496,13 +497,12 @@
           dragHandler = singleSoundDragHandler;
         }
       }
-      console.log(dragHandler);
       dragHandler.onDragStart(e, dragData, channel);
     });
 
     $scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
       dragHandler.onDragEnd(e, data, channel);
-
+      // console.log('ANGULAR_DRAG_END');
       $scope.dropNote.visible = false;
     });
 

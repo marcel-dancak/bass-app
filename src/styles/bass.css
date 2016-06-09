@@ -19,15 +19,14 @@
   bottom: 0;
   content: "";
   width: 1px;
-  background-color: #ccc;
+  background-color: #555;
+  opacity: 0.3;
   z-index: 199;
 }
 .beat-1 .drums-beat-container::before,
 .beat-1 .audio-graph-container::before,
 .beat-1 .bass-board::before {
   width: 3px;
-  background-color: #555;
-  opacity: 0.3;
 }
 
 .bass-board-container .swiper-container {
@@ -88,11 +87,10 @@
 }
 
 .bass-string {
-  height: 36px;
-  margin: 19px 0 15px 0;
+  height: 18px;
+  margin: 19px 0 16px 0;
   width: 100%;
-  background-color: #eee;
-  top: 18px;
+  background-color: #e2e2e2;
   z-index: 1;
   opacity: 0.8;
   pointer-events: none;
@@ -198,12 +196,20 @@
   text-transform: none;
   color: #777;
   background-color: #fff;
+  xbackground-color: transparent;
   border-radius: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #e2e2e2;
 
   outline-color: white;
   outline-style: solid;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
+
+.instruments-tabs:hover .bass-button {
+  opacity: 1;
+}
+
 .bass-button:hover:not([disabled]) {
   background-color: #fff;
 }
@@ -211,7 +217,8 @@
 .bass-button md-icon {
   width: 18px;
   height: 18px;
-  color: #ccc;
+  color: #e2e2e2;
+  xcolor: transparent;
   pointer-events: none;
 }
 
@@ -481,33 +488,37 @@ md-input-container.slide-field > span {
   position: fixed;
   top: -100px;
   left: 0;
-  overflow: visible;
+  overflow: hidden;
+  xpadding-top: 28px;
+  xbackground-color: rgba(255,0,0,0.1);
+  height: 64px;
 }
 
 .drag-group .bass-sound-container {
   left: 0!important;
-  top: 0!important;
+  top: 28px!important;
 }
 
 .bass-sound-container .hammer-on-label {
   position: absolute;
-  left: -12px;
+  left: -15px;
   top: -28px;
-  width: 24px;
+  width: 31px;
   height: 26px;
-  background-color: rgba(255,255,255,0.65);
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  background-color: rgba(255,255,255,0.75);
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 .bass-sound-container .hammer-on-label > span:first-child {
   position: absolute;
   top: 5px;
-  left: 9px;
+  left: 11px;
+  font-size: 20px;
   transform: rotate(-90deg);
 }
 .bass-sound-container .hammer-on-label > span:last-child {
   position: absolute;
   top: -5px;
-  left: 7px;
+  left: 10px;
   font-size: 14px;
 }

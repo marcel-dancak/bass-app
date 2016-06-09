@@ -176,7 +176,7 @@
         aria-label="Section"
         class="select-editable"
         ng-model="project.selectedSectionIndex"
-        md-on-close="loadSection(project.selectedSectionIndex)">
+        ng-change="loadSection(project.selectedSectionIndex)">
         <md-option
           ng-repeat="section in project.sections"
           ng-value="$index">
