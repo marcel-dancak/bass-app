@@ -1,5 +1,6 @@
 <div
   ng-repeat="subbeat in beat.subbeats"
+  id="bar_{{ ::beat.bar }}_{{ ::beat.beat }}_{{ ::$index+1 }}"
   class="subbeat"
   ng-class="{
     hidden: beat.visibleSubbeats.indexOf($index+1) === -1
@@ -79,7 +80,7 @@
 
     <md-menu-item>
       <md-button
-        ng-click="copyBar(beat.bar)">
+        ng-click="copyBar(beat.bar, ui.instrumentIndex===0? 'bass' : 'drums')">
         Copy
       </md-button>
     </md-menu-item>

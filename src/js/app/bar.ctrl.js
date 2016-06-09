@@ -17,26 +17,30 @@
 
     var bassClipboard = [];
     var drumsClipboard = [];
-    $scope.copyBar = function(barIndex) {
-      console.log('Copy bar: '+barIndex);
+    $scope.copyBar = function(barIndex, instrument) {
+      console.log('Copy bar: '+barIndex+' : '+instrument);
       var section = $scope.section;
 
       bassClipboard.splice(0, bassClipboard.length);
       drumsClipboard.splice(0, drumsClipboard.length);
       var beatIndex;
       for (beatIndex = 1; beatIndex <= section.timeSignature.top; beatIndex++) {
-        var bassBeat = section.bassBeat(barIndex, beatIndex);
-        bassClipboard.push({
-          beat: beatIndex,
-          subdivision: bassBeat.subdivision,
-          sounds: section.getBassSounds(bassBeat)
-        });
-        var drumsBeat = section.drumsBeat(barIndex, beatIndex);
-        drumsClipboard.push({
-          beat: beatIndex,
-          subdivision: drumsBeat.subdivision,
-          sounds: section.getDrumsSounds(drumsBeat)
-        });
+        if (instrument === 'bass') {
+          var bassBeat = section.bassBeat(barIndex, beatIndex);
+          bassClipboard.push({
+            beat: beatIndex,
+            subdivision: bassBeat.subdivision,
+            sounds: section.getBassSounds(bassBeat)
+          });
+        }
+        if (instrument === 'drums') {
+          var drumsBeat = section.drumsBeat(barIndex, beatIndex);
+          drumsClipboard.push({
+            beat: beatIndex,
+            subdivision: drumsBeat.subdivision,
+            sounds: section.getDrumsSounds(drumsBeat)
+          });
+        }
       }
     };
 
