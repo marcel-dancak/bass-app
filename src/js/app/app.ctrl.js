@@ -20,7 +20,8 @@
   function AppController($scope, $timeout, context, audioPlayer, audioVisualiser,
                          Notes, Section, Timeline, HighlightTimeline) {
     audioPlayer.drums.audio.connect(context.destination);
-    audioVisualiser.initialize(context, audioPlayer);
+    audioPlayer.bass.audio.connect(context.destination);
+    audioVisualiser.initialize(context, audioPlayer.bass.audio);
 
     $scope.player = {
       playing: false,
@@ -275,7 +276,7 @@
         $scope.bassSwiper.updateSlidesSize();
         $scope.drumsSwiper.updateSlidesSize();
         updateSubbeatsVisibility();
-        audioVisualiser.redraw();
+        audioVisualiser.updateSize();
 
         if ($scope.barSwiper.getWrapperTranslate() < $scope.barSwiper.maxTranslate()) {
           // fix slides when scrolled to much
@@ -319,8 +320,8 @@
       $scope.drumsSwiper = swiper;
       $scope.barSwiper.params.control.push(swiper);
       $scope.updateSwipers();
-      // timeline = new Timeline(context, $scope.barSwiper, $scope.drumsSwiper);
-      timeline = new HighlightTimeline($scope.slides);
+      timeline = new Timeline(context, $scope.barSwiper, $scope.drumsSwiper);
+      // timeline = new HighlightTimeline($scope.slides);
     };
 
     updateSlides();
@@ -330,14 +331,14 @@
     });
 
 
-    function beatSync(barIndex, beat, bpm) {
-      if (barIndex === 1 && beat === 1 && repeats-- === 0) {
+    function beatPrepared(evt) {
+      if (evt.bar === 1 && evt.beat === 1 && repeats-- === 0) {
         // $scope.stop();
       }
 
-      audioVisualiser.beatSync(barIndex, beat, bpm);
-      timeline.beatSync($scope.section, barIndex, beat, bpm);
-      var slide = (barIndex-1)*$scope.section.timeSignature.top+beat-1;
+      audioVisualiser.beatSync(evt);
+      timeline.beatSync(evt);
+      var slide = (evt.bar-1)*$scope.section.timeSignature.top+evt.beat-1;
       $scope.barSwiper.slideTo(
         slide,
         (slide === 0)? 0 : $scope.slides.animationDuration,
@@ -350,14 +351,11 @@
     $scope.play = function() {
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.player.bpm);
-      audioVisualiser.activate();
       audioVisualiser.setBeatsCount($scope.slides.bars.length);
+      audioVisualiser.activate();
       timeline.start();
       repeats = 1;
-      audioPlayer.play(
-        $scope.section,
-        beatSync
-      );
+      audioPlayer.play($scope.section, beatPrepared);
     };
 
     $scope.stop = function() {
@@ -391,7 +389,8 @@
             // Create an AudioNode from the stream.
             input.source = context.createMediaStreamSource(stream);
             input.source.connect(input.audio);
-            audioVisualiser.setInputSource(context, input.audio);
+            audioVisualiser.initialize(context, input.audio);
+            input.audio.connect(context.destination);
           }
 
           var error = function() {

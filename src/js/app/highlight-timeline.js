@@ -22,14 +22,13 @@
     }
   };
 
-  HighlightTimeline.prototype.beatSync = function(section, bar, beat, bpm) {
-    var beatTime = 60 / bpm;
-    var subbeatIdTemplate = "bar_{0}_{1}_".format(bar, beat);
-    var flatIndex = (bar-1)*section.timeSignature.top+beat-1;
-    var barBeat = this.slides.bars[flatIndex];
+  HighlightTimeline.prototype.beatSync = function(evt) {
+    var subbeatIdTemplate = "bar_{0}_{1}_".format(evt.bar, evt.beat);
+    var barBeat = this.slides.bars[evt.flatIndex];
+    var beatDelay = evt.startTime - evt.eventTime;
     barBeat.visibleSubbeats.forEach(function(index) {
       var id = subbeatIdTemplate+index;
-      var delay = 1000*beatTime*(index-1)/barBeat.subbeats.length;
+      var subbeatDelay = evt.duration*(index-1)/barBeat.subbeats.length;
       setTimeout(function() {
         if (this.currentSubbeatElem) {
           this.currentSubbeatElem.removeClass('active');
@@ -38,7 +37,7 @@
           this.currentSubbeatElem = angular.element(document.getElementById(id));
           this.currentSubbeatElem.addClass('active');
         }
-      }.bind(this), delay);
+      }.bind(this), 1000*(beatDelay+subbeatDelay));
     }.bind(this));
   };
 

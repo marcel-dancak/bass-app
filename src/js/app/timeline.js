@@ -10,7 +10,6 @@
     this.barSwiper = barSwiper;
     this.drumsSwiper = drumsSwiper;
     this.timelineElem = document.getElementById('time-marker');
-    this.timelineElem.style.visibility = "hidden";
     this.boundRedraw = this.redraw.bind(this);
     this.running = false;
   }
@@ -24,6 +23,8 @@
     this.timelineElem.style.height = parseInt(height)+'px';
     this.timelineElem.style.visibility = "visible";
     this.beatBarElement = null;
+    this.beat = null;
+    this.nextBeat = null;
     this.running = true;
   };
 
@@ -33,25 +34,28 @@
     this.timelineElem.style.visibility = "hidden";
   };
 
-  Timeline.prototype.beatSync = function(section, bar, beat, bpm) {
-    this.beatTime = 60 / bpm;
-    var slide = (bar-1)*section.timeSignature.top+beat-1;
-    var beatBarElement = this.barSwiper.$('.swiper-slide')[slide];
-    this.beatStartTime = this.audioContext.currentTime;
-    if (!this.beatBarElement) {
-      this.beatBarElement = beatBarElement;
+  Timeline.prototype.beatSync = function(evt) {
+    var beatElement = this.barSwiper.$('.swiper-slide')[evt.flatIndex];
+    if (!this.beat) {
+      this.beat = angular.copy(evt);
+      this.beat.element = beatElement;
       this.redraw();
     } else {
-      this.beatBarElement = beatBarElement;
+      this.nextBeat = angular.copy(evt);
+      this.nextBeat.element = beatElement;
     }
   };
 
   Timeline.prototype.redraw = function() {
     if (this.running) {
-      var elapsed = this.audioContext.currentTime - this.beatStartTime;
-      var fraction = elapsed / this.beatTime;
+      var currentTime = this.audioContext.currentTime;
+      if (currentTime > this.beat.endTime) {
+        this.beat = this.nextBeat;
+      }
+      var elapsed = currentTime - this.beat.startTime;
+      var fraction = elapsed / this.beat.duration;
 
-      var barBox = this.beatBarElement.getBoundingClientRect();
+      var barBox = this.beat.element.getBoundingClientRect();
       this.timelineElem.style.left = barBox.left+fraction*barBox.width+'px';
       requestAnimationFrame(this.boundRedraw);
     }

@@ -5,6 +5,10 @@
   position: relative;
 }
 
+.subbeat.active {
+  background-color: rgb(255, 250, 190);
+}
+
 .bar-beat .subbeat::before {
   position: absolute;
   left: 0;
