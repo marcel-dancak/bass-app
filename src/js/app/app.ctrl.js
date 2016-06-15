@@ -65,32 +65,27 @@
           noteIndex: bassNotes.list.indexOf(bassNotes.map['G2'])
         }
       ],
-      playingStyles: {
-        finger: {
+      playingStyles: [
+        {
           name: 'finger',
           label: 'Finger'
-        },
-        slap: {
+        }, {
           name: 'slap',
           label: 'Slap'
-        },
-        pop: {
+        }, {
           name: 'pop',
           label: 'Pop'
-        },
-        tap: {
+        }, {
           name: 'tap',
           label: 'Tap'
-        },
-        hammer: {
-          name: 'hammer-on',
+        }, {
+          name: 'hammer',
           label: 'Hammer on'
-        },
-        pull: {
-          name: 'pull-off',
+        }, {
+          name: 'pull',
           label: 'Pull off'
         }
-      }
+      ]
     };
     $scope.drums = [
       {
@@ -406,17 +401,6 @@
       }
     };
 
-    $scope.playBassSound = function(bassSound) {
-      var sound = angular.extend({
-        style: 'finger',
-        noteLength: {
-          beatLength: 1/2
-        },
-        volume: 0.75
-      }, bassSound);
-      audioPlayer.playBassSample(sound);
-    };
-
     $scope.playDrumSound = function(drum) {
       audioPlayer.playDrumSample({
         drum: drum,
@@ -500,6 +484,8 @@
       if (!sectionName) {
         return;
       }
+      $scope.clearSection();
+
       $scope.project.sectionName = sectionName;
       var storageKey = 'v8.section.'+sectionName;
       var sectionData = JSON.parse(localStorage.getItem(storageKey));
@@ -515,26 +501,28 @@
       $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;
       $scope.updateSwipers();
 
-      $scope.clearSection();
+      $timeout(function() {
 
-      // override selected section data
-      sectionData.beats.forEach(function(beat) {
-        if (beat.bass) {
-          var destBassBeat = section.bassBeat(beat.bar, beat.beat);
-          if (beat.bass.subdivision !== destBassBeat.subdivision) {
-            var flatIndex = (beat.bar-1)*section.timeSignature.top+beat.beat-1;
-            var barBeat = $scope.slides.bars[flatIndex];
-            $scope.setBeatSubdivision(barBeat, destBassBeat, beat.bass.subdivision);
+        // override selected section data
+        sectionData.beats.forEach(function(beat) {
+          if (beat.bass) {
+            var destBassBeat = section.bassBeat(beat.bar, beat.beat);
+            if (beat.bass.subdivision !== destBassBeat.subdivision) {
+              var flatIndex = (beat.bar-1)*section.timeSignature.top+beat.beat-1;
+              var barBeat = $scope.slides.bars[flatIndex];
+              $scope.setBeatSubdivision(barBeat, destBassBeat, beat.bass.subdivision);
+            }
+            beat.bass.sounds.forEach(function(bassSound) {
+              var subbeat = $scope.section.bassSubbeat(beat.bar, beat.beat, bassSound.subbeat);
+              angular.extend(subbeat[bassSound.sound.string].sound, bassSound.sound);
+            });
           }
-          beat.bass.sounds.forEach(function(bassSound) {
-            var subbeat = $scope.section.bassSubbeat(beat.bar, beat.beat, bassSound.subbeat);
-            angular.extend(subbeat[bassSound.sound.string].sound, bassSound.sound);
+          beat.drums.sounds.forEach(function(drumSound) {
+            var subbeat = $scope.section.drumsSubbeat(beat.bar, beat.beat, drumSound.subbeat);
+            subbeat[drumSound.drum].volume = drumSound.volume;
           });
-        }
-        beat.drums.sounds.forEach(function(drumSound) {
-          var subbeat = $scope.section.drumsSubbeat(beat.bar, beat.beat, drumSound.subbeat);
-          subbeat[drumSound.drum].volume = drumSound.volume;
         });
+
       });
     }
 

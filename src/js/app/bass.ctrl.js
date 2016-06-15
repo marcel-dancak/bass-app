@@ -7,7 +7,6 @@
 
   function NoteController($scope, $timeout, $mdMenu, audioPlayer) {
     console.log('NOTE CONTROLLER');
-    console.log($scope);
     var noteLengthSymbols = {
       1: '𝅝',
       0.5: '𝅗𝅥',
@@ -113,10 +112,8 @@
     };
 
     $timeout(function() {
-      $scope.menu.element = angular.element(document.getElementById('subbeat-menu'));
+      $scope.menu.element = angular.element(document.getElementById('bass-sound-menu'));
     }, 500);
-
-    $scope.playingStyles = ['finger', 'slap', 'pop', 'tap', 'hammer', 'pull'];
 
     $scope.clearSound = function(sound) {
       // TODO: move to section class?
@@ -244,10 +241,12 @@
       // console.log(dragData);
       // console.log(dropGrid);
       dragHandler.onDrop(evt, dragData, dropGrid);
-
-      $scope.selectGrid(evt, dropGrid);
-      findBassContainer(evt.target).focus();
       $scope.dropNote.visible = false;
+
+      $timeout(function() {
+        $scope.selectGrid(evt, dropGrid);
+        $scope.selected.element.focus();
+      });
     };
 
     $scope.updateBassGrid = function(grid) {
@@ -255,17 +254,12 @@
       var sound = grid.sound;
       if (sound.note && sound.note.type !== 'ghost') {
         sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
-        console.log(sound.note.fret);
 
         if (sound.noteLength) {
           var length = sound.noteLength.length;
           if (sound.noteLength.dotted) {
             length *= 1.5;
           }
-          if (sound.noteLength.staccato) {
-            //length -= 0.1;
-          }
-          // sound.ui.width = 100*(length*$scope.section.timeSignature.bottom*4)+'%';
           sound.noteLength.beatLength = length;
         }
 
@@ -297,17 +291,14 @@
 
     $scope.onDragEnter = function(evt, $data) {
 
-      var target = evt.target || evt.originalTarget;
-      if (target.tagName === 'BUTTON') {
-        // target = target.parentElement.parentElement;
-        target = target.parentElement;
-      }
+      var target = findRootContainer(evt.target);
+
       var subdivision = $scope.section.bassBeat($data.bar, $data.beat).subdivision;
       $timeout(function() {
         $scope.dropNote.visible = true;
         var box = target.getBoundingClientRect();
         $scope.dropNote.left = box.left;
-        $scope.dropNote.top = box.top;
+        $scope.dropNote.top = box.top+1;
         if ($scope.dropNote.subdivision !== subdivision) {
           if ($scope.dropNote.subdivision === 4 && subdivision === 3) {
             $scope.dropNote.width = $scope.dropNote.width * (2/3);
@@ -397,7 +388,7 @@
         while (prev) {
           var prevGridData = getGridInfo(prev);
           grids.splice(0, 0, prevGridData.grid);
-          soundElements.splice(0, 0, prevGridData.element);
+          soundElements.splice(0, 0, prevGridData.soundElement);
           prev = prevGridData.grid.sound.prev;
         }
 
@@ -405,7 +396,7 @@
         while (next) {
           var nextGridData = getGridInfo(next);
           grids.push(nextGridData.grid);
-          soundElements.push(nextGridData.element);
+          soundElements.push(nextGridData.soundElement);
           next = nextGridData.grid.sound.next;
         }
 
@@ -413,6 +404,7 @@
         soundElements.forEach(function(elem) {
           var clone = elem.cloneNode(true);
           clone.style.width = elem.clientWidth+'px';
+          clone.style.position = 'relative';
           clone.style.display = 'inline-block';
           dragElem.appendChild(clone);
         });
@@ -450,7 +442,6 @@
           $scope.updateBassGrid(destGrid);
         }
 
-        console.log(this.sourceSoundGrids);
         var dragSounds = this.sourceSoundGrids.map(function(grid) {
           var copy = angular.copy(grid.sound);
           delete copy.prev;
@@ -519,11 +510,11 @@
       return fret !== -1;
     };
 
-    function findBassContainer(elem) {
+    function findRootContainer(elem) {
       var e = elem;
       var maxDepth = 10;
-      while (e.className.indexOf("bass-sound-container") === -1) {
-        console.log(e.className);
+      while (e.className.indexOf("bass-subbeat") === -1) {
+        //console.log(e.className);
         e = e.parentElement;
         if (maxDepth-- === 0) {
           return null;
@@ -543,18 +534,12 @@
       if (elem) {
         return {
           grid: angular.element(elem).scope().grid,
-          element: elem
+          gridElement: elem.querySelector('.bass-grid'),
+          soundElement: elem.querySelector('.bass-sound-container')
         };
       }
     }
 
-    function findActiveBassContainer(elem) {
-      var container = findBassContainer(elem);
-      if (container) {
-        var grid = angular.element(container).scope().grid;
-        return grid.sound.note? container : null;
-      }
-    }
 
     function connectGrids(grid1, grid2) {
       grid1.sound.next = {
@@ -623,16 +608,14 @@
         var backdropElements = Array.from(
           document.querySelectorAll('md-backdrop.md-menu-backdrop, div.md-scroll-mask')
         );
-        console.log(backdropElements);
         backdropElements.forEach(function(elem) {
           elem.style.visibility = 'hidden';
         });
 
-        var elemOnLeft = findActiveBassContainer(document.elementFromPoint(elemBox.left-10, elemBox.top+10));
-        // backdropElem.style.visibility = 'visible';
-        if (elemOnLeft) {
-          var leftElemGrid = angular.element(elemOnLeft).scope().grid;
-          console.log(leftElemGrid);
+        var elemOnLeft = document.elementFromPoint(elemBox.left-10, elemBox.top+10);
+        var leftElemGrid = angular.element(elemOnLeft).scope().grid;
+
+        if (leftElemGrid) {
           connectGrids(leftElemGrid, $scope.selected.grid);
         } else {
           $scope.selected.grid.sound.style = 'finger';
@@ -651,14 +634,16 @@
 
     $scope.selectGrid = function(evt, grid) {
       $scope.selected.grid = grid;
-      $scope.selected.element = findActiveBassContainer(evt.target);
-      // console.log($scope.selected.element);
+      $scope.selected.element = findRootContainer(evt.target).querySelector('.bass-sound-container');
     };
 
     $scope.openBassSoundMenu = function(evt, grid) {
       $scope.selectGrid(evt, grid);
 
       var box = evt.target.getBoundingClientRect();
+      if (!grid.sound.volume) {
+        grid.sound.volume = 0.8;
+      }
       // $scope.menu.element.css('left', box.left+'px');
       // $scope.menu.element.css('top', 32+box.top+'px');
       $scope.menu.element.css('left', (evt.clientX-20)+'px');
@@ -695,7 +680,9 @@
     };
 
     $scope.playSound = function(sound) {
-      audioPlayer.playBassSample(sound);
+      if (sound.bote) {
+        audioPlayer.playBassSample(sound);
+      }
     };
   }
 

@@ -1,103 +1,12 @@
 <div
-  ng-repeat="subbeat in beat.subbeats"
+  ng-repeat="subbeat in beat.subbeats track by $index"
   id="bar_{{ ::beat.bar }}_{{ ::beat.beat }}_{{ ::$index+1 }}"
+  flex
   class="subbeat"
   ng-class="{
     hidden: beat.visibleSubbeats.indexOf($index+1) === -1
-  }"
-  flex>
+  }">
   <label class="subbeat-label">
-    {{ ::subbeat }}
+    {{ subbeat }}
   </label>
 </div>
-<md-menu
-  md-position-mode="target target"
-  md-offset="-5 10"
-  class="beat-menu">
-  <div class="button"
-    aria-label="Menu"
-    ng-right-click="openBeatMenu($mdOpenMenu, $event)"
-    ng-click="">
-    <offset
-      md-menu-origin
-      style="position:absolute;width:5px;height:5px;">
-    </offset>
-  </div>
-  <md-menu-content
-    width="3"
-    class="md-whiteframe-16dp beat-menu-content">
-
-    <md-menu-item class="menu-group-item">
-      <md-divider></md-divider>
-      <div layout="row">
-        <span flex></span>
-        <span flex="none" class="group-item-title">Beat</span>
-        <span flex="5"></span>
-      </div>
-    </md-menu-item>
-
-    <md-menu-item>
-      <md-menu>
-        <md-menu-item>
-          <md-button
-            class="submenu-trigger-button"
-            ng-click="$mdOpenMenu()">
-            Subdivision
-          </md-button>
-          <md-icon class="expand-icon" md-svg-icon="arrow-right-fill"></md-icon>
-        </md-menu-item>
-        <md-menu-content>
-          <md-menu-item class="checkbox-item">
-            <md-icon
-              ng-show="slides.bass[$index].subdivision === 4"
-              md-svg-icon="check">
-            </md-icon>
-            <md-button ng-click="setBeatSubdivision(beat, slides.bass[$index], 4)">
-              Standard
-            </md-button>
-          </md-menu-item>
-          <md-menu-item class="checkbox-item">
-            <md-icon
-              ng-show="slides.bass[$index].subdivision === 3"
-              md-svg-icon="check">
-            </md-icon>
-            <md-button ng-click="setBeatSubdivision(beat, slides.bass[$index], 3)">
-              Triplet
-            </md-button>
-          </md-menu-item>
-        </md-menu-content>
-      </md-menu>
-    </md-menu-item>
-
-    <md-menu-item class="menu-group-item">
-      <md-divider></md-divider>
-      <div layout="row">
-        <span flex></span>
-        <span flex="none" class="group-item-title">Bar</span>
-        <span flex="5"></span>
-      </div>
-    </md-menu-item>
-
-    <md-menu-item>
-      <md-button
-        ng-click="copyBar(beat.bar, ui.instrumentIndex===0? 'bass' : 'drums')">
-        Copy
-      </md-button>
-    </md-menu-item>
-
-    <md-menu-item>
-      <md-button
-        ng-disabled="bassClipboard.length+drumsClipboard.length === 0"
-        ng-click="pasteBar(beat.bar)">
-        Paste
-      </md-button>
-    </md-menu-item>
-
-    <md-menu-item>
-      <md-button
-        ng-click="clearBar(beat.bar)">
-        Clear
-      </md-button>
-    </md-menu-item>
-  </md-menu-content>
-</md-menu>

@@ -74,6 +74,7 @@
   position: absolute;
   left: -8px;
   top: -26px;
+  z-index: 500;
   font-weight: bold;
   font-size: 14px;
   background-color: #555;
@@ -103,13 +104,16 @@
   user-select: none;           /* Non-prefixed version, currently */
 }
 
-.subbeat label {
+.bar-slide .subbeat {
+  pointer-events: none;
+}
+.bar-slide .subbeat label {
   min-height: 20px;
   max-height: 20px;
 }
 
 
-.subbeat.hidden {
+.bar-slide .subbeat.hidden {
   display: none;
 }
 
@@ -357,7 +361,12 @@ md-slider .md-focus-ring {
 /**
  * Beat menu
  */
-
+.context-menu {
+  overflow: visible;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
 md-menu-content.beat-menu-content {
   padding-top: 3px;
 }
@@ -365,23 +374,44 @@ md-menu-content.beat-menu-content {
   border-color: rgba(63,81,181,0.6);
 }
 
-.beat-menu .button:hover {
+.bar-slide::after {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  left: 0;
+  right: 0;
+  content: "";
+}
+.bar-slide:hover::after {
   transition-delay: 0.5s;
+  background-color: rgba(63,81,181,0.6);
+}
+
+.beat-menu.md-open {
   border-color: rgba(63,81,181,0.6);
 }
-.beat-menu .button {
-  position: absolute;
+
+.beat-menu {
+  overflow: hidden;
   top: 0;
   left: 0;
+  z-index: 100;
+  pointer-events: none;
+  padding: 0;
+  border-width: 0 0 2px 0;
+  border-style: solid;
+  transition: 0s border;
+  border-color: transparent;
+}
+
+.beat-menu .button {
   width: 100%;
-  height: calc(100% - 2px);
+  height: 100%;
   content: "";
   margin: 0;
   padding: 0;
   outline: none;
 
-  border-width: 0 0 2px 0;
-  border-style: solid;
-  transition: 0s border;
-  border-color: transparent;
+
+
 }

@@ -89,6 +89,9 @@ md-input-container.input-inline-label label {
   color: #444;
 }
 
+.control-panel md-menu {
+  padding: 0;
+}
 .select-editable .md-select-value {
   border: none;
   min-width: 16px;
@@ -130,7 +133,7 @@ md-backdrop.md-select-backdrop {
 
 md-tabs.instruments-tabs {
   overflow: visible;
-  min-height: 480px!important;
+  min-height: 500px!important;
 }
 .instruments-tabs md-tabs-wrapper {
   display: none;
@@ -323,6 +326,10 @@ md-menu-content .checkbox-item .md-button {
 }
 .submenu-trigger-button {
   position: relative;
+}
+
+.md-menu.md-nested-menu {
+  padding: 0;
 }
 
 md-menu-item.menu-group-item md-divider {

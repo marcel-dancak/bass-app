@@ -7,12 +7,42 @@
 
   function BarController($scope, $timeout) {
 
-    $scope.openBeatMenu = function(openFunction, evt) {
+    $scope.contextMenu = {
+      show: angular.noop,
+      element: null,
+      barBeat: null,
+      bassBeat: null,
+      drumsBeat: null
+    };
+
+    $scope.test = function(evt) {
+      console.log('test');
+      console.log(evt);
+    }
+    $scope.contextMenu.open = function(evt, index) {
+      console.log('openBeatMenu');
+      if (!$scope.contextMenu.element) {
+        $scope.contextMenu.element = document.querySelector('.beat-menu');
+      }
+      $scope.contextMenu.barBeat = $scope.slides.bars[index];
+      $scope.contextMenu.bassBeat = $scope.slides.bass[index];
+      $scope.contextMenu.drumsBeat = $scope.slides.drums[index];
+
       var parentBox = evt.target.offsetParent.getBoundingClientRect();
-      var offsetElem = evt.target.getElementsByTagName("offset")[0];
+
+      $scope.contextMenu.element.style.position = 'fixed';
+      $scope.contextMenu.element.style.left = parentBox.left+'px';
+      $scope.contextMenu.element.style.top = parentBox.top+'px';
+      $scope.contextMenu.element.style.width = parentBox.width+'px';
+      $scope.contextMenu.element.style.height = (parentBox.height-2)+'px';
+
+      var offsetElem = $scope.contextMenu.element.getElementsByTagName("offset")[0];
       offsetElem.style.left = (evt.clientX-parentBox.left)+'px';
       offsetElem.style.top = (evt.clientY-parentBox.top)+'px';
-      $timeout(openFunction, 20, true, evt);
+
+      $timeout(function() {
+        $scope.contextMenu.element.children[0].click();
+      });
     };
 
     var bassClipboard = [];

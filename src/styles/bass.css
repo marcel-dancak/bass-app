@@ -3,7 +3,6 @@
   border-width: 1px 0;
   background-color: #eee;
   position: relative;
-  margin-bottom: 30px;
 }
 .audio-graph-container canvas {
   z-index: 200;
@@ -53,16 +52,18 @@
   width: 100%;
 }
 
-.bass-board {
-  width: 100%;
-  height: 144px;
-  position: relative;
-}
-
 .bass-board-container {
   margin: 0px 30px 40px 65px;
   position: relative;
 }
+
+.bass-board {
+  width: 100%;
+  height: 144px;
+  position: relative;
+  margin-top: 36px;
+}
+
 .bass-tunning-button {
   position: absolute;
   min-width: 36px;
@@ -87,74 +88,155 @@
 }
 
 .bass-string {
-  height: 18px;
-  margin: 19px 0 16px 0;
+  height: 1px;
+  margin: 18px 0 36px 0;
   width: 100%;
   background-color: #e2e2e2;
-  z-index: 1;
   opacity: 0.8;
   pointer-events: none;
 }
 
+.bass-subbeat {
+  position: relative;
+  height: 36px;
+  width: 100%;
+}
+
+.bass-grid {
+  height: 100%;
+  overflow: visible;
+  position: relative;
+}
+
+.subbeats-container:not(.hidden) .bass-grid {
+  pointer-events: auto;
+}
+
+.bass-sound-wrapper {
+  height: 100%;
+  top: 0;
+  position: absolute;
+  overflow: visible;
+  outline: none;
+  z-index: 200;
+  transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  transition-property: none;
+}
+
+/* with enter/leave animations */
+
+.bass-sound-wrapper.ng-enter {
+  transition-property: opacity;
+  opacity:0;
+}
+
+.bass-sound-wrapper.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+
+.bass-sound-wrapper.ng-leave {
+  transition-property: opacity;
+  opacity: 1;
+}
+.bass-sound-wrapper.ng-leave.ng-leave-active {
+  opacity: 0;
+}
+
+
+/* without enter/leave animations */
+
+/*.bass-sound-wrapper.ng-enter,
+.bass-sound-wrapper.ng-leave {
+  transition: none;
+  opacity: 1;
+}*/
+
+
+.bass-button {
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  min-width: 32px;
+  min-height: 32px;
+  width: 32px;
+  height: 32px;
+  line-height: 30px;
+  margin: 0;
+  padding: 0 2px;
+  text-transform: none;
+  color: #e2e2e2;
+  background-color: #fff;
+  border-radius: 16px;
+  border: 1px solid #e2e2e2;
+  font-size: 20px;
+  font-weight: 300;
+
+  outline-color: white;
+  outline-style: solid;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+}
+
 .bass-sound-container {
   height: 100%;
+  width: 100%;
   text-align: center;
-  z-index: 50;
-  position: relative;
+  z-index: 200;
+  position: absolute;
   border-radius: 3px;
   margin: 2px 1px;
+  top: 0;
   outline: none;
+  text-align: center;
+  border: 1px solid #777;
   box-sizing: border-box;
-  overflow: visible;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  max-height: 32px;
+  line-height: 32px;
+  pointer-events: auto;
 }
+
 .bass-sound-container label {
-  display: none;
+  display: inline-block;
   font-size: 14px;
 }
 
-.bass-sound-container.active {
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-  border: 1px solid #777;
-  max-height: 32px;
-  line-height: 32px;
-  xtransform: scale(0.95, 1);
-  xtransform-origin: 0 0 0;
-}
-.bass-sound-container.active label {
-  display: inline-block;
-}
-.bass-sound-container.ghost label.fret {
+.ghost .bass-sound-container label.fret {
   display: none;
 }
-.bass-sound-container.active[octave="1"] {
+.bass-sound-container[octave="1"] {
   background-color: #ff5722;
 }
-.bass-sound-container.active[octave="2"] {
+.bass-sound-container[octave="2"] {
   background-color: #ff9800;
 }
-.bass-sound-container.active[octave="3"] {
+.bass-sound-container[octave="3"] {
   background-color: #ffc107;
 }
-.bass-sound-container.active[octave="4"] {
+.bass-sound-container[octave="4"] {
   background-color: #ffeb3b;
 }
-.bass-sound-container.active.ghost {
+
+.ghost .bass-sound-container {
   background-color: #ddd;
-  max-width: 25%;
 }
-.bass-sound-container.active.selected {
+.ghost.bass-sound-wrapper {
+  min-width: 25%;
+}
+.bass-sound-wrapper.selected .bass-sound-container {
   border: 2px solid #333;
   margin: 1px 1px 1px 1px;
   border-radius: 4px;
   line-height: 32px;
   max-height: 34px;
-  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+}
+.bass-sound-wrapper.selected {
+  transition-property: width, opacity;
 }
 .fret-input {
   min-width: 18px;
   max-width: 18px;
 }
-.fretboard-icon {
 
 }
 .fretboard-select md-select {
@@ -182,30 +264,6 @@
   border-bottom: 1px solid #ddd;
 }
 
-.bass-button {
-  position: absolute;
-  left: 3px;
-  top: 0;
-  min-width: 32px;
-  min-height: 30px;
-  width: 32px;
-  height: 32px;
-  line-height: 30px;
-  margin: 0;
-  padding: 0 2px;
-  text-transform: none;
-  color: #777;
-  background-color: #fff;
-  xbackground-color: transparent;
-  border-radius: 16px;
-  border: 1px solid #e2e2e2;
-
-  outline-color: white;
-  outline-style: solid;
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-}
-
 .instruments-tabs:hover .bass-button {
   opacity: 1;
 }
@@ -214,24 +272,6 @@
   background-color: #fff;
 }
 
-.bass-button md-icon {
-  width: 18px;
-  height: 18px;
-  color: #e2e2e2;
-  xcolor: transparent;
-  pointer-events: none;
-}
-
-.bass-sound-container {
-  text-align: center;
-}
-
-.bass-sound-container.active .bass-button {
-  display: none;
-}
-.bass-sound-container.active:hover .rg-right {
-  opacity: 1;
-}
 
 .musical-tab-char {
   display: inline-block;
@@ -243,13 +283,11 @@
 }
 
 .subbeats-container {
-  width: 100%;
-  height: 100%;
   position: absolute;
   top: 0;
-  left: 0
+  left: 0;
   bottom: 0;
-  right: 0;
+  pointer-events: none;
 }
 
 .tab-top-marker {
@@ -267,10 +305,6 @@
   font-size: 14px;
 }
 
-.bass-sound-container {
-  z-index: 50;
-}
-
 .bass-sound-container p {
   padding: 0;
   margin: 0;
@@ -280,46 +314,14 @@
   vertical-align: bottom;
 }
 
-.bass-sound-container.staccato p::before {
-  content: "•";
-  position: absolute;
-  top: 0;
-  padding-left: 2px;
-  line-height: 12px;
-}
-
-.bass-sound-container .resize-handler {
-  position: absolute;
-  display: none;
-  width: 10px;
-  right: 0;
-  padding: 4px 0;
-  transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  pointer-events: none;
-}
-
-.bass-sound-container.active .resize-handler {
-  display: block;
-  opacity: 0;
-}
-
-.bass-sound-container.active:hover .resize-handler {
-  opacity: 1;
-}
-.bass-sound-container .resize-handler md-icon {
-  width: 10px;
-  height: 12px;
-  display: block;
-}
-
-.bass-sound-container.active {
-  z-index: 200;
-}
-.md-menu {
+#bass-sound-menu {
   padding: 0;
   line-height: 20px;
   display: block;
   text-align: left;
+  position: fixed;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .drop-note-area {
@@ -330,8 +332,8 @@
   border-radius: 4px;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   z-index: 199;
-  left: 0px;
-  top: 0;
+  left: 0;
+  top: -50px;
   pointer-events: none;
   box-sizing: border-box;
 }
@@ -352,11 +354,10 @@
 
 .resize-container {
   position: absolute;
-  
   border-radius: 4px;
   top: 0;
   left: 0;
-  bottom: 0;
+  height: 32px;
   right: 0;
 }
 
@@ -370,6 +371,34 @@
   display: block;
 }
 */
+.bass-sound-container .resize-handler {
+  position: absolute;
+  display: none;
+  width: 10px;
+  right: 0;
+  padding: 4px 0;
+  transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  pointer-events: none;
+}
+.ghost .bass-sound-container .resize-handler,
+.ghost .bass-sound-container .resize-container {
+  display: none;
+}
+
+.bass-sound-container .resize-handler {
+  display: block;
+  opacity: 0;
+}
+
+.bass-sound-container:hover .resize-handler {
+  opacity: 1;
+}
+.bass-sound-container .resize-handler md-icon {
+  width: 10px;
+  height: 12px;
+  display: block;
+}
+
 .rg-right {
   right: 14px;
 }
@@ -378,17 +407,6 @@
   pointer-events: none;
   opacity: 0.4;
 }
-
-.bass-sound-container.drag-element {
-  background-color: rgb(250, 220, 220);
-}
-
-#subbeat-menu {
-  position: fixed;
-  visibility: hidden;
-  pointer-events: none;
-}
-
 
 
 md-select-menu {
@@ -404,9 +422,9 @@ md-select-menu:not(.md-overflow) md-content {
   min-height: 144px;
 }
 
-.hidden .bass-sound-container:not(.active) {
-  /*display: none;*/
-  visibility: hidden;
+
+.hidden .bass-button {
+  display: none;
 }
 
 .buttons-spinner .md-button.md-focused:not(:hover) {
@@ -489,7 +507,6 @@ md-input-container.slide-field > span {
   top: -100px;
   left: 0;
   overflow: hidden;
-  xpadding-top: 28px;
   xbackground-color: rgba(255,0,0,0.1);
   height: 64px;
 }
@@ -505,20 +522,53 @@ md-input-container.slide-field > span {
   top: -28px;
   width: 31px;
   height: 26px;
-  background-color: rgba(255,255,255,0.75);
+  xbackground-color: rgba(255,255,255,0.75);
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
+    text-shadow:
+    0px 0px 5px #fff,
+    0px 0px 5px #fff;
 }
+.selected .bass-sound-container .hammer-on-label {
+  left: -16px;
+}
+
 .bass-sound-container .hammer-on-label > span:first-child {
   position: absolute;
   top: 5px;
   left: 11px;
   font-size: 20px;
-  transform: rotate(-90deg);
+  transform-origin: 50%  51%; /* to avoid blury text */
+  transform: rotate3d(0, 0, 1, -90deg);
 }
 .bass-sound-container .hammer-on-label > span:last-child {
   position: absolute;
   top: -5px;
   left: 10px;
   font-size: 14px;
+}
+
+.top-label {
+  position: absolute;
+  z-index: 50;
+  text-align: center;
+  width: 100%;
+  font-size: 14px;
+  line-height: 36px;
+}
+
+.bass-sound-wrapper.staccato .top-label::before {
+  content: "•";
+  position: absolute;
+  top: 0;
+  padding-left: 2px;
+  line-height: 12px;
+}
+
+.bass-sound-wrapper.slap .top-label::after {
+  content: "S";
+}
+
+.bass-sound-wrapper.pop .top-label::after {
+  content: "P";
 }

@@ -1,4 +1,4 @@
-<md-menu id="subbeat-menu" md-ofset="0 0" md-position-mode="target target">
+<md-menu id="bass-sound-menu" md-ofset="0 0" md-position-mode="target target">
   <md-button
     ng-init="menu.open=$mdOpenMenu"
     ng-click="$mdOpenMenu($event)"
@@ -15,9 +15,9 @@
             ng-model="menu.sound.style"
             md-on-close="soundStyleChanged(menu.sound.style)">
             <md-option
-              ng-repeat="style in playingStyles"
-              ng-value="style">
-              {{ bass.playingStyles[style].label }}
+              ng-repeat="style in ::bass.playingStyles"
+              ng-value="::style.name">
+              {{ ::style.label }}
             </md-option>
           </md-select>
         </md-input-container>
@@ -179,7 +179,7 @@
           <label>Volume</label>
           <input
             type="number"
-            min="0"
+            min="0.001"
             max="1"
             step="0.01"
             ng-model="menu.sound.volume">
