@@ -28,7 +28,9 @@
       bpm: 80,
       bass: audioPlayer.bass,
       drums: audioPlayer.drums,
-      input: audioPlayer.input
+      input: audioPlayer.input,
+      countdown: false,
+      loop: false
     };
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
@@ -327,18 +329,21 @@
 
 
     function beatPrepared(evt) {
-      if (evt.bar === 1 && evt.beat === 1 && repeats-- === 0) {
-        // $scope.stop();
+      if (evt.playbackActive) {
+        var slide = (evt.bar-1)*$scope.section.timeSignature.top+evt.beat-1;
+        $scope.barSwiper.slideTo(
+          slide,
+          (slide === 0)? 0 : $scope.slides.animationDuration,
+          false
+        );
+      } else {
+        $timeout(function() {
+          $scope.player.playing = false;
+        });
       }
 
       audioVisualiser.beatSync(evt);
       timeline.beatSync(evt);
-      var slide = (evt.bar-1)*$scope.section.timeSignature.top+evt.beat-1;
-      $scope.barSwiper.slideTo(
-        slide,
-        (slide === 0)? 0 : $scope.slides.animationDuration,
-        false
-      );
     }
 
     var repeats;
@@ -348,9 +353,10 @@
       audioPlayer.setBpm($scope.player.bpm);
       audioVisualiser.setBeatsCount($scope.slides.bars.length);
       audioVisualiser.activate();
+      audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
       repeats = 1;
-      audioPlayer.play($scope.section, beatPrepared);
+      audioPlayer.play($scope.section, beatPrepared, $scope.player.loop? -1 : 1);
     };
 
     $scope.stop = function() {
@@ -377,6 +383,7 @@
         console.log('mute microphone');
         // input.stream.removeTrack(input.stream.getAudioTracks()[0]);
         // input.source.disconnect();
+        audioVisualiser.initialize(context, audioPlayer.bass.audio);
       } else {
         if (!input.source) {
           var gotStream = function(stream) {

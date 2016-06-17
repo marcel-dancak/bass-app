@@ -46,14 +46,19 @@ md-input-container.input-inline-label label {
   opacity: 1;
   transform: none;
 }
-.play-stop-button {
+.playback-fields {
   border: 1px solid #ccc;
   margin: 0 10px;
+  border-radius: 5px;
 }
-
+.play-stop-button {
+  margin: 2px;
+  padding: 0 10px 0 0;
+  line-height: 44px;
+}
 .play-stop-button md-icon {
-  margin-right: 6px;
-  padding: 6px 0;
+  margin-bottom: 4px;
+  padding: 0px 0;
   width: 32px;
   height: 32px;
 }
@@ -133,7 +138,7 @@ md-backdrop.md-select-backdrop {
 
 md-tabs.instruments-tabs {
   overflow: visible;
-  min-height: 500px!important;
+  min-height: 515px!important;
 }
 .instruments-tabs md-tabs-wrapper {
   display: none;
@@ -355,4 +360,25 @@ md-menu-item.menu-group-item .group-item-title {
   padding: 0 10px;
   width: auto;
   z-index: 50;
+}
+
+.toggle-button.md-button {
+  min-width: 32px;
+  min-height: 32px;
+  line-height: 32px;
+  padding: 0;
+  border-radius: 0;
+  margin: 8px;
+  border-left: 1px solid #ccc;
+}
+
+.toggle-button.md-button.md-focused:not([disabled]),
+.toggle-button.md-button:hover:not([disabled]) {
+  background-color: transparent;
+}
+.toggle-button md-icon {
+  fill: #aaa;
+}
+.toggle-button.active md-icon {
+  fill: rgb(63, 81, 181);
 }

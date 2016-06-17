@@ -40,6 +40,7 @@
   <md-menu
     md-offset="56 10">
     <md-button
+      md-no-ink
       aria-label="Preferences"
       class="preferences"
       ng-click="$mdOpenMenu($event)">
@@ -49,6 +50,7 @@
     </md-button>
 
     <md-menu-content
+      md-no-ink
       width="4"
       class="preferences md-whiteframe-16dp">
       <md-list>
@@ -149,15 +151,42 @@
     </md-input-container>
   </div>
 
-  <md-button
-    aria-label="Play"
-    class="play-stop-button"
-    ng-click="player.playing? stop() : play()">
-    <md-icon
-      md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
-    </md-icon>
-    {{ player.playing? 'Stop' : 'Play' }}
-  </md-button>
+  <div
+    layout="row"
+    class="playback-fields">
+    <md-button
+      md-no-ink
+      aria-label="Play"
+      class="play-stop-button"
+      ng-click="player.playing? stop() : play()">
+      <md-icon
+        md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
+      </md-icon>
+      {{ player.playing? 'Stop' : 'Play' }}
+    </md-button>
+
+    <md-button
+      md-no-ink
+      aria-label="Countdown"
+      class="toggle-button"
+      ng-class="{active: player.countdown}"
+      ng-click="player.countdown=!player.countdown">
+      <md-icon
+        md-svg-icon="countdown">
+      </md-icon>
+    </md-button>
+
+    <md-button
+      md-no-ink
+      aria-label="Loop"
+      class="toggle-button"
+      ng-class="{active: player.loop}"
+      ng-click="player.loop=!player.loop">
+      <md-icon
+        md-svg-icon="loop">
+      </md-icon>
+    </md-button>
+  </div>
 
   <div flex></div>
 
@@ -172,6 +201,7 @@
     </md-input-container>
     <md-input-container>
       <md-select
+        md-no-ink
         ng-show="project.sections.length > 0"
         aria-label="Section"
         class="select-editable"
@@ -185,6 +215,7 @@
       </md-select>
     </md-input-container>
     <md-button
+      md-no-ink
       aria-label="Save"
       class="toolbar-button"
       ng-click="saveSection(project.selectedSectionIndex, project.sectionName)">
@@ -192,8 +223,10 @@
         md-svg-icon="pen">
       </md-icon>
     </md-button>
-    <md-menu md-position-mode="target-right target">
+    <md-menu
+      md-position-mode="target-right target">
       <md-button
+        md-no-ink
         aria-label="Menu"
         class="toolbar-button"
         ng-click="$mdOpenMenu($event)">
@@ -202,15 +235,20 @@
         </md-icon>
       </md-button>
       <md-menu-content
+        md-no-ink
         class="md-whiteframe-16dp">
         <md-menu-item>
           <md-button
+            md-no-ink
+            aria-label="New"
             ng-click="clearSection()">
             New
           </md-button>
         </md-menu-item>
         <md-menu-item>
           <md-button
+            md-no-ink
+            aria-label="Delete"
             ng-click="deleteSection(project.selectedSectionIndex)">
             Delete
           </md-button>

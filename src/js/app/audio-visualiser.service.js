@@ -145,7 +145,7 @@
     AudioVisualiser.prototype.beatSync = function(evt) {
       // console.log('BEAT Sync '+bpm);
       var beat = this.beats[evt.flatIndex];
-      beat.startTime = evt.startTime;
+      beat.startTime = evt.playbackActive? evt.startTime : -1;
       beat.endTime = evt.endTime;
       beat.lastFrame = 0;
       beat.frame = 0;
@@ -207,9 +207,15 @@
         if (beat.x >= beatWidth) {
           this.drawBeatIndex = this.nextBeatIndex(this.drawBeatIndex);
           var nextBeat = this.beats[this.drawBeatIndex];
+
           if (nextBeat) {
-            nextBeat.x = 0;
-            nextBeat.y = beat.y;
+            if (nextBeat.startTime !== -1) {
+              nextBeat.x = 0;
+              nextBeat.y = beat.y;
+            } else {
+              console.log('stop');
+              this.enabled = false;
+            }
           }
         }
       }

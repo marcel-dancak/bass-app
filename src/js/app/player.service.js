@@ -29,10 +29,10 @@
 
     function AudioPlayer() {
       this.playing = false;
-      this.playback = this.playback.bind(this);
+      this.countdown = false;
       this.setBpm(60);
       this.bufferLoader = new BufferLoader(context, soundsUrl);
-      this.playingNotes = [];
+      this.scheduledSounds = [];
 
       this.bass = {
         muted: false,
@@ -171,7 +171,7 @@
           endTime: startTime+duration
         };
 
-        this.playingNotes.push(playingSound);
+        this.scheduledSounds.push(playingSound);
         return playingSound;
       }
     };
@@ -179,28 +179,36 @@
     AudioPlayer.prototype.playBeat = function(bar, beat, startTime) {
       if (!this.playing) return;
 
-      // console.log('Play beat: '+beat);
-      var timeSignature = this.composition.timeSignature;
-      var currentTime = context.currentTime;
-      var bassBeat = this.composition.bassBeat(bar, beat);
-      var bassSounds = this.composition.getBassSounds(bassBeat);
-      var beatTime = 60/this.bpm;
-      var noteBeatTime = bassBeat.subdivision === 3? beatTime*(2/3) : beatTime;
+      var isFinalBeat = (bar === 1 && beat === 1 && this.repeats === 0);
 
-      bassSounds.forEach(function(subbeatSound) {
-        var startAt = startTime + (beatTime / bassBeat.subdivision * (subbeatSound.subbeat - 1));
-        this._playBassSound(subbeatSound.sound, timeSignature, startAt, noteBeatTime);
-      }.bind(this));
+      if (!isFinalBeat) {
+        // console.log('Play beat: '+beat);
+        var timeSignature = this.composition.timeSignature;
+        var currentTime = context.currentTime;
+        var bassBeat = this.composition.bassBeat(bar, beat);
+        var bassSounds = this.composition.getBassSounds(bassBeat);
+        var beatTime = 60/this.bpm;
+        var noteBeatTime = bassBeat.subdivision === 3? beatTime*(2/3) : beatTime;
 
-      var drumsBeat = this.composition.drumsBeat(bar, beat);
-      var drumsSounds = this.composition.getDrumsSounds(drumsBeat);
-      drumsSounds.forEach(function(subbeatSound) {
-        var startAt = startTime + (beatTime / 4 * (subbeatSound.subbeat - 1));
-        // replace 'incomplete' drum sound object from Section.getDrumsSounds
-        var sound = this.composition.drumsSubbeat(drumsBeat.bar, drumsBeat.beat, subbeatSound.subbeat)[subbeatSound.drum]; 
-        this._playDrumsSound(sound, startAt);
-      }.bind(this));
+        bassSounds.forEach(function(subbeatSound) {
+          var startAt = startTime + (beatTime / bassBeat.subdivision * (subbeatSound.subbeat - 1));
+          this._playBassSound(subbeatSound.sound, timeSignature, startAt, noteBeatTime);
+        }.bind(this));
 
+        var drumsBeat = this.composition.drumsBeat(bar, beat);
+        var drumsSounds = this.composition.getDrumsSounds(drumsBeat);
+        drumsSounds.forEach(function(subbeatSound) {
+          var startAt = startTime + (beatTime / 4 * (subbeatSound.subbeat - 1));
+          // replace 'incomplete' drum sound object from Section.getDrumsSounds
+          var sound = this.composition.drumsSubbeat(drumsBeat.bar, drumsBeat.beat, subbeatSound.subbeat)[subbeatSound.drum];
+          this._playDrumsSound(sound, startAt);
+        }.bind(this));
+      }
+
+      var flatIndex = (bar-1)*this.composition.timeSignature.top+beat-1;
+      if (flatIndex === 0) {
+        this.repeats--;
+      }
       this.beatPreparedCallback({
         bar: bar,
         beat: beat,
@@ -209,38 +217,31 @@
         endTime: startTime+beatTime,
         duration: beatTime,
         timeSignature: this.composition.timeSignature,
-        flatIndex: (bar-1)*this.composition.timeSignature.top+beat-1
+        flatIndex: flatIndex,
+        playbackActive: !isFinalBeat
       });
 
-
-      var isLastBeatInBar = beat === timeSignature.top;
-      var isLastBar = isLastBeatInBar && bar === this.composition.length;
-      var nextBar = isLastBar? 1 : isLastBeatInBar? bar+1 : bar;
-      var nextBeat = isLastBeatInBar? 1 : beat+1;
-      var nextBeatStart = startTime+beatTime;
-      // setup next beat's sounds ahead some time
-      var schedule = 1000*(nextBeatStart - currentTime - 0.15);
-      schedule = Math.max(schedule, 15);
-      setTimeout(this.playBeat.bind(this), schedule, nextBar, nextBeat, nextBeatStart);
-    };
-
-    AudioPlayer.prototype.playback = function() {
-      if (this.playing) {
-
-        if (this.playingNotes.length) {
-          var currentTime = context.currentTime;
-          this.playingNotes = this.playingNotes.filter(function(playingNote) {
-            if (currentTime > playingNote.endTime) {
-              // maybe some cleanup
-              // playingNote.gain.gain.value = 0.0001;
-              return false;
-            }
-            return true;
-          });
-        }
-        requestAnimationFrame(this.playback);
+      if (this.scheduledSounds.length) {
+        this.scheduledSounds = this.scheduledSounds.filter(function(playingNote) {
+          return currentTime <= playingNote.endTime;
+        });
       }
-    }
+
+      if (isFinalBeat) {
+        this.playing = false;
+      } else {
+        var isLastBeatInBar = beat === timeSignature.top;
+        var isLastBar = isLastBeatInBar && bar === this.composition.length;
+        var nextBar = isLastBar? 1 : isLastBeatInBar? bar+1 : bar;
+        var nextBeat = isLastBeatInBar? 1 : beat+1;
+        var nextBeatStart = startTime+beatTime;
+
+        // setup next beat's sounds ahead some time
+        var schedule = 1000*(nextBeatStart - currentTime - 0.15);
+        schedule = Math.max(schedule, 15);
+        setTimeout(this.playBeat.bind(this), schedule, nextBar, nextBeat, nextBeatStart);
+      }
+    };
 
     AudioPlayer.prototype._play = function(composition) {
       this.playing = true;
@@ -272,12 +273,14 @@
       }
     }
 
-    AudioPlayer.prototype.play = function(section, beatPreparedCallback) {
+    AudioPlayer.prototype.play = function(section, beatPreparedCallback, repeats) {
       console.log('PLAY');
+      this.repeats = repeats || 1;
       var player = this;
       this.beatPreparedCallback = angular.isFunction(beatPreparedCallback)? beatPreparedCallback : angular.noop;
       function afterLoad() {
-        var count = 0;
+        console.log(player.countdown)
+        var count = player.countdown? 3 : 0;
         function countdown() {
           if (count > 0) {
             count--;
@@ -316,10 +319,14 @@
     AudioPlayer.prototype.stop = function(noteLength) {
       this.playing = false;
       var currentTime = context.currentTime;
-      this.playingNotes.forEach(function(playingNote) {
-        playingNote.gain.gain.cancelScheduledValues(currentTime);
-        playingNote.gain.gain.setValueAtTime(playingNote.gain.gain.value, currentTime);
-        playingNote.gain.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
+      this.scheduledSounds.forEach(function(sound) {
+        if (currentTime < sound.startTime) {
+          sound.source.stop();
+        } else {
+          sound.gain.gain.cancelScheduledValues(currentTime);
+          sound.gain.gain.setValueAtTime(sound.gain.gain.value, currentTime);
+          sound.gain.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
+        }
       });
       this.oscillator.stop();
     };
