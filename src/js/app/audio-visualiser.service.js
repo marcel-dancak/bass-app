@@ -10,6 +10,7 @@
       this.beats = [];
       this.drawBeatIndex = -1;
       this.analyzeBeatIndex = -1;
+      this.lastInitBeatsCount = 0;
     }
 
     AudioVisualiser.prototype.initializeBeat = function(index) {
@@ -125,15 +126,16 @@
       this.audioProcessor.connect(this.context.destination);
       console.log('activate');
 
+      var reinitialize = this.lastInitBeatsCount !== this.beatsCount;
       for (var i = 0; i < this.beatsCount; i++) {
         var beat = this.beats[i];
-        if (beat && beat.canvas && !document.contains(beat.canvas)) {
+        if (beat && beat.canvas && (reinitialize || !document.contains(beat.canvas))) {
           delete beat.ctx;
           delete beat.canvas;
-          // console.log('deleting canvas: '+beat.index);
         }
         this.initializeBeat(i);
       }
+      this.lastInitBeatsCount = this.beatsCount;
       // console.log(this.beats);
     };
 
