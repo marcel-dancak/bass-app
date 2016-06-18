@@ -244,7 +244,6 @@
     };
 
     AudioPlayer.prototype._play = function(composition) {
-      this.playing = true;
       // setup 'silent' source, it's needed for proper graph
       // visualization when no other source is playing
       var oscillator = context.createOscillator();
@@ -275,17 +274,20 @@
 
     AudioPlayer.prototype.play = function(section, beatPreparedCallback, repeats) {
       console.log('PLAY');
+      this.playing = true;
       this.repeats = repeats || 1;
+
       var player = this;
       this.beatPreparedCallback = angular.isFunction(beatPreparedCallback)? beatPreparedCallback : angular.noop;
       function afterLoad() {
-        console.log(player.countdown)
         var count = player.countdown? 3 : 0;
         function countdown() {
           if (count > 0) {
             count--;
-            player._playDrumStick();
-            setTimeout(countdown, 60000/player.bpm);
+            if (player.playing) {
+              player._playDrumStick();
+              setTimeout(countdown, 60000/player.bpm);
+            }
           } else {
             player._play(section);
           }
