@@ -13,7 +13,7 @@ You can create a bass sound with two different ways:
 
 * Move mouse pointer over the bass board area and open context menu by click (left or right) on the plus button
 
-<img src="docs/sound-context-menu.png" style="width:667px;" />
+![Context menu](docs/sound-context-menu.png)
 
 * Drag note from fretboard to bass board area
 
@@ -33,7 +33,7 @@ After a bass sound was defined, you can:
 
 ## Audio inut/output prefferences
 
-<img src="docs/audio-prefferences.png" style="width:622px;" />
+![Audio prefferences](docs/audio-prefferences.png)
 
 Application use two independent output channels - one for the drums, second for the bass guitar.
 You can also connect bass guitar throught input channel. By default, input channel is muted, when you enable it, audio graph visualization will use this channel instead of bass guitar playback.
