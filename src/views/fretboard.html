@@ -1,76 +1,111 @@
 <div
-  class="fretboard">
+  class="fretboard"
+  ng-controller="FretboardController">
   <div layout="row">
+    <span flex class="fret-index"></span>
     <span
       flex
       class="fret-index"
-      ng-repeat="fret in [].constructor(25) track by $index">
+      ng-repeat="fret in [].constructor(25) | limitTo: fretboard.size+1 track by $index">
       {{ $index }}
     </span>
   </div>
 
-  <div
-    layout="column"
-    class="ghost-notes">
+  <div class="notes-container">
+
     <div
-      ng-repeat="string in bass.strings | orderBy:string.index:'-'"
-      ng-click="playBassSound({
-        note: {
-          type: 'ghost'
-        },
-        string: string.index
-      })"
-      ui-draggable="true"
-      drag="{
-        handler: 'fretboard',
-        sound: {
-          style: 'finger',
+      ng-repeat="string in ::bass.strings | orderBy:string.index:'-'"
+      layout="row"
+      class="string-row">
+
+      <div
+        flex
+        class="ghost-note"
+        ng-click="playBassSound({
           note: {
             type: 'ghost'
           },
-          volume: 0.75,
           string: string.index
-        }
-      }">
-      x
+        })"
+        ui-draggable="true"
+        drag="{
+          handler: 'fretboard',
+          sound: {
+            style: 'finger',
+            note: {
+              type: 'ghost'
+            },
+            volume: 0.75,
+            string: string.index
+          }
+        }">
+        x
+      </div>
+
+      <div
+        flex
+        ng-click="playBassSound({
+          note: {
+            name: note.label[0],
+            octave: note.octave,
+            fret: $index
+          },
+          string: string.index
+        })"
+        class="fret-box octave-{{ ::note.octave }}"
+        ng-repeat="note in string.notes | limitTo: fretboard.size+1"
+
+        ui-draggable="true"
+        drag="{
+          handler: 'fretboard',
+          sound: {
+            style: fretboard.style,
+            note: {
+              type: 'regular',
+              label: note.label,
+              octave: note.octave,
+              fret: $index
+            },
+            noteLength: {
+              length: 1/8
+            },
+            volume: 0.75,
+            string: string.index
+          }
+        }"
+        >
+        {{ ::note.label.join(' / ') }}
+      </div>
     </div>
   </div>
 
   <div
-    ng-repeat="string in bass.strings | orderBy:string.index:'-'"
-    layout="row">
-    <div
-      flex
-      ng-click="playBassSound({
-        note: {
-          name: note.label[0],
-          octave: note.octave
-        },
-        string: string.index
-      })"
-      class="fret-box octave-{{ ::note.octave }}"
-      ng-repeat="note in string.notes"
+    layout="row"
+    class="fretboard-settings">
 
-      ui-draggable="true"
-      drag="{
-        handler: 'fretboard',
-        sound: {
-          style: 'finger',
-          note: {
-            type: 'regular',
-            label: note.label,
-            octave: note.octave,
-            fret: $index
-          },
-          noteLength: {
-            length: 1/8
-          },
-          volume: 0.75,
-          string: string.index
-        }
-      }"
-      >
-      {{ ::note.label.join(' / ') }}
-    </div>
+    <md-input-container>
+      <md-select
+        aria-label="Style"
+        class="style-selectbox"
+        ng-model="fretboard.style">
+        <md-option
+          ng-repeat="style in ::bass.playingStyles"
+          ng-value="::style.name">
+          {{ ::style.label }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+
+    <md-input-container
+      layout="row"
+      class="input-inline-label">
+      <label class="md-label md-no-float">Frets</label>
+      <input
+        type="number"
+        min="19"
+        max="24"
+        ng-model="fretboard.size">
+    </md-input-container>
   </div>
+
 </div>

@@ -8,9 +8,13 @@
 }
 
 .fretboard {
-  overflow-x: auto;
-  overflow-y: hidden;
-  margin: 0 30px 0 65px;
+  overflow: hidden;
+  margin: 0 30px 0 25px;
+}
+
+.fretboard .notes-container {
+  border: 1px solid #555;
+  overflow: auto;
 }
 
 .fretboard .md-button {
@@ -20,12 +24,20 @@
   overflow: visible;
 }
 
+.fretboard .string-row {
+  border-bottom: 1px solid white;
+}
+
+.fretboard .string-row:last-child {
+  border-bottom: none;
+}
+
 .fret-box {
   min-width: 64px!important;
   height: 32px;
   line-height: 32px;
   border: solid #fff;
-  border-width: 1px 1px 0 0;
+  border-width: 0 1px 0 0;
   text-align: center;
   color: #333;
 
@@ -57,14 +69,44 @@
 .fretboard .fret-index {
   display: inline-block;
   min-width: 64px;
-  text-align: center;
-  border: solid #fff;
-  border-width: 1px 1px 0 0;
-  background-color: #555;
-  color: #fff;
+  text-align: right;
+  color: #ccc;
   font-size: 12px;
-  line-height: 20px;
+  line-height: 22px;
+  padding-right: 12px;
+  position: relative;
 }
+
+
+.fretboard .fret-index::before {
+  position: absolute;
+  left: 40%;
+  font-size: 44px;
+  font-weight: bold;
+  color: #555;
+}
+.fretboard .fret-index:nth-child(5)::before,
+.fretboard .fret-index:nth-child(7)::before,
+.fretboard .fret-index:nth-child(9)::before,
+.fretboard .fret-index:nth-child(11)::before,
+.fretboard .fret-index:nth-child(17)::before,
+.fretboard .fret-index:nth-child(19)::before,
+.fretboard .fret-index:nth-child(21)::before,
+.fretboard .fret-index:nth-child(23)::before {
+  bottom: 12px;
+  content: ".";
+}
+
+.fretboard .fret-index:nth-child(14)::before,
+.fretboard .fret-index:nth-child(26)::before {
+  left: 40%;
+  bottom: -4px;
+  content: "..";
+  letter-spacing: -3px;
+  padding: 6px;
+  transform: rotate(90deg);
+}
+
 
 .second-button::before {
   content: "/";
@@ -77,13 +119,32 @@
   left: 14px;
 }
 
-.fretboard .ghost-notes > div {
-  height: 31px;
+.fretboard .ghost-note {
+  min-width: 64px!important;
+  height: 32px;
   line-height: 31px;
-  background-color: #bbb;
-  width: 48px;
+  background-color: #ddd;
   text-align: center;
-  border: solid #fff;
-  border-width: 1px 1px 0 0;
+  border: solid #555;
+  border-width: 0 2px 0 0;
+  box-sizing: content-box;
   outline: none;
+}
+
+.fretboard md-input-container {
+  margin: 4px 10px 2px 5px;
+}
+.fretboard-settings .style-selectbox {
+  min-width: 120px;
+}
+.fretboard-settings input {
+  padding-top: 6px;
+  height: 34px;
+  text-align: right;
+}
+
+md-input-container.input-inline-label label {
+  bottom: 3px;
+  left: 0;
+  position: relative;
 }
