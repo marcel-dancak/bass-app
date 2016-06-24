@@ -82,10 +82,10 @@
           label: 'Tap'
         }, {
           name: 'hammer',
-          label: 'Hammer on'
+          label: 'Hammer-On'
         }, {
           name: 'pull',
-          label: 'Pull off'
+          label: 'Pull-Off'
         }
       ]
     };

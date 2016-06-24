@@ -28,7 +28,7 @@ After a bass sound was defined, you can:
 
 **Slide** - you can create a slide from two already defined bass sounds (on the same string) by resizing - first sound box must overlap with the second
 
-**Hammer on & Pull off** - create two following sounds on the same string, select the second one and press 'H' or 'P' key to create hammer on or pull off relation
+**Hammer-On & Pull-Off** - create two following sounds on the same string, select the second one and press **H** or **P** key to create Hammer-On or Pull-Off relation
 
 
 ## Audio inut/output prefferences

@@ -8,36 +8,36 @@
 }
 
 .fretboard {
-  overflow: hidden;
-  margin: 0 30px 0 25px;
+  padding: 0 30px 0 65px;
+  position: relative;
 }
 
-.fretboard .notes-container {
-  border: 1px solid #555;
-  overflow: auto;
+.fretboard-scroller {
+  overflow-x: auto;
+}
+.fretboard-table {
+  width: calc(100% - 2px);
+  border-collapse: collapse;
 }
 
 .fretboard .md-button {
   min-width: 32px;
   padding: 0;
   margin: 0;
-  overflow: visible;
 }
 
-.fretboard .string-row {
-  border-bottom: 1px solid white;
+.fretboard-table tbody td {
+  border: 1px solid #fff;
 }
 
-.fretboard .string-row:last-child {
-  border-bottom: none;
+.fretboard-table tbody {
+  border: solid #777;
+  border-width: 2px 2px 2px 0;
 }
 
-.fret-box {
-  min-width: 64px!important;
-  height: 32px;
-  line-height: 32px;
-  border: solid #fff;
-  border-width: 0 1px 0 0;
+.fretboard .fret-box {
+  height: 30px;
+  line-height: 30px;
   text-align: center;
   color: #333;
 
@@ -66,44 +66,55 @@
   background-color: #ffeb3b;
 }
 
-.fretboard .fret-index {
-  display: inline-block;
-  min-width: 64px;
-  text-align: right;
-  color: #ccc;
+.fretboard-table thead th {
+  position: relative;
+  font-weight: normal;
+  text-align: center;
   font-size: 12px;
   line-height: 22px;
-  padding-right: 12px;
-  position: relative;
+  min-width: 46px;
+  padding: 0 7px;
+  color: #ccc;
 }
-
 
 .fretboard .fret-index::before {
   position: absolute;
-  left: 40%;
   font-size: 44px;
   font-weight: bold;
   color: #555;
+  transform: translate3d(-15px, 0, 0);
 }
-.fretboard .fret-index:nth-child(5)::before,
-.fretboard .fret-index:nth-child(7)::before,
-.fretboard .fret-index:nth-child(9)::before,
-.fretboard .fret-index:nth-child(11)::before,
-.fretboard .fret-index:nth-child(17)::before,
-.fretboard .fret-index:nth-child(19)::before,
-.fretboard .fret-index:nth-child(21)::before,
-.fretboard .fret-index:nth-child(23)::before {
+.fretboard .fret-index:nth-child(4),
+.fretboard .fret-index:nth-child(6),
+.fretboard .fret-index:nth-child(8),
+.fretboard .fret-index:nth-child(10),
+.fretboard .fret-index:nth-child(13),
+.fretboard .fret-index:nth-child(16),
+.fretboard .fret-index:nth-child(18),
+.fretboard .fret-index:nth-child(20),
+.fretboard .fret-index:nth-child(22),
+.fretboard .fret-index:nth-child(25) {
+  padding: 0 0 0 14px;
+}
+
+.fretboard .fret-index:nth-child(4)::before,
+.fretboard .fret-index:nth-child(6)::before,
+.fretboard .fret-index:nth-child(8)::before,
+.fretboard .fret-index:nth-child(10)::before,
+.fretboard .fret-index:nth-child(16)::before,
+.fretboard .fret-index:nth-child(18)::before,
+.fretboard .fret-index:nth-child(20)::before,
+.fretboard .fret-index:nth-child(22)::before {
   bottom: 12px;
   content: ".";
 }
 
-.fretboard .fret-index:nth-child(14)::before,
-.fretboard .fret-index:nth-child(26)::before {
-  left: 40%;
+.fretboard .fret-index:nth-child(13)::before,
+.fretboard .fret-index:nth-child(25)::before {
   bottom: -4px;
   content: "..";
-  letter-spacing: -3px;
-  padding: 6px;
+  letter-spacing: -4px;
+  padding: 16px 0px 0 4px;
   transform: rotate(90deg);
 }
 
@@ -114,26 +125,10 @@
   left: -2px;
 }
 
-.fretboard .ghost-notes {
-  position: absolute;
-  left: 14px;
-}
-
-.fretboard .ghost-note {
-  min-width: 64px!important;
-  height: 32px;
-  line-height: 31px;
-  background-color: #ddd;
-  text-align: center;
-  border: solid #555;
-  border-width: 0 2px 0 0;
-  box-sizing: content-box;
-  outline: none;
-}
-
 .fretboard md-input-container {
   margin: 4px 10px 2px 5px;
 }
+
 .fretboard-settings .style-selectbox {
   min-width: 120px;
 }
@@ -147,4 +142,24 @@ md-input-container.input-inline-label label {
   bottom: 3px;
   left: 0;
   position: relative;
+}
+
+.ghost-notes-container {
+  width: 54px;
+  position: absolute;
+  left: 8px;
+  top: 22px;
+  border: solid #777;
+  border-width: 2px 2px 2px 2px;
+}
+.ghost-notes-container .ghost-note:last-child {
+  border-bottom: none;
+}
+.fretboard .ghost-note {
+  height: 32px;
+  line-height: 32px;
+  background-color: #ddd;
+  text-align: center;
+  border-bottom: 1px solid #fff;
+  outline: none;
 }
