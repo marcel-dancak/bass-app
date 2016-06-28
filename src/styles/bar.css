@@ -13,7 +13,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  height: 60%;
+  height: 50%;
   content: "";
   width: 1px;
   background-color: #ccc;
@@ -24,7 +24,7 @@
 .bar-beat .subbeat:first-child::before {
   background-color: #aaa;
   width: 2px;
-  height: 85%;
+  height: 70%;
 }
 
 .bar-beat .subbeat:first-child {
@@ -33,14 +33,14 @@
 }
 .beat-1 .bar-beat .subbeat:first-child::before {
   width: 3px;
-  height: 100%;
+  height: 80%;
 }
 
 .bar-slide:last-child .bar-beat::after {
   position: absolute;
   top: 0;
   right: -4px;
-  height: 100%;
+  height: 80%;
   content: "";
   width: 1px;
   border: solid #aaa;
@@ -49,8 +49,7 @@
 }
 
 .bar-slide {
-  padding: 0 0 16px 0;
-  height: calc(100% - 16px);
+  height: 70%;
 }
 
 .bar-slide .bar-beat {
@@ -93,7 +92,7 @@
 
 .bar-container {
   position: relative;
-  margin: 0 22px 3vh 57px;
+  margin: 0 22px 1vh 57px;
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
@@ -121,7 +120,7 @@
 .bar-preferences .md-menu {
   position: absolute;
   left: -44px;
-  top: 26px;
+  top: 16px;
   height: calc(85% - 26px);
   margin-bottom: 16px;
 }
@@ -147,7 +146,6 @@
 .bar-settings-container {
   position: absolute;
   width: 250px;
-  xheight: 80px;
   top: 80px;
   left: -30px;
   background-color: white;
@@ -335,7 +333,7 @@ md-slider .md-focus-ring {
 }
 
 .bar-container .swiper-container {
-  height: 10vh;
+  height: 13vh;
 }
 
 .swiper-container .bar-container {
@@ -345,7 +343,7 @@ md-slider .md-focus-ring {
 .bar-container .swiper-button-prev,
 .bar-container .swiper-button-next {
   top: auto;
-  bottom: 8px;
+  bottom: 0px;
   width: 38px;
   height: 18px;
 }
@@ -411,7 +409,4 @@ md-menu-content.beat-menu-content {
   margin: 0;
   padding: 0;
   outline: none;
-
-
-
 }

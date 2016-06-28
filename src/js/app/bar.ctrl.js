@@ -15,10 +15,7 @@
       drumsBeat: null
     };
 
-    $scope.test = function(evt) {
-      console.log('test');
-      console.log(evt);
-    }
+
     $scope.contextMenu.open = function(evt, index) {
       console.log('openBeatMenu');
       if (!$scope.contextMenu.element) {
@@ -28,7 +25,7 @@
       $scope.contextMenu.bassBeat = $scope.slides.bass[index];
       $scope.contextMenu.drumsBeat = $scope.slides.drums[index];
 
-      var parentBox = evt.target.offsetParent.getBoundingClientRect();
+      var parentBox = evt.target.getBoundingClientRect();
 
       $scope.contextMenu.element.style.position = 'fixed';
       $scope.contextMenu.element.style.left = parentBox.left+'px';
@@ -103,7 +100,7 @@
       // drumsClipboard.splice(0, drumsClipboard.length);
     };
 
-    $scope.clearBar = function(barIndex) {
+    $scope.clearBar = function(barIndex, instrument) {
       var bar = $scope.section.bars[barIndex-1];
       bar.bassBeats.forEach(function(bassBeat) {
         $scope.section.clearBassBeat(bassBeat);

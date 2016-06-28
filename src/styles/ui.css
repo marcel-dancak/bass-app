@@ -290,6 +290,19 @@ md-tab-content:not(.md-active) > div {
   text-align: right;
 }
 
+.preferences md-select md-select-value {
+  text-align: right;
+}
+
+.preferences.md-select-menu-container {
+  margin-top: 50px;
+  xtransform: translate3d(50px, 100px, 0);
+}
+/*.preferences md-option .md-text {
+  text-align: right;
+  width: 100%;
+}*/
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   margin-left: 6px;

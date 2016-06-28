@@ -76,14 +76,14 @@
     <md-menu-item>
       <md-button
         ng-disabled="bassClipboard.length+drumsClipboard.length === 0"
-        ng-click="pasteBar(contextMenu.beat.bar)">
+        ng-click="pasteBar(contextMenu.barBeat.bar)">
         Paste
       </md-button>
     </md-menu-item>
 
     <md-menu-item>
       <md-button
-        ng-click="clearBar(contextMenu.beat.bar)">
+        ng-click="clearBar(contextMenu.barBeat.bar, ui.instrumentIndex===0? 'bass' : 'drums')">
         Clear
       </md-button>
     </md-menu-item>
