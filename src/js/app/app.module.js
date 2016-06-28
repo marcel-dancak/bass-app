@@ -7,7 +7,6 @@
       'bd.app', [
         'templates',
         'ngMaterial',
-        'ngSanitize',
         'ang-drag-drop',
         'angularResizable',
         'monospaced.mousewheel',

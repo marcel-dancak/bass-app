@@ -192,7 +192,8 @@
 
   <div
     layout="row"
-    class="present-field">
+    class="project-toolbar"
+    ng-controller="ProjectController">
     <md-input-container>
       <label>Section</label>
       <input
@@ -205,12 +206,33 @@
         ng-show="project.sections.length > 0"
         aria-label="Section"
         class="select-editable"
+        md-container-class="sections-list"
         ng-model="project.selectedSectionIndex"
         ng-change="loadSection(project.selectedSectionIndex)">
         <md-option
-          ng-repeat="section in project.sections"
+          ng-repeat="section in project.sections | orderBy:section.index track by $index"
           ng-value="$index">
-          {{ section }}
+          {{ section.id }} {{ section.name }} <span class="space"></span>
+          <div class="option-buttons-group">
+            <md-button
+              aria-label="Up"
+              class="no-hover"
+              ng-click="
+                moveSectionUp(section);
+                $event.stopPropagation()
+              ">
+              <md-icon md-svg-icon="arrow-up"></md-icon>
+            </md-button>
+            <md-button
+              aria-label="Down"
+              class="no-hover"
+              ng-click="
+                moveSectionDown(section);
+                $event.stopPropagation()
+              ">
+              <md-icon md-svg-icon="arrow-down"></md-icon>
+            </md-button>
+          </div>
         </md-option>
       </md-select>
     </md-input-container>
@@ -218,7 +240,7 @@
       md-no-ink
       aria-label="Save"
       class="toolbar-button"
-      ng-click="saveSection(project.selectedSectionIndex, project.sectionName)">
+      ng-click="saveSection(project.selectedSectionIndex)">
       <md-icon
         md-svg-icon="pen">
       </md-icon>
@@ -241,8 +263,16 @@
           <md-button
             md-no-ink
             aria-label="New"
-            ng-click="clearSection()">
+            ng-click="newEmptySection()">
             New
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="Save As"
+            ng-click="saveSection()">
+            Save As...
           </md-button>
         </md-menu-item>
         <md-menu-item>
@@ -253,6 +283,16 @@
             Delete
           </md-button>
         </md-menu-item>
+
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="Export"
+            ng-click="exportToFile()">
+            Export
+          </md-button>
+        </md-menu-item>
+
       </md-menu-content>
     </md-menu>
   </div>
