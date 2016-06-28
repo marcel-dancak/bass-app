@@ -13,7 +13,8 @@
     ng-controller="BarController"
     msd-wheel="
       slides.beatsPerView=slides.beatsPerView+$delta;
-      updateSwipers()
+      updateSwipers();
+      $event.preventDefault()
     ">
     <div
       class="bar-preferences"
@@ -33,6 +34,7 @@
         show-nav-buttons="true"
         slides-per-view="slides.beatsPerView"
         space-between="0"
+        pagination-is-active="true"
         pagination-clickable="true"
         override-parameters="{
           slidesPerGroup: slides.beatsPerSlide,

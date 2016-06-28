@@ -47,13 +47,13 @@
     AudioVisualiser.prototype.initialize = function(context, input) {
       var _this = this;
       this.context = context;
+      this.input = input;
       this.enabled = false;
 
       // window.addEventListener("resize", this.redraw.bind(this));
 
       this.audioProcessor = context.createScriptProcessor(512, 1, 1);
       this.saveRate = 8;
-      input.connect(this.audioProcessor);
 
       this.audioProcessor.onaudioprocess = function(audioProcessingEvent) {
         // console.log('onaudioprocess');
@@ -123,8 +123,9 @@
       this.enabled = true;
       this.drawing = false;
       this.analyzeBeatIndex = -1;
+      // console.log('activate visualizer');
+      this.input.connect(this.audioProcessor);
       this.audioProcessor.connect(this.context.destination);
-      console.log('activate');
 
       var reinitialize = this.lastInitBeatsCount !== this.beatsCount;
       for (var i = 0; i < this.beatsCount; i++) {
@@ -141,11 +142,12 @@
 
     AudioVisualiser.prototype.deactivate = function() {
       this.enabled = false;
-      this.audioProcessor.disconnect();
+      this.input.disconnect(this.audioProcessor);
+      this.audioProcessor.disconnect(this.context.destination);
     };
 
     AudioVisualiser.prototype.beatSync = function(evt) {
-      // console.log('BEAT Sync '+bpm);
+      // console.log('BEAT Sync: '+evt.flatIndex);
       var beat = this.beats[evt.flatIndex];
       beat.startTime = evt.playbackActive? evt.startTime : -1;
       beat.endTime = evt.endTime;

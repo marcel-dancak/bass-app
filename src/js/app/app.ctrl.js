@@ -19,9 +19,9 @@
 
   function AppController($scope, $timeout, context, audioPlayer, audioVisualiser,
                          Notes, Section, Timeline, HighlightTimeline) {
+    audioVisualiser.initialize(context, audioPlayer.bass.audio);
     audioPlayer.drums.audio.connect(context.destination);
     audioPlayer.bass.audio.connect(context.destination);
-    audioVisualiser.initialize(context, audioPlayer.bass.audio);
 
     $scope.player = {
       playing: false,
@@ -196,7 +196,7 @@
       $scope.slides.visibleSubbeats = visibleSubbeats;
     }
 
-    $scope.updateSwipers = function(options) {
+    $scope.updateSwipers = function() {
       var reinitializeSlides = false;
       var updateSlidesSize = false;
 
@@ -269,9 +269,14 @@
         });
       }
       if (updateSlidesSize) {
-        $scope.barSwiper.updateSlidesSize();
+        $scope.barSwiper.update();
         $scope.bassSwiper.updateSlidesSize();
         $scope.drumsSwiper.updateSlidesSize();
+        // barSwiper.updateClasses() doesn't work as expected (prev/next
+        // button state), so use barSwiper.update() instead.
+        // $scope.barSwiper.updatePagination();
+        // $scope.barSwiper.updateClasses();
+
         updateSubbeatsVisibility();
         audioVisualiser.updateSize();
 
@@ -317,8 +322,9 @@
       $scope.drumsSwiper = swiper;
       $scope.barSwiper.params.control.push(swiper);
       $scope.updateSwipers();
-      timeline = new Timeline(context, $scope.barSwiper, $scope.drumsSwiper);
-      // timeline = new HighlightTimeline($scope.slides);
+      $scope.barSwiper.updatePagination();
+      // timeline = new Timeline(context, $scope.barSwiper, $scope.drumsSwiper);
+      timeline = new HighlightTimeline($scope.slides);
     };
 
     updateSlides();
@@ -336,10 +342,6 @@
           (slide === 0)? 0 : $scope.slides.animationDuration,
           false
         );
-      } else {
-        $timeout(function() {
-          $scope.player.playing = false;
-        });
       }
 
       audioVisualiser.beatSync(evt);
@@ -349,6 +351,17 @@
     var repeats;
     var timeline;
     $scope.play = function() {
+      audioPlayer.drums.audio.connect(context.destination);
+      audioPlayer.bass.audio.connect(context.destination);
+
+      // var filter = context.createBiquadFilter();
+      // filter.type = 'lowpass';
+      // filter.frequency.value = 700;
+      // filter.Q.value = 0.5;
+      // audioPlayer.bass.audio.disconnect();
+      // audioPlayer.bass.audio.connect(filter);
+      // filter.connect(context.destination);
+
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.player.bpm);
       audioVisualiser.setBeatsCount($scope.slides.bars.length);
@@ -360,11 +373,14 @@
     };
 
     $scope.stop = function() {
-      $scope.player.playing = false;
       audioPlayer.stop();
+    };
+
+    audioPlayer.on('playbackStopped', function() {
+      $scope.player.playing = false;
       audioVisualiser.deactivate();
       timeline.stop();
-    };
+    });
 
     $scope.toggleVolumeMute = function(instrument) {
       if (!instrument.muted) {

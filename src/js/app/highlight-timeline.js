@@ -40,13 +40,6 @@
           }
         }.bind(this), 1000*(beatDelay+subbeatDelay));
       }.bind(this));
-    } else {
-      setTimeout(function() {
-        if (this.currentSubbeatElem) {
-          this.currentSubbeatElem.removeClass('active');
-        }
-        this.running = false;
-      }.bind(this), 1000*(evt.startTime-evt.eventTime));
     }
   };
 
