@@ -87,7 +87,10 @@
           name: 'pull',
           label: 'Pull-Off'
         }
-      ]
+      ],
+      settings: {
+        label: 'name-and-fret'
+      }
     };
     $scope.drums = [
       {

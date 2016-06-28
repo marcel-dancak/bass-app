@@ -218,6 +218,7 @@
       $scope.dropNote.resizeNoteLength = '';
       $scope.dropNote.visible = false;
       $scope.$apply();
+      evt.stopPropagation();
     };
 
     $scope.onResize = function(grid, info) {
@@ -320,7 +321,10 @@
       onDragStart: function(evt, dragData, channel) {
         var sound = dragData.sound;
         if (sound.note.type !== 'ghost') {
-          if (sound.note.label.length > 1 && evt.clientX > evt.target.offsetLeft+evt.target.clientWidth/2) {
+          var elemBox = evt.target.getBoundingClientRect();
+                    console.log(evt.clientX);
+          console.log(evt.clientX - elemBox.left);
+          if (sound.note.label.length > 1 && evt.clientX > elemBox.left+elemBox.width/2) {
             sound.note.name = sound.note.label[1];
           } else {
             sound.note.name = sound.note.label[0];
@@ -356,7 +360,7 @@
         evt.dataTransfer.setDragImage(evt.target, 0, 0);
 
         var beat = $scope.section.bassBeat(dragData.bar, dragData.beat);
-        $scope.dropNote.width = evt.target.clientWidth;
+        $scope.dropNote.width = evt.target.offsetWidth;
         $scope.dropNote.subdivision = beat.subdivision;
         if (!evt.ctrlKey) {
           $timeout(function() {
@@ -567,6 +571,7 @@
       }
     }
 
+    // TODO: fix crash on last grid
     function rightGrid(grid) {
       var section = $scope.section;
       var bar = grid.bar;
@@ -679,8 +684,16 @@
       }
     };
 
+    $scope.clearSelection = function(evt) {
+      console.log(evt.target.className);
+      // if (evt.target.className.indexOf('bass-board-container') !== -1) {
+        $scope.selected.grid = null;
+        $scope.selected.element = null;
+      // }
+    };
+
     $scope.playSound = function(sound) {
-      if (sound.bote) {
+      if (sound.note) {
         audioPlayer.playBassSample(sound);
       }
     };

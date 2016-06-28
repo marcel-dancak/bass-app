@@ -1,7 +1,7 @@
 .audio-graph-container {
   border: solid #ccc;
   border-width: 1px 0;
-  background-color: #eee;
+  background-color: #f5f5f5;
   position: relative;
 }
 .audio-graph-container canvas {
@@ -55,6 +55,7 @@
 .bass-board-container {
   margin: 0px 30px 40px 65px;
   position: relative;
+  outline: none;
 }
 
 .bass-board {
@@ -89,7 +90,7 @@
 
 .bass-string {
   height: 1px;
-  margin: 18px 0 36px 0;
+  margin: 18px 0 35px 0;
   width: 100%;
   background-color: #e2e2e2;
   opacity: 0.8;
@@ -184,22 +185,35 @@
   z-index: 200;
   position: absolute;
   border-radius: 3px;
-  margin: 2px 1px;
+  margin: 1px 1px;
   top: 0;
   outline: none;
   text-align: center;
   border: 1px solid #777;
   box-sizing: border-box;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-  max-height: 32px;
-  line-height: 32px;
+  max-height: 34px;
+  line-height: 34px;
   pointer-events: auto;
 }
 
-.bass-sound-container label {
-  display: inline-block;
-  font-size: 14px;
+.bass-sound-container .label-wrapper {
+  font-size: 16px;
+  line-height: 32px;
 }
+.name-and-fret .bass-sound-container .label-wrapper {
+  font-size: 13px;
+  line-height: 17px;
+}
+
+
+.name-and-fret .bass-sound-container label {
+  display: block;
+  max-height: 16px;
+}
+
+/*.bass-sound-container label.note {}
+.bass-sound-container label.fret {}*/
 
 .ghost .bass-sound-container label.fret {
   display: none;
@@ -225,10 +239,10 @@
 }
 .bass-sound-wrapper.selected .bass-sound-container {
   border: 2px solid #333;
-  margin: 1px 1px 1px 1px;
+  margin: 0 1px 0 1px;
   border-radius: 4px;
-  line-height: 32px;
-  max-height: 34px;
+  line-height: 34px;
+  max-height: 36px;
 }
 .bass-sound-wrapper.selected {
   transition-property: width, opacity;
@@ -309,7 +323,7 @@
   padding: 0;
   margin: 0;
   overflow: hidden;
-  height: 30px;
+  height: 32px;
   line-height: 36px;
   vertical-align: bottom;
 }
@@ -458,48 +472,64 @@ md-input-container.slide-field > span {
 .bass-sound-container .slide-slash {
   transform: scale3d(4, 1, 1);
   padding: 0 10px;
+  line-height: 32px;
+  vertical-align: top;
+  height: 32px;
   font-weight: 300;
 }
 
 /* #ff5722, #ff9800, #ffc107, #ffeb3b */
-.bass-sound-container.slide p label {
-  line-height: 30px;
+.slide .bass-sound-container .label-wrapper > div > div {
+  display: inline-block;
+  height: 32px;
 }
-.bass-sound-container.slide p.s-octave-1.e-octave-2 {
+
+.bass-board-container.name .bass-sound-container .label-wrapper .fret {
+  display: none;
+}
+.bass-board-container.fret .bass-sound-container .label-wrapper .note {
+  display: none;
+}
+
+.slide .bass-sound-container .s-octave-1.e-octave-2 {
   background: linear-gradient(to right, #ff5722, #ff5722, #ff9800, #ff9800);
 }
-.bass-sound-container.slide p.s-octave-1.e-octave-3 {
+.slide .bass-sound-container .s-octave-1.e-octave-3 {
   background: linear-gradient(to right, #ff5722, #ff5722, #ffc107, #ffc107);
 }
-.bass-sound-container.slide p.s-octave-2.e-octave-3 {
+.slide .bass-sound-container .s-octave-2.e-octave-3 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ffc107, #ffc107);
 }
-.bass-sound-container.slide p.s-octave-2.e-octave-4 {
+.slide .bass-sound-container .s-octave-2.e-octave-4 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ffeb3b, #ffeb3b);
 }
-.bass-sound-container.slide p.s-octave-3.e-octave-4 {
+.slide .bass-sound-container .s-octave-3.e-octave-4 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ffeb3b, #ffeb3b);
 }
 
-.bass-sound-container.slide p.s-octave-2.e-octave-1 {
+.slide .bass-sound-container .s-octave-2.e-octave-1 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ff5722, #ff5722);
 }
-.bass-sound-container.slide p.s-octave-3.e-octave-1 {
+.slide .bass-sound-container .s-octave-3.e-octave-1 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ff5722, #ff5722);
 }
-.bass-sound-container.slide p.s-octave-3.e-octave-2 {
+. .bass-sound-containerslide .s-octave-3.e-octave-2 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ff9800, #ff9800);
 }
-.bass-sound-container.slide p.s-octave-4.e-octave-2 {
+.slide .bass-sound-container .s-octave-4.e-octave-2 {
   background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ff9800, #ff9800);
 }
-.bass-sound-container.slide p.s-octave-4.e-octave-3 {
+.slide .bass-sound-container .s-octave-4.e-octave-3 {
   background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ffc107, #ffc107);
 }
 
-.bass-sound-container p .grace {
-  font-size: 10px;
+.bass-sound-container .grace {
+  font-size: 11px;
   padding-right: 3px;
+}
+
+.name-and-fret .bass-sound-container .grace {
+  font-size: 9px;
 }
 
 .drag-group {
@@ -522,7 +552,7 @@ md-input-container.slide-field > span {
   top: -28px;
   width: 31px;
   height: 26px;
-  xbackground-color: rgba(255,255,255,0.75);
+  line-height: 32px;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
     text-shadow:
