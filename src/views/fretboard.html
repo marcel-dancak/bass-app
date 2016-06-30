@@ -68,9 +68,7 @@
                   octave: note.octave,
                   fret: $index
                 },
-                noteLength: {
-                  length: 1/8
-                },
+                noteLength: fretboard.noteLength,
                 volume: 0.75,
                 string: string.index
               }
@@ -96,6 +94,27 @@
           ng-repeat="style in ::bass.playingStyles"
           ng-value="::style.name">
           {{ ::style.label }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+
+    <md-input-container
+      layout="row"
+      class="input-inline-label">
+      <label class="md-label md-no-float">Length</label>
+      <md-select
+        ng-model="fretboard.noteLength.length">
+        <md-option
+          ng-repeat="value in [
+            ['𝅝', 'Whole', 1],
+            ['𝅗𝅥', 'Half', 0.5],
+            ['𝅘𝅥', 'Quarter', 0.25],
+            ['𝅘𝅥𝅮', 'Eighth', 0.125],
+            ['𝅘𝅥𝅯', 'Sixteenth', 0.0625]
+          ]"
+          ng-value="{{ value[2] }}">
+          <span class="note-symbol">{{ ::value[0] }}</span>
+          <span class="note-length-title"> {{ ::value[1] }}</span>
         </md-option>
       </md-select>
     </md-input-container>

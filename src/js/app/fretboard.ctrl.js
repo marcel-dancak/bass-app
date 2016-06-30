@@ -9,6 +9,9 @@
     
     $scope.fretboard = {
       style: 'finger',
+      noteLength: {
+        length: 1/8
+      },
       size: 20
     };
 
