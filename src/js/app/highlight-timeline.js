@@ -7,19 +7,20 @@
 
   function HighlightTimeline(slides) {
     this.slides = slides;
-    this.running = false;
   }
 
   HighlightTimeline.prototype.start = function() {
     this.currentSubbeatElem = null;
-    this.running = true;
+    this.activeTimers = {};
   };
 
   HighlightTimeline.prototype.stop = function() {
-    this.running = false;
     if (this.currentSubbeatElem) {
       this.currentSubbeatElem.removeClass('active');
     }
+    Object.keys(this.activeTimers).forEach(function(key) {
+      clearTimeout(this.activeTimers[key]);
+    }.bind(this));
   };
 
   HighlightTimeline.prototype.beatSync = function(evt) {
@@ -30,15 +31,17 @@
       barBeat.visibleSubbeats.forEach(function(index) {
         var id = subbeatIdTemplate+index;
         var subbeatDelay = evt.duration*(index-1)/barBeat.subbeats.length;
-        setTimeout(function() {
+
+        var timerKey = window.performance.now().toFixed(2);
+        var timerId = setTimeout(function(key) {
+          delete this.activeTimers[key];
           if (this.currentSubbeatElem) {
             this.currentSubbeatElem.removeClass('active');
           }
-          if (this.running) {
-            this.currentSubbeatElem = angular.element(document.getElementById(id));
-            this.currentSubbeatElem.addClass('active');
-          }
-        }.bind(this), 1000*(beatDelay+subbeatDelay));
+          this.currentSubbeatElem = angular.element(document.getElementById(id));
+          this.currentSubbeatElem.addClass('active');
+        }.bind(this), 1000*(beatDelay+subbeatDelay), timerKey);
+        this.activeTimers[timerKey] = timerId;
       }.bind(this));
     }
   };

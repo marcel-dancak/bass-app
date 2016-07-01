@@ -338,7 +338,7 @@
         // setup next beat's sounds ahead some time
         var schedule = 1000*(nextBeatStart - currentTime - 0.15);
         schedule = Math.max(schedule, 15);
-        setTimeout(this.playBeat.bind(this), schedule, nextBar, nextBeat, nextBeatStart);
+        this.lastSyncTimerId = setTimeout(this.playBeat.bind(this), schedule, nextBar, nextBeat, nextBeatStart);
       }
     };
 
@@ -375,6 +375,7 @@
       console.log('PLAY');
       this.composition = section;
       this.playing = true;
+      this.lastSyncTimerId = 0;
       this.repeats = repeats || 1;
 
       var player = this;
@@ -420,6 +421,9 @@
 
     AudioPlayer.prototype.stop = function(noteLength) {
       this.playing = false;
+      if (this.lastSyncTimerId) {
+        clearTimeout(this.lastSyncTimerId);
+      }
       var currentTime = context.currentTime;
       this.scheduledSounds.forEach(function(sound) {
         if (currentTime < sound.startTime) {
