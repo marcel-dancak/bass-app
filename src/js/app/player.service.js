@@ -52,21 +52,42 @@
       this.bufferLoader.loadResource('sounds/drums/drumstick');
 
       var _this = this;
-      function getResources() {
-
-      }
       this.bassSounds = {
-        metadata: {
+        meta: {
           pop: 'sounds/bass/pop/metadata.json',
           slap: 'sounds/bass/slap/metadata.json'
         },
-        getSoundResources: function(sound) {
+        metadata: {},
+        getResources: function(sound) {
           var style = sound.style;
-          if (sound.style === 'finger') {
+          var string = ['E', 'A', 'D', 'G'][sound.string];
 
+          if (sound.prev) {
+            var rootSound = sound;
+            while (rootSound.prev) {
+              rootSound = rootSound.prev.ref;
+            }
+            var rootStyle = rootSound.style;
+            var code = string + sound.note.fret;
+
+            if (style === 'hammer' || style === 'pull') {
+              var meta = _this.bassSounds.metadata[rootStyle];
+              if (meta) {
+                if (angular.isUndefined(sound.meta)) {
+                  Object.defineProperty(sound, 'meta', {value: 'static', writable: true});
+                }
+                sound.meta = {offset: meta.pull_offset[code] || 0};
+              }
+
+              return ['sounds/bass/{0}/{1}'.format(rootStyle, code)];
+            } else if (style === 'ring') {
+              if (sound.prev.ref.note.type === 'slide' || sound.note.type === 'slide') {
+                return ['sounds/bass/slide/{0}/{1}{2}'.format(rootSound.style, string, sound.note.fret+sound.note.slide)];
+              }
+              return [];
+            }
           }
 
-          var string = ['E', 'A', 'D', 'G'][sound.string];
           if (sound.note.type === 'ghost') {
             return ['sounds/bass/{0}/{1}X'.format(style, string)];
           } else if (sound.note.type === 'grace') {
@@ -77,122 +98,15 @@
               'sounds/bass/slide/{0}/{1}{2}'.format(style, string, sound.note.fret+sound.note.slide)
             ];
           }
-          return ['sounds/bass/{0}/{1}{2}'.format(string, sound.note.fret)];
-
-        },
-        finger: {
-          getResources: function(sound) {
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            if (sound.note.type === 'ghost') {
-              return ['sounds/bass/finger/{0}X'.format(string)];
-            } else if (sound.note.type === 'grace') {
-              return ['sounds/bass/finger/{0}{1}'.format(string, sound.note.fret-2)];
-            } else if (sound.note.type === 'slide' && sound.next) {
-              return [
-                'sounds/bass/finger/{0}{1}'.format(string, sound.note.fret),
-                'sounds/bass/slide/{0}{1}'.format(string, sound.note.fret+sound.note.slide)
-              ];
-            }
-            return ['sounds/bass/finger/{0}{1}'.format(string, sound.note.fret)];
-          }
-        },
-        slap: {
-          metadata: soundsUrl+'sounds/bass/slap/metadata.json',
-          getResources: function(sound) {
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            if (sound.note.type === 'ghost') {
-              return ['sounds/bass/slap/{0}X'.format(string)];
-            } else if (sound.note.type === 'slide' && sound.next) {
-              return [
-                'sounds/bass/slap/{0}{1}'.format(string, sound.note.fret),
-                'sounds/bass/slide/slap/{0}{1}'.format(string, sound.note.fret+sound.note.slide)
-              ];
-            }
-            return ['sounds/bass/slap/{0}{1}'.format(string, sound.note.fret)];
-          }
-        },
-        pop: {
-          metadata: soundsUrl+'sounds/bass/pop/metadata.json',
-          getResources: function(sound) {
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            if (sound.note.type === 'ghost') {
-              return ['sounds/bass/pop/{0}X'.format(string)];
-            } else if (sound.note.type === 'slide' && sound.next) {
-              return [
-                'sounds/bass/pop/{0}{1}'.format(string, sound.note.fret),
-                'sounds/bass/slide/pop/{0}{1}'.format(string, sound.note.fret+sound.note.slide)
-              ];
-            }
-            return ['sounds/bass/pop/{0}{1}'.format(string, sound.note.fret)];
-          }
-        },
-        pick: {
-          getResources: function(sound) {
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            if (sound.note.type === 'ghost') {
-              return ['sounds/bass/pick/{0}X'.format(string)];
-            }
-            return ['sounds/bass/pick/{0}{1}'.format(string, sound.note.fret)];
-          }
-        },
-        tap: {
-          getResources: function(sound) {
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            if (sound.note.type === 'ghost') {
-              return ['sounds/bass/tap/{0}X'.format(string)];
-            }
-            return ['sounds/bass/tap/{0}{1}'.format(string, sound.note.fret)];
-          }
-        },
-        hammer: {
-          getResources: function(sound) {
-            var rootSound = sound;
-            while (rootSound.prev) {
-              rootSound = rootSound.prev.ref;
-            }
-
-            var style = rootSound.style;
-            // style = 'finger';
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            var code = string + sound.note.fret;
-
-            var meta = _this.bassSounds[style].metadata;
-            if (meta) {
-              if (angular.isUndefined(sound.meta)) {
-                Object.defineProperty(sound, 'meta', {value: 'static', writable: true});
-              }
-              sound.meta = {offset: meta.pull_offset[code] || 0};
-            }
-
-            return ['sounds/bass/{0}/{1}'.format(style, code)];
-            // return ['sounds/bass/tap/{0}{1}'.format(string, sound.note.fret)];
-          }
-        },
-        ring: {
-          getResources: function(sound) {
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            if (sound.prev.ref.note.type === 'slide' || sound.note.type === 'slide') {
-              var rootSound = sound;
-              while (rootSound.prev) {
-                rootSound = rootSound.prev.ref;
-              }
-              console.log('ROOT');
-              console.log(rootSound);
-              return ['sounds/bass/slide/{0}/{1}{2}'.format(rootSound.style, string, sound.note.fret+sound.note.slide)];
-            }
-            return [];
-          }
+          return ['sounds/bass/{0}/{1}{2}'.format(style, string, sound.note.fret)];
         }
       };
-      this.bassSounds.pull = this.bassSounds.hammer;
       // fetch sounds metadata
-      Object.keys(this.bassSounds).forEach(function(style) {
-        var styleObj = this.bassSounds[style];
-        if (styleObj.metadata) {
-          $http.get(styleObj.metadata).then(function(response) {
-            styleObj.metadata = response.data;
-          });
-        }
+      Object.keys(this.bassSounds.meta).forEach(function(style) {
+        var url = soundsUrl+_this.bassSounds.meta[style];
+        $http.get(url).then(function(response) {
+          _this.bassSounds.metadata[style] = response.data;
+        });
       }.bind(this));
     }
     AudioPlayer.prototype = Object.create(Observable.prototype);
@@ -239,7 +153,7 @@
       if (sound.style === 'ring') {
         return;
       }
-      var resources = this.bassSounds[sound.style].getResources(sound);
+      var resources = this.bassSounds.getResources(sound);
       var audioData = resources? this.bufferLoader.loadResource(resources[0]) : null;
       //console.log(this.bufferLoader.loadedResources);
       if (audioData) {
@@ -276,13 +190,16 @@
                 source.playbackRate.setValueAtTime(1, endTime-nextSoundDuration);
                 source.playbackRate.exponentialRampToValueAtTime(endRate, endTime);
                 // break;
-                gain.gain.setValueAtTime(nextSound.volume, endTime-0.02);
-                gain.gain.exponentialRampToValueAtTime(0.0001, endTime);
-
-                var slideResources = this.bassSounds[nextSound.style].getResources(nextSound);
+                
+                var slideResources = this.bassSounds.getResources(nextSound);
                 console.log(slideResources);
                 var slideEndAudio = this.bufferLoader.loadResource(slideResources[0]);
                 if (slideEndAudio) {
+                  // finish previous sound and start a new one
+                  gain.gain.setValueAtTime(nextSound.volume, endTime-0.02);
+                  gain.gain.exponentialRampToValueAtTime(0.0001, endTime);
+
+                  console.log('Secondary slide sound');
                   var source2 = context.createBufferSource();
                   var gain2 = context.createGain();
                   source2.connect(gain2);
@@ -294,7 +211,7 @@
 
                   gain = gain2;
                   nextSoundDuration = 0;
-                }
+                } 
               }
               nextSound = nextSound.next? nextSound.next.ref : null;
             }
@@ -442,7 +359,7 @@
 
     AudioPlayer.prototype.fetchSoundResources = function(sound) {
       if (sound.style && sound.note) {
-        var resources = this.bassSounds[sound.style].getResources(sound);
+        var resources = this.bassSounds.getResources(sound);
         this.bufferLoader.loadResources(resources);
       }
     }
@@ -478,7 +395,7 @@
         for (string = 0; string < 4; string++) {
           var bassSound = subbeat.data[string].sound;
           if (bassSound.note && bassSound.style) {
-            var subbeatResources = player.bassSounds[bassSound.style].getResources(bassSound);
+            var subbeatResources = player.bassSounds.getResources(bassSound);
             subbeatResources.forEach(function(resource) {
               if (resources.indexOf(resource) === -1) {
                 resources.push(resource);
@@ -517,7 +434,7 @@
     };
 
     AudioPlayer.prototype.playBassSample = function(bassSound) {
-      var resources = this.bassSounds[bassSound.style].getResources(bassSound);
+      var resources = this.bassSounds.getResources(bassSound);
       var player = this;
       if (player.playingBassSample && player.playingBassSample.source.playing) {
         var currentTime = context.currentTime;
