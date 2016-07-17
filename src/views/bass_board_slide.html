@@ -36,6 +36,7 @@
       <div
         class="bass-grid"
         drop-validate="dropValidation(grid, $data)"
+        ui-drag-channel="section"
         ui-on-drag-enter="onDragEnter($event, grid)"
         ui-on-drag-leave="onDragLeave($event, grid)"
         ui-on-drop="onDrop($event, $data, grid, section)">
@@ -51,6 +52,7 @@
 
       <div
         ng-if="grid.sound.note"
+        ng-init="updateBassGrid(grid)"
         class="bass-sound-wrapper"
         ng-class="[{
             selected: selected.grid===grid,
@@ -100,12 +102,17 @@
             ng-switch="grid.sound.note.type">
             <!-- Regular note label -->
             <div ng-switch-when="regular">
-              <label class="note">
-                {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
-              </label>
-              <label class="fret">
-                {{ grid.sound.note.fret }}
-              </label>
+              <div ng-if="grid.sound.style === 'ring'">
+                <label class="ring">⏝</label>
+              </div>
+              <div ng-if="grid.sound.style !== 'ring'">
+                <label class="note">
+                  {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
+                </label>
+                <label class="fret">
+                  {{ grid.sound.note.fret }}
+                </label>
+              </div>
             </div>
 
             <!-- Ghost note label -->
@@ -115,7 +122,8 @@
             <div ng-switch-when="slide"
               class="slide s-octave-{{ grid.sound.note.octave}} e-octave-{{string.notes[grid.sound.note.fret+grid.sound.note.slide].octave }}"
               ng-class="{down: grid.sound.note.slide > 0}">
-              <div>
+
+              <div ng-if="grid.sound.style !== 'ring'">
                 <label class="note">
                   {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
                 </label>
@@ -123,8 +131,9 @@
                   {{ grid.sound.note.fret }}
                 </label>
               </div>
-              <div class="slide-slash">
-                {{ grid.sound.note.slide > 0? '/' : '\\' }}
+              <div
+                class="slide-slash"
+                ng-class="{up: grid.sound.note.slide > 0}">|
               </div>
               <div>
                 <label class="note">
@@ -139,16 +148,6 @@
 
             <div
               ng-switch-when="grace">
-    <!--           <label>
-                <span class="grace">
-                  {{ string.notes[grid.sound.note.fret-2].label[0] }}
-                  <sub>{{ string.notes[grid.sound.note.fret-2].octave }}</sub>
-                  ({{ grid.sound.note.fret-2 }})
-                </span>
-                {{ grid.sound.note.name }}<sub>{{ grid.sound.note.octave }}</sub>
-
-                &nbsp( {{ grid.sound.note.fret }} )
-              </label> -->
               <label class="note">
                 <span class="grace">
                   {{ string.notes[grid.sound.note.fret-2].label[0] }}

@@ -197,17 +197,43 @@
   pointer-events: auto;
 }
 
-.bass-sound-container .label-wrapper {
-  font-size: 16px;
-  line-height: 32px;
+.drag-group .bass-sound-container .label-wrapper > div:not(.hammer-on-label) {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
+.bass-sound-container .label-wrapper label.note,
+.bass-sound-container .label-wrapper label.fret {
+  display: none;
+}
+.bass-sound-container label {
+  white-space: nowrap;
+}
+
+.name .bass-sound-container .label-wrapper label.note,
+.fret .bass-sound-container .label-wrapper label.fret,
+.name-and-fret .bass-sound-container .label-wrapper label.note,
+.name-and-fret .bass-sound-container .label-wrapper label.fret {
+  display: block;
+}
+
+.name-and-fret .bass-sound-container .label-wrapper .ring,
+.name-and-fret .ring:not(.slide) .bass-sound-container .label-wrapper,
+.bass-sound-container .label-wrapper {
+  line-height: 32px;
+  font-size: 16px;
+}
+
+
 .name-and-fret .bass-sound-container .label-wrapper {
   font-size: 13px;
-  line-height: 17px;
+  line-height: normal!important;
 }
 
-
-.name-and-fret .bass-sound-container label {
+.name-and-fret .bass-sound-container label.note,
+.name-and-fret .bass-sound-container label.fret {
   display: block;
   max-height: 16px;
 }
@@ -470,16 +496,22 @@ md-input-container.slide-field > span {
 }
 
 .bass-sound-container .slide-slash {
-  transform: scale3d(4, 1, 1);
-  padding: 0 10px;
+  padding: 0 6px;
+  width: 10px;
   line-height: 32px;
   vertical-align: top;
-  height: 32px;
+  max-height: 32px;
+  font-size: 20px;
   font-weight: 300;
+  transform: rotate3d(0, 0, 1, -55deg);
+}
+
+.bass-sound-container .slide-slash.up {
+  transform: rotate3d(0, 0, 1, 55deg);
 }
 
 /* #ff5722, #ff9800, #ffc107, #ffeb3b */
-.slide .bass-sound-container .label-wrapper > div > div {
+.bass-sound-container .label-wrapper .slide > div {
   display: inline-block;
   height: 32px;
 }
@@ -535,12 +567,16 @@ md-input-container.slide-field > span {
 .drag-group {
   position: fixed;
   top: -100px;
+  xtop: 10px;
   left: 0;
   overflow: hidden;
   xbackground-color: rgba(255,0,0,0.1);
   height: 64px;
 }
 
+.drag-group .label-wrapper .slide {
+  max-height: 36px;
+}
 .drag-group .bass-sound-container {
   left: 0!important;
   top: 28px!important;
