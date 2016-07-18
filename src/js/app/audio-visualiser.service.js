@@ -105,7 +105,13 @@
     };
 
     AudioVisualiser.prototype.nextBeatIndex = function(index) {
-      return (index+1) % this.beatsCount;
+      var next = index+1;
+      var lastBeat = this.lastBeat || this.beatsCount-1;
+      var firstBeat = this.firstBeat || 0;
+      if (next > lastBeat) {
+        next = firstBeat;
+      }
+      return next;
     };
 
     AudioVisualiser.prototype.setBeatsCount = function(count) {
@@ -156,13 +162,13 @@
 
       // console.log(beat);
 
-      if (evt.bar === 1 && evt.beat === 1 && !this.drawing) {
+      if (!this.drawing) {
         this.drawing = true;
-        this.drawBeatIndex = 0;
-        this.analyzeBeatIndex = 0;
+        this.drawBeatIndex = evt.flatIndex;
+        this.analyzeBeatIndex = evt.flatIndex;
 
         var delay = 1000*(evt.startTime-this.context.currentTime);
-        console.log('Start drawing in '+delay);
+        // console.log('Start drawing in '+delay);
         if (delay > 0) {
           setTimeout(this.draw.bind(this), delay);
         } else {
@@ -175,10 +181,11 @@
     AudioVisualiser.prototype.draw = function() {
       var beat = this.beats[this.drawBeatIndex];
       if (beat) {
-        if (this.drawBeatIndex === 0 && beat.x === 0) {
+        var firstBeat = this.firstBeat || 0;
+        if (this.drawBeatIndex === firstBeat && beat.x === 0) {
           // console.log('FIRST DRAW: '+this.beatsCount);
           beat.ctx.clearRect(0, 0, beat.canvas.offsetWidth, beat.canvas.offsetHeight);
-          for (var i = 1; i < this.beatsCount; i++) {
+          for (var i = firstBeat+1; i < this.beatsCount; i++) {
             var b = this.beats[i];
             if (b && b.ctx && b.lastFrame) {
               // console.log('clearing beat canvas '+i);

@@ -30,7 +30,7 @@
       drums: audioPlayer.drums,
       input: audioPlayer.input,
       countdown: false,
-      loop: false
+      loop: true
     };
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
@@ -78,6 +78,9 @@
           name: 'pop',
           label: 'Pop'
         }, {
+          name: 'pick',
+          label: 'Pick'
+        }, {
           name: 'tap',
           label: 'Tap'
         }, {
@@ -86,6 +89,9 @@
         }, {
           name: 'pull',
           label: 'Pull-Off'
+        }, {
+          name: 'ring',
+          label: 'Let ring'
         }
       ],
       settings: {
@@ -197,6 +203,24 @@
         bassBeat.visibleSubbeats = bar.visibleSubbeats;
       });
       $scope.slides.visibleSubbeats = visibleSubbeats;
+    }
+
+    $scope.updateSwipersFilter = function() {
+      audioPlayer.firstBar = $scope.slides.first;
+      audioPlayer.lastBar = $scope.slides.last;
+      var firstBeat = ($scope.slides.first-1) * $scope.section.timeSignature.top;
+      var lastBeat = $scope.slides.last * $scope.section.timeSignature.top - 1;
+      audioVisualiser.firstBeat = firstBeat;
+      audioVisualiser.lastBeat = lastBeat;
+      console.log('firstBeat: '+firstBeat);
+      console.log('lastBeat: '+lastBeat);
+
+      for (var i = 0; i < $scope.slides.bars.length; i++) {
+        var opacity = (i < firstBeat || i > lastBeat)? 0.35 : 1;
+        $scope.barSwiper.wrapper[0].children[i].style.opacity = opacity;
+        $scope.bassSwiper.wrapper[0].children[i].style.opacity = opacity;
+        $scope.drumsSwiper.wrapper[0].children[i].style.opacity = opacity;
+      }
     }
 
     $scope.updateSwipers = function() {
@@ -364,6 +388,8 @@
       // audioPlayer.bass.audio.disconnect();
       // audioPlayer.bass.audio.connect(filter);
       // filter.connect(context.destination);
+
+      //return audioPlayer.composer.test();
 
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.player.bpm);

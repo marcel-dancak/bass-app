@@ -46,7 +46,12 @@
       var sectionConfigChanged = $scope.section.timeSignature.top !== sectionData.timeSignature.top;
 
       $scope.section.setLength(sectionData.length);
+
       $scope.section.timeSignature = sectionData.timeSignature;
+      $scope.slides.first = 1;
+      $scope.slides.last = sectionData.length;
+      $scope.updateSwipersFilter();
+
       $scope.slides.beatsPerView = sectionData.beatsPerView;
       $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;
       $scope.updateSwipers();
