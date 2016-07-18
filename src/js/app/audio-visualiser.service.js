@@ -208,7 +208,7 @@
           var steps = parseInt(Math.round(beatWidth * beat.complete - beat.x));
           for (var i = 0; i < steps; i++) {
             var dataIndex = beat.frame+parseInt((i+1)*(newFrames/steps))-1;
-            beat.y = beat.data[dataIndex] * beat.height / 256.0;
+            beat.y = beat.height * (1.0 - beat.data[dataIndex] / 256.0);
             beat.x++;
             ctx.lineTo(beat.x, beat.y);
           }
@@ -255,8 +255,8 @@
       var graphEnd = parseInt(beat.width * beat.complete);
       for (var i = 1; i <= graphEnd; i++) {
         var recordIndex = parseInt(i*(records/graphEnd));
-        var v = beat.data[recordIndex] / 128.0;
-        beat.y = v * beat.height / 2;
+        var v = 1.0 - beat.data[recordIndex] / 256.0;
+        beat.y = v * beat.height;
         ctx.lineTo(i, beat.y);
       }
       beat.x = graphEnd;
