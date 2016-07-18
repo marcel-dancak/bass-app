@@ -13,8 +13,8 @@
         string: string.index
       })"
       ui-draggable="true"
+      drag-channel="fretboard"
       drag="{
-        handler: 'fretboard',
         sound: {
           style: fretboard.style,
           note: {
@@ -59,8 +59,8 @@
             ng-repeat="note in string.notes | limitTo: fretboard.size+1"
 
             ui-draggable="true"
+            drag-channel="fretboard"
             drag="{
-              handler: 'fretboard',
               sound: {
                 style: fretboard.style,
                 note: {

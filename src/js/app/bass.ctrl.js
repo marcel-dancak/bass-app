@@ -509,26 +509,31 @@
 
     var dragHandler;
     $scope.$root.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
-      console.log('ANGULAR_DRAG_START');
+      console.log('ANGULAR_DRAG_START: '+channel);
       // console.log(data);
       var dragData = data.data;
 
-      if (dragData.handler === 'fretboard') {
+      dragHandler = null;
+      if (channel === 'fretboard') {
         dragHandler = fretboardDragHandler;
-      } else {
+      } else if (channel === 'bassboard') {
         if (dragData.sound.next || dragData.sound.prev) {
           dragHandler = groupSoundDragHandler;
         } else {
           dragHandler = singleSoundDragHandler;
         }
       }
-      dragHandler.onDragStart(e, dragData, channel);
+      if (dragHandler) {
+        dragHandler.onDragStart(e, dragData, channel);
+      }
     });
 
     $scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
-      dragHandler.onDragEnd(e, data, channel);
-      // console.log('ANGULAR_DRAG_END');
-      $scope.dropNote.visible = false;
+      if (channel === 'fretboard' || channel === 'bassboard') {
+        dragHandler.onDragEnd(e, data, channel);
+        // console.log('ANGULAR_DRAG_END');
+        $scope.dropNote.visible = false;
+      }
     });
 
     $scope.dropValidation = function(grid, $data) {

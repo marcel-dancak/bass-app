@@ -35,8 +35,8 @@
       }">
       <div
         class="bass-grid"
+        drop-channel="bassboard,fretboard"
         drop-validate="dropValidation(grid, $data)"
-        ui-drag-channel="section"
         ui-on-drag-enter="onDragEnter($event, grid)"
         ui-on-drag-leave="onDragLeave($event, grid)"
         ui-on-drop="onDrop($event, $data, grid, section)">
@@ -75,6 +75,7 @@
         <div
           ui-draggable="true"
           drag="grid"
+          drag-channel="bassboard"
 
           ng-attr-octave="{{ grid.sound.note.octave }}"
           class="bass-sound-container"

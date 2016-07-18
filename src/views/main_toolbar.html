@@ -210,29 +210,17 @@
         ng-model="project.selectedSectionIndex"
         ng-change="loadSection(project.selectedSectionIndex)">
         <md-option
+          ui-draggable="true"
+          drag="$index"
+          ui-on-drag-enter=""
+          ui-on-drag-leave=""
+          ui-on-drop="dropSection($event, $data, $index, section)"
+          drag-channel="section"
+          drop-channel="section"
+
           ng-repeat="section in project.sections | orderBy:section.index track by $index"
           ng-value="$index">
-          {{ section.id }} {{ section.name }} <span class="space"></span>
-          <div class="option-buttons-group">
-            <md-button
-              aria-label="Up"
-              class="no-hover"
-              ng-click="
-                moveSectionUp(section);
-                $event.stopPropagation()
-              ">
-              <md-icon md-svg-icon="arrow-up"></md-icon>
-            </md-button>
-            <md-button
-              aria-label="Down"
-              class="no-hover"
-              ng-click="
-                moveSectionDown(section);
-                $event.stopPropagation()
-              ">
-              <md-icon md-svg-icon="arrow-down"></md-icon>
-            </md-button>
-          </div>
+          {{ section.name }}
         </md-option>
       </md-select>
     </md-input-container>

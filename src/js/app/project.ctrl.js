@@ -225,41 +225,53 @@
     $scope.project.sectionName = '';
 
 
-    $scope.moveSectionUp = function(section) {
-      var arrayIndex = $scope.project.sections.findIndex(function(s) {
-        return s.id === section.id;
-      });
-      console.log(arrayIndex);
-      if (arrayIndex > 0) {
 
-        // var tmpValue = angular.copy($scope.project.sections[arrayIndex-1]);
-        // angular.extend($scope.project.sections[arrayIndex-1], $scope.project.sections[arrayIndex]);
-        // angular.extend($scope.project.sections[arrayIndex], tmpValue);
+    $scope.dropSection = function(event, dragSectionIndex, dropSectionIndex, dropSection) {
+      var dragSection = $scope.project.sections[dragSectionIndex];
+      var selectedId = $scope.project.sections[$scope.project.selectedSectionIndex].id;
 
-        var tmpName = $scope.project.sections[arrayIndex-1].name;
-        var tmpId = $scope.project.sections[arrayIndex-1].id;
-        $scope.project.sections[arrayIndex-1].name = section.name;
-        $scope.project.sections[arrayIndex-1].id = section.id;
-        $scope.project.sections[arrayIndex].name = tmpName;
-        $scope.project.sections[arrayIndex].id = tmpId;
+      // move dragged section item into dropped position
+      $scope.project.sections.splice(dropSectionIndex, 0, dragSection);
+      var removeIndex = dragSectionIndex;
+      if (dragSectionIndex > dropSectionIndex) {
+        removeIndex += 1;
       }
+      $scope.project.sections.splice(removeIndex, 1);
+
+
+      // update selected secton item
+      if ($scope.project.selectedSectionIndex !== -1) {
+        var newSelectedIndex = $scope.project.sections.findIndex(function(s) {
+          return s.id === selectedId;
+        });
+        $scope.project.selectedSectionIndex = newSelectedIndex;
+      }
+      // save the actual list
       saveProjectInfo();
     }
 
-    $scope.moveSectionDown = function(section) {
-      var arrayIndex = $scope.project.sections.findIndex(function(s) {
-        return s.id === section.id;
-      });
-      if (arrayIndex < $scope.project.sections.length-1) {
-        var tmpName = $scope.project.sections[arrayIndex+1].name;
-        var tmpId = $scope.project.sections[arrayIndex+1].id;
-        $scope.project.sections[arrayIndex+1].name = section.name;
-        $scope.project.sections[arrayIndex+1].id = section.id;
-        $scope.project.sections[arrayIndex].name = tmpName;
-        $scope.project.sections[arrayIndex].id = tmpId;
+    // swap items
+    /*
+    $scope.dropSection = function(event, dragSectionIndex, dropSectionIndex, dropSection) {
+      var dragSection = $scope.project.sections[dragSectionIndex];
+      // console.log(dragSection);
+      // console.log(dropSection);
+      var tmpId = dropSection.id;
+      var tmpName = dropSection.name;
+      dropSection.id = dragSection.id;
+      dropSection.name = dragSection.name;
+      dragSection.id = tmpId;
+      dragSection.name = tmpName;
+
+      if ($scope.project.selectedSectionIndex === dragSectionIndex) {
+        $scope.project.selectedSectionIndex = dropSectionIndex;
+      }
+      if ($scope.project.selectedSectionIndex === dropSectionIndex) {
+        $scope.project.selectedSectionIndex = dragSectionIndex;
       }
       saveProjectInfo();
     }
+    */
 
     $scope.exportToFile = function() {
       if ($scope.project.sectionName) {
