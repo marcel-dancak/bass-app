@@ -10,6 +10,7 @@
         'ang-drag-drop',
         'angularResizable',
         'monospaced.mousewheel',
-        'ksSwiper'
+        'ksSwiper',
+        'rzModule'
     ]);
 })();

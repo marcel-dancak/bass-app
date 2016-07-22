@@ -50,56 +50,49 @@
       open: angular.noop,
       grid: null, // set when opened,
       sound: null,
-      nextNote: function() {
-        var fret = this.sound.note.fret || 0;
-        var string = $scope.bass.strings[this.grid.string];
-        if (fret < 24) {
-          this.sound.note = angular.copy(this.sound.note);
-          var currentNote = string.notes[fret];
-          if (currentNote.label.length === 2 && this.sound.note.code === currentNote.label[0]+currentNote.octave) {
-            angular.extend(this.sound.note, {
-              code: currentNote.label[1]+currentNote.octave,
-              name: currentNote.label[1],
-              octave: currentNote.octave,
-              fret: fret
-            });
-          } else {
-            fret++;
-            var nextNote = string.notes[fret];
-            angular.extend(this.sound.note, {
-              code: nextNote.label[0]+nextNote.octave,
-              name: nextNote.label[0],
-              octave: nextNote.octave,
-              fret: fret
-            });
-          }
-          $scope.soundPitchChanged(this.sound);
+      nextNote: function(note) {
+        var index = -1;
+        if (note.code) {
+          index = this.inlineStringNotes.findIndex(function(n) {
+            return n.code === note.code;
+          });
+        }
+        var nextNote = this.inlineStringNotes[index+1];
+        console.log(nextNote);
+        if (nextNote) {
+          note.code = nextNote.code;
+          this.soundPitchChanged(note);
         }
       },
-      prevNote: function() {
-        var fret = this.sound.note.fret || 0;
-        var string = $scope.bass.strings[this.grid.string];
-        if (fret > 0) {
-          this.sound.note = angular.copy(this.sound.note);
-          var currentNote = string.notes[fret];
-          if (currentNote.label.length === 2 && this.sound.note.code === currentNote.label[1]+currentNote.octave) {
-            angular.extend(this.sound.note, {
-              code: currentNote.label[0]+currentNote.octave,
-              name: currentNote.label[0],
-              octave: currentNote.octave,
-              fret: fret
-            });
-          } else {
-            fret--;
-            var prevNote = string.notes[fret];
-            angular.extend(this.sound.note, {
-              code: prevNote.label[prevNote.label.length-1]+prevNote.octave,
-              name: prevNote.label[prevNote.label.length-1],
-              octave: prevNote.octave,
-              fret: fret
-            });
-          }
-          $scope.soundPitchChanged(this.sound);
+      prevNote: function(note) {
+        var code = note.code || this.inlineStringNotes[0].code;
+        var index = this.inlineStringNotes.findIndex(function(n) {
+          return note.code === n.code;
+        });
+        if (index > 0) {
+          var nextNote = this.inlineStringNotes[index-1];
+          note.code = nextNote.code;
+          this.soundPitchChanged(note);
+        }
+      },
+      soundPitchChanged: function(note) {
+        var noteData = this.inlineStringNotes.find(function(n) {
+          return note.code === n.code;
+        })
+        angular.extend(note, noteData);
+
+        var nextSound = this.sound.next;
+        while (nextSound) {
+          nextSound = nextSound.ref;
+          var prevSound = nextSound.prev.ref;
+          var prevEndNote = prevSound.note.type === 'slide'? prevSound.note.slide.endNote : prevSound.note;
+
+          nextSound.note.name = prevEndNote.name;
+          nextSound.note.octave = prevEndNote.octave;
+          nextSound.note.code = prevEndNote.code;
+          nextSound.note.fret = prevEndNote.fret;
+
+          nextSound = nextSound.next;
         }
       },
       updateSlide: function() {
@@ -203,13 +196,15 @@
       var targetGrid = angular.element(elem.parentElement).scope().grid;
       if (targetGrid && !grid.sound.next) {
         var targetSound = targetGrid.sound;
-        if (targetSound && targetSound.note) {
+        if (targetSound && targetSound.note && targetSound.note.type === 'regular') {
           if (grid !== targetGrid) {
             console.log('CONVERT TO SLIDE');
             // info.element.css('width', '');
             // $scope.dropNote.visible = false;
             grid.sound.note.type = 'slide';
-            grid.sound.note.slide = targetSound.note.fret-grid.sound.note.fret;
+            grid.sound.note.slide = {
+              endNote: angular.copy(targetSound.note)
+            };
             $scope.clearSound(targetSound);
           }
         }
@@ -253,7 +248,9 @@
     };
 
     $scope.updateBassGrid = function(grid) {
-      console.log('updateBassGrid');
+      // if (Number.isInteger(grid.sound.note.slide)) {
+      //   grid.sound.note.slide = {};
+      // }
       var sound = grid.sound;
       if (sound.note && sound.note.type !== 'ghost') {
         sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
@@ -302,23 +299,6 @@
       }
     };
 
-    $scope.soundPitchChanged = function(sound) {
-      console.log(sound);
-      var nextSound = sound.next;
-      var fret = sound.note.fret;
-      while (nextSound) {
-        nextSound = nextSound.ref;
-        nextSound.note.name = sound.note.name;
-        nextSound.note.octave = sound.note.octave;
-        nextSound.note.code = sound.note.code;
-        nextSound.note.fret = fret;
-        if (nextSound.note.type === 'slide') {
-          fret += nextSound.note.slide;
-          console.log('slide '+fret);
-        }
-        nextSound = nextSound.next;
-      }
-    };
 
     $scope.onDragEnter = function(evt, $data) {
 
@@ -663,15 +643,35 @@
         if (leftElemGrid) {
           connectGrids(leftElemGrid, $scope.selected.grid);
           if (style === 'ring') {
-            var prevEndFret = leftElemGrid.sound.note.fret+(leftElemGrid.sound.note.slide || 0);
-            var fretOffset = $scope.selected.grid.sound.note.fret - prevEndFret;
+            var ringNote = $scope.selected.grid.sound.note;
+            var prevNote = leftElemGrid.sound.note.type === 'slide'? leftElemGrid.sound.note.slide.endNote : leftElemGrid.sound.note;
+            var fretOffset = $scope.selected.grid.sound.note.fret - prevNote.fret;
             console.log(fretOffset);
             // $scope.selected.grid.sound.note = angular.copy(leftElemGrid.sound.note);
-            $scope.selected.grid.sound.note.type = fretOffset === 0? 'regular' : 'slide';
-            if (fretOffset !== 0) {
-              $scope.selected.grid.sound.note.code = ' ';
-              $scope.selected.grid.sound.note.fret = prevEndFret;
-              $scope.selected.grid.sound.note.slide = fretOffset;
+            if (fretOffset === 0) {
+              $scope.selected.grid.sound.note = {
+                type: 'regular',
+                code: prevNote.code,
+                fret: prevNote.fret,
+                name: prevNote.name,
+                octave: prevNote.octave
+              };
+            } else {
+              $scope.selected.grid.sound.note = {
+                type: 'slide',
+                code: prevNote.code,
+                fret: prevNote.fret,
+                name: prevNote.name,
+                octave: prevNote.octave,
+                slide: {
+                  endNote: {
+                    code: ringNote.code,
+                    fret: ringNote.fret,
+                    name: ringNote.name,
+                    octave: ringNote.octave
+                  }
+                }
+              };
             }
           }
         } else {
@@ -709,7 +709,28 @@
         grid.sound.string = grid.string;
         $scope.menu.sound = grid.sound;
         $scope.menu.grid = grid;
-        $scope.menu.stringNotes = $scope.bass.strings[grid.string].notes;
+        var fretsStringNotes = [];
+        var inlineStringNotes = [];
+        $scope.bass.strings[grid.string].notes.forEach(function(note, fret) {
+          var notes = note.label.map(function(label) {
+
+            return {
+              code: label+note.octave,
+              name: label,
+              octave: note.octave,
+              fret: fret
+            };
+
+          });
+
+          Array.prototype.push.apply(inlineStringNotes, notes);
+          fretsStringNotes.push(notes);
+        });
+        console.log(inlineStringNotes);
+        console.log(fretsStringNotes);
+        $scope.menu.fretsStringNotes = fretsStringNotes;
+        $scope.menu.inlineStringNotes = inlineStringNotes;
+
         $timeout(function() {
           $scope.menu.open(evt);
         });

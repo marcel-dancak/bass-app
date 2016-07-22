@@ -179,20 +179,25 @@
           <label>Volume</label>
           <input
             type="number"
-            min="0.001"
+            min="0.01"
             max="1"
             step="0.01"
             ng-model="menu.sound.volume">
         </md-input-container>
-        <md-slider
-          class="md-primary"
-          ng-model="menu.sound.volume"
-          aria-label="Volume"
-          min="0"
-          max="1"
-          step="0.01"
-          flex>
-        </md-slider>
+        <rzslider
+          rz-slider-model="menu.sound.volume"
+          rz-slider-options="{
+            floor: 0,
+            ceil: 1,
+            step: 0.01,
+            precision: 2,
+            minLimit: 0.01,
+            hideLimitLabels: true,
+            hidePointerLabels: true,
+            showSelectionBar: true
+          }">
+        </rzslider>
+
         <md-button
           aria-label="Play"
           class="play-button"

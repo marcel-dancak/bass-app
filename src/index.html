@@ -11,7 +11,8 @@
     <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" type="text/css" href="bower_components/angular-material/angular-material.css"/>
     <link rel="stylesheet" type="text/css" href="bower_components/angular-resizable/src/angular-resizable.css"/>
-    <link rel="stylesheet" href="bower_components/swiper/dist/css/swiper.min.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/swiper/dist/css/swiper.min.css">
+    <link rel="stylesheet" type="text/css" href="bower_components/angularjs-slider/dist/rzslider.css">
 
     <link rel="stylesheet" type="text/css" href="styles/fonts.css">
     <link rel="stylesheet" type="text/css" href="styles/ui.css">
@@ -26,12 +27,13 @@
     <script type="text/javascript" src="bower_components/angular-material/angular-material.js"></script>
     <script type="text/javascript" src="bower_components/angular-aria/angular-aria.js"></script>
 
-    <script type="text/javascript" src="bower_components/angular-native-dragdrop/draganddrop.js"></script>
+    <script type="text/javascript" src="lib/angular-native-dragdrop/draganddrop.js"></script>
     <script type="text/javascript" src="bower_components/angular-resizable/src/angular-resizable.js"></script>
     <script type="text/javascript" src="bower_components/hamsterjs/hamster.js"></script>
     <script type="text/javascript" src="bower_components/angular-mousewheel/mousewheel.js"></script>
 
     <script type="text/javascript" src="bower_components/angular-swiper/src/angular-swiper.js"></script>
+    <script type="text/javascript" src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
     <script type="text/javascript" src="bower_components/file-saver/FileSaver.min.js"></script>
 
     <script type="text/javascript">
@@ -49,7 +51,8 @@
     }
     </script>
 
-    <script src="js/buffer-loader.js"></script>
+    <script src="lib/buffer-loader.js"></script>
+    <script src="lib/audiobuffer-to-wav.js"></script>
     <script src="js/app/app.module.js"></script>
     <script src="js/app/observable.js"></script>
     <script src="js/app/notes.js"></script>
@@ -60,6 +63,7 @@
     <script src="js/app/bass.ctrl.js"></script>
     <script src="js/app/drums.ctrl.js"></script>
     <script src="js/app/fretboard.ctrl.js"></script>
+    <script src="js/app/audio-composer.js"></script>
     <script src="js/app/player.service.js"></script>
     <script src="js/app/audio-visualiser.service.js"></script>
     <script src="js/app/timeline.js"></script>

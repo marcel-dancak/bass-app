@@ -264,9 +264,6 @@ md-tab-content:not(.md-active) > div {
   color: rgb(63,81,181);
 }
 
-.preferences .volume-field md-slider {
-  margin: 16px 12px 0px 12px;
-}
 .preferences md-list-item {
   margin-top: 4px;
 }
@@ -375,7 +372,8 @@ md-menu-item.menu-group-item .group-item-title {
   z-index: 50;
 }
 
-.toggle-button.md-button {
+.playback-fields .icon-button.md-button,
+.playback-fields .toggle-button.md-button {
   min-width: 32px;
   min-height: 32px;
   line-height: 32px;
@@ -407,4 +405,117 @@ md-menu-item.menu-group-item .group-item-title {
 .sections-list md-option {
   font-size: 13px;
   min-width: 160px;
+}
+
+
+/**
+  Slider
+*/
+
+.rzslider .rz-pointer {
+  outline: none;
+  top: -10px;
+  width: 24px;
+  height: 24px;
+  background-color:  rgb(63, 81, 181);
+}
+
+.rzslider .rz-pointer.rz-active::after {
+  background-color:  rgb(63, 81, 181);
+}
+.rzslider .rz-pointer:after {
+  top: calc(50% - 3px);
+  left: calc(50% - 3px);
+  width: 6px;
+  height: 6px;
+}
+
+
+.rzslider[disabled] {
+  cursor: default;
+}
+
+
+.rzslider .rz-pointer[aria-valuenow="0"]:after {
+  background-color: #fff!important;
+}
+.rzslider .rz-pointer[aria-valuenow="0"],
+.rzslider[disabled] .rz-pointer {
+  cursor: default;
+  background-color: #ccc;
+  border: 2px solid white;
+  width: 16px;
+  height: 16px;
+  top: -6px;
+  left: -4px!important;
+  box-sizing: border-box;
+}
+
+.rz-bar-wrapper .rz-bar {
+  height: 2px;
+  top: 17px;
+  margin: 0 12px;
+  width: calc(100% - 24px);
+  background-color: rgba(0,0,0,0.26);
+}
+.rz-bar-wrapper .rz-bar.rz-selection {
+  background-color:  rgb(63, 81, 181);
+  margin: 0;
+  width: 100%;
+}
+
+.rzslider .rz-ticks .rz-tick {
+  width: 2px;
+  border-radius: 0;
+}
+.rzslider .rz-ticks .rz-tick.rz-selected {
+  background-color: rgb(63, 81, 181);
+}
+
+.rz-tick-value {
+  font-size: 13px;
+}
+
+.volume-field .rzslider {
+  margin-left: 10px;
+}
+/**
+  Playback range slider
+*/
+
+.playback-range .rzslider {
+  width: 280px;
+  margin-top: 56px;
+}
+
+
+.playback-range .rzslider .rz-pointer {
+  transition: left 0.15s cubic-bezier(0.35, 0, 0.25, 1);
+}
+
+.playback-range .rz-bar-wrapper {
+  transition: 0.15s cubic-bezier(0.35, 0, 0.25, 1);
+  transition-property: left, width;
+}
+
+.playback-range .rzslider ul > li:last-child:before {
+  content: "|"!important;
+  font-size: 13px;
+  position: absolute;
+  right: 13px;
+  top: -32px;
+}
+
+.playback-range .rzslider ul > li:last-child > span {
+  display: none;
+}
+
+md-list-item.range-slider-item {
+  height: 72px;
+  padding: 0;
+}
+
+/** To make range slider in menu initialized properly */
+.md-open-menu-container {
+  display: block!important;
 }

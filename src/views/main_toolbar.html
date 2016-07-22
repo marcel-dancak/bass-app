@@ -54,19 +54,23 @@
       width="4"
       class="preferences md-whiteframe-16dp">
       <md-list>
+
         <md-list-item
           class="volume-field bottom-border">
           <label>Bass Volume</label>
-          <md-slider
-            class="md-primary"
-            ng-model="player.bass.audio.gain.value"
-            ng-disabled="player.bass.muted"
-            aria-label="Volume"
-            min="0"
-            max="1"
-            step="0.01"
-            flex>
-          </md-slider>
+          <rzslider
+            rz-slider-model="player.bass.audio.gain.value"
+            rz-slider-options="{
+              floor: 0,
+              ceil: 1,
+              step: 0.01,
+              precision: 2,
+              hideLimitLabels: true,
+              hidePointerLabels: true,
+              showSelectionBar: true,
+              disabled: player.bass.muted
+            }">
+          </rzslider>
           <md-button
             md-no-ink
             aria-label="Mute"
@@ -80,19 +84,23 @@
           </md-button>
         </md-list-item>
 
+
         <md-list-item
           class="volume-field bottom-border">
           <label>Drums Volume</label>
-          <md-slider
-            class="md-primary"
-            ng-model="player.drums.audio.gain.value"
-            ng-disabled="player.drums.muted"
-            aria-label="Volume"
-            min="0"
-            max="1"
-            step="0.01"
-            flex>
-          </md-slider>
+          <rzslider
+            rz-slider-model="player.drums.audio.gain.value"
+            rz-slider-options="{
+              floor: 0,
+              ceil: 1,
+              step: 0.01,
+              precision: 2,
+              hideLimitLabels: true,
+              hidePointerLabels: true,
+              showSelectionBar: true,
+              disabled: player.drums.muted
+            }">
+          </rzslider>
           <md-button
             md-no-ink
             aria-label="Mute"
@@ -109,16 +117,19 @@
         <md-list-item
           class="volume-field bottom-border">
           <label>Input Volume</label>
-          <md-slider
-            class="md-primary"
-            ng-model="player.input.audio.gain.value"
-            ng-disabled="player.input.muted"
-            aria-label="Volume"
-            min="0"
-            max="1"
-            step="0.01"
-            flex>
-          </md-slider>
+          <rzslider
+            rz-slider-model="player.input.audio.gain.value"
+            rz-slider-options="{
+              floor: 0,
+              ceil: 1,
+              step: 0.01,
+              precision: 2,
+              hideLimitLabels: true,
+              hidePointerLabels: true,
+              showSelectionBar: true,
+              disabled: player.input.muted
+            }">
+          </rzslider>
           <md-button
             md-no-ink
             aria-label="Mute"
@@ -186,6 +197,40 @@
         md-svg-icon="loop">
       </md-icon>
     </md-button>
+
+    <md-menu
+      md-position-mode="target target"
+      md-offset="0, 56">
+      <md-button
+        class="icon-button no-hover"
+        ng-click="$mdOpenMenu($event)">
+        <md-icon md-svg-icon="range"></md-icon>
+      </md-button>
+      <md-menu-content
+        class="preferences md-whiteframe-16dp">
+        <md-list>
+          <md-list-item class="range-slider-item playback-range">
+            <label>Playback range</label>
+            <rzslider
+              class="range-slider"
+              rz-slider-model="player.playbackRange.start"
+              rz-slider-high="player.playbackRange.end"
+              rz-slider-options="{
+                floor: 1,
+                ceil: section.length+1,
+                step: 1,
+                minRange: 1,
+                pushRange: true,
+                showTicks: true,
+                onEnd: updateSwipersFilter,
+                showTicksValues: true
+              }">
+            </rzslider>
+          </md-list-item>
+        </md-list>
+      </md-menu-content>
+    </md-menu>
+
   </div>
 
   <div flex></div>

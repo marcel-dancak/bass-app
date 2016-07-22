@@ -30,7 +30,11 @@
       drums: audioPlayer.drums,
       input: audioPlayer.input,
       countdown: false,
-      loop: true
+      loop: true,
+      playbackRange: {
+        start: 1,
+        end: 1
+      }
     };
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
@@ -139,6 +143,8 @@
       },
       length: 2
     });
+    $scope.player.playbackRange.end = $scope.section.length + 1;
+
     // Reference for debugging
     window.section = $scope.section;
 
@@ -158,6 +164,7 @@
       barBeatsCount: $scope.section.timeSignature.top,
       barsCount: $scope.section.length
     };
+
 
     function updateSlides() {
       var timeSignature = $scope.section.timeSignature;
@@ -206,10 +213,10 @@
     }
 
     $scope.updateSwipersFilter = function() {
-      audioPlayer.firstBar = $scope.slides.first;
-      audioPlayer.lastBar = $scope.slides.last;
-      var firstBeat = ($scope.slides.first-1) * $scope.section.timeSignature.top;
-      var lastBeat = $scope.slides.last * $scope.section.timeSignature.top - 1;
+      audioPlayer.firstBar = $scope.player.playbackRange.start;
+      audioPlayer.lastBar = $scope.player.playbackRange.end - 1;
+      var firstBeat = (audioPlayer.firstBar - 1) * $scope.section.timeSignature.top;
+      var lastBeat = (audioPlayer.lastBar) * $scope.section.timeSignature.top - 1;
       audioVisualiser.firstBeat = firstBeat;
       audioVisualiser.lastBeat = lastBeat;
       console.log('firstBeat: '+firstBeat);

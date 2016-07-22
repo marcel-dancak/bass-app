@@ -5,8 +5,8 @@
     .module('bd.app')
     .controller('ProjectController', ProjectController)
 
-  function ProjectController($scope, $timeout, context, audioPlayer, audioVisualiser,
-                         Notes, Section, Timeline, HighlightTimeline) {
+  function ProjectController($scope, $timeout, $http, context, audioPlayer,
+              audioVisualiser, Notes, Section, Timeline, HighlightTimeline) {
 
     function clearSection() {
       audioVisualiser.clear();
@@ -48,8 +48,8 @@
       $scope.section.setLength(sectionData.length);
 
       $scope.section.timeSignature = sectionData.timeSignature;
-      $scope.slides.first = 1;
-      $scope.slides.last = sectionData.length;
+      $scope.player.playbackRange.start = 1;
+      $scope.player.playbackRange.end = sectionData.length + 1;
       $scope.updateSwipersFilter();
 
       $scope.slides.beatsPerView = sectionData.beatsPerView;

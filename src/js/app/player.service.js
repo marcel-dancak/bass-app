@@ -65,9 +65,6 @@
             var string = ['E', 'A', 'D', 'G'][sound.string];
             return ['sounds/bass/{0}/{1}{2}'.format(rootSound.style, string, sound.note.fret)];
           },
-          prepareForPlayback: function(sound, startTime, beatTime, timeSignature) {
-            // error
-          },
           transitionPlayback: function(stack, sound, startTime, beatTime, timeSignature) {
             /*
             var prevAudio = stack.pop();
@@ -101,8 +98,8 @@
               rootSound = rootSound.prev.ref;
             }
             var string = ['E', 'A', 'D', 'G'][sound.string];
-            var step = sound.note.slide > 0? 1 : -1;
-            var outOfRange = sound.note.fret + sound.note.slide + step;
+            var step = sound.note.fret > sound.note.slide.endNote.fret? -1 : 1;
+            var outOfRange = sound.note.slide.endNote.fret + step;
             var resources = [];
             for (var i = sound.note.fret; i !== outOfRange; i += step) {
               resources.push('sounds/bass/{0}/{1}{2}'.format(rootSound.style, string, i));
@@ -111,7 +108,7 @@
           },
           slideCurve: function(sound, beatTime, timeSignature, slideStartOffset, slideEndOffset) {
             var duration = _this.noteDuration(sound, beatTime, timeSignature);
-            var steps = Math.abs(sound.note.slide);
+            var steps = Math.abs(sound.note.fret-sound.note.slide.endNote.fret);
             var curve = new Array(steps+2);
             curve[0] = Math.max(duration*slideStartOffset, 0.02);
             curve[curve.length-1] = Math.max(duration*slideEndOffset, 0.02);
@@ -169,35 +166,7 @@
             audio.endTime = startTime+duration;
             return [audio];
           }
-        },/*
-        {
-          accepts: function(sound) {
-            return sound.note.type === 'grace';
-          },
-          getResources: function(sound) {
-            var string = ['E', 'A', 'D', 'G'][sound.string];
-            return [
-              'sounds/bass/{0}/{1}{2}'.format(sound.style, string, sound.note.fret-2),
-              'sounds/bass/{0}/{1}{2}'.format(sound.style, string, sound.note.fret)
-            ];
-          },
-          prepareForPlayback: function(sound, startTime, beatTime, timeSignature) {
-            var duration = _this.noteDuration(sound, beatTime, timeSignature);
-
-            var audio1 = _this.createSoundAudio(sound, startTime);
-            var audio2 = _this.createSoundAudio(sound, startTime, 1);
-
-            audio1.duration = 0.075;
-            audio1.endTimme = startTime + audio1.duration;
-            audio2.duration = duration - audio1.duration;
-            audio2.endTimme = startTime + duration;
-
-            var audio = _this.composer.join(audio1, audio2);
-            audio.duration = duration;
-            audio.endTime = startTime+duration;
-            return [audio];
-          }
-        },*/
+        },
         {
           accepts: function(sound) {
             return sound.note.type === 'ghost';
