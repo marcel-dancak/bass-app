@@ -10,7 +10,7 @@ var merge = require('merge-stream');
 var path = require('path');
 
 
-var TARGET = 'dist/latest/';
+var TARGET = 'dist/v11/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -21,9 +21,14 @@ var DEV_CSS = 'src/styles/**/*.css';
  */
 
 gulp.task('devserver', function() {
+  var port = 3000;
+  var portArgIndex = process.argv.indexOf('--port');
+  if (portArgIndex != -1) {
+    port = parseInt(process.argv[portArgIndex+1]);
+  }
   connect.server({
     root: ['./', 'src/'],
-    port: 3000,
+    port: port,
     livereload: true
   });
 });
@@ -75,17 +80,41 @@ gulp.task('uglify', function() {
       'bower_components/angular/angular.min.js',
       'bower_components/angular-aria/angular-aria.min.js',
       'bower_components/angular-animate/angular-animate.min.js',
-      'bower_components/angular-sanitize/angular-sanitize.min.js',
-      'bower_components/angular-material/angular-material.js',
-      'bower_components/angular-native-dragdrop/draganddrop.js',
+      // 'bower_components/angular-sanitize/angular-sanitize.min.js',
+
+      'src/lib/**/*.js',
+
+      // 'bower_components/angular-material/angular-material.js',
+
+      'src/angular-material.module.js',
+      'bower_components/angular-material/modules/js/core/core.min.js',
+      // 'bower_components/angular-material/modules/js/core/default-theme.js',
+      'bower_components/angular-material/modules/js/backdrop/backdrop.min.js',
+      'bower_components/angular-material/modules/js/button/button.min.js',
+      'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
+      'bower_components/angular-material/modules/js/icon/icon.min.js',
+      'bower_components/angular-material/modules/js/input/input.min.js',
+      'bower_components/angular-material/modules/js/textField/textField.min.js',
+      // 'bower_components/angular-material/modules/js/list/list.min.js',
+      'bower_components/angular-material/modules/js/menu/menu.min.js',
+      'bower_components/angular-material/modules/js/select/select.min.js',
+      // 'bower_components/angular-material/modules/js/slider/slider.min.js',
+      'bower_components/angular-material/modules/js/tabs/tabs.min.js',
+      // 'bower_components/angular-material/modules/js/content/content.min.js',
+      // 'bower_components/angular-material/modules/js/whiteframe/whiteframe.min.js',
+      // 'bower_components/angular-material/modules/js/divider/divider.min.js',
+
+
       'bower_components/angular-resizable/src/angular-resizable.js',
       'bower_components/hamsterjs/hamster.js',
       'bower_components/angular-mousewheel/mousewheel.js',
       'bower_components/angular-swiper/dist/angular-swiper.js',
+      'bower_components/angularjs-slider/dist/rzslider.min.js',
+      'bower_components/file-saver/FileSaver.min.js',
 
 
-      'src/**/*.module.js',
-      'src/**/*.js',
+      'src/js/**/*.module.js',
+      'src/js/**/*.js',
     ]).pipe(ngAnnotate({ add: true })),
     gulp.src('src/**/*.html')
       .pipe(templateCache())
@@ -102,9 +131,29 @@ gulp.task('csss', function() {
   var minifyCss = require('gulp-minify-css');
   return merge(
       gulp.src([
-      'bower_components/angular-material/angular-material.css',
+       'bower_components/angular-material/angular-material.css',
+       /*
+      'src/angular-material.css',
+      'bower_components/angular-material/modules/css/angular-material-layouts.css',
+      'bower_components/angular-material/modules/js/backdrop/backdrop.min.css',
+      'bower_components/angular-material/modules/js/button/button.min.css',
+      'bower_components/angular-material/modules/js/checkbox/checkbox.min.css',
+
+      'bower_components/angular-material/modules/js/icon/icon.min.css',
+      'bower_components/angular-material/modules/js/input/input.min.css',
+      'bower_components/angular-material/modules/js/textField/textField.min.css',
+      'bower_components/angular-material/modules/js/menu/menu.min.css',
+      'bower_components/angular-material/modules/js/select/select.min.css',
+      // 'bower_components/angular-material/modules/js/slider/slider.min.css',
+      'bower_components/angular-material/modules/js/tabs/tabs.min.css',
+      'bower_components/angular-material/modules/js/whiteframe/whiteframe.min.css',
+      'bower_components/angular-material/modules/js/divider/divider.min.css',
+      'bower_components/angular-material/modules/js/list/list.min.css',
+      */
+
       'bower_components/angular-resizable/src/angular-resizable.css',
       'bower_components/swiper/dist/css/swiper.min.css',
+      'bower_components/angularjs-slider/dist/rzslider.css',
       'src/styles/**/*.css',
       '!src/styles/fonts.css'
     ])
@@ -113,7 +162,10 @@ gulp.task('csss', function() {
       .pipe(gulp.dest(TARGET + 'styles')),
 
     gulp.src('src/styles/icons.svg')
-      .pipe(gulp.dest(TARGET + 'styles'))
+      .pipe(gulp.dest(TARGET + 'styles')),
+
+    gulp.src('src/favicon-16x16.png')
+      .pipe(gulp.dest(TARGET))
 
     // gulp.src('src/styles/fonts/*')
     //   .pipe(gulp.dest(TARGET + 'styles/fonts'))
@@ -135,7 +187,7 @@ gulp.task('build', ['index-page', 'uglify', 'csss']);
 gulp.task('serve-deploy', function() {
   connect.server({
     root: [TARGET],
-    port: 3300,
+    port: 3000,
     livereload: true
   });
 });
