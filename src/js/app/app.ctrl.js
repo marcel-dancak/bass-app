@@ -34,7 +34,8 @@
       playbackRange: {
         start: 1,
         end: 1
-      }
+      },
+      graphEnabled: true
     };
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
@@ -378,7 +379,9 @@
         );
       }
 
-      audioVisualiser.beatSync(evt);
+      if ($scope.player.graphEnabled) {
+        audioVisualiser.beatSync(evt);
+      }
       timeline.beatSync(evt);
     }
 
@@ -400,8 +403,10 @@
 
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.player.bpm);
-      audioVisualiser.setBeatsCount($scope.slides.bars.length);
-      audioVisualiser.activate();
+      if ($scope.player.graphEnabled) {
+        audioVisualiser.setBeatsCount($scope.slides.bars.length);
+        audioVisualiser.activate();
+      }
       audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
       repeats = 1;

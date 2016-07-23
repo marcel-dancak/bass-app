@@ -1,11 +1,23 @@
+
 .audio-graph-container {
   border: solid #ccc;
   border-width: 1px 0;
   background-color: #f5f5f5;
   position: relative;
+  max-height: 10px;
+  visibility: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
+.graph-enabled .audio-graph-container {
+  max-height: 120px;
+  visibility: visible;
+}
+
 .audio-graph-container canvas {
   z-index: 200;
+  -webkit-user-select: none;
+  user-select: none;
+  pointer-events: none;
 }
 
 

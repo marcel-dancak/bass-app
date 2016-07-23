@@ -519,3 +519,19 @@ md-list-item.range-slider-item {
 .md-open-menu-container {
   display: block!important;
 }
+
+.audio-graph-toggle {
+  position: absolute;
+  min-width: 36px;
+  padding: 0;
+  margin: 0;
+  left: -48px;
+  top: -6px;
+  z-index: 50;
+}
+.audio-graph-toggle md-icon {
+  fill: #ccc;
+}
+.audio-graph-toggle.enabled md-icon {
+  fill: rgb(63,81,181);
+}

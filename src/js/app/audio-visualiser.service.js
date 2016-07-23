@@ -148,8 +148,13 @@
 
     AudioVisualiser.prototype.deactivate = function() {
       this.enabled = false;
-      this.input.disconnect(this.audioProcessor);
-      this.audioProcessor.disconnect(this.context.destination);
+      console.log(this.input);
+      try {
+        this.input.disconnect(this.audioProcessor);
+        this.audioProcessor.disconnect(this.context.destination);
+      } catch (ex) {
+        console.log(ex);
+      }
     };
 
     AudioVisualiser.prototype.beatSync = function(evt) {

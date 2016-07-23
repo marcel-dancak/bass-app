@@ -88,6 +88,13 @@
       <label>{{ dropNote.resizeNoteLength }}</label>
     </div>
 
+    <md-button
+      class="audio-graph-toggle no-hover"
+      ng-class="{enabled: player.graphEnabled}"
+      ng-click="player.graphEnabled = !player.graphEnabled">
+      <md-icon md-svg-icon="audio-signal"></md-icon>
+    </md-button>
+
     <div
       ng-include src="'views/bass_sound_form.html'">
     </div>
@@ -104,7 +111,8 @@
       override-parameters="{
         slidesPerGroup: slides.beatsPerSlide,
         roundLengths: true
-      }">
+      }"
+      ng-class="{'graph-enabled': player.graphEnabled}">
 
       <ks-swiper-slide
         ng-repeat="beat in slides.bass track by beat.id"
