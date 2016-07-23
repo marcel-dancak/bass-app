@@ -79,7 +79,7 @@
     var endIndex = parseInt(audio1.duration*44100);
     var cross1 = analyzeSignal(buffer1, endIndex-parseInt(waveLength*44100), searchMaxSize).crossIndex;
     var endOffset = (cross1 - endIndex)/44100;
-    console.log('Audio1 end offset: '+endOffset);
+    // console.log('Audio1 end offset: '+endOffset);
     var fadeStartTime = audio1.endTime+endOffset;
     audio1.gain.setValueCurveAtTime(fadeOut(audio1.sound.volume), fadeStartTime, waveLength-0.001);
     audio1.gain.setValueAtTime(0.00001, fadeStartTime+waveLength);
@@ -174,19 +174,18 @@
     var st = performance.now();
 
     var sounds = [];
-    var steps = Math.abs(sound.note.slide);
-    var direction = (sound.note.slide > 0)? 1 : -1;
+    var steps = Math.abs(sound.note.fret - sound.note.slide.endNote.fret);
+    var direction = (sound.note.fret > sound.note.slide.endNote.fret)? -1 : 1;
 
     var audio = prevAudio || this.player.createSoundAudio(sound, startTime, 0);
     var buffer = audio.source.buffer.getChannelData(0);
     var waveLength = fretWaveLength(sound.string, sound.note.fret);
     var searchMaxSize = parseInt(1.5*waveLength*44100);
 
-    console.log(curve[0]+' vs '+waveLength);
+    // console.log(curve[0]+' vs '+waveLength);
     var crossPointIndex = parseInt((audio.duration+curve[0])*44100);
     var info = analyzeSignal(buffer, crossPointIndex, searchMaxSize);
     var diff = info.crossIndex - crossPointIndex;
-    console.log(diff);
     // console.log(crossPointIndex+' vs '+info.crossIndex);
     crossPointIndex = info.crossIndex;
     audio.slide = {
@@ -201,8 +200,8 @@
 
     // console.log('add duration: '+audio.slide.crossPointDuration);
 
-    console.log('first slide sound start time: '+startTime);
-    console.log('amplitude: '+info.absoluteValue);
+    // console.log('first slide sound start time: '+startTime);
+    // console.log('amplitude: '+info.absoluteValue);
     audio.gain.setValueAtTime(audio.slide.volume, startTime);
     audio.duration += audio.slide.crossPointDuration;
     audio.endTime += audio.slide.crossPointDuration;
@@ -248,7 +247,7 @@
       } else {
         step = 1;
       }
-      console.log('Waves: {0} Step: {1}'.format(wavesCount, step));
+      // console.log('Waves: {0} Step: {1}'.format(wavesCount, step));
       searchMaxSize = parseInt(1.5*waveLength*44100);
 
       var nextAudio = this.player.createSoundAudio(sound, 0, i+step);

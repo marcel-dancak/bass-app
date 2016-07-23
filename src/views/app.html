@@ -71,13 +71,7 @@
     ng-controller="NoteController"
     ng-keyup="keyPressed($event)"
     ng-click="clearSelection($event)">
-<!--     <md-button
-      aria-label="Tunning"
-      class="bass-tunning-button">
-      <p ng-repeat="string in bass.strings | orderBy:string.index:'-'">
-        {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
-      </p>
-    </md-button> -->
+
     <div
       class="bass-preferences"
       ng-include src="'views/bass_board_form.html'">

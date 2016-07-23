@@ -471,7 +471,7 @@ md-select-menu:not(.md-overflow) md-content {
   background-color: transparent;
 }
 
-md-input-container.slide-field {
+/*md-input-container.slide-field {
   margin-left: 15px;
   position: relative;
 }
@@ -489,7 +489,7 @@ md-input-container.slide-field > span {
   color: #555;
   text-align: right;
   pointer-events: none;
-}
+}*/
 
 .bass-sound-container .label-wrapper {
   display: inline;
@@ -507,7 +507,7 @@ md-input-container.slide-field > span {
 }
 
 .bass-sound-container .slide-slash.up {
-  transform: rotate3d(0, 0, 1, 55deg);
+  transform: rotate3d(0, 0, 1, 55deg)!important;
 }
 
 /* #ff5722, #ff9800, #ffc107, #ffeb3b */

@@ -51,43 +51,29 @@
         <md-input-container flex>
           <label class="md-label">Pitch</label>
           <md-select
-            ng-disabled="menu.sound.note.type==='ghost'"
+            ng-disabled="menu.sound.style === 'ring' || menu.sound.note.type === 'ghost'"
             md-container-class="note-select-menu"
-            ng-model="menu.sound.note"
-            ng-model-options="{trackBy: '$value.code'}">
+            ng-model="menu.sound.note.code"
+            md-on-close="menu.soundPitchChanged(menu.sound.note)">
             <div
-              ng-repeat="note in bass.strings[menu.grid.string].notes"
+              ng-repeat="note in menu.fretsStringNotes"
               layout="row">
-              <span class="fret-index">( {{ $index }} )</span>
-              
+              <span class="fret-index">( {{ ::$index }} )</span>
+
               <md-option
                 flex
-                ng-if-end 
-                ng-value="{
-                  name: note.label[0],
-                  octave: note.octave,
-                  code: note.label[0]+note.octave,
-                  type: menu.sound.note.type,
-                  slide: menu.sound.note.slide,
-                  fret: $index
-                }">
-                {{ note.label[0] }} <sub>{{ note.octave }}</sub>
+                ng-if-end
+                ng-value="note[0].code">
+                {{ ::note[0].name }} <sub>{{ ::note[0].octave }}</sub>
               </md-option>
               <span
-                ng-if-start="note.label[1]">/
+                ng-if-start="note[1]">/
               </span>
               <md-option
                 flex
-                ng-if-end 
-                ng-value="{
-                  name: note.label[1],
-                  octave: note.octave,
-                  code: note.label[1]+note.octave,
-                  type: menu.sound.note.type,
-                  slide: menu.sound.note.slide,
-                  fret: $index
-                }">
-                {{ note.label[1] }} <sub>{{ note.octave }}</sub>
+                ng-if-end
+                ng-value="note[1].code">
+                {{ ::note[1].name }} <sub>{{ ::note[1].octave }}</sub>
               </md-option>
             </div>
           </md-select>
@@ -98,18 +84,74 @@
           <md-button
             aria-label="Next note"
             md-prevent-menu-close
-            ng-click="menu.nextNote()">
+            ng-click="menu.nextNote(menu.sound.note)">
             <md-icon md-svg-icon="plus"></md-icon>
           </md-button>
           <md-button
             aria-label="Previous note"
             md-prevent-menu-close
-            ng-click="menu.prevNote()">
+            ng-click="menu.prevNote(menu.sound.note)">
             <md-icon md-svg-icon="minus"></md-icon>
           </md-button>
         </div>
 
-        <md-input-container
+        <md-input-container flex
+          ng-if-start="menu.sound.note.type === 'slide'"
+          ng-init="
+            menu.sound.note.slide.endNote = menu.sound.note.slide.endNote || {
+              code: menu.sound.note.code,
+              name: menu.sound.note.name,
+              octave: menu.sound.note.octave,
+              fret: menu.sound.note.fret
+            }">
+          <label class="md-label">Slide To</label>
+          <md-select
+            md-container-class="note-select-menu"
+            ng-model="menu.sound.note.slide.endNote.code"
+            md-on-close="menu.soundPitchChanged(menu.sound.note.slide.endNote)"
+            >
+            <div
+              ng-repeat="note in menu.fretsStringNotes"
+              layout="row">
+              <span class="fret-index">( {{ ::$index }} )</span>
+              
+              <md-option
+                flex
+                ng-if-end 
+                ng-value="note[0].code">
+                {{ ::note[0].name }} <sub>{{ ::note[0].octave }}</sub>
+              </md-option>
+              <span
+                ng-if-start="note[1]">/
+              </span>
+              <md-option
+                flex
+                ng-if-end 
+                ng-value="note[1].code">
+                {{ ::note[1].name }} <sub>{{ ::note[1].octave }}</sub>
+              </md-option>
+            </div>
+          </md-select>
+        </md-input-container>
+        <div
+          ng-if-end
+          class="buttons-spinner"
+          layout="column">
+          <md-button
+            aria-label="Next note"
+            md-prevent-menu-close
+            ng-click="menu.nextNote(menu.sound.note.slide.endNote)">
+            <md-icon md-svg-icon="plus"></md-icon>
+          </md-button>
+          <md-button
+            aria-label="Previous note"
+            md-prevent-menu-close
+            ng-click="menu.prevNote(menu.sound.note.slide.endNote)">
+            <md-icon md-svg-icon="minus"></md-icon>
+          </md-button>
+        </div>
+
+        <!-- <md-input-container
           flex="50"
           class="slide-field"
           ng-if="menu.sound.note.type === 'slide'"
@@ -128,7 +170,7 @@
             {{ menu.slideEndNote.label[0] }}
             <sub>{{ menu.slideEndNote.octave }}</sub>)
           </span>
-        </md-input-container>
+        </md-input-container> -->
       </div>
 
       <div layout="row">
