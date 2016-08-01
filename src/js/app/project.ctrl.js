@@ -50,7 +50,7 @@
       $scope.section.timeSignature = sectionData.timeSignature;
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.end = sectionData.length + 1;
-      $scope.updateSwipersFilter();
+      $scope.updatePlaybackRange();
 
       $scope.slides.beatsPerView = sectionData.beatsPerView;
       $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;

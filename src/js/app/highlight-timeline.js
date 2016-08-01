@@ -7,20 +7,31 @@
 
   function HighlightTimeline(slides) {
     this.slides = slides;
+    // this.$ = new Swiper().$;
   }
 
+  HighlightTimeline.prototype._removeActiveClass = function() {
+    var activeElems = this.swiperElem.querySelectorAll('.swiper-slide .subbeat.active');
+    for (var i = 0; i < activeElems.length; i++) {
+      angular.element(activeElems[i]).removeClass('active');
+    }
+  };
+
   HighlightTimeline.prototype.start = function() {
-    this.currentSubbeatElem = null;
+    // this.currentSubbeatElem = null;
     this.activeTimers = {};
+    this.swiperElem = document.querySelector('.bar-swiper');
   };
 
   HighlightTimeline.prototype.stop = function() {
-    if (this.currentSubbeatElem) {
-      this.currentSubbeatElem.removeClass('active');
-    }
+    // if (this.currentSubbeatElem) {
+    //   this.currentSubbeatElem.removeClass('active');
+    // }
+    this._removeActiveClass();
     Object.keys(this.activeTimers).forEach(function(key) {
       clearTimeout(this.activeTimers[key]);
     }.bind(this));
+    this.swiperElem = null;
   };
 
   HighlightTimeline.prototype.beatSync = function(evt) {
@@ -35,11 +46,19 @@
         var timerKey = window.performance.now().toFixed(2);
         var timerId = setTimeout(function(key) {
           delete this.activeTimers[key];
-          if (this.currentSubbeatElem) {
-            this.currentSubbeatElem.removeClass('active');
+          // if (this.currentSubbeatElem) {
+          //   this.currentSubbeatElem.removeClass('active');
+          // }
+          // this.currentSubbeatElem = angular.element(document.getElementById(id));
+          // this.currentSubbeatElem.addClass('active');
+
+
+          this._removeActiveClass();
+          var nextActiveElems = this.swiperElem.querySelectorAll('.swiper-slide #'+id);
+          for (var i = 0; i < nextActiveElems.length; i++) {
+            angular.element(nextActiveElems[i]).addClass('active');
           }
-          this.currentSubbeatElem = angular.element(document.getElementById(id));
-          this.currentSubbeatElem.addClass('active');
+
         }.bind(this), 1000*(beatDelay+subbeatDelay), timerKey);
         this.activeTimers[timerKey] = timerId;
       }.bind(this));

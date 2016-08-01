@@ -11,6 +11,7 @@
         'angularResizable',
         'monospaced.mousewheel',
         'ksSwiper',
-        'rzModule'
+        'rzModule',
+        'sly'
     ]);
 })();

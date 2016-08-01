@@ -36,7 +36,8 @@
   height: 80%;
 }
 
-.bar-slide:last-child .bar-beat::after {
+.bar-slide.bar-end .bar-beat::after {
+/*.bar-slide:last-child .bar-beat::after {*/
   position: absolute;
   top: 0;
   right: -4px;
@@ -45,7 +46,8 @@
   width: 1px;
   border: solid #aaa;
   border-width: 0 2px;
-  z-index: 199;
+  background-color: white;
+  z-index: 200;
 }
 
 .bar-slide {
