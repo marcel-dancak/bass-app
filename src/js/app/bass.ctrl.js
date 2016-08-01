@@ -7,6 +7,7 @@
 
   function NoteController($scope, $timeout, $mdMenu, audioPlayer) {
     console.log('NOTE CONTROLLER');
+    console.log($scope);
     var noteLengthSymbols = {
       1: '𝅝',
       0.5: '𝅗𝅥',
@@ -37,11 +38,17 @@
       // console.log(stringNoteLabel);
     });
 
-    var notesLabels = [];
-    $scope.bass.notes.scaleNotes.forEach(function(note) {
-      notesLabels.push.apply(notesLabels, note.label);
-    });
-    $scope.notesLabels = notesLabels;
+    $timeout(function() {
+      // move elements with fixed positioning to the body
+      var dropElem = document.querySelector('.drop-note-area');
+      dropElem.remove();
+      document.body.appendChild(dropElem);
+
+      var menuElem = document.getElementById('bass-sound-menu');
+      menuElem.remove();
+      document.body.appendChild(menuElem);
+    }, 100);
+
     $scope.dropNote = {
       width: 0
     };
@@ -58,7 +65,6 @@
           });
         }
         var nextNote = this.inlineStringNotes[index+1];
-        console.log(nextNote);
         if (nextNote) {
           note.code = nextNote.code;
           this.soundPitchChanged(note);
@@ -347,7 +353,13 @@
         console.log(transferDataText);
 
         // compute width of the note
-        var beatElem = document.getElementById("bass_1_1_1_0").parentElement;
+        console.log($scope.barSwiper.activeIndex);
+        var bar = 1 + parseInt(($scope.barSwiper.activeIndex) / $scope.section.timeSignature.top);
+        var beat = 1 + ($scope.barSwiper.activeIndex % $scope.section.timeSignature.top);
+        var beatElem = document.getElementById("bass_{0}_{1}_1_0".format(bar, beat)).parentElement;
+
+        // console.log(beatElem);
+        // console.log(beatElem.clientWidth);
         var beatWidth = beatElem.clientWidth;
         var width = (dragData.sound.noteLength)?
             dragData.sound.noteLength.length * $scope.section.timeSignature.bottom * beatWidth :
@@ -360,6 +372,7 @@
         angular.extend(dropGrid.sound, dragSound);
         dropGrid.sound.string = dropGrid.string;
         audioPlayer.fetchSoundResources(dropGrid.sound);
+        $scope.updateBassGrid(dropGrid);
       }
     };
 
@@ -383,6 +396,7 @@
       onDrop: function(evt, dragData, dropGrid) {
         angular.extend(dropGrid.sound, dragData.sound);
         dropGrid.sound.string = dropGrid.string;
+        $scope.updateBassGrid(dropGrid);
 
         if (evt.dataTransfer.dropEffect === "move") {
           var sourceSound = section.bassSubbeat(dragData.bar, dragData.beat, dragData.subbeat)[dragData.string].sound;
@@ -705,6 +719,7 @@
       // $scope.menu.element.css('top', 32+box.top+'px');
       $scope.menu.element.css('left', (evt.clientX-20)+'px');
       $scope.menu.element.css('top', 32+box.top+'px');
+      console.log($scope.menu.element);
       $mdMenu.hide().then(function() {
         grid.sound.string = grid.string;
         $scope.menu.sound = grid.sound;

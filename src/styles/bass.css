@@ -10,7 +10,7 @@
 }
 .graph-enabled .audio-graph-container {
   max-height: 120px;
-  visibility: visible;
+  visibility: inherit;
 }
 
 .audio-graph-container canvas {
@@ -65,8 +65,8 @@
 }
 
 .bass-board-container {
-  margin: 0px 30px 40px 65px;
-  position: relative;
+  margin: 0px 30px 0 65px;
+  xposition: relative;
   outline: none;
 }
 
