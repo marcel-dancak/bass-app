@@ -55,6 +55,7 @@
         if (instrument === 'bass') {
           var bassBeat = section.bassBeat(barIndex, beatIndex);
           bassClipboard.push({
+            bar: barIndex,
             beat: beatIndex,
             subdivision: bassBeat.subdivision,
             sounds: section.getBassSounds(bassBeat)
@@ -63,6 +64,7 @@
         if (instrument === 'drums') {
           var drumsBeat = section.drumsBeat(barIndex, beatIndex);
           drumsClipboard.push({
+            bar: barIndex,
             beat: beatIndex,
             subdivision: drumsBeat.subdivision,
             sounds: section.getDrumsSounds(drumsBeat)
@@ -75,6 +77,7 @@
       console.log('Paste bar: '+barIndex);
       var section = $scope.section;
 
+      var barOffset = barIndex - bassClipboard[0].bar;
       // paste bass sounds
       bassClipboard.forEach(function(beat) {
         var destBassBeat = section.bassBeat(barIndex, beat.beat);
@@ -85,8 +88,18 @@
         }
         beat.sounds.forEach(function(bassSound) {
           var subbeat = $scope.section.bassSubbeat(barIndex, beat.beat, bassSound.subbeat);
-          angular.extend(subbeat[bassSound.sound.string].sound, bassSound.sound);
+          var destSound = subbeat[bassSound.sound.string].sound;
+          angular.extend(destSound, angular.copy(bassSound.sound));
+          if (destSound.next) {
+            destSound.next.bar += barOffset;
+            destSound.next.ref = undefined;
+          }
+          if (destSound.prev) {
+            destSound.prev.bar += barOffset;
+            destSound.prev.ref = undefined;
+          }
         });
+        section.updateBassReferences(destBassBeat);
       });
 
       // paste drum sounds
@@ -102,12 +115,16 @@
 
     $scope.clearBar = function(barIndex, instrument) {
       var bar = $scope.section.bars[barIndex-1];
-      bar.bassBeats.forEach(function(bassBeat) {
-        $scope.section.clearBassBeat(bassBeat);
-      });
-      bar.drumsBeats.forEach(function(drumsBeat) {
-        $scope.section.clearDrumsBeat(drumsBeat);
-      });
+      if (instrument === 'bass') {
+        bar.bassBeats.forEach(function(bassBeat) {
+          $scope.section.clearBassBeat(bassBeat);
+        });
+      }
+      if (instrument === 'drums') {
+        bar.drumsBeats.forEach(function(drumsBeat) {
+          $scope.section.clearDrumsBeat(drumsBeat);
+        });
+      }
     };
 
     $scope.bassClipboard = bassClipboard;

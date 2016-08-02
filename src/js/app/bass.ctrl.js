@@ -90,6 +90,9 @@
         var nextSound = this.sound.next;
         while (nextSound) {
           nextSound = nextSound.ref;
+          if (nextSound.style === 'hammer' || nextSound.style === 'pull') {
+            break;
+          }
           var prevSound = nextSound.prev.ref;
           var prevEndNote = prevSound.note.type === 'slide'? prevSound.note.slide.endNote : prevSound.note;
 
@@ -246,6 +249,7 @@
       // console.log(dropGrid);
       dragHandler.onDrop(evt, dragData, dropGrid);
       $scope.dropNote.visible = false;
+      $scope.updateBassGrid(dropGrid);
 
       $timeout(function() {
         $scope.selectGrid(evt, dropGrid);
@@ -254,9 +258,6 @@
     };
 
     $scope.updateBassGrid = function(grid) {
-      // if (Number.isInteger(grid.sound.note.slide)) {
-      //   grid.sound.note.slide = {};
-      // }
       var sound = grid.sound;
       if (sound.note && sound.note.type !== 'ghost') {
         sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
@@ -372,7 +373,6 @@
         angular.extend(dropGrid.sound, dragSound);
         dropGrid.sound.string = dropGrid.string;
         audioPlayer.fetchSoundResources(dropGrid.sound);
-        $scope.updateBassGrid(dropGrid);
       }
     };
 
@@ -396,7 +396,6 @@
       onDrop: function(evt, dragData, dropGrid) {
         angular.extend(dropGrid.sound, dragData.sound);
         dropGrid.sound.string = dropGrid.string;
-        $scope.updateBassGrid(dropGrid);
 
         if (evt.dataTransfer.dropEffect === "move") {
           var sourceSound = section.bassSubbeat(dragData.bar, dragData.beat, dragData.subbeat)[dragData.string].sound;
@@ -467,7 +466,6 @@
         function copySound(sound, destGrid) {
           angular.extend(destGrid.sound, sound);
           destGrid.sound.string = destGrid.string;
-          // $scope.updateBassGrid(destGrid);
         }
 
         var dragSounds = this.sourceSoundGrids.map(function(grid) {

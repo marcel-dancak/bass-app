@@ -56,6 +56,10 @@
       $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;
       $scope.updateSwipers();
 
+      $timeout(function () {
+        $scope.$root.$broadcast('rzSliderForceRender');
+      });
+
       $timeout(function() {
 
         // override selected section data
@@ -76,6 +80,10 @@
             var subbeat = $scope.section.drumsSubbeat(beat.bar, beat.beat, drumSound.subbeat);
             subbeat[drumSound.drum].volume = drumSound.volume;
           });
+        });
+        // update references
+        $scope.section.forEachBeat(function(beat) {
+          $scope.section.updateBassReferences(beat.bass);
         });
       });
     }

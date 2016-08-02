@@ -207,4 +207,20 @@
     });
   };
 
+  // update references
+  Section.prototype.updateBassReferences = function(beat) {
+    var sounds = this.getBassSounds(beat);
+    for (var i = 0; i < sounds.length; i++) {
+      var sound = sounds[i].sound;
+      if (sound.prev && angular.isUndefined(sound.prev.ref)) {
+        Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
+        sound.prev.ref = this.bassSubbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat)[sound.prev.string].sound;
+      }
+      if (sound.next && angular.isUndefined(sound.next.ref)) {
+        Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
+        sound.next.ref = this.bassSubbeat(sound.next.bar, sound.next.beat, sound.next.subbeat)[sound.next.string].sound;
+      }
+    }
+  };
+
 })();
