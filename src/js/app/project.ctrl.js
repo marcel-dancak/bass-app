@@ -173,16 +173,21 @@
       clearSection();
 
       $scope.project.sectionName = sectionInfo.name;
-      // var storageKey = 'v8.section.'+sectionInfo.name;
-      var storageKey = 'v9.section.'+sectionInfo.id;
 
-      var data = localStorage.getItem(storageKey);
-      if (!data) {
-        return;
+      var sectionData;
+      if ($scope.projectData) {
+        sectionData = $scope.projectData[index];
       }
-      var sectionData = JSON.parse(data);
-      console.log(sectionData);
-      loadSectionData(sectionData);
+      if (!sectionData) {
+        var storageKey = 'v9.section.'+sectionInfo.id;
+        var data = localStorage.getItem(storageKey);
+        if (data) {
+          sectionData = JSON.parse(data);
+        }
+      }
+      if (sectionData) {
+        loadSectionData(sectionData);
+      }
     };
 
     /*
@@ -318,5 +323,20 @@
     console.log(projectDropElem);
     projectDropElem.addEventListener('dragover', handleDragOver, false);
     projectDropElem.addEventListener('drop', handleFileSelect, false);
+
+
+    function queryStringParam(item) {
+      var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+      if (svalue !== null) {
+        return decodeURIComponent(svalue ? svalue[1] : svalue);
+      }
+    }
+    var startupProject = queryStringParam("PROJECT");
+    if (startupProject) {
+      $http.get(startupProject).then(function(response) {
+        $scope.project.sections = response.data.index;
+        $scope.projectData = response.data.sections;
+      });
+    }
   }
 })();
