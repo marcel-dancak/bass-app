@@ -72,9 +72,16 @@
 
 .bass-board {
   width: 100%;
-  height: 144px;
+  xheight: 144px;
   position: relative;
   margin-top: 36px;
+}
+
+.strings-4 .bass-board {
+  height: 144px;
+}
+.strings-5 .bass-board {
+  height: 180px;
 }
 
 .bass-tunning-button {
@@ -649,4 +656,17 @@ md-input-container.slide-field > span {
 
 .bass-sound-wrapper.pop .top-label::after {
   content: "P";
+}
+
+.bass-subbeat.string-0 .top-label {
+  top: -140px;
+}
+.bass-subbeat.string-1 .top-label {
+  top: -104px;
+}
+.bass-subbeat.string-2 .top-label {
+  top: -68px;
+}
+.bass-subbeat.string-3 .top-label {
+  top: -32px;
 }

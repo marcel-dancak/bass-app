@@ -59,12 +59,11 @@
   };
 
   function soundWaveLength(sound) {
-    return [0.024272, 0.018182, 0.01362, 0.0102041][sound.string]/Math.pow(Math.pow(2, 1/12), sound.note.fret);
+    return [0.024272, 0.018182, 0.01362, 0.0102041][sound.string.index]/Math.pow(Math.pow(2, 1/12), sound.note.fret);
   }
 
   function fretWaveLength(string, fret) {
-    var stringIndex = Number.isInteger(string)? string : ['E', 'A', 'D', 'G'].indexOf(string);
-    var openLength = [0.024272, 0.018182, 0.01362, 0.0102041][stringIndex];
+    var openLength = [0.024272, 0.018182, 0.01362, 0.0102041][string.index];
     return openLength/Math.pow(Math.pow(2, 1/12), fret);
   }
 
@@ -442,7 +441,7 @@
     var timeSignature = {top: 4, bottom: 4};
     var sound = {
       style: 'slap',
-      string: 1,
+      string: {label: 'A'},
       note: {
         fret: 0,
         type: 'slide',
@@ -497,7 +496,80 @@
 
     }.bind(this));
     console.log(resources);
-
   };
+
+
+  function findBeginning(buffer, offset, threshold) {
+    var end = buffer.length;
+    var index = offset;
+    var value;
+    for (var i = offset; i < end; i += 10) {
+      value = buffer[i];
+      if (value > threshold) {
+        index = i;
+        break;
+      }
+    }
+    return findCrossPoint(buffer, index);
+  };
+
+  AudioComposer.prototype.generateSamples = function(filename, string, startFret) {
+    console.log('generateSamples');
+    var context = new OfflineAudioContext(1, 44100*10, 44100);
+
+    var bufferLoader = new BufferLoader(context, '/bass-records/');
+    bufferLoader.format = 'wav';
+    bufferLoader.loadResource(filename, function(audioData) {
+      console.log('sound loaded');
+      var source = context.createBufferSource();
+      source.buffer = audioData;
+      var buffer = source.buffer.getChannelData(0);
+
+      var offsets = [];
+      var start = 0;
+      var blockSize = 22050;
+      var info;
+
+      for (var i = 0; i < 13; i++) {
+        info = analyzeSignal(buffer, start, blockSize);
+        while (info.absoluteValue < 0.2) {
+          start += blockSize;
+          info = analyzeSignal(buffer, start, blockSize);
+        }
+        start = findBeginning(buffer, start, 0.2);
+        var endIndex = analyzeSignal(buffer, start+7*44100, parseInt(0.024*44100)).crossIndex;
+        offsets.push([start, endIndex]);
+
+        start = endIndex;
+        info = analyzeSignal(buffer, start, blockSize);
+        while (info.absoluteValue > 0.2) {
+          start += blockSize;
+          info = analyzeSignal(buffer, start, blockSize);
+        }
+      }
+      console.log(offsets);
+
+      for (var sampleIndex = 0; sampleIndex < offsets.length; sampleIndex++) {
+        var start = offsets[sampleIndex][0];
+        var end = offsets[sampleIndex][1];
+
+        var sampleContext = new OfflineAudioContext(1, end - start, 44100);
+        var source = sampleContext.createBufferSource();
+        source.connect(sampleContext.destination);
+        source.buffer = audioData;
+        sampleContext.fret = startFret + sampleIndex;
+
+        source.start(0, start/44100, end/44100-start/44100);
+        sampleContext.startRendering().then(function(renderedBuffer) {
+          var wav = audioBufferToWav(renderedBuffer);
+          var blob = new window.Blob([ new DataView(wav) ], {
+            type: 'audio/wav'
+          });
+          saveAs(blob, '{0}{1}.wav'.format(string, this.fret));
+        }.bind(sampleContext));
+      }
+
+    }.bind(this));
+  }
 
 })();

@@ -49,27 +49,82 @@
         var fret = index - $scope.bass.strings[stringIndex].noteIndex;
         return (fret >= 0 && fret <= 24)? fret : -1;
       },
+      xstrings: [
+        {
+          label: 'B',
+          octave: 0,
+          index: 0,
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['B0']),
+          toJSON: function() {
+            return this.index;
+          }
+        }, {
+          label: 'E',
+          octave: 1,
+          index: 1,
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1']),
+          toJSON: function() {
+            return this.index;
+          }
+        }, {
+          label: 'A',
+          octave: 1,
+          index: 2,
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['A1']),
+          toJSON: function() {
+            return this.index;
+          }
+        }, {
+          label: 'D',
+          octave: 2,
+          index: 3,
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['D2']),
+          toJSON: function() {
+            return this.index;
+          }
+        }, {
+          label: 'G',
+          octave: 2,
+          index: 4,
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['G2']),
+          toJSON: function() {
+            return this.index;
+          }
+        }
+      ],
       strings: [
         {
           label: 'E',
           octave: 1,
           index: 0,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1'])
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1']),
+          toJSON: function() {
+            return this.index;
+          }
         }, {
           label: 'A',
           octave: 1,
           index: 1,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['A1'])
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['A1']),
+          toJSON: function() {
+            return this.index;
+          }
         }, {
           label: 'D',
           octave: 2,
           index: 2,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['D2'])
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['D2']),
+          toJSON: function() {
+            return this.index;
+          }
         }, {
           label: 'G',
           octave: 2,
           index: 3,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['G2'])
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['G2']),
+          toJSON: function() {
+            return this.index;
+          }
         }
       ],
       playingStyles: [
@@ -535,6 +590,7 @@
       console.log(swiper);
       $scope.drumsSwiper = swiper;
       $scope.barSwiper.params.control = [$scope.bassSwiper, $scope.drumsSwiper];
+      $scope.updatePlaybackRange();
       $scope.updateSwipers();
       calculateVisibleSlides();
       updateSubbeatsVisibility();

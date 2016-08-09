@@ -26,10 +26,10 @@
         bar: beat.bar,
         beat: beat.beat,
         subbeat: $parent.$index+1,
-        string: string.index,
+        string: string,
         sound: bassSubbeats[string.index].sound
       }"
-      class="bass-subbeat"
+      class="bass-subbeat string-{{ ::string.index }}"
       ng-style="{
         left: (($parent.$index/beat.subdivision)*(beat.subdivision===4? 100 : 150))+'%'
       }">
@@ -65,10 +65,7 @@
         }">
 
         <div
-          class="top-label"
-          ng-style="{
-            top: (-32-36*(3-string.index))+'px'
-          }">
+          class="top-label">
         </div>
 
         <div

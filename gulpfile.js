@@ -10,7 +10,7 @@ var merge = require('merge-stream');
 var path = require('path');
 
 
-var TARGET = 'dist/v11/';
+var TARGET = 'dist/v13/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -98,8 +98,9 @@ gulp.task('uglify', function() {
       // 'bower_components/angular-material/modules/js/list/list.min.js',
       'bower_components/angular-material/modules/js/menu/menu.min.js',
       'bower_components/angular-material/modules/js/select/select.min.js',
+      'bower_components/angular-material/modules/js/tooltip/tooltip.min.js',
       // 'bower_components/angular-material/modules/js/slider/slider.min.js',
-      'bower_components/angular-material/modules/js/tabs/tabs.min.js',
+      // 'bower_components/angular-material/modules/js/tabs/tabs.min.js',
       // 'bower_components/angular-material/modules/js/content/content.min.js',
       // 'bower_components/angular-material/modules/js/whiteframe/whiteframe.min.js',
       // 'bower_components/angular-material/modules/js/divider/divider.min.js',

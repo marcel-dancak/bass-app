@@ -73,7 +73,7 @@
             }
             beat.bass.sounds.forEach(function(bassSound) {
               var subbeat = $scope.section.bassSubbeat(beat.bar, beat.beat, bassSound.subbeat);
-              angular.extend(subbeat[bassSound.sound.string].sound, bassSound.sound);
+              angular.extend(subbeat[bassSound.sound.string.index].sound, bassSound.sound);
             });
           }
           beat.drums.sounds.forEach(function(drumSound) {
@@ -182,7 +182,12 @@
         var storageKey = 'v9.section.'+sectionInfo.id;
         var data = localStorage.getItem(storageKey);
         if (data) {
-          sectionData = JSON.parse(data);
+          sectionData = JSON.parse(data, function(k, v) {
+            if (k === 'string') {
+              return $scope.bass.strings[v];
+            }
+            return v;
+          });
         }
       }
       if (sectionData) {

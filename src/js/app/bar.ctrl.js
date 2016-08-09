@@ -88,15 +88,15 @@
         }
         beat.sounds.forEach(function(bassSound) {
           var subbeat = $scope.section.bassSubbeat(barIndex, beat.beat, bassSound.subbeat);
-          var destSound = subbeat[bassSound.sound.string].sound;
+          var destSound = subbeat[bassSound.sound.string.index].sound;
           angular.extend(destSound, angular.copy(bassSound.sound));
           if (destSound.next) {
             destSound.next.bar += barOffset;
-            destSound.next.ref = undefined;
+            delete destSound.next.ref;
           }
           if (destSound.prev) {
             destSound.prev.bar += barOffset;
-            destSound.prev.ref = undefined;
+            delete destSound.prev.ref;
           }
         });
         section.updateBassReferences(destBassBeat);

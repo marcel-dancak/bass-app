@@ -66,7 +66,7 @@
     <div
       ng-show="ui.instrumentIndex === 0"
       class="instrument-tab bass-board-container"
-      ng-class="bass.settings.label"
+      ng-class="[bass.settings.label, 'strings-'+bass.strings.length]"
       ng-controller="NoteController"
       ng-keyup="keyPressed($event)"
       ng-click="clearSelection($event)"

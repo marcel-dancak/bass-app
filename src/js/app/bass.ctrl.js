@@ -260,7 +260,7 @@
     $scope.updateBassGrid = function(grid) {
       var sound = grid.sound;
       if (sound.note && sound.note.type !== 'ghost') {
-        sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
+        sound.note.fret = $scope.bass.stringFret(sound.string.index, sound.note);
 
         if (sound.noteLength) {
           var length = sound.noteLength.length;
@@ -537,7 +537,7 @@
       if ($data.sound.note.type === 'ghost') {
         return true;
       }
-      var fret = $scope.bass.stringFret(grid.string, $data.sound.note);
+      var fret = $scope.bass.stringFret(grid.string.index, $data.sound.note);
       return fret !== -1;
     };
 
@@ -559,7 +559,7 @@
         coords.bar,
         coords.beat,
         coords.subbeat,
-        coords.string
+        coords.string.index
       );
       var elem = document.getElementById(id);
       if (elem) {
@@ -724,7 +724,7 @@
         $scope.menu.grid = grid;
         var fretsStringNotes = [];
         var inlineStringNotes = [];
-        $scope.bass.strings[grid.string].notes.forEach(function(note, fret) {
+        grid.string.notes.forEach(function(note, fret) {
           var notes = note.label.map(function(label) {
 
             return {
