@@ -140,6 +140,7 @@
     var closestWidth;
     $scope.onResizeStart = function(grid, info, subdivision) {
       // console.log('onResizeStart');
+      $scope.selectGrid({target: info.element[0]}, grid);
       var noteLengths = [
         {
           length: 1,
@@ -183,14 +184,19 @@
         widthToLength[width] = noteLength;
         return width;
       });
-      var containerElem = info.element.parent()[0];
-      $scope.dropNote.visible = true;
-      $scope.dropNote.width = info.width;
-      var box = containerElem.getBoundingClientRect();
-      $scope.dropNote.left = box.left;
-      $scope.dropNote.top = box.top;
 
       $scope.$apply();
+
+      $timeout(function() {
+        var containerElem = info.element.parent()[0];
+        // $scope.selected.element
+        $scope.dropNote.visible = true;
+        $scope.dropNote.width = info.width;
+        var box = containerElem.getBoundingClientRect();
+        $scope.dropNote.left = box.left;
+        $scope.dropNote.top = box.top;
+      }, 10);
+
     };
 
     $scope.onResizeEnd = function(grid, info, evt) {
