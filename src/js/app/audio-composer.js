@@ -59,11 +59,11 @@
   };
 
   function soundWaveLength(sound) {
-    return [0.024272, 0.018182, 0.01362, 0.0102041][sound.string.index]/Math.pow(Math.pow(2, 1/12), sound.note.fret);
+    return [0.0324, 0.024272, 0.018182, 0.01362, 0.0102041][sound.string.index]/Math.pow(Math.pow(2, 1/12), sound.note.fret);
   }
 
   function fretWaveLength(string, fret) {
-    var openLength = [0.024272, 0.018182, 0.01362, 0.0102041][string.index];
+    var openLength = [0.0324, 0.024272, 0.018182, 0.01362, 0.0102041][string.index];
     return openLength/Math.pow(Math.pow(2, 1/12), fret);
   }
 

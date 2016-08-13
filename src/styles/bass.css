@@ -671,14 +671,17 @@ md-input-container.slide-field > span {
 }
 
 .bass-subbeat.string-0 .top-label {
-  top: -140px;
+  top: -176px;
 }
 .bass-subbeat.string-1 .top-label {
-  top: -104px;
+  top: -140px;
 }
 .bass-subbeat.string-2 .top-label {
-  top: -68px;
+  top: -104px;
 }
 .bass-subbeat.string-3 .top-label {
+  top: -68px;
+}
+.bass-subbeat.string-4 .top-label {
   top: -32px;
 }
