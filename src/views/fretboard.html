@@ -4,7 +4,7 @@
 
   <div class="ghost-notes-container">
     <div
-      ng-repeat="string in ::bass.strings | orderBy:string.index:'-'"
+      ng-repeat="string in bass.strings | orderBy:string.index:'-' track by string.index"
       class="ghost-note"
       ng-click="playBassSound({
         note: {
@@ -35,14 +35,14 @@
         <tr>
           <th class="fret-index"
             ng-repeat="fret in [].constructor(25) | limitTo: fretboard.size+1 track by $index">
-            {{ $index }}
+            {{ ::$index }}
           </th>
         </tr>
       </thead>
 
       <tbody>
         <tr
-          ng-repeat="string in ::bass.strings | orderBy:string.index:'-'"
+          ng-repeat="string in bass.strings | orderBy:string.index:'-' track by string.index"
           class="string-row">
 
           <td
@@ -113,7 +113,7 @@
             ['𝅘𝅥𝅮', 'Eighth', 0.125],
             ['𝅘𝅥𝅯', 'Sixteenth', 0.0625]
           ]"
-          ng-value="{{ value[2] }}">
+          ng-value="{{ ::value[2] }}">
           <span class="note-symbol">{{ ::value[0] }}</span>
           <span class="note-length-title"> {{ ::value[1] }}</span>
         </md-option>

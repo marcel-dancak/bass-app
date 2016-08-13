@@ -11,9 +11,11 @@
   }
 
   HighlightTimeline.prototype._removeActiveClass = function() {
-    var activeElems = this.swiperElem.querySelectorAll('.swiper-slide .subbeat.active');
-    for (var i = 0; i < activeElems.length; i++) {
-      angular.element(activeElems[i]).removeClass('active');
+    if (this.swiperElem) {
+      var activeElems = this.swiperElem.querySelectorAll('.swiper-slide .subbeat.active');
+      for (var i = 0; i < activeElems.length; i++) {
+        angular.element(activeElems[i]).removeClass('active');
+      }
     }
   };
 

@@ -77,7 +77,7 @@
       console.log('Paste bar: '+barIndex);
       var section = $scope.section;
 
-      var barOffset = barIndex - bassClipboard[0].bar;
+      var barOffset = barIndex - (bassClipboard[0] || drumsClipboard[0]).bar;
       // paste bass sounds
       bassClipboard.forEach(function(beat) {
         var destBassBeat = section.bassBeat(barIndex, beat.beat);

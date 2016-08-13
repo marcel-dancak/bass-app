@@ -53,6 +53,9 @@
   font-size: 13px;
 }
 
+.fret-box.octave-0 {
+  background-color: #f44336;
+}
 .fret-box.octave-1 {
   background-color: #ff5722;
 }

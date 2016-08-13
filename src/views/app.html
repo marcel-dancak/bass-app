@@ -67,7 +67,7 @@
       ng-show="ui.instrumentIndex === 0"
       class="instrument-tab bass-board-container"
       ng-class="[bass.settings.label, 'strings-'+bass.strings.length]"
-      ng-controller="NoteController"
+      ng-controller="BassController"
       ng-keyup="keyPressed($event)"
       ng-click="clearSelection($event)"
       layout="column">
@@ -76,7 +76,7 @@
         class="drop-note-area"
         ng-style="{
           width: dropNote.width+'px',
-          left: dropNote.left===3? '-5000px' : dropNote.left+'px',
+          left: dropNote.left+'px',
           top: dropNote.top+'px',
           opacity: dropNote.visible? 1 : 0
         }">

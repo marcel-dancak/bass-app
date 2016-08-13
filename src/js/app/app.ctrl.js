@@ -43,88 +43,38 @@
     var bassNotes = new Notes('B0', 'G4');
     $scope.bass = {
       notes: bassNotes,
-      stringFret: function(stringIndex, note) {
+      stringFret: function(string, note) {
         var noteName = note.name + note.octave;
         var index = bassNotes.list.indexOf(bassNotes.map[noteName]);
-        var fret = index - $scope.bass.strings[stringIndex].noteIndex;
+        var fret = index - $scope.bass.strings[string.label].noteIndex;
         return (fret >= 0 && fret <= 24)? fret : -1;
       },
-      xstrings: [
+      allStrings: [
         {
           label: 'B',
           octave: 0,
           index: 0,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['B0']),
-          toJSON: function() {
-            return this.index;
-          }
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['B0'])
         }, {
           label: 'E',
           octave: 1,
           index: 1,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1']),
-          toJSON: function() {
-            return this.index;
-          }
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1'])
         }, {
           label: 'A',
           octave: 1,
           index: 2,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['A1']),
-          toJSON: function() {
-            return this.index;
-          }
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['A1'])
         }, {
           label: 'D',
           octave: 2,
           index: 3,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['D2']),
-          toJSON: function() {
-            return this.index;
-          }
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['D2'])
         }, {
           label: 'G',
           octave: 2,
           index: 4,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['G2']),
-          toJSON: function() {
-            return this.index;
-          }
-        }
-      ],
-      strings: [
-        {
-          label: 'E',
-          octave: 1,
-          index: 0,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['E1']),
-          toJSON: function() {
-            return this.index;
-          }
-        }, {
-          label: 'A',
-          octave: 1,
-          index: 1,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['A1']),
-          toJSON: function() {
-            return this.index;
-          }
-        }, {
-          label: 'D',
-          octave: 2,
-          index: 2,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['D2']),
-          toJSON: function() {
-            return this.index;
-          }
-        }, {
-          label: 'G',
-          octave: 2,
-          index: 3,
-          noteIndex: bassNotes.list.indexOf(bassNotes.map['G2']),
-          toJSON: function() {
-            return this.index;
-          }
+          noteIndex: bassNotes.list.indexOf(bassNotes.map['G2'])
         }
       ],
       playingStyles: [
@@ -155,7 +105,18 @@
         }
       ],
       settings: {
-        label: 'name-and-fret'
+        label: 'name-and-fret',
+        strings: 'EADG'
+      },
+      initStrings: function (layout) {
+        var first = layout === 'BEADG'? 0 : 1;
+        this.strings = this.allStrings.slice(first);
+        this.strings.forEach(function(string) {
+          string.toJSON = function() {
+            return this.label;
+          }
+          this.strings[string.label] = string;
+        }, this);
       }
     };
     $scope.drums = [
@@ -192,13 +153,17 @@
       }
     ];
 
-    $scope.section = new Section($scope.bass, $scope.drums, {
-      timeSignature: {
-        top: 4,
-        bottom: 4
-      },
-      length: 4
-    });
+    $scope.section = new Section(
+      $scope.bass,
+      $scope.drums,
+      {
+        timeSignature: {
+          top: 4,
+          bottom: 4
+        },
+        length: 4
+      }
+    );
     $scope.player.playbackRange.end = $scope.section.length + 1;
 
     // Reference for debugging
@@ -313,6 +278,7 @@
     $scope.updateSwipers = function() {
       var reinitializeSlides = false;
       var updateSlidesSize = false;
+      var updateVisibleSlides = false;
       var swiperConfig = $scope.slides.swiperConfig;
 
       var firstBar = $scope.player.playbackRange.start;
@@ -322,22 +288,9 @@
 
       if (firstSlide !== swiperConfig.firstSlide || lastSlide !== swiperConfig.lastSlide) {
         console.log('Swiper range changed: First Slide: {0} Last Slide: {1}'.format(firstSlide, lastSlide));
-        swiperConfig.firstSlide = firstSlide;
-        swiperConfig.lastSlide = lastSlide;
-        for (var i = 0; i < $scope.slides.bars.length; i++) {
-          var display = (i < firstSlide || i > lastSlide)? 'none' : '';
-          $scope.barSwiper.wrapper[0].children[i].style.display = display;
-          $scope.bassSwiper.wrapper[0].children[i].style.display = display;
-          $scope.drumsSwiper.wrapper[0].children[i].style.display = display;
-        }
-
-        updateSlidesSize = true;
-        // $scope.barSwiper.update();
-        // $scope.bassSwiper.update();
-        // $scope.drumsSwiper.update();
-        var Dom7 = $scope.barSwiper.$;
-        Dom7($scope.barSwiper.wrapper[0].querySelector('.bar-end')).removeClass('bar-end');
-        Dom7($scope.barSwiper.slides[lastSlide]).addClass('bar-end');
+        updateVisibleSlides = true;
+        reinitializeSlides = true;
+        //updateSlidesSize = true;
       }
       if ($scope.section.length !== swiperConfig.barsCount) {
         if ($scope.section.length > 0 && $scope.section.length <= 24) {
@@ -429,6 +382,25 @@
           console.log('Fix slide something ...');
           $scope.barSwiper.slideTo($scope.barSwiper.activeIndex, 0, true);
         }
+      }
+      if (updateVisibleSlides) {
+        $timeout(function() { // wait for DOM update after
+          swiperConfig.firstSlide = firstSlide;
+          swiperConfig.lastSlide = lastSlide;
+          for (var i = 0; i < $scope.slides.bars.length; i++) {
+            var display = (i < firstSlide || i > lastSlide)? 'none' : '';
+            $scope.barSwiper.wrapper[0].children[i].style.display = display;
+            $scope.bassSwiper.wrapper[0].children[i].style.display = display;
+            $scope.drumsSwiper.wrapper[0].children[i].style.display = display;
+          }
+
+          $scope.barSwiper.update();
+          // $scope.bassSwiper.update();
+          // $scope.drumsSwiper.update();
+          var Dom7 = $scope.barSwiper.$;
+          Dom7($scope.barSwiper.wrapper[0].querySelector('.bar-end')).removeClass('bar-end');
+          Dom7($scope.barSwiper.slides[lastSlide]).addClass('bar-end');
+        });
       }
     };
 
@@ -740,8 +712,28 @@
     $scope.playDrumSound = function(drum) {
       audioPlayer.playDrumSample({
         drum: drum,
-        volume: 0.75
+        volume: 0.85
       });
+    };
+
+    $scope.setStringsLayout = function(strings) {
+      console.log(strings);
+      var bassSlides = $scope.slides.bass;
+      $scope.slides.bass = [];
+      $scope.bass.initStrings(strings);
+
+      // $scope.section.forEachBassSubbeat(function(subbeat) {
+      //   subbeat.data['B'] = {
+      //     sound: {}
+      //   };
+      // });
+
+      $timeout(function() {
+        updateSlides();
+        $timeout(function() {
+          $scope.bassSwiper.update();
+        }, 10);
+      }, 10)
     };
 
     // Prevent default context menu

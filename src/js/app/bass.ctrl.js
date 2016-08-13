@@ -3,9 +3,9 @@
 
   angular
     .module('bd.app')
-    .controller('NoteController', NoteController);
+    .controller('BassController', BassController);
 
-  function NoteController($scope, $timeout, $mdMenu, audioPlayer) {
+  function BassController($scope, $timeout, $mdMenu, audioPlayer) {
     console.log('NOTE CONTROLLER');
     console.log($scope);
     var noteLengthSymbols = {
@@ -20,7 +20,7 @@
       element: null
     };
 
-    $scope.bass.strings.forEach(function(string) {
+    $scope.bass.allStrings.forEach(function(string) {
       // console.log($scope.bass.notes.list);
       string.notes = $scope.bass.notes.list.slice(string.noteIndex, string.noteIndex+25);
 
@@ -187,6 +187,7 @@
 
       $scope.$apply();
 
+      // wait for grid selection (css) for better accuracy
       $timeout(function() {
         var containerElem = info.element.parent()[0];
         // $scope.selected.element
@@ -266,7 +267,7 @@
     $scope.updateBassGrid = function(grid) {
       var sound = grid.sound;
       if (sound.note && sound.note.type !== 'ghost') {
-        sound.note.fret = $scope.bass.stringFret(sound.string.index, sound.note);
+        sound.note.fret = $scope.bass.stringFret(sound.string, sound.note);
 
         if (sound.noteLength) {
           var length = sound.noteLength.length;
@@ -363,7 +364,7 @@
         console.log($scope.barSwiper.activeIndex);
         var bar = 1 + parseInt(($scope.barSwiper.activeIndex) / $scope.section.timeSignature.top);
         var beat = 1 + ($scope.barSwiper.activeIndex % $scope.section.timeSignature.top);
-        var beatElem = document.getElementById("bass_{0}_{1}_1_0".format(bar, beat)).parentElement;
+        var beatElem = document.getElementById("bass_{0}_{1}_1_1".format(bar, beat)).parentElement;
 
         // console.log(beatElem);
         // console.log(beatElem.clientWidth);
@@ -543,7 +544,7 @@
       if ($data.sound.note.type === 'ghost') {
         return true;
       }
-      var fret = $scope.bass.stringFret(grid.string.index, $data.sound.note);
+      var fret = $scope.bass.stringFret(grid.string, $data.sound.note);
       return fret !== -1;
     };
 
@@ -795,6 +796,6 @@
         audioPlayer.playBassSample(sound);
       }
     };
-  }
 
+  }
 })();

@@ -46,8 +46,8 @@
       };
       for (subbeat = 0; subbeat < 4; subbeat++) {
         var bassSubbeatGrid = {};
-        this.bass.strings.forEach(function(string) {
-          bassSubbeatGrid[string.index] = {
+        this.bass.allStrings.forEach(function(string) {
+          bassSubbeatGrid[string.label] = {
             sound: {}
           };
         });
@@ -214,11 +214,11 @@
       var sound = sounds[i].sound;
       if (sound.prev && angular.isUndefined(sound.prev.ref)) {
         Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
-        sound.prev.ref = this.bassSubbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat)[sound.prev.string.index].sound;
+        sound.prev.ref = this.bassSubbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat)[sound.prev.string.label].sound;
       }
       if (sound.next && angular.isUndefined(sound.next.ref)) {
         Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
-        sound.next.ref = this.bassSubbeat(sound.next.bar, sound.next.beat, sound.next.subbeat)[sound.next.string.index].sound;
+        sound.next.ref = this.bassSubbeat(sound.next.bar, sound.next.beat, sound.next.subbeat)[sound.next.string.label].sound;
       }
     }
   };

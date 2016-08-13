@@ -47,7 +47,7 @@
         muted: true,
         audio: context.createGain()
       };
-      this.drums.audio.gain.value = 0.65;
+      // this.drums.audio.gain.value = 0.65;
       this.input.audio.gain.value = 0.001;
       this.bufferLoader.loadResource('sounds/drums/drumstick');
 
@@ -183,11 +183,9 @@
             return sound.note.type === 'regular';
           },
           getResources: function(sound) {
-            console.log('sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string.label, sound.note.fret));
             return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string.label, sound.note.fret)];
           },
           prepareForPlayback: function(sound, startTime, beatTime, timeSignature) {
-            console.log(sound);
             var audio = _this.createSoundAudio(sound, startTime);
             var duration = _this.noteDuration(sound, beatTime, timeSignature);
             audio.duration = duration;
@@ -440,11 +438,11 @@
 
       var resources = [];
 
-      var stringsCount = Object.keys(section.bassSubbeat(1, 1, 1)).length;
+      var strings = Object.keys(section.bassSubbeat(1, 1, 1));
       section.forEachBassSubbeat(function(subbeat) {
-        for (var string = 0; string < stringsCount; string++) {
+        for (var stringIndex = 0; stringIndex < strings.length; stringIndex++) {
         // for (var string in subbeat.data) {
-          var bassSound = subbeat.data[string].sound;
+          var bassSound = subbeat.data[strings[stringIndex]].sound;
           if (bassSound.note && bassSound.style) {
             var subbeatResources = player._getSoundHandler(bassSound).getResources(bassSound);
             subbeatResources.forEach(function(resource) {

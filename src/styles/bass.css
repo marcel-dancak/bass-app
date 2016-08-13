@@ -72,7 +72,6 @@
 
 .bass-board {
   width: 100%;
-  xheight: 144px;
   position: relative;
   margin-top: 36px;
 }
@@ -263,6 +262,10 @@
 .ghost .bass-sound-container label.fret {
   display: none;
 }
+
+.bass-sound-container[octave="0"] {
+  background-color: #f44336;
+}
 .bass-sound-container[octave="1"] {
   background-color: #ff5722;
 }
@@ -452,10 +455,19 @@
 .bass-sound-container:hover .resize-handler {
   opacity: 1;
 }
-.bass-sound-container .resize-handler md-icon {
-  width: 10px;
+/*.bass-sound-container .resize-handler div {
+  font-size: 10px;
+  height: 13px;
+  line-height: 10px;
+  color: #333;
+}*/
+
+.bass-sound-container .resize-handler div {
+  font-size: 14px;
   height: 12px;
-  display: block;
+  line-height: 11px;
+  color: #333;
+  transform: scale(0.45, 1);
 }
 
 .rg-right {

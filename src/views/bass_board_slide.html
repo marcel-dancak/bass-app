@@ -29,7 +29,7 @@
         beat: beat.beat,
         subbeat: $parent.$index+1,
         string: string,
-        sound: bassSubbeats[string.index].sound
+        sound: bassSubbeats[string.label].sound
       }"
       class="bass-subbeat string-{{ ::string.index }}"
       ng-style="{
@@ -80,10 +80,11 @@
           ng-click="selectGrid($event, grid);$event.stopPropagation()"
           ng-right-click="openBassSoundMenu($event, grid)">
 
-          <div
-            class="resize-handler">
-            <md-icon md-svg-icon="arrow-left-fill"></md-icon>
-            <md-icon md-svg-icon="arrow-right-fill"></md-icon>
+          <div class="resize-handler">
+<!--             <div>❮</div>
+            <div>❯</div> -->
+            <div>◀</div>
+            <div>▶</div>
           </div>
 
           <div

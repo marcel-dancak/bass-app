@@ -13,6 +13,19 @@
     class="preferences md-whiteframe-16dp">
     <md-list>
 
+      <md-list-item>
+        <label>Strings</label>
+        <md-input-container>
+          <md-select
+            md-container-class="preferences"
+            ng-model="bass.settings.strings"
+            ng-change="setStringsLayout(bass.settings.strings)">
+            <md-option value="BEADG">B E A D G</md-option>
+            <md-option value="EADG">E A D G</md-option>
+          </md-select>
+        </md-input-container>
+      </md-list-item>
+
 <!--       <md-list-item class="group-label">
         <label>Label</label>
       </md-list-item>
