@@ -1,4 +1,6 @@
-<div class="bass-board">
+<div
+  ng-if="::beat.initialized"
+  sly-show="ui.instrumentIndex === 0 && beat.visible">
   <div class="string-container">
     <div
       ng-repeat="string in ::bass.strings track by string.index"
@@ -89,7 +91,7 @@
             resizable
             r-directions="['right']"
             on-resize="onResize(grid, info, $event)"
-            on-resize-start="onResizeStart(grid, info, beat.subdivision)"
+            on-resize-start="onResizeStart(grid, info, beat.subdivision, $event)"
             on-resize-end="onResizeEnd(grid, info, $event)"
             r-grabber="<div></div>">
           </div>

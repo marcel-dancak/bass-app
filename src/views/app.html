@@ -127,8 +127,7 @@
             </div>
             <div
               xng-init="renderingBar($index)"
-              ng-if="::beat.initialized"
-              sly-show="ui.instrumentIndex === 0 && beat.visible"
+              class="bass-board"
               ng-include src="'views/bass_board_slide.html'">
             </div>
             <!-- <div>Bass slide {{::beat.beat}}</div> -->
@@ -177,7 +176,6 @@
           ng-repeat="beat in slides.drums track by beat.id"
           class="swiper-no-swiping drums-slide beat-{{ ::beat.beat }}">
           <div
-            ng-if="ui.instrumentIndex === 1 && beat.visible"
             ng-include src="'views/drums_board_slide.html'">
           </div>
         </ks-swiper-slide>

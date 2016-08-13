@@ -248,7 +248,7 @@
     }
 
     function calculateVisibleSlides() {
-      console.log('calculateVisibleSlides');
+      // console.log('calculateVisibleSlides');
       // console.log($scope.slides.bass);
       var playbackRange = $scope.slides.swiperConfig.lastSlide - $scope.slides.swiperConfig.firstSlide + 1;
 
@@ -262,7 +262,7 @@
           visibleIndexes.push(index);
         }
       }
-      console.log('visible: '+visibleIndexes);
+      // console.log('visible: '+visibleIndexes);
       for (var i = 0; i < $scope.slides.bass.length; i++) {
         var visible = visibleIndexes.indexOf(i) !== -1;
         $scope.slides.bass[i].visible = visible;
@@ -270,6 +270,10 @@
 
         $scope.slides.bass[i].initialized = visible || $scope.slides.bass[i].initialized;
       }
+    }
+
+    function calculateVisibleSlidesAndUpdate() {
+      $timeout(calculateVisibleSlides);
     }
 
     function updateSubbeatsVisibility() {
@@ -533,6 +537,7 @@
             s.$(elem).addClass('swiper-slide-duplicate');
           }
         }
+        calculateVisibleSlidesAndUpdate();
       };
       swiper.on('transitionEnd', swiper._loopCallback);
       swiper._onTheirPlace = onTheirPlace;
@@ -549,7 +554,6 @@
       var cloneIndexes = [];
       swiper.off('transitionEnd', swiper._loopCallback);
       swiper.detachEvents();
-      console.log($scope.slides.bars.length+' vs '+swiper.slides.length);
       for (var j = $scope.slides.bars.length; j < swiper.slides.length; j++) {
         cloneIndexes.push(j);
         if (swiper._onTheirPlace[j]) {
@@ -575,7 +579,7 @@
       console.log('Bar');
       console.log(swiper);
       $scope.barSwiper = swiper;
-      $scope.barSwiper.on('transitionEnd', calculateVisibleSlides);
+      $scope.barSwiper.on('transitionEnd', calculateVisibleSlidesAndUpdate);
 
     };
     $scope.onBassSwiper = function(swiper) {
@@ -637,13 +641,12 @@
       if ($scope.player.loop) {
         var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
         if (playbackRange > $scope.slides.beatsPerView) {
-          $scope.barSwiper.off('transitionEnd', calculateVisibleSlides);
+          $scope.barSwiper.off('transitionEnd', calculateVisibleSlidesAndUpdate);
           $scope.barSwiper = createLoop($scope.barSwiper, '.bar-swiper .swiper-container');
           $scope.bassSwiper = createLoop($scope.bassSwiper, '.bass-swiper .swiper-container');
           $scope.drumsSwiper = createLoop($scope.drumsSwiper, '.drums-swiper .swiper-container');
 
           $scope.barSwiper.params.control = [$scope.bassSwiper, $scope.drumsSwiper];
-          $scope.barSwiper.on('transitionEnd', calculateVisibleSlides)
         };
 
         // createLoop($scope.drumsSwiper);
@@ -676,16 +679,17 @@
       audioVisualiser.deactivate();
       timeline.stop();
 
+      // TODO: check if loop slides was created properly, this is not reliable
       if ($scope.player.loop) {
         var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
         if (playbackRange > $scope.slides.beatsPerView) {
-          $scope.barSwiper.off('transitionEnd', calculateVisibleSlides);
+          // $scope.barSwiper.off('transitionEnd', calculateVisibleSlidesAndUpdate);
           $scope.barSwiper = destroyLoop($scope.barSwiper, '.bar-swiper .swiper-container');
           $scope.bassSwiper = destroyLoop($scope.bassSwiper, '.bass-swiper .swiper-container');
           $scope.drumsSwiper = destroyLoop($scope.drumsSwiper, '.drums-swiper .swiper-container');
 
           $scope.barSwiper.params.control = [$scope.bassSwiper, $scope.drumsSwiper];
-          $scope.barSwiper.on('transitionEnd', calculateVisibleSlides);
+          $scope.barSwiper.on('transitionEnd', calculateVisibleSlidesAndUpdate);
           calculateVisibleSlides();
         }
       }

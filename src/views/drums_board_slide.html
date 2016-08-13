@@ -1,5 +1,6 @@
 <div
-  class="drums-beat-container">
+  class="drums-beat-container"
+  ng-if="ui.instrumentIndex === 1 && beat.visible">
   <div
     layout="row">
     <div
@@ -36,7 +37,6 @@
           >
           <div
             class="volume-meter"
-            xstyle="transform: scale({{ subbeat.volume }}, {{ subbeat.volume }});"
             ng-style="{
               transform: 'scale('+subbeat.volume+','+subbeat.volume+')'
             }">
