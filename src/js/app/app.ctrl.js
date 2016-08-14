@@ -106,7 +106,8 @@
       ],
       settings: {
         label: 'name-and-fret',
-        strings: 'EADG'
+        strings: 'EADG',
+        colors: true
       },
       initStrings: function (layout) {
         var first = layout === 'BEADG'? 0 : 1;
@@ -730,6 +731,8 @@
 
       $timeout(function() {
         updateSlides();
+        // updateSlides will delete 'visibleSubbeats' attribute from beats
+        updateSubbeatsVisibility();
         $timeout(function() {
           $scope.bassSwiper.update();
         }, 10);

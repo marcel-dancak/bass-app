@@ -685,3 +685,12 @@ md-input-container.slide-field > span {
 .bass-subbeat.string-4 .top-label {
   top: -32px;
 }
+
+.no-colors .bass-sound-container {
+  background-color: #E0E0E0!important;
+  border-color: #bbb!important;
+}
+
+.no-colors .slide .bass-sound-container .slide {
+  background: #E0E0E0!important;
+}

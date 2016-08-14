@@ -4,7 +4,7 @@
     aria-label="Bass Preferences"
     class="bass-tunning-button"
     ng-click="$mdOpenMenu($event)">
-    <p ng-repeat="string in bass.strings | orderBy:string.index:'-'">
+    <p ng-repeat="string in bass.strings | orderBy:string.index:'-' track by string.index">
       {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
     </p>
   </md-button>
@@ -26,26 +26,26 @@
         </md-input-container>
       </md-list-item>
 
-<!--       <md-list-item class="group-label">
-        <label>Label</label>
-      </md-list-item>
       <md-list-item>
-        <label>Note name</label>
-        <md-input-container>
-          <md-checkbox></md-checkbox>
-        </md-input-container>
-      </md-list-item> -->
-
-      <md-list-item>
-        <label>Note label</label>
+        <label>Labels</label>
         <md-input-container>
           <md-select
             md-container-class="preferences"
             ng-model="bass.settings.label">
-            <md-option value="name-and-fret">Name & Fret</md-option>
+            <md-option value="name-and-fret">Name + Fret</md-option>
             <md-option value="name">Name</md-option>
             <md-option value="fret">Fret</md-option>
           </md-select>
+        </md-input-container>
+      </md-list-item>
+
+      <md-list-item md-no-ink class="checkbox-item">
+        <label>Colors</label>
+        <md-input-container>
+          <md-checkbox
+            ng-model="bass.settings.colors">
+            Enabled
+          </md-checkbox>
         </md-input-container>
       </md-list-item>
 

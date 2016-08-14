@@ -221,7 +221,10 @@
       md-offset="0, 56">
       <md-button
         md-no-ink
-        class="icon-button toolbar-separated-button icon-hover"
+        class="toggle-button toolbar-separated-button icon-hover"
+        ng-class="{
+          active: player.playbackRange.start > 1 || player.playbackRange.end < section.length+1
+        }"
         ng-click="$mdOpenMenu($event)">
         <md-icon md-svg-icon="playback-range"></md-icon>
         <md-tooltip md-delay="1000">Playback range</md-tooltip>
@@ -233,7 +236,7 @@
             <label>Playback range</label>
             <rzslider
               class="range-slider"
-              ng-class="{long: section.length > 10}"
+              ng-class="{ long: section.length > 10 }"
               rz-slider-model="player.playbackRange.start"
               rz-slider-high="player.playbackRange.end"
               rz-slider-options="{

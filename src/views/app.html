@@ -66,7 +66,11 @@
     <div
       ng-show="ui.instrumentIndex === 0"
       class="instrument-tab bass-board-container"
-      ng-class="[bass.settings.label, 'strings-'+bass.strings.length]"
+      ng-class="[
+        bass.settings.label,
+        'strings-'+bass.strings.length,
+        {'no-colors': !bass.settings.colors}
+      ]"
       ng-controller="BassController"
       ng-keyup="keyPressed($event)"
       ng-click="clearSelection($event)"
