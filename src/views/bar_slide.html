@@ -1,12 +1,18 @@
 <div
-  ng-repeat="subbeat in beat.subbeats track by $index"
-  id="bar_{{ ::beat.bar }}_{{ ::beat.beat }}_{{ ::$index+1 }}"
+  flex
+  class="subbeat">
+  <label class="subbeat-label">
+    {{ ::slide.beat.beat }}
+  </label>
+</div>
+<div
+  ng-repeat="label in barLabels[slide.beat.subdivision] track by $index"
   flex
   class="subbeat"
   ng-class="{
-    hidden: beat.visibleSubbeats.indexOf($index+1) === -1
+    hidden: !swiperControl.swiperConfig.visibleSubbeats[slide.beat.subdivision][$index+2]
   }">
   <label class="subbeat-label">
-    {{ subbeat }}
+    {{ label }}
   </label>
 </div>

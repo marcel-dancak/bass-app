@@ -1,16 +1,36 @@
+.bass-left-panel {
+  position: absolute;
+  width: 65px;
+  padding: 0 10px;
+  top: -10px;
+}
+.audio-graph-toggle {
+  xposition: absolute;
+  min-width: 36px;
+  height: 44px;
+  padding: 0;
+  margin: 0;
+}
+.audio-graph-toggle md-icon {
+  fill: #ccc;
+}
+.audio-graph-toggle.enabled md-icon {
+  fill: rgb(63,81,181);
+}
 
 .audio-graph-container {
-  border: solid #ccc;
-  border-width: 1px 0;
+  border: none;
   background-color: #f5f5f5;
   position: relative;
-  max-height: 10px;
+  max-height: 0px;
   visibility: hidden;
   transition: max-height 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 .graph-enabled .audio-graph-container {
   max-height: 120px;
   visibility: inherit;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
 }
 
 .audio-graph-container canvas {
@@ -20,7 +40,18 @@
   pointer-events: none;
 }
 
+.bass-board::after {
+  position: absolute;
+  content: "";
+  background-color: white;
+  top: -36px;
+  left: -5px;
+  right: -5px;
+  height: 12px;
+  z-index: 199;
+}
 
+/*
 .drums-beat-container::before,
 .audio-graph-container::before,
 .bass-board::before {
@@ -40,12 +71,10 @@
   width: 3px;
 }
 
-.bass-board-container .swiper-container {
-  padding-right: 4px;
-}
+
 .drums-slide:last-child .drums-beat-container::after,
-.bass-slide:last-child .audio-graph-container::after,
-.bass-slide:last-child .bass-board::after {
+.instrument-slide:last-child .audio-graph-container::after,
+.instrument-slide:last-child .bass-board::after {
   position: absolute;
   top: 0;
   right: -4px;
@@ -57,18 +86,13 @@
   opacity: 0.3;
   z-index: 199;
 }
-
+*/
 .audio-graph {
   height: 10vh;
   max-height: 85px;
   width: 100%;
 }
 
-.bass-board-container {
-  margin: 0px 30px 0 65px;
-  xposition: relative;
-  outline: none;
-}
 
 .bass-board {
   width: 100%;
@@ -84,9 +108,9 @@
 }
 
 .bass-tunning-button {
-  position: absolute;
+  xposition: absolute;
   min-width: 36px;
-  left: -52px;
+  xleft: -52px;
   bottom: 0;
   font-size: 20px;
   margin: 0 3px;
@@ -104,6 +128,7 @@
   right: 0;
   bottom: 0;
   pointer-events: none;
+  z-index: -1;
 }
 
 .bass-string {
@@ -192,7 +217,8 @@
 
   outline-color: white;
   outline-style: solid;
-  opacity: 0;
+  opacity: 0.001;
+  z-index: -1;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
@@ -282,6 +308,10 @@
 .ghost .bass-sound-container {
   background-color: #ddd;
 }
+.ghost .bass-sound-container p {
+  line-height: 32px;
+}
+
 .ghost.bass-sound-wrapper {
   min-width: 25%;
 }
@@ -326,8 +356,11 @@
   border-bottom: 1px solid #ddd;
 }
 
-.instruments-tabs:hover .bass-button {
-  opacity: 1;
+.workspace:hover .bass-button {
+  opacity: 0.99;
+  transition-delay: 0.1s;
+  transition: z-index 0.4s step-end;
+  z-index: 1;
 }
 
 .bass-button:hover:not([disabled]) {
@@ -386,7 +419,7 @@
   pointer-events: none;
 }
 
-.drop-note-area {
+.drop-area {
   position: fixed;
   height: 36px;
   padding: 0;
@@ -399,7 +432,7 @@
   pointer-events: none;
   box-sizing: border-box;
 }
-.drop-note-area label {
+.drop-area label {
   position: absolute;
   right: 0;
   top: -30px;
@@ -409,8 +442,9 @@
   text-align: center;
   background-color: rgba(63,81,181, 0.65);
   border-radius: 5px;
+  letter-spacing: 1px;
 }
-.drop-note-area label:empty {
+.drop-area label:empty {
   display: none;
 }
 
@@ -487,10 +521,6 @@ md-select-menu {
 md-select-menu:not(.md-overflow) md-content {
   padding: 0;
   border-radius: 5px;
-}
-
-.bass-board-container .swiper-container {
-  min-height: 144px;
 }
 
 
@@ -647,7 +677,7 @@ md-input-container.slide-field > span {
 
 .top-label {
   position: absolute;
-  z-index: 50;
+  z-index: 201;
   text-align: center;
   width: 100%;
   font-size: 14px;

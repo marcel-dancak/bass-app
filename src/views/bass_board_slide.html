@@ -1,9 +1,9 @@
 <div
-  ng-if="::beat.initialized"
-  sly-show="ui.instrumentIndex === 0 && beat.visible">
+  ng-if="::slide.initialized"
+  sly-show="slide.visible">
   <div class="string-container">
     <div
-      ng-repeat="string in ::bass.strings track by string.index"
+      ng-repeat="string in ::project.bass.strings track by string.index"
       class="bass-string">
     </div>
   </div>
@@ -14,15 +14,15 @@
     ng-repeat="bassSubbeats in beat.subbeats track by $index"
     xng-init="renderingBar(beat.bar+':'+beat.beat+':'+$index+' ')"
     ng-class="{
-      hidden: beat.visibleSubbeats.indexOf($index+1) === -1
+      hidden: !swiperControl.swiperConfig.visibleSubbeats[beat.subdivision][$index+1]
     }"
     ng-style="{
-      width: ((beat.subdivision===4? 100 : 66.667))+'%'
+      width: ((beat.subdivision === 4? 100 : 66.667))+'%'
     }">
 
     <div
-      ng-repeat="string in ::bass.strings | orderBy:string.index:'-' track by string.index"
-      id="bass_{{::beat.bar}}_{{::beat.beat}}_{{::$parent.$index+1}}_{{::string.index}}"
+      ng-repeat="string in ::project.bass.strings | orderBy:string.index:'-' track by string.index"
+      id="bass_{{::beat.bar}}_{{::beat.beat}}_{{::$parent.$index+1}}_{{::string.label}}"
 
       ng-init="grid={
         bar: beat.bar,

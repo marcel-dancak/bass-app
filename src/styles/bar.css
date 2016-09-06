@@ -65,6 +65,7 @@
   visibility: visible;
 }
 
+.bar.swiper-container,
 .bar-swiper {
   padding-top: 26px;
   padding-left: 8px;
@@ -87,6 +88,10 @@
   border-radius: 10px;
 }
 
+.bar.swiper-container {
+  padding-right: 4px;
+  xwidth: calc(100% + 8px);
+}
 .bar-swiper .swiper-container {
   overflow: visible;
   padding-right: 4px;
@@ -329,17 +334,9 @@ md-slider .md-focus-ring {
 
 
 /***** Swiper *******/
-.swiper-container {
-  width: 100%;
-  xborder: 1px solid #aa7777;
-}
 
 .bar-container .swiper-container {
   height: 13vh;
-}
-
-.swiper-container .bar-container {
-  margin: 0;
 }
 
 .bar-container .swiper-button-prev,

@@ -1,11 +1,18 @@
-.drums-container {
-  margin: 20px 30px 0 65px;
-}
 
 .drums-labels-container {
   position: absolute;
-  left: -65px;
+  left: 0;
   width: 65px;
+  padding: 0 2px 0 14px;
+  top: 0;
+}
+
+.drums-labels-container img {
+  position: relative;
+  height: 48px;
+  width: 48px;
+  outline: none;
+  cursor: pointer;
 }
 
 .drums-labels-container .md-button {
@@ -21,8 +28,8 @@
 
 .drum-sound-box {
   min-height: 40px;
-  max-height: 40px;
-  height: 40px;
+  max-height: 44px;
+  height: 44px;
   text-align: center;
   z-index: 50;
   position: relative;

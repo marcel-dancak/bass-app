@@ -32,24 +32,25 @@
             ng-click="$mdOpenMenu()">
             Subdivision
           </md-button>
-          <md-icon class="expand-icon" md-svg-icon="arrow-right-fill"></md-icon>
+          <!-- <md-icon class="expand-icon" md-svg-icon="arrow-right-fill"></md-icon> -->
+          <span class="expand-arrow">▶</span>
         </md-menu-item>
         <md-menu-content>
           <md-menu-item class="checkbox-item">
             <md-icon
-              ng-show="contextMenu.bassBeat.subdivision === 4"
+              ng-show="contextMenu.beat.subdivision === 4"
               md-svg-icon="check">
             </md-icon>
-            <md-button ng-click="setBeatSubdivision(contextMenu.barBeat, contextMenu.bassBeat, 4)">
+            <md-button ng-click="contextMenu.beat.subdivision = 4">
               Standard
             </md-button>
           </md-menu-item>
           <md-menu-item class="checkbox-item">
             <md-icon
-              ng-show="contextMenu.bassBeat.subdivision === 3"
+              ng-show="contextMenu.beat.subdivision === 3"
               md-svg-icon="check">
             </md-icon>
-            <md-button ng-click="setBeatSubdivision(contextMenu.barBeat, contextMenu.bassBeat, 3)">
+            <md-button ng-click="contextMenu.beat.subdivision = 3">
               Triplet
             </md-button>
           </md-menu-item>

@@ -90,7 +90,6 @@ md-input-container.input-inline-label label {
 */
 .playback-fields .bpm-field {
   width: 70px;
-  xmargin: 0px 0px;
   margin: 13px 5px 0px 5px;
 }
 
@@ -166,16 +165,6 @@ md-backdrop.md-select-backdrop {
   visibility: hidden;
 }
 
-.instruments-tabs {
-  position: relative;
-}
-.instrument-tab {
-  position: absolute;
-  left: 0;
-  top: 0;
-  right: 0;
-  bottom: 0;
-}
 
 .instruments-toolbar {
   xborder: 1px solid #ccc;
@@ -333,12 +322,15 @@ md-menu-content .checkbox-item .md-button {
 .md-menu .md-button {
   text-transform: none;
 }
-.md-menu .expand-icon {
+.md-menu .expand-arrow {
   width: 10px;
   height: 10px;
   position: absolute;
   right: 0;
-  padding: 19px 4px;
+  padding: 14px 6px;
+  font-size: 14px;
+  color: #777;
+  transform: scale3d(0.75, 1, 1);
 }
 .submenu-trigger-button {
   position: relative;
@@ -528,18 +520,62 @@ md-list-item.range-slider-item {
   display: block!important;
 }
 
-.audio-graph-toggle {
+
+
+/** Instrument swiper */
+
+.workspace {
+  xborder: 1px solid red;
+  position: relative;
+}
+
+
+.bass-board-container {
+  position: relative;
+  outline: none;
+}
+
+.workspace .instrument-grid {
+  margin: 0 22px 0 57px;
+  position: relative;
+  xoverflow: hidden;
+}
+
+.workspace .swiper-container {
+  padding-left: 8px;
+  padding-right: 4px;
+}
+
+
+.instrument-slide::before {
   position: absolute;
-  min-width: 36px;
-  padding: 0;
-  margin: 0;
-  left: -48px;
-  top: -6px;
-  z-index: 50;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  content: "";
+  width: 1px;
+  background-color: #555;
+  opacity: 0.3;
+  z-index: 199;
 }
-.audio-graph-toggle md-icon {
-  fill: #ccc;
+
+.beat-1.instrument-slide::before {
+  width: 3px;
 }
-.audio-graph-toggle.enabled md-icon {
-  fill: rgb(63,81,181);
+
+.bar-end.instrument-slide::after {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  bottom: 0;
+  content: "";
+  width: 1px;
+  border: solid #aaa;
+  border-width: 0 2px;
+  z-index: 200;
+  background-color: white;
+}
+
+.instrument-slide .obsolete {
+  display: none;
 }

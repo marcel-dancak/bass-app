@@ -16,7 +16,7 @@
         ng-class="{
           active: ui.instrumentIndex===0
         }"
-        ng-click="ui.instrumentIndex=0">
+        ng-click="selectInstrument(0)">
         Bass
         <md-icon md-svg-icon="bass-guitar"></md-icon>
       </md-button>
@@ -28,7 +28,7 @@
         ng-class="{
           active: ui.instrumentIndex===1
         }"
-        ng-click="ui.instrumentIndex=1">
+        ng-click="selectInstrument(1)">
         Drums
         <md-icon md-svg-icon="drums"></md-icon>
       </md-button>
@@ -154,19 +154,6 @@
 
   <div flex></div>
 
-<!--   <div
-    class="bpm-field">
-    <md-input-container>
-      <label>bpm</label>
-      <input
-        type="number"
-        min="30"
-        max="200"
-        step="5"
-        ng-model="player.bpm">
-    </md-input-container>
-  </div> -->
-
   <div
     layout="row"
     class="playback-fields">
@@ -178,7 +165,7 @@
         min="30"
         max="200"
         step="5"
-        ng-model="player.bpm">
+        ng-model="section.bpm">
     </md-input-container>
 
     <md-button
@@ -267,7 +254,7 @@
       <label>Section</label>
       <input
         type="text"
-        ng-model="project.sectionName">
+        ng-model="section.name">
     </md-input-container>
     <md-input-container>
       <md-select
@@ -322,7 +309,7 @@
           <md-button
             md-no-ink
             aria-label="New"
-            ng-click="newEmptySection()">
+            ng-click="newSection()">
             New
           </md-button>
         </md-menu-item>

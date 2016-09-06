@@ -5,14 +5,12 @@
     .module('bd.app')
     .controller('BarController', BarController);
 
-  function BarController($scope, $timeout) {
+  function BarController($scope, $timeout, workspace) {
 
     $scope.contextMenu = {
       show: angular.noop,
       element: null,
-      barBeat: null,
-      bassBeat: null,
-      drumsBeat: null
+      beat: null
     };
 
 
@@ -21,9 +19,8 @@
       if (!$scope.contextMenu.element) {
         $scope.contextMenu.element = document.querySelector('.beat-menu');
       }
-      $scope.contextMenu.barBeat = $scope.slides.bars[index];
-      $scope.contextMenu.bassBeat = $scope.slides.bass[index];
-      $scope.contextMenu.drumsBeat = $scope.slides.drums[index];
+      $scope.contextMenu.beat = $scope.slides[index].beat;
+      console.log($scope.contextMenu);
 
       var parentBox = evt.target.getBoundingClientRect();
 
@@ -42,34 +39,25 @@
       });
     };
 
-    var bassClipboard = [];
-    var drumsClipboard = [];
+    $scope.setBeatSubdivision = function() {
+
+    };
+
+    var clipboard = [];
     $scope.copyBar = function(barIndex, instrument) {
       console.log('Copy bar: '+barIndex+' : '+instrument);
       var section = $scope.section;
 
-      bassClipboard.splice(0, bassClipboard.length);
-      drumsClipboard.splice(0, drumsClipboard.length);
+      clipboard.splice(0, clipboard.length);
       var beatIndex;
-      for (beatIndex = 1; beatIndex <= section.timeSignature.top; beatIndex++) {
-        if (instrument === 'bass') {
-          var bassBeat = section.bassBeat(barIndex, beatIndex);
-          bassClipboard.push({
-            bar: barIndex,
-            beat: beatIndex,
-            subdivision: bassBeat.subdivision,
-            sounds: section.getBassSounds(bassBeat)
-          });
-        }
-        if (instrument === 'drums') {
-          var drumsBeat = section.drumsBeat(barIndex, beatIndex);
-          drumsClipboard.push({
-            bar: barIndex,
-            beat: beatIndex,
-            subdivision: drumsBeat.subdivision,
-            sounds: section.getDrumsSounds(drumsBeat)
-          });
-        }
+      for (beatIndex = 1; beatIndex <= workspace.section.timeSignature.top; beatIndex++) {
+        var beat = workspace.trackSection.beat(barIndex, beatIndex);
+        clipboard.push({
+          bar: barIndex,
+          beat: beatIndex,
+          subdivision: bassBeat.subdivision,
+          sounds: workspace.trackSection.getSounds(beat)
+        });
       }
     };
 
@@ -77,29 +65,29 @@
       console.log('Paste bar: '+barIndex);
       var section = $scope.section;
 
-      var barOffset = barIndex - (bassClipboard[0] || drumsClipboard[0]).bar;
+      var barOffset = barIndex - clipboard[0].bar;
       // paste bass sounds
-      bassClipboard.forEach(function(beat) {
-        var destBassBeat = section.bassBeat(barIndex, beat.beat);
-        if (beat.subdivision !== destBassBeat.subdivision) {
-          var flatIndex = (barIndex-1)*section.timeSignature.top+beat.beat-1;
-          var barBeat = $scope.slides.bars[flatIndex];
-          $scope.setBeatSubdivision(barBeat, destBassBeat, beat.subdivision);
-        }
-        beat.sounds.forEach(function(bassSound) {
-          var subbeat = $scope.section.bassSubbeat(barIndex, beat.beat, bassSound.subbeat);
-          var destSound = subbeat[bassSound.sound.string.index].sound;
-          angular.extend(destSound, angular.copy(bassSound.sound));
-          if (destSound.next) {
-            destSound.next.bar += barOffset;
-            delete destSound.next.ref;
-          }
-          if (destSound.prev) {
-            destSound.prev.bar += barOffset;
-            delete destSound.prev.ref;
-          }
-        });
-        section.updateBassReferences(destBassBeat);
+      clipboard.forEach(function(beat) {
+        // var destBassBeat = section.bassBeat(barIndex, beat.beat);
+        // if (beat.subdivision !== destBassBeat.subdivision) {
+        //   var flatIndex = (barIndex-1)*section.timeSignature.top+beat.beat-1;
+        //   var barBeat = $scope.slides.bars[flatIndex];
+        //   $scope.setBeatSubdivision(barBeat, destBassBeat, beat.subdivision);
+        // }
+        // beat.sounds.forEach(function(bassSound) {
+        //   var subbeat = $scope.section.bassSubbeat(barIndex, beat.beat, bassSound.subbeat);
+        //   var destSound = subbeat[bassSound.sound.string.label].sound;
+        //   angular.extend(destSound, angular.copy(bassSound.sound));
+        //   if (destSound.next) {
+        //     destSound.next.bar += barOffset;
+        //     delete destSound.next.ref;
+        //   }
+        //   if (destSound.prev) {
+        //     destSound.prev.bar += barOffset;
+        //     delete destSound.prev.ref;
+        //   }
+        // });
+        // section.updateBassReferences(destBassBeat);
       });
 
       // paste drum sounds
@@ -117,17 +105,14 @@
       var bar = $scope.section.bars[barIndex-1];
       if (instrument === 'bass') {
         bar.bassBeats.forEach(function(bassBeat) {
-          $scope.section.clearBassBeat(bassBeat);
+          $scope.section.clearBeat(bassBeat);
         });
       }
       if (instrument === 'drums') {
         bar.drumsBeats.forEach(function(drumsBeat) {
-          $scope.section.clearDrumsBeat(drumsBeat);
+          $scope.section.clearBeat(drumsBeat);
         });
       }
     };
-
-    $scope.bassClipboard = bassClipboard;
-    $scope.drumsClipboard = drumsClipboard;
   }
 })();
