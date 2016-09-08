@@ -309,15 +309,41 @@
       if (!this.playing) return;
 
       var isFinalBeat = (bar === 1 && beat === 1 && this.repeats === 0);
-      var timeSignature = this.composition.timeSignature;
+      var timeSignature = this.section.timeSignature;
       var currentTime = context.currentTime;
       var beatTime = 60/this.bpm;
 
       if (!isFinalBeat) {
         // console.log('Play beat: '+beat);
+        for (var i = 0; i < this.section.tracksList.length; i++) {
 
-        var bassBeat = this.composition.bassBeat(bar, beat);
-        var bassSounds = this.composition.getBassSounds(bassBeat);
+          var trackSection = this.section.tracks[this.section.tracksList[i]];
+          var trackBeat = trackSection.beat(bar, beat);
+          var trackSounds = trackSection.getSounds(trackBeat);
+
+          console.log('Subdivision: '+trackBeat.subdivision);
+          var noteBeatTime = trackBeat.subdivision === 3? beatTime*(2/3) : beatTime;
+
+          trackSounds.forEach(function(subbeatSound) {
+            var startAt = startTime + (beatTime / trackBeat.subdivision * (subbeatSound.subbeat - 1));
+            if (trackSection.type === 'bass') {
+              this._playBassSound(subbeatSound.sound, startAt, noteBeatTime, timeSignature);
+            } else {
+              var sound = trackSection.subbeat(bar, beat, subbeatSound.subbeat)[subbeatSound.drum];
+              console.log(subbeatSound);
+              console.log(sound);
+              this._playDrumsSound(sound, startAt);
+            }
+          }.bind(this));
+        }
+
+        /*
+        var bassSection = this.section.tracks['bass_0'];
+        var drumSection = this.section.tracks['drums_0'];
+
+        var bassBeat = bassSection.beat(bar, beat);
+        var bassSounds = bassSection.getSounds(bassBeat);
+        console.log('Subdivision: '+bassBeat.subdivision);
         var noteBeatTime = bassBeat.subdivision === 3? beatTime*(2/3) : beatTime;
 
         bassSounds.forEach(function(subbeatSound) {
@@ -325,17 +351,18 @@
           this._playBassSound(subbeatSound.sound, startAt, noteBeatTime, timeSignature);
         }.bind(this));
 
-        var drumsBeat = this.composition.drumsBeat(bar, beat);
-        var drumsSounds = this.composition.getDrumsSounds(drumsBeat);
+        var drumsBeat = drumSection.beat(bar, beat);
+        var drumsSounds = drumSection.getDrumsSounds(drumsBeat);
         drumsSounds.forEach(function(subbeatSound) {
           var startAt = startTime + (beatTime / 4 * (subbeatSound.subbeat - 1));
           // replace 'incomplete' drum sound object from Section.getDrumsSounds
-          var sound = this.composition.drumsSubbeat(drumsBeat.bar, drumsBeat.beat, subbeatSound.subbeat)[subbeatSound.drum];
+          var sound = drumSection.subbeat(drumsBeat.bar, drumsBeat.beat, subbeatSound.subbeat)[subbeatSound.drum];
           this._playDrumsSound(sound, startAt);
         }.bind(this));
+        */
       }
 
-      var flatIndex = (bar-1)*this.composition.timeSignature.top+beat-1;
+      var flatIndex = (bar-1)*this.section.timeSignature.top+beat-1;
       if (flatIndex === 0) {
         this.repeats--;
       }
@@ -346,7 +373,7 @@
         startTime: startTime,
         endTime: startTime+beatTime,
         duration: beatTime,
-        timeSignature: this.composition.timeSignature,
+        timeSignature: this.section.timeSignature,
         flatIndex: flatIndex,
         playbackActive: !isFinalBeat
       });
@@ -363,7 +390,7 @@
         }.bind(this), 1000*(startTime - currentTime));
       } else {
         var isLastBeatInBar = beat === timeSignature.top;
-        var isLastBar = isLastBeatInBar && bar === (this.lastBar || this.composition.length);
+        var isLastBar = isLastBeatInBar && bar === (this.lastBar || this.section.length);
         var nextBar = isLastBar? this.firstBar || 1 : isLastBeatInBar? bar+1 : bar;
         var nextBeat = isLastBeatInBar? 1 : beat+1;
         var nextBeatStart = startTime+beatTime;
@@ -401,7 +428,6 @@
 
     AudioPlayer.prototype.setBpm = function(bpm) {
       this.bpm = bpm;
-      this.beatTime = 60/bpm;
     }
 
     AudioPlayer.prototype.fetchSoundResources = function(sound) {
@@ -413,7 +439,7 @@
 
     AudioPlayer.prototype.play = function(section, beatPreparedCallback, repeats) {
       console.log('PLAY');
-      this.composition = section;
+      this.section = section;
       this.playing = true;
       this.lastSyncTimerId = 0;
       this.repeats = repeats || 1;
@@ -438,21 +464,23 @@
 
       var resources = [];
 
-      var strings = Object.keys(section.bassSubbeat(1, 1, 1));
-      section.forEachBassSubbeat(function(subbeat) {
-        for (var stringIndex = 0; stringIndex < strings.length; stringIndex++) {
-        // for (var string in subbeat.data) {
-          var bassSound = subbeat.data[strings[stringIndex]].sound;
-          if (bassSound.note && bassSound.style) {
-            var subbeatResources = player._getSoundHandler(bassSound).getResources(bassSound);
-            subbeatResources.forEach(function(resource) {
-              if (resources.indexOf(resource) === -1) {
-                resources.push(resource);
-              }
-            });
+      section.forEachTrack(function(bassSection) {
+        var strings = Object.keys(bassSection.subbeat(1, 1, 1));
+        bassSection.forEachSubbeat(function(subbeat) {
+          for (var stringIndex = 0; stringIndex < strings.length; stringIndex++) {
+          // for (var string in subbeat.data) {
+            var bassSound = subbeat.data[strings[stringIndex]].sound;
+            if (bassSound.note && bassSound.style) {
+              var subbeatResources = player._getSoundHandler(bassSound).getResources(bassSound);
+              subbeatResources.forEach(function(resource) {
+                if (resources.indexOf(resource) === -1) {
+                  resources.push(resource);
+                }
+              });
+            }
           }
-        }
-      });
+        });
+      }, 'bass');
       console.log(resources);
       if (resources.length) {
         this.bufferLoader.loadResources(resources, afterLoad);

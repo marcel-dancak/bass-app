@@ -4,7 +4,7 @@
     aria-label="Bass Preferences"
     class="bass-tunning-button"
     ng-click="$mdOpenMenu($event)">
-    <p ng-repeat="string in bass.strings | orderBy:string.index:'-' track by string.index">
+    <p ng-repeat="string in project.bass.strings | orderBy:string.index:'-' track by string.index">
       {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
     </p>
   </md-button>
@@ -17,9 +17,10 @@
         <label>Strings</label>
         <md-input-container>
           <md-select
+            aria-label="Strings"
             md-container-class="preferences"
-            ng-model="bass.settings.strings"
-            ng-change="setStringsLayout(bass.settings.strings)">
+            ng-model="project.bassTuning"
+            ng-change="setStringsLayout(project.bassTuning)">
             <md-option value="BEADG">B E A D G</md-option>
             <md-option value="EADG">E A D G</md-option>
           </md-select>
@@ -30,6 +31,7 @@
         <label>Labels</label>
         <md-input-container>
           <md-select
+            aria-label="Labels"
             md-container-class="preferences"
             ng-model="bass.settings.label">
             <md-option value="name-and-fret">Name + Fret</md-option>

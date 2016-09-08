@@ -4,109 +4,108 @@
   angular
     .module('bd.app')
     .controller('ProjectController', ProjectController)
+    .factory('projectManager', projectManager);
 
-  function ProjectController($scope, $timeout, $http, context, audioPlayer,
-              audioVisualiser, Notes, Section, Timeline, HighlightTimeline) {
+  function projectManager($http, $timeout, $q, Observable, Section, BassSection, DrumSection, Bass, Drums) {
 
-    function clearSection() {
-      audioVisualiser.clear();
-      $scope.section.forEachBeat(function(beat) {
-        $scope.section.clearBassBeat(beat.bass);
-        $scope.section.clearDrumsBeat(beat.drums);
+    function ProjectManager() {
+      Observable.call(this, ["sectionLoaded", "sectionDeleted", "sectionCreated"]);
+    }
+    ProjectManager.prototype = Object.create(Observable.prototype);
+
+    function queryStringParam(item) {
+      var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+      if (svalue !== null) {
+        return decodeURIComponent(svalue ? svalue[1] : svalue);
+      }
+    }
+
+    ProjectManager.prototype.addTrack = function(track) {
+      var id = 0;
+      this.project.tracks.forEach(function(t) {
+        if (t.type === track.type && t.id >= id) {
+          id = t.id + 1;
+        }
       });
+      track.id = id;
+      track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
+      this.project.tracks.push(track);
+      // TODO: add track for every section
     };
 
-    function newSection() {
-      var newId = Math.max.apply(
-        null,
-        $scope.project.sections.map(function(section) {
-          return section.id;
-        })
-      )+1;
-      console.log($scope.project.sections.map(function(section) {
-          return section.id;
-        }));
-      console.log('New id: '+newId)
-      var sectionInfo = {
-        id: newId,
-        name: 'New'
+    ProjectManager.prototype.createProject = function(tracks) {
+      this.project = {
+        sections: this.getSectionsList(),
+        tracks: [],
       };
-      $scope.project.sections.push(sectionInfo);
-      $scope.project.selectedSectionIndex = $scope.project.sections.length-1;
-      return sectionInfo;
-    }
+      tracks.forEach(this.addTrack.bind(this));
+      return this.project;
+    };
 
-    function loadSectionData(sectionData) {
-      if (sectionData.bpm) {
-        $scope.player.bpm = sectionData.bpm;
+    ProjectManager.prototype.createSection = function(options) {
+      var section = new Section(options);
+      section.tracks = {};
+      this.project.tracks.forEach(function(track, index) {
+        var trackSection;
+        if (track.type === 'bass') {
+          trackSection = new BassSection(track.instrument, section);
+        } else if (track.type === 'drums') {
+          trackSection = new DrumSection(track.instrument, section);
+        }
+        section.addTrack(track, trackSection);
+      }, this);
+      this.section = section;
+      return section;
+    };
+
+    ProjectManager.prototype.getSectionsList = function() {
+
+      var startupProject = queryStringParam("PROJECT");
+      if (startupProject) {
+        var task = $q.defer();
+        var sectionsIndex = [];
+        $http.get(startupProject+'.json').then(function(response) {
+          console.log(response);
+          this.projectData = response.data.sections;
+          Array.prototype.push.apply(sectionsIndex, response.data.index);
+          // task.resolve(response.data.index);
+        }.bind(this));
+        return sectionsIndex;
+        // return task.promise;
       }
-      if (sectionData.animationDuration) {
-        $scope.section.animationDuration = sectionData.animationDuration;
-      }
-      var sectionConfigChanged = $scope.section.timeSignature.top !== sectionData.timeSignature.top;
-
-      $scope.section.setLength(sectionData.length);
-
-      $scope.section.timeSignature = sectionData.timeSignature;
-      $scope.player.playbackRange.start = 1;
-      $scope.player.playbackRange.end = sectionData.length + 1;
-      $scope.updatePlaybackRange();
-
-      $scope.slides.beatsPerView = sectionData.beatsPerView;
-      $scope.slides.beatsPerSlide = sectionData.beatsPerSlide;
-      $scope.updateSwipers();
-
-      $timeout(function () {
-        $scope.$root.$broadcast('rzSliderForceRender');
-      });
-
-      $timeout(function() {
-
-        // override selected section data
-        sectionData.beats.forEach(function(beat) {
-          if (beat.bass) {
-            var destBassBeat = section.bassBeat(beat.bar, beat.beat);
-            if (beat.bass.subdivision !== destBassBeat.subdivision) {
-              var flatIndex = (beat.bar-1)*section.timeSignature.top+beat.beat-1;
-              var barBeat = $scope.slides.bars[flatIndex];
-              $scope.setBeatSubdivision(barBeat, destBassBeat, beat.bass.subdivision);
-            }
-            beat.bass.sounds.forEach(function(bassSound) {
-              var subbeat = $scope.section.bassSubbeat(beat.bar, beat.beat, bassSound.subbeat);
-              angular.extend(subbeat[bassSound.sound.string.label].sound, bassSound.sound);
-            });
-          }
-          beat.drums.sounds.forEach(function(drumSound) {
-            var subbeat = $scope.section.drumsSubbeat(beat.bar, beat.beat, drumSound.subbeat);
-            subbeat[drumSound.drum].volume = drumSound.volume;
+      /*
+      var storageKeyPrefix = 'v9.section.';
+      var sectionsNames = [];
+      var i;
+      for (i=0; i<localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (key.startsWith(storageKeyPrefix)) {
+          sectionsNames.push({
+            id: key.substring(storageKeyPrefix.length),
+            name: key.substring(storageKeyPrefix.length)
           });
-        });
-        // update references
-        $scope.section.forEachBeat(function(beat) {
-          $scope.section.updateBassReferences(beat.bass);
-        });
-      });
+        }
+      }
+      console.log(sectionsNames);
+      return sectionsNames;
+      */
+
+      var storageKey = 'v9.project';
+      var jsonData = localStorage.getItem(storageKey);
+      if (jsonData) {
+        console.log(jsonData);
+        return JSON.parse(jsonData).sections;
+      }
+      return [];
     }
 
-    $scope.newEmptySection = function() {
-      newSection();
-      clearSection();
-    };
+    ProjectManager.prototype.saveProjectInfo = function() {
+      var storageKey = 'v9.project';
+      var jsonData = JSON.stringify(this.project);
+      localStorage.setItem(storageKey, jsonData);
+    }
 
-    $scope.deleteSection = function(index) {
-      console.log('delete '+index);
-      if (index !== -1) {
-        var storageKey = 'v9.section.'+$scope.project.sections[index].id;
-        localStorage.removeItem(storageKey);
-        $scope.project.sections.splice(index, 1);
-      }
-      $scope.project.selectedSectionIndex = -1;
-      $scope.project.sectionName = '';
-      clearSection();
-      saveProjectInfo();
-    };
-
-    function serializeSection(section) {
+    ProjectManager.prototype.serializeSectionBeats = function(section) {
       var sectionStorageBeats = [];
       section.forEachBeat(function(beat) {
         sectionStorageBeats.push({
@@ -118,27 +117,67 @@
           },
           drums: {
             subdivision: beat.drums.subdivision,
-            sounds: section.getDrumsSounds(beat.drums)
+            sounds: section.getSounds(beat.drums)
           }
         });
       });
+      return sectionStorageBeats;
+    };
+
+
+    ProjectManager.prototype.newSection = function() {
+      var newId = Math.max.apply(
+        null,
+        this.project.sections.map(function(section) {
+          return section.id;
+        })
+      ) + 1;
+      newId = Math.max(newId, 1);
+
+      console.log('New id: '+newId)
+      var sectionInfo = {
+        id: newId,
+        name: 'New'
+      };
+      this.project.sections.push(sectionInfo);
+      this.project.selectedSectionIndex = this.project.sections.length-1;
+      this.dispatchEvent('sectionCreated');
+      return sectionInfo;
+    }
+
+
+    ProjectManager.prototype.deleteSection = function(index) {
+      console.log('delete '+index);
+      if (index !== -1) {
+        var storageKey = 'v9.section.'+this.project.sections[index].id;
+        localStorage.removeItem(storageKey);
+        this.project.sections.splice(index, 1);
+      }
+      this.project.selectedSectionIndex = -1;
+      this.section.name = '';
+      this.saveProjectInfo();
+      this.dispatchEvent('sectionDeleted');
+    };
+
+
+    ProjectManager.prototype.serializeSection = function(section) {
 
       var data = {
         timeSignature: section.timeSignature,
         length: section.length,
-        beats: sectionStorageBeats,
+        beats: this.serializeSectionBeats(section),
         // other section configuration
-        beatsPerView: $scope.slides.beatsPerView,
-        beatsPerSlide: $scope.slides.beatsPerSlide,
-        animationDuration: $scope.slides.animationDuration,
-        bpm: $scope.player.bpm
+        beatsPerView: section.beatsPerView,
+        beatsPerSlide: section.beatsPerSlide,
+        animationDuration: section.animationDuration,
+        bpm: section.bpm
       }
       return JSON.stringify(data);
     }
 
-    $scope.saveSection = function(index) {
-      var sectionInfo = $scope.project.sections[index];
-      if (sectionInfo && !$scope.project.sectionName) {
+    ProjectManager.prototype.saveSection = function(index) {
+      var sectionInfo = this.project.sections[index];
+      if (sectionInfo && !this.section.name) {
         return;
       }
 
@@ -147,174 +186,157 @@
       if (!sectionInfo) {
         // save as new
         console.log('save as new');
-        sectionInfo = newSection();
-        if (index === -1 && $scope.project.sectionName) {
-          sectionInfo.name = $scope.project.sectionName;
+        sectionInfo = this.newSection();
+        console.log(sectionInfo);
+        if (index === -1 && projectManager.section.name) {
+          sectionInfo.name = projectManager.section.name;
         } else {
-          $scope.project.sectionName = sectionInfo.name;
+          this.section.name = sectionInfo.name;
         }
       } else {
-        sectionInfo.name = $scope.project.sectionName;
+        sectionInfo.name = this.section.name;
       }
 
       var storageKey = 'v9.section.'+sectionInfo.id;
-      console.log(storageKey);
       var data = serializeSection($scope.section);
-      // console.log(data);
+      console.log(data);
       localStorage.setItem(storageKey, data);
-      saveProjectInfo();
+      this.saveProjectInfo();
     };
 
-    $scope.loadSection = function(index) {
+
+    ProjectManager.prototype.loadSectionData = function(sectionData) {
+      console.log('sectionData');
+      console.log(sectionData);
+      var section = this.section;
+
+      section.name = sectionData.name;
+      if (sectionData.animationDuration) {
+        section.animationDuration = sectionData.animationDuration;
+      }
+      section.setLength(sectionData.length);
+
+      section.bpm = sectionData.bpm;
+      section.timeSignature = sectionData.timeSignature;
+      section.beatsPerView = sectionData.beatsPerView;
+      section.beatsPerSlide = sectionData.beatsPerSlide;
+
+      this.dispatchEvent('sectionLoaded', section);
+
+      $timeout(function() {
+
+        // override selected section data
+        var index2Label = ['E', 'A', 'D', 'G'];
+        var bassSection = section.tracks['bass_0'];
+        var drumSection = section.tracks['drums_0'];
+        sectionData.beats.forEach(function(beat) {
+          if (beat.bass) {
+            console.log(beat.bass);
+            var destBassBeat = bassSection.beat(beat.bar, beat.beat);
+            destBassBeat.subdivision = beat.bass.subdivision;
+            beat.bass.sounds.forEach(function(bassSound) {
+              var subbeat = bassSection.subbeat(beat.bar, beat.beat, bassSound.subbeat);
+              if (Number.isInteger(bassSound.sound.string)) {
+                // temporarty conversion for backward compatibility
+                bassSound.sound.string = index2Label[bassSound.sound.string];
+              }
+              // console.log(bassSound.sound.string);
+              // console.log(subbeat[bassSound.sound.string]);
+              angular.extend(subbeat[bassSound.sound.string].sound, bassSound.sound);
+            });
+          }
+          beat.drums.sounds.forEach(function(drumSound) {
+            var subbeat = drumSection.subbeat(beat.bar, beat.beat, drumSound.subbeat);
+            subbeat[drumSound.drum].volume = drumSound.volume;
+          });
+        });
+        // update references
+        bassSection.forEachBeat(function(beat) {
+          bassSection.updateBassReferences(beat.beat);
+        });
+      });
+    }
+
+    ProjectManager.prototype.loadSection = function(index) {
       console.log('loadSection');
-      var sectionInfo = $scope.project.sections[index];
+      var sectionInfo = this.project.sections[index];
       if (!sectionInfo) {
         return;
       }
-      clearSection();
-
-      $scope.project.sectionName = sectionInfo.name;
 
       var sectionData;
-      if ($scope.projectData) {
-        sectionData = $scope.projectData[index];
+
+      var bass = new Bass({strings: this.project.bassTuning});
+      if (this.projectData) {
+        sectionData = this.projectData[index];
       }
       if (!sectionData) {
         var storageKey = 'v9.section.'+sectionInfo.id;
         var data = localStorage.getItem(storageKey);
         if (data) {
-          sectionData = JSON.parse(data, function(k, v) {
-            if (k === 'string') {
-              if (Number.isInteger(v)) {
-                var map = ['E', 'A', 'D', 'G'];
-                v = map[v];
-              }
-              return $scope.bass.strings[v];
-            }
-            return v;
-          });
+          sectionData = JSON.parse(data);
         }
       }
       if (sectionData) {
-        loadSectionData(sectionData);
+        this.loadSectionData(sectionData);
       }
+      // TODO: remove, leaved temporary for backward compatibility
+      this.section.name = sectionInfo.name;
     };
 
-    /*
-    function loadSavedSectionsNames() {
-      var storageKeyPrefix = 'v8.section.';
-      var sectionsNames = [];
-      var i;
-      for (i=0; i<localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (key.startsWith(storageKeyPrefix)) {
-          sectionsNames.push(key.substring(storageKeyPrefix.length));
-        }
-      }
-      return sectionsNames;
-    }
+    return new ProjectManager();
+  }
 
-    function loadSavedSections() {
-      var names = loadSavedSectionsNames();
-      var sections = names.map(function(name, index) {
-        return {
-          id: index,
-          name: name
-        }
-      });
-      console.log(sections);
-      return sections;
-    }*/
+  function ProjectController($scope, $timeout, audioVisualiser, projectManager) {
 
-    function loadProjectInfo() {
-      var storageKey = 'v9.project';
-      var jsonData = localStorage.getItem(storageKey);
-      if (jsonData) {
-        return JSON.parse(jsonData);
-      }
-    }
-
-    function saveProjectInfo() {
-      var storageKey = 'v9.project';
-      var jsonData = JSON.stringify($scope.project);
-      localStorage.setItem(storageKey, jsonData);
-    }
-
-    $scope.project = loadProjectInfo() || {
-      sections: []
-      // sections: loadSavedSections()
+    $scope.newSection = function() {
+      projectManager.newSection();
     };
-    $scope.project.selectedSectionIndex = -1;
-    $scope.project.sectionName = '';
 
-
+    $scope.loadSection = function(index) {
+      projectManager.loadSection(index);
+    };
 
     $scope.dropSection = function(event, dragSectionIndex, dropSectionIndex, dropSection) {
-      var dragSection = $scope.project.sections[dragSectionIndex];
-      var selectedId = $scope.project.sections[$scope.project.selectedSectionIndex].id;
+      var dragSection = projectManager.project.sections[dragSectionIndex];
+      var selectedId = projectManager.project.sections[projectManager.project.selectedSectionIndex].id;
 
       // move dragged section item into dropped position
-      $scope.project.sections.splice(dropSectionIndex, 0, dragSection);
+      projectManager.project.sections.splice(dropSectionIndex, 0, dragSection);
       var removeIndex = dragSectionIndex;
       if (dragSectionIndex > dropSectionIndex) {
         removeIndex += 1;
       }
-      $scope.project.sections.splice(removeIndex, 1);
+      projectManager.project.sections.splice(removeIndex, 1);
 
 
       // update selected secton item
-      if ($scope.project.selectedSectionIndex !== -1) {
-        var newSelectedIndex = $scope.project.sections.findIndex(function(s) {
+      if (projectManager.project.selectedSectionIndex !== -1) {
+        var newSelectedIndex = projectManager.project.sections.findIndex(function(s) {
           return s.id === selectedId;
         });
-        $scope.project.selectedSectionIndex = newSelectedIndex;
+        projectManager.project.selectedSectionIndex = newSelectedIndex;
       }
       // save the actual list
-      saveProjectInfo();
+      projectManager.saveProjectInfo();
     }
-
-    // swap items
-    /*
-    $scope.dropSection = function(event, dragSectionIndex, dropSectionIndex, dropSection) {
-      var dragSection = $scope.project.sections[dragSectionIndex];
-      // console.log(dragSection);
-      // console.log(dropSection);
-      var tmpId = dropSection.id;
-      var tmpName = dropSection.name;
-      dropSection.id = dragSection.id;
-      dropSection.name = dragSection.name;
-      dragSection.id = tmpId;
-      dragSection.name = tmpName;
-
-      if ($scope.project.selectedSectionIndex === dragSectionIndex) {
-        $scope.project.selectedSectionIndex = dropSectionIndex;
-      }
-      if ($scope.project.selectedSectionIndex === dropSectionIndex) {
-        $scope.project.selectedSectionIndex = dragSectionIndex;
-      }
-      saveProjectInfo();
-    }
-    */
 
     $scope.exportToFile = function() {
-      if ($scope.project.sectionName) {
+      if (projectManager.section.name) {
         console.log('exportToFile');
         var blob = new Blob(
-          [serializeSection($scope.section)],
+          [projectManager.serializeSection(projectManager.section)],
           {type: "application/json;charset=utf-8"}
         );
-        saveAs(blob, $scope.project.sectionName+'.json');
+        saveAs(blob, projectManager.section.name+'.json');
       }
     }
 
-
-    function handleFileSelect(evt) {
+    function handleFileDrop(evt) {
       evt.stopPropagation();
       evt.preventDefault();
 
       var files = evt.dataTransfer.files; // FileList object.
-
-      console.log(files);
       var file = files[0];
       var reader = new FileReader();
       reader.onload = function(theFile) {
@@ -329,24 +351,9 @@
       evt.preventDefault();
       evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
     }
+
     var projectDropElem = document.querySelector('.project-toolbar');
-    console.log(projectDropElem);
     projectDropElem.addEventListener('dragover', handleDragOver, false);
-    projectDropElem.addEventListener('drop', handleFileSelect, false);
-
-
-    function queryStringParam(item) {
-      var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
-      if (svalue !== null) {
-        return decodeURIComponent(svalue ? svalue[1] : svalue);
-      }
-    }
-    var startupProject = queryStringParam("PROJECT");
-    if (startupProject) {
-      $http.get(startupProject).then(function(response) {
-        $scope.project.sections = response.data.index;
-        $scope.projectData = response.data.sections;
-      });
-    }
+    projectDropElem.addEventListener('drop', handleFileDrop, false);
   }
 })();

@@ -1,0 +1,51 @@
+.bass-sound-form {
+  background-color: white;
+  font-size: 15px;
+  max-height: 400px;
+  xposition: fixed;
+  z-index: 300;
+}
+
+.bass-sound-form.closed {
+  visibility: hidden;
+  opacity: 0;
+  transform: translate3d(-100px, -120px, 0px) scale3d(0.5, 0.25, 1);
+}
+
+.bass-sound-form .volume-field md-input-container {
+  width: 65px;
+  height: 35px;
+  margin-top: 20px;
+  margin-bottom: 1px;
+}
+.bass-sound-form md-slider {
+  margin: 2px 8px 0 10px;
+  height: 46px;
+  border-bottom: 1px solid #ddd;
+}
+
+.bass-sound-form .horizontal-space {
+  width: 8px;
+}
+
+.bass-sound-form .play-button {
+  margin: 2px;
+  padding: 0px;
+  min-width: 40px;
+}
+.bass-sound-form .clear-button.md-focused,
+.bass-sound-form .clear-button:hover:not([disabled]) {
+  background-color: transparent;
+}
+.bass-sound-form .clear-button md-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.bass-sound-form {
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  padding: 4px;
+  min-width: 250px;
+  width: 280px;
+}
