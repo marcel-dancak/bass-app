@@ -21,9 +21,8 @@
   };
 
   Section.prototype.addTrack = function(track, trackSection) {
-    var trackId = track.type+'_'+track.id;
-    this.tracks[trackId] = trackSection;
-    this.tracksList.push(trackId);
+    this.tracks[track.id] = trackSection;
+    this.tracksList.push(track.id);
   };
 
   Section.prototype.forEachTrack = function(callback, type) {

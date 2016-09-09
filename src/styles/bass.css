@@ -4,9 +4,12 @@
   padding: 0 10px;
   top: -10px;
 }
+
 .audio-graph-toggle {
-  xposition: absolute;
-  min-width: 36px;
+  position: absolute;
+  top: -8px;
+  min-width: 40px;
+  width: 40px;
   height: 44px;
   padding: 0;
   margin: 0;
@@ -40,6 +43,10 @@
   pointer-events: none;
 }
 
+.bass-preferences {
+  position: absolute;
+  bottom: 0;
+}
 .bass-board::after {
   position: absolute;
   content: "";

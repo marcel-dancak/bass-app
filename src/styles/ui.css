@@ -54,7 +54,6 @@ md-dialog {
 md-input-container.input-inline-label {
   margin: 6px 0;
   line-height: 46px;
-
 }
 md-input-container.input-inline-label label {
   bottom: auto;
@@ -94,9 +93,9 @@ md-input-container.input-inline-label label {
 }
 
 .control-panel {
-  margin: 10px 30px 15px 65px;
-  min-height: 48px;
-  height: 48px;
+  margin: 5px 10px 25px 60px;
+  min-height: 44px;
+  height: 44px;
 }
 
 .control-panel md-input-container {
@@ -116,6 +115,10 @@ md-input-container.input-inline-label label {
 }
 .control-panel .md-button {
   color: #444;
+}
+
+.control-panel .tracks-list {
+  min-width: 100px;
 }
 
 .control-panel md-menu {
@@ -148,7 +151,6 @@ md-input-container.input-inline-label label {
 }
 
 .project-toolbar {
-  xborder: 1px solid #ccc;
   border-radius: 5px;
   padding: 2px 4px 0 4px;
 }
@@ -166,13 +168,10 @@ md-backdrop.md-select-backdrop {
 }
 
 
-.instruments-toolbar {
-  xborder: 1px solid #ccc;
-  border-radius: 7px;
-}
-
 .instruments-field {
   position: relative;
+  margin-right: 6px;
+  max-height: 44px;
 }
 
 .instruments-field .md-button {
@@ -388,6 +387,10 @@ md-menu-item.menu-group-item .group-item-title {
   fill: rgb(63, 81, 181);
 }
 
+.swiper-pagination {
+  opacity: 0.45;
+}
+
 .swiper-pagination span:only-child {
   display: none;
 }
@@ -578,4 +581,28 @@ md-list-item.range-slider-item {
 
 .instrument-slide .obsolete {
   display: none;
+}
+
+.instrument-left-panel {
+  position: absolute;
+  top: 0;
+  left: -44px;
+  bottom: 0;
+}
+
+.instrument-tracks {
+  position: absolute;
+  top: 64px;
+  left: 58px;
+  font-size: 13.5px;
+}
+
+.instrument-tracks a {
+  padding: 0 10px;
+  color: #999;
+  cursor: pointer;
+}
+.instrument-tracks a:hover,
+.instrument-tracks a.active {
+  color: rgb(63,81,181);
 }

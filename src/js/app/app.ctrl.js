@@ -75,16 +75,25 @@
       }
     };
 
-    $scope.drums = Drums.Basic;
-
     $scope.project = projectManager.createProject([
       {
         type: 'bass',
+        name: 'Bassline',
+        strings: 'EADG',
+        tuning: [0, 0, 0, 0]
+      }, {
+        type: 'bass',
+        name: 'Melody',
         strings: 'EADG',
         tuning: [0, 0, 0, 0]
       }, {
         type: 'drums',
-        kit: 'Basic'
+        kit: 'Standard',
+        name: 'Standard'
+      }, {
+        type: 'drums',
+        kit: 'Bongo',
+        name: 'Bongo'
       }
     ]);
 
@@ -115,40 +124,7 @@
       4: ['e', 'and', 'a']
     };
 
-    function createSlides() {
-      var timeSignature = $scope.section.timeSignature;
 
-      $scope.slides = [];
-      workspace.trackSection.forEachBeat(function(beat) {
-        var slideId = beat.bar+'_'+beat.index;
-        $scope.slides.push({
-          id: slideId,
-          beat: beat.beat,
-          type: $scope.ui.instrumentIndex
-        });
-      });
-    }
-
-    $scope.setWorkspaceTrack = function(track) {
-      $scope.workspace.track = track;
-      console.log(track);
-      if (track.type === 'bass') {
-        $scope.workspace.trackSection = $scope.workspace.section.tracks['bass_0'];
-        $scope.project.bass = track.instrument;
-      }
-    };
-
-    $scope.setWorkspaceTrack(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
-    createSlides();
-    $timeout(function() {
-      swiperControl.setSlides($scope.slides, {
-        slidesPerView: $scope.section.beatsPerView,
-        slidesPerGroup: $scope.section.beatsPerSlide
-      });
-      $scope.updatePlaybackRange();
-    });
-
-    audioPlayer.setBpm($scope.section.bpm);
     $scope.player.playbackRange.end = $scope.section.length + 1;
 
     $scope.updatePlaybackRange = function() {
@@ -170,17 +146,16 @@
 
     timeline = new HighlightTimeline(swiperControl);
 
-    $scope.$watch('section.bpm', function(value) {
+    $scope.bpmChanged = function(value) {
       console.log('bpm changed: '+value);
       audioPlayer.setBpm($scope.section.bpm);
-    });
-
+    };
 
     function beatPrepared(evt) {
       if (evt.playbackActive) {
         var slide = evt.flatIndex - swiperControl.firstSlide;
-        console.log('flatIndex: '+evt.flatIndex+' slide: '+slide);
-        console.log('active index: '+swiperControl.barSwiper.activeIndex);
+        // console.log('flatIndex: '+evt.flatIndex+' slide: '+slide);
+        // console.log('active index: '+swiperControl.barSwiper.activeIndex);
         if (slide < swiperControl.barSwiper.activeIndex) {
           // compute index of 'cloned' looped slide
           slide = swiperControl.lastSlide - swiperControl.firstSlide + 1 + slide;
@@ -304,6 +279,38 @@
     };
 
 
+    function createSlides() {
+      var timeSignature = $scope.section.timeSignature;
+
+      $scope.slides = [];
+      workspace.trackSection.forEachBeat(function(beat) {
+        var slideId = beat.bar+'_'+beat.index;
+        $scope.slides.push({
+          id: slideId,
+          beat: beat.beat,
+          type: $scope.ui.instrumentIndex
+        });
+      });
+    }
+
+    $scope.initializeWorkspace = function(track) {
+      $scope.workspace.track = track;
+      console.log(track);
+      $scope.workspace.trackSection = workspace.section.tracks[track.id];
+      // $scope.project.bass = track.instrument;
+      createSlides();
+    };
+
+    $scope.initializeWorkspace(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
+
+    $timeout(function() {
+      swiperControl.setSlides($scope.slides, {
+        slidesPerView: $scope.section.beatsPerView,
+        slidesPerGroup: $scope.section.beatsPerSlide
+      });
+      $scope.updatePlaybackRange();
+    });
+
     function clearSectionWorkspace() {
       audioVisualiser.clear();
       $scope.section.forEachTrack(function(trackSection) {
@@ -312,6 +319,7 @@
         });
       });
     };
+
     function sectionLoaded(section) {
       clearSectionWorkspace();
       $scope.section = section;
@@ -320,7 +328,7 @@
       $scope.updatePlaybackRange();
 
       console.log('sectionLoaded');
-      $scope.setWorkspaceTrack(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
+      $scope.initializeWorkspace(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
       createSlides();
       $timeout(function() {
         swiperControl.setSlides($scope.slides, {
@@ -360,20 +368,64 @@
       }, 10)
     };
 
+    var lastInstrumentTrackSelection = {};
+
     $scope.selectInstrument = function(index) {
       console.log('--- selectInstrument ----');
+      console.log(lastInstrumentTrackSelection[index]);
+      var trackId;
       switch (index) {
         case 0:
-          $scope.workspace.trackSection = $scope.workspace.section.tracks['bass_0'];
+          trackId = lastInstrumentTrackSelection[index] || 'bass_0';
           break;
         case 1:
-          $scope.workspace.trackSection = $scope.workspace.section.tracks['drums_0'];
+          trackId = lastInstrumentTrackSelection[index] || 'drums_0';
           break;
       }
+      console.log(workspace.section.tracks[trackId]);
+      var track = projectManager.project.tracks.find(function(t){return t.id === trackId});
+      $scope.selectTrack(track);
 
       swiperControl.switchInstrument(index);
       $scope.ui.instrumentIndex = index;
     };
+
+    $scope.selectTrack = function(track) {
+      console.log('--- selectTrack: '+track.id);
+      var instrumentIndex = track.type === 'bass'? 0 : 1;
+      lastInstrumentTrackSelection[instrumentIndex] = track.id;
+
+      workspace.trackSection = workspace.section.tracks[track.id];
+      workspace.track = track;
+      if ($scope.ui.instrumentIndex !== instrumentIndex) {
+        swiperControl.switchInstrument(instrumentIndex);
+        $scope.ui.instrumentIndex = instrumentIndex;
+      } else {
+        $scope.slides.forEach(function(slide) {
+          slide.type = -1;
+        });
+        $scope.ui.instrumentIndex = instrumentIndex;
+        $timeout(function() {
+          swiperControl.switchInstrument(instrumentIndex);
+        });
+        /*
+        $scope.slides.forEach(function(slide) {
+          var trackBeat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat);
+          slide.beat = trackBeat;
+        });
+        */
+      }
+    };
+
+    $scope.selectTrack(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
+
+    // Load standard drums kit sounds
+    var resources = Drums.Standard.map(function(drum) {
+      return drum.filename;
+    });
+    audioPlayer.bufferLoader.loadResources(resources);
+
+    window.workspace = workspace;
 
     // Prevent default context menu
     window.oncontextmenu = function() {

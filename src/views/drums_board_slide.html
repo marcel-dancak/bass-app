@@ -3,7 +3,7 @@
   <div
     flex
     layout="column"
-    ng-repeat="drumSubbeats in beat.subbeats"
+    ng-repeat="drumSubbeats in beat.subbeats track by $index"
     class="drums-column"
     ng-class="{
       hidden: slides.visibleSubbeats.indexOf($index+1) === -1
@@ -14,7 +14,7 @@
       aria-label="Drum sound"
       class="drum-sound-box no-hover"
 
-      ng-repeat="drum in drums"
+      ng-repeat="drum in ::workspace.track.instrument track by drum.name"
       ng-init="subbeat=drumSubbeats[drum.name]">
       <div
         class="drum-sound"

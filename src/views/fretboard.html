@@ -4,7 +4,7 @@
 
   <div class="ghost-notes-container">
     <div
-      ng-repeat="string in bass.strings | orderBy:string.index:'-' track by string.index"
+      ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
       class="ghost-note"
       ng-click="playBassSound({
         note: {
@@ -42,7 +42,7 @@
 
       <tbody>
         <tr
-          ng-repeat="string in bass.strings | orderBy:string.index:'-' track by string.index"
+          ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
           class="string-row">
 
           <td

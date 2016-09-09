@@ -8,11 +8,6 @@
   function DrumsController($scope, $timeout, audioPlayer) {
     var drumsVolumeLevels = [0.0, 0.85, 0.4];
 
-    var resources = $scope.drums.map(function(drum) {
-      return drum.filename;
-    });
-    audioPlayer.bufferLoader.loadResources(resources);
-
     $scope.toggleDrum = function(sound) {
       var index = drumsVolumeLevels.indexOf(sound.volume);
       var nextIndex = (index+1) % drumsVolumeLevels.length;

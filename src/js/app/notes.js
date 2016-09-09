@@ -142,7 +142,7 @@
 
   function createDrums() {
     return {
-      Basic: [
+      Standard: [
         {
           name: 'tom1',
           label: 'Small Rack Tom',

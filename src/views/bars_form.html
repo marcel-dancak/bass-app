@@ -36,9 +36,9 @@
             class="time-signature"
             ng-model="section.timeSignature.bottom">
             <md-option
-              ng-repeat="value in [2,4,8,16]"
-              ng-value="{{ value }}">
-              {{ value }}
+              ng-repeat="value in ::[2,4,8,16]"
+              ng-value="{{ ::value }}">
+              {{ ::value }}
             </md-option>
           </md-select>
         </md-input-container>

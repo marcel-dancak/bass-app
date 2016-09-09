@@ -90,11 +90,7 @@
 
 .bar.swiper-container {
   padding-right: 4px;
-  xwidth: calc(100% + 8px);
-}
-.bar-swiper .swiper-container {
-  overflow: visible;
-  padding-right: 4px;
+  min-height: 80px;
 }
 
 .bar-container {
@@ -126,10 +122,9 @@
 
 .bar-preferences .md-menu {
   position: absolute;
-  left: -44px;
-  top: 16px;
+  left: -48px;
+  top: 0;
   height: calc(85% - 26px);
-  margin-bottom: 16px;
 }
 
 .time-signature-button.md-button {
@@ -167,11 +162,7 @@
   z-index: 500;
 }
 
-md-menu-content.subbeat-form-container {
-  background-color: white;
-  font-size: 15px;
-  max-height: 400px;
-}
+
 
 .subbeat-form {
   overflow: hidden;
@@ -179,49 +170,6 @@ md-menu-content.subbeat-form-container {
 
 .md-open-menu-container {
   border-radius: 8px;
-}
-.subbeat-form-container {
-  border: 1px solid #ccc;
-  border-radius: 7px;
-  padding: 4px;
-  min-width: 250px;
-  width: 280px;
-}
-
-.subbeat-form-container.closed {
-  visibility: hidden;
-  opacity: 0;
-  transform: translate3d(-100px, -120px, 0px) scale3d(0.5, 0.25, 1);
-}
-
-.subbeat-form-container .volume-field md-input-container {
-  width: 65px;
-  height: 35px;
-  margin-top: 20px;
-  margin-bottom: 1px;
-}
-.subbeat-form-container md-slider {
-  margin: 2px 8px 0 10px;
-  height: 46px;
-  border-bottom: 1px solid #ddd;
-}
-
-.subbeat-form-container .horizontal-space {
-  width: 8px;
-}
-
-.subbeat-form-container .play-button {
-  margin: 2px;
-  padding: 0px;
-  min-width: 40px;
-}
-.subbeat-form-container .clear-button.md-focused,
-.subbeat-form-container .clear-button:hover:not([disabled]) {
-  background-color: transparent;
-}
-.subbeat-form-container .clear-button md-icon {
-  width: 26px;
-  height: 26px;
 }
 
 .bar-settings-container md-input-container {
@@ -339,14 +287,20 @@ md-slider .md-focus-ring {
   height: 13vh;
 }
 
-.bar-container .swiper-button-prev,
-.bar-container .swiper-button-next {
+.swiper-button-prev,
+.swiper-button-next {
   top: auto;
   bottom: 0px;
   width: 38px;
   height: 18px;
+  opacity: 0.45;
 }
-.bar-container .swiper-button-prev {
+.swiper-button-prev.swiper-button-disabled,
+.swiper-button-next.swiper-button-disabled {
+  opacity: 0.1;
+}
+
+.swiper-button-prev {
   left: 10px;
   padding: 2px 5px 2px 5px;
 }
@@ -373,7 +327,7 @@ md-menu-content.beat-menu-content {
 
 .bar-slide::after {
   position: absolute;
-  bottom: 0;
+  bottom: 2px;
   height: 2px;
   left: 0;
   right: 0;
@@ -385,20 +339,21 @@ md-menu-content.beat-menu-content {
 }
 
 .beat-menu.md-open {
-  border-color: rgba(63,81,181,0.6);
+  xborder-color: rgba(63,81,181,0.6);
 }
 
 .beat-menu {
   overflow: hidden;
   top: 0;
   left: 0;
+  xbackground-color: red;
   z-index: 100;
   pointer-events: none;
   padding: 0;
-  border-width: 0 0 2px 0;
-  border-style: solid;
-  transition: 0s border;
-  border-color: transparent;
+  xborder-width: 0 0 2px 0;
+  xborder-style: solid;
+  xtransition: 0s border;
+  xborder-color: transparent;
 }
 
 .beat-menu .button {
@@ -408,4 +363,14 @@ md-menu-content.beat-menu-content {
   margin: 0;
   padding: 0;
   outline: none;
+  box-sizing: border-box;
+
+  border-width: 0 0 2px 0;
+  border-style: solid;
+  transition: 0s border;
+  border-color: transparent;
+}
+
+.beat-menu.md-open .button {
+  border-color: rgba(63,81,181,0.6);
 }

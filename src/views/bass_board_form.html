@@ -4,7 +4,7 @@
     aria-label="Bass Preferences"
     class="bass-tunning-button"
     ng-click="$mdOpenMenu($event)">
-    <p ng-repeat="string in project.bass.strings | orderBy:string.index:'-' track by string.index">
+    <p ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index">
       {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
     </p>
   </md-button>

@@ -1,9 +1,10 @@
 <div
   ng-if="::slide.initialized"
-  sly-show="slide.visible">
+  sly-show="slide.visible"
+  ng-keyup="keyPressed($event)">
   <div class="string-container">
     <div
-      ng-repeat="string in ::project.bass.strings track by string.index"
+      ng-repeat="string in ::workspace.track.instrument.strings track by string.index"
       class="bass-string">
     </div>
   </div>
@@ -11,7 +12,7 @@
   <div
     class="subbeats-container"
     layout="column"
-    ng-repeat="bassSubbeats in beat.subbeats track by $index"
+    ng-repeat="bassSubbeats in ::beat.subbeats track by $index"
     xng-init="renderingBar(beat.bar+':'+beat.beat+':'+$index+' ')"
     ng-class="{
       hidden: !swiperControl.swiperConfig.visibleSubbeats[beat.subdivision][$index+1]
@@ -21,7 +22,7 @@
     }">
 
     <div
-      ng-repeat="string in ::project.bass.strings | orderBy:string.index:'-' track by string.index"
+      ng-repeat="string in ::workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
       id="bass_{{::beat.bar}}_{{::beat.beat}}_{{::$parent.$index+1}}_{{::string.label}}"
 
       ng-init="grid={
@@ -38,10 +39,10 @@
       <div
         class="bass-grid"
         drop-channel="bassboard,fretboard"
-        drop-validate="dropValidation(grid, $data)"
-        ui-on-drag-enter="onDragEnter($event, grid)"
-        ui-on-drag-leave="onDragLeave($event, grid)"
-        ui-on-drop="onDrop($event, $data, grid, section)">
+        drop-validate="dropValidation(workspace.track.instrument, grid, $data)"
+        ui-on-drag-enter="onDragEnter(beat, grid, $event)"
+        ui-on-drag-leave="onDragLeave(beat, grid, $event)"
+        ui-on-drop="onDrop($event, $data, grid)">
 
         <md-button
           md-no-ink
@@ -56,7 +57,7 @@
         ng-if="grid.sound.note"
         class="bass-sound-wrapper"
         ng-class="[{
-            selected: selected.grid===grid,
+            selected: workspace.selected.grid === grid,
             staccato: grid.sound.noteLength.staccato
           },
           grid.sound.note.type,

@@ -18,8 +18,10 @@
     <link rel="stylesheet" type="text/css" href="styles/ui.css">
     <link rel="stylesheet" type="text/css" href="styles/bar.css">
     <link rel="stylesheet" type="text/css" href="styles/bass.css">
+    <link rel="stylesheet" type="text/css" href="styles/bass-sound-form.css">
     <link rel="stylesheet" type="text/css" href="styles/drums.css">
     <link rel="stylesheet" type="text/css" href="styles/fretboard.css">
+    <link rel="stylesheet" type="text/css" href="styles/playlist.css">
 
     <script type="text/javascript" src="bower_components/swiper/dist/js/swiper.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
@@ -58,10 +60,14 @@
     <script src="js/app/observable.js"></script>
     <script src="js/app/notes.js"></script>
     <script src="js/app/section.js"></script>
+    <script src="js/app/bass-section.js"></script>
+    <script src="js/app/drum-section.js"></script>
     <script src="js/app/app.ctrl.js"></script>
     <script src="js/app/project.ctrl.js"></script>
     <script src="js/app/bar.ctrl.js"></script>
-    <script src="js/app/bass.ctrl.js"></script>
+    <!-- <script src="js/app/bass.ctrl.js"></script> -->
+    <script src="js/app/bass-beat.ctrl.js"></script>
+    <script src="js/app/grid-handlers.service.js"></script>
     <script src="js/app/drums.ctrl.js"></script>
     <script src="js/app/fretboard.ctrl.js"></script>
     <script src="js/app/audio-composer.js"></script>
@@ -69,6 +75,8 @@
     <script src="js/app/audio-visualiser.service.js"></script>
     <script src="js/app/timeline.js"></script>
     <script src="js/app/highlight-timeline.js"></script>
+    <script src="js/app/player.ctrl.js"></script>
+    <script src="js/app/swiper-control.service.js"></script>
 
     <script type="text/javascript">
       angular.module('bd.app')
@@ -83,6 +91,11 @@
   <body>
     <div
       layout-fill
-      ng-include="'views/app.html'"></div>
+      ng-include="'views/app.html'">
+    </div>
+<!--     <div
+      layout-fill
+      ng-include="'views/player.html'">
+    </div> -->
   </body>
 </html>

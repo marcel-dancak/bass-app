@@ -9,7 +9,7 @@
     src="'views/main_toolbar.html'">
   </ng-include>
 
-  <div style="height: 3%;max-height: 50px;"></div>
+  <div style="height: 4%;max-height: 50px;"></div>
 
   <div
     class="bar-container"
@@ -58,12 +58,31 @@
       class="instrument-grid strings-4"
       ng-class="[
         bass.settings.label,
-        'strings-'+project.bass.strings.length,
+        'strings-'+workspace.track.instrument.strings.length,
         {
           'no-colors': !bass.settings.colors,
           'graph-enabled': player.graphEnabled
         }
       ]">
+
+    <div
+      ng-show="ui.instrumentIndex === 0"
+      class="instrument-left-panel">
+
+      <md-button
+        md-no-ink
+        class="audio-graph-toggle no-hover"
+        ng-class="{enabled: player.graphEnabled}"
+        ng-click="player.graphEnabled = !player.graphEnabled">
+        <md-icon md-svg-icon="audio-signal"></md-icon>
+        <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
+      </md-button>
+
+      <div
+        class="bass-preferences"
+        ng-include src="'views/bass_board_form.html'">
+      </div>
+    </div>
 
     <div class="instrument swiper-container">
       <div class="swiper-wrapper">
@@ -104,11 +123,9 @@
 
     </div>
     <div flex style="max-height: 40px;"></div>
-    <div
+<!--     <div
       ng-show="ui.instrumentIndex === 0"
       class="bass-left-panel"
-      xng-keyup="keyPressed($event)"
-      xng-click="clearSelection($event)"
       layout="column">
 
       <md-button
@@ -126,12 +143,8 @@
           ng-include src="'views/bass_board_form.html'">
         </div>
       </div>
-    </div>
+    </div> -->
     <div ng-show="ui.instrumentIndex === 0">
-      <div
-        ng-include src="'views/bass_sound_form.html'">
-      </div>
-
       <div
         style="margin-bottom: 20px;"
         ng-include src="'views/fretboard.html'">
@@ -144,11 +157,10 @@
       layout="column"
       class="drums-labels-container">
       <img
-        ng-repeat="drum in ::drums track by drum.name"
+        ng-repeat="drum in workspace.track.instrument track by drum.name"
         ng-src="src/styles/images/{{ ::drum.name }}.svg"
         ng-click="playDrumSound(drum)">
     </div>
-
   </div>
 
   <div

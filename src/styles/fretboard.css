@@ -8,7 +8,7 @@
 }
 
 .fretboard {
-  padding: 0;
+  padding: 0 10px 0 65px;
   position: relative;
 }
 
@@ -150,7 +150,7 @@ md-input-container.input-inline-label label {
 .ghost-notes-container {
   width: 54px;
   position: absolute;
-  left: -54px;
+  left: 8px;
   top: 22px;
   border: solid #777;
   border-width: 2px 2px 2px 2px;

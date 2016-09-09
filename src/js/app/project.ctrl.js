@@ -20,17 +20,16 @@
       }
     }
 
+    var idCouter = {};
     ProjectManager.prototype.addTrack = function(track) {
-      var id = 0;
-      this.project.tracks.forEach(function(t) {
-        if (t.type === track.type && t.id >= id) {
-          id = t.id + 1;
-        }
-      });
-      track.id = id;
+      if (angular.isUndefined(idCouter[track.type])) {
+        idCouter[track.type] = 0;
+      }
+      track.id = track.type+'_'+idCouter[track.type];
       track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
       this.project.tracks.push(track);
-      // TODO: add track for every section
+      idCouter[track.type] += 1;
+      // TODO: add track for every existing section, or do it lazy
     };
 
     ProjectManager.prototype.createProject = function(tracks) {

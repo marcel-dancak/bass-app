@@ -14,7 +14,7 @@
         aria-label="Bass"
         class="no-hover"
         ng-class="{
-          active: ui.instrumentIndex===0
+          active: ui.instrumentIndex === 0
         }"
         ng-click="selectInstrument(0)">
         Bass
@@ -26,7 +26,7 @@
         aria-label="Drums"
         class="icon-hover"
         ng-class="{
-          active: ui.instrumentIndex===1
+          active: ui.instrumentIndex === 1
         }"
         ng-click="selectInstrument(1)">
         Drums
@@ -60,6 +60,36 @@
         <md-list>
 
           <md-list-item
+            ng-repeat="track in project.tracks track by track.id"
+            class="volume-field bottom-border">
+            <label>{{ track.name }}</label>
+            <rzslider
+              rz-slider-model="track.audio.gain.value"
+              rz-slider-options="{
+                floor: 0,
+                ceil: 1,
+                step: 0.01,
+                precision: 2,
+                hideLimitLabels: true,
+                hidePointerLabels: true,
+                showSelectionBar: true,
+                disabled: track.muted
+              }">
+            </rzslider>
+            <md-button
+              md-no-ink
+              aria-label="Mute"
+              class="mute-button"
+              ng-class="{active: !track.muted}"
+              md-prevent-menu-close
+              ng-click="toggleVolumeMute(track)">
+              <md-icon
+                md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
+              </md-icon>
+            </md-button>
+          </md-list-item>
+
+<!--           <md-list-item
             class="volume-field bottom-border">
             <label>Bass Volume</label>
             <rzslider
@@ -86,10 +116,10 @@
                 md-svg-icon="{{ player.bass.muted? 'volume-mute' : 'volume-medium' }}">
               </md-icon>
             </md-button>
-          </md-list-item>
+          </md-list-item> -->
 
 
-          <md-list-item
+<!--           <md-list-item
             class="volume-field bottom-border">
             <label>Drums Volume</label>
             <rzslider
@@ -116,7 +146,7 @@
                 md-svg-icon="{{ player.drums.muted? 'volume-mute' : 'volume-medium' }}">
               </md-icon>
             </md-button>
-          </md-list-item>
+          </md-list-item> -->
 
           <md-list-item
             class="volume-field bottom-border">
@@ -150,6 +180,34 @@
 
       </md-menu-content>
     </md-menu>
+
+<!--     <md-input-container class="track">
+      <md-select
+        md-no-ink
+        aria-label="Track"
+        class="tracks-list"
+        ng-model="workspace.trackName"
+        ng-change="selectTrack(workspace.trackName)">
+        <md-option
+          ng-repeat="track in section.tracksList track by $index"
+          ng-value="track">
+          {{ track }}
+        </md-option>
+      </md-select>
+    </md-input-container> -->
+
+  </div>
+  <div
+    layout="row"
+    class="instrument-tracks">
+    <a
+      ng-repeat="track in project.tracks track by track.id"
+      class="item"
+      ng-show="track.type === ['bass', 'drums'][ui.instrumentIndex]"
+      ng-class="{active: workspace.track === track}"
+      ng-click="selectTrack(track)">
+      / {{ track.name }}
+    </a>
   </div>
 
   <div flex></div>
@@ -165,7 +223,8 @@
         min="30"
         max="200"
         step="5"
-        ng-model="section.bpm">
+        ng-model="section.bpm"
+        ng-change="bpmChanged(section.bpm)">
     </md-input-container>
 
     <md-button
@@ -275,7 +334,7 @@
           drop-channel="section"
 
           ng-repeat="section in project.sections | orderBy:section.index track by $index"
-          ng-value="$index">
+          ng-value="::$index">
           {{ section.name }}
         </md-option>
       </md-select>
