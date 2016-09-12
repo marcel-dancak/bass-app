@@ -25,7 +25,7 @@
     'B' : 'B'
   };
 
-  function audioPlayer($timeout, $http, context, soundsUrl, Observable, AudioComposer) {
+  function audioPlayer($timeout, $http, context, soundsUrl, Observable, AudioComposer, projectManager) {
 
     function AudioPlayer() {
       Observable.call(this, ["playbackStarted", "playbackStopped"]);
@@ -62,7 +62,7 @@
             while (rootSound.prev) {
               rootSound = rootSound.prev.ref;
             }
-            return ['sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string.label, sound.note.fret)];
+            return ['sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string, sound.note.fret)];
           },
           transitionPlayback: function(stack, sound, startTime, beatTime, timeSignature) {
             /*
@@ -100,7 +100,7 @@
             var outOfRange = sound.note.slide.endNote.fret + step;
             var resources = [];
             for (var i = sound.note.fret; i !== outOfRange; i += step) {
-              resources.push('sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string.label, i));
+              resources.push('sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string, i));
             }
             return resources;
           },
@@ -149,7 +149,7 @@
             return sound.note.type === 'grace';
           },
           getResources: function(sound) {
-            return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string.label, sound.note.fret-2)];
+            return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret-2)];
           },
           prepareForPlayback: function(sound, startTime, beatTime, timeSignature) {
             var audio = _this.createSoundAudio(sound, startTime);
@@ -169,7 +169,7 @@
             return sound.note.type === 'ghost';
           },
           getResources: function(sound) {
-            return ['sounds/bass/{0}/{1}X'.format(sound.style, sound.string.label)];
+            return ['sounds/bass/{0}/{1}X'.format(sound.style, sound.string)];
           },
           prepareForPlayback: function(sound, startTime, beatTime, timeSignature) {
             var audio = _this.createSoundAudio(sound, startTime);
@@ -183,7 +183,7 @@
             return sound.note.type === 'regular';
           },
           getResources: function(sound) {
-            return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string.label, sound.note.fret)];
+            return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];
           },
           prepareForPlayback: function(sound, startTime, beatTime, timeSignature) {
             var audio = _this.createSoundAudio(sound, startTime);
@@ -315,51 +315,25 @@
 
       if (!isFinalBeat) {
         // console.log('Play beat: '+beat);
-        for (var i = 0; i < this.section.tracksList.length; i++) {
+        var tracks = [
+          workspace.trackSection,
+          this.section.tracksData[(workspace.trackSection.type === 'bass')? 'drums_0' : 'bass_0']
+        ];
 
-          var trackSection = this.section.tracks[this.section.tracksList[i]];
-          var trackBeat = trackSection.beat(bar, beat);
-          var trackSounds = trackSection.getSounds(trackBeat);
+        tracks.forEach(function(track) {
 
-          console.log('Subdivision: '+trackBeat.subdivision);
+          var trackBeat = track.beat(bar, beat);
           var noteBeatTime = trackBeat.subdivision === 3? beatTime*(2/3) : beatTime;
-
-          trackSounds.forEach(function(subbeatSound) {
+          track.beatSounds(trackBeat).forEach(function(subbeatSound) {
             var startAt = startTime + (beatTime / trackBeat.subdivision * (subbeatSound.subbeat - 1));
-            if (trackSection.type === 'bass') {
+            if (track.type === 'bass') {
               this._playBassSound(subbeatSound.sound, startAt, noteBeatTime, timeSignature);
             } else {
-              var sound = trackSection.subbeat(bar, beat, subbeatSound.subbeat)[subbeatSound.drum];
               console.log(subbeatSound);
-              console.log(sound);
-              this._playDrumsSound(sound, startAt);
+              this._playDrumsSound(subbeatSound, startAt);
             }
-          }.bind(this));
-        }
-
-        /*
-        var bassSection = this.section.tracks['bass_0'];
-        var drumSection = this.section.tracks['drums_0'];
-
-        var bassBeat = bassSection.beat(bar, beat);
-        var bassSounds = bassSection.getSounds(bassBeat);
-        console.log('Subdivision: '+bassBeat.subdivision);
-        var noteBeatTime = bassBeat.subdivision === 3? beatTime*(2/3) : beatTime;
-
-        bassSounds.forEach(function(subbeatSound) {
-          var startAt = startTime + (beatTime / bassBeat.subdivision * (subbeatSound.subbeat - 1));
-          this._playBassSound(subbeatSound.sound, startAt, noteBeatTime, timeSignature);
-        }.bind(this));
-
-        var drumsBeat = drumSection.beat(bar, beat);
-        var drumsSounds = drumSection.getDrumsSounds(drumsBeat);
-        drumsSounds.forEach(function(subbeatSound) {
-          var startAt = startTime + (beatTime / 4 * (subbeatSound.subbeat - 1));
-          // replace 'incomplete' drum sound object from Section.getDrumsSounds
-          var sound = drumSection.subbeat(drumsBeat.bar, drumsBeat.beat, subbeatSound.subbeat)[subbeatSound.drum];
-          this._playDrumsSound(sound, startAt);
-        }.bind(this));
-        */
+          }, this);
+        }, this);
       }
 
       var flatIndex = (bar-1)*this.section.timeSignature.top+beat-1;
@@ -464,23 +438,22 @@
 
       var resources = [];
 
-      section.forEachTrack(function(bassSection) {
-        var strings = Object.keys(bassSection.subbeat(1, 1, 1));
-        bassSection.forEachSubbeat(function(subbeat) {
-          for (var stringIndex = 0; stringIndex < strings.length; stringIndex++) {
-          // for (var string in subbeat.data) {
-            var bassSound = subbeat.data[strings[stringIndex]].sound;
-            if (bassSound.note && bassSound.style) {
-              var subbeatResources = player._getSoundHandler(bassSound).getResources(bassSound);
-              subbeatResources.forEach(function(resource) {
-                if (resources.indexOf(resource) === -1) {
-                  resources.push(resource);
-                }
-              });
-            }
+      // var trackData = section.tracksData['bass_0'];
+      var trackData = workspace.trackSection;
+      if (trackData.type === 'bass') {
+        trackData.forEachSound(function(bassSound) {
+          console.log(bassSound);
+          if (bassSound.note && bassSound.style) {
+            var subbeatResources = player._getSoundHandler(bassSound).getResources(bassSound);
+            subbeatResources.forEach(function(resource) {
+              if (resources.indexOf(resource) === -1) {
+                resources.push(resource);
+              }
+            });
           }
-        });
-      }, 'bass');
+        }, this);
+      }
+
       console.log(resources);
       if (resources.length) {
         this.bufferLoader.loadResources(resources, afterLoad);

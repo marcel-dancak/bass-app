@@ -10,7 +10,7 @@
         note: {
           type: 'ghost'
         },
-        string: string
+        string: string.label
       })"
       ui-draggable="true"
       drag-channel="fretboard"
@@ -21,7 +21,7 @@
             type: 'ghost'
           },
           volume: 0.75,
-          string: string
+          string: string.label
         }
       }">x
     </div>
@@ -53,7 +53,7 @@
                 octave: note.octave,
                 fret: $index
               },
-              string: string
+              string: string.label
             })"
             class="fret-box octave-{{ ::note.octave }}"
             ng-repeat="note in string.notes | limitTo: fretboard.size+1"
@@ -71,7 +71,7 @@
                 },
                 noteLength: fretboard.noteLength,
                 volume: 0.75,
-                string: string
+                string: string.label
               }
             }"
             >

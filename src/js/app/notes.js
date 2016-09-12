@@ -136,12 +136,12 @@
   Bass.prototype.stringFret = function(string, note) {
     var noteName = note.name + note.octave;
     var index = bassNotes.list.indexOf(bassNotes.map[noteName]);
-    var fret = index - this.strings[string.label].noteIndex;
+    var fret = index - this.strings[string].noteIndex;
     return (fret >= 0 && fret <= 24)? fret : -1;
   };
 
   function createDrums() {
-    return {
+    var drumsKits = {
       Standard: [
         {
           name: 'tom1',
@@ -247,6 +247,15 @@
     //     duration: 0.27
     //   }
     // ];
+
+    for (name in drumsKits) {
+      var kit = drumsKits[name];
+      kit.drumMap = {};
+      kit.forEach(function(drum) {
+        kit.drumMap[drum.name] = drum;
+      });
+    }
+    return drumsKits;
   }
 
 })();

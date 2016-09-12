@@ -6,7 +6,8 @@
     .controller('ProjectController', ProjectController)
     .factory('projectManager', projectManager);
 
-  function projectManager($http, $timeout, $q, Observable, Section, BassSection, DrumSection, Bass, Drums) {
+  function projectManager($http, $timeout, $q, Observable,
+      BassSection, DrumSection, Bass, Drums, BassTrackSection, DrumTrackSection) {
 
     function ProjectManager() {
       Observable.call(this, ["sectionLoaded", "sectionDeleted", "sectionCreated"]);
@@ -28,6 +29,7 @@
       track.id = track.type+'_'+idCouter[track.type];
       track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
       this.project.tracks.push(track);
+      this.project.tracksMap[track.id] = track;
       idCouter[track.type] += 1;
       // TODO: add track for every existing section, or do it lazy
     };
@@ -36,23 +38,13 @@
       this.project = {
         sections: this.getSectionsList(),
         tracks: [],
+        tracksMap: {}
       };
       tracks.forEach(this.addTrack.bind(this));
       return this.project;
     };
 
-    ProjectManager.prototype.createSection = function(options) {
-      var section = new Section(options);
-      section.tracks = {};
-      this.project.tracks.forEach(function(track, index) {
-        var trackSection;
-        if (track.type === 'bass') {
-          trackSection = new BassSection(track.instrument, section);
-        } else if (track.type === 'drums') {
-          trackSection = new DrumSection(track.instrument, section);
-        }
-        section.addTrack(track, trackSection);
-      }, this);
+    ProjectManager.prototype.createSection = function(section) {
       this.section = section;
       return section;
     };
@@ -104,20 +96,14 @@
       localStorage.setItem(storageKey, jsonData);
     }
 
-    ProjectManager.prototype.serializeSectionBeats = function(section) {
+    ProjectManager.prototype.serializeSectionTrack = function(trackSection) {
       var sectionStorageBeats = [];
-      section.forEachBeat(function(beat) {
+      trackSection.forEachBeat(function(beat) {
         sectionStorageBeats.push({
           bar: beat.bar,
           beat: beat.index,
-          bass: {
-            subdivision: beat.bass.subdivision,
-            sounds: section.getBassSounds(beat.bass)
-          },
-          drums: {
-            subdivision: beat.drums.subdivision,
-            sounds: section.getSounds(beat.drums)
-          }
+          subdivision: beat.beat.subdivision,
+          data: trackSection.beatSounds(beat.beat)
         });
       });
       return sectionStorageBeats;
@@ -164,14 +150,19 @@
       var data = {
         timeSignature: section.timeSignature,
         length: section.length,
-        beats: this.serializeSectionBeats(section),
         // other section configuration
         beatsPerView: section.beatsPerView,
         beatsPerSlide: section.beatsPerSlide,
         animationDuration: section.animationDuration,
-        bpm: section.bpm
+        bpm: section.bpm,
+
+        tracks: {
+          'bass_0': this.serializeSectionTrack(section.tracks['bass_0']),
+          'drums_0': this.serializeSectionTrack(section.tracks['drums_0'])
+        }
       }
-      return JSON.stringify(data);
+
+      return JSON.stringify(data, null, 4);
     }
 
     ProjectManager.prototype.saveSection = function(index) {
@@ -205,7 +196,7 @@
 
 
     ProjectManager.prototype.loadSectionData = function(sectionData) {
-      console.log('sectionData');
+      console.log('loadSectionData');
       console.log(sectionData);
       var section = this.section;
 
@@ -213,47 +204,18 @@
       if (sectionData.animationDuration) {
         section.animationDuration = sectionData.animationDuration;
       }
-      section.setLength(sectionData.length);
-
+      section.length = sectionData.length;
       section.bpm = sectionData.bpm;
       section.timeSignature = sectionData.timeSignature;
       section.beatsPerView = sectionData.beatsPerView;
       section.beatsPerSlide = sectionData.beatsPerSlide;
 
+      section.tracksData = {
+        bass_0: new BassTrackSection(sectionData.tracks['bass_0'], this.project.tracksMap['bass_0'].instrument),
+        drums_0: new DrumTrackSection(sectionData.tracks['drums_0'], this.project.tracksMap['drums_0'].instrument)
+      };
       this.dispatchEvent('sectionLoaded', section);
 
-      $timeout(function() {
-
-        // override selected section data
-        var index2Label = ['E', 'A', 'D', 'G'];
-        var bassSection = section.tracks['bass_0'];
-        var drumSection = section.tracks['drums_0'];
-        sectionData.beats.forEach(function(beat) {
-          if (beat.bass) {
-            console.log(beat.bass);
-            var destBassBeat = bassSection.beat(beat.bar, beat.beat);
-            destBassBeat.subdivision = beat.bass.subdivision;
-            beat.bass.sounds.forEach(function(bassSound) {
-              var subbeat = bassSection.subbeat(beat.bar, beat.beat, bassSound.subbeat);
-              if (Number.isInteger(bassSound.sound.string)) {
-                // temporarty conversion for backward compatibility
-                bassSound.sound.string = index2Label[bassSound.sound.string];
-              }
-              // console.log(bassSound.sound.string);
-              // console.log(subbeat[bassSound.sound.string]);
-              angular.extend(subbeat[bassSound.sound.string].sound, bassSound.sound);
-            });
-          }
-          beat.drums.sounds.forEach(function(drumSound) {
-            var subbeat = drumSection.subbeat(beat.bar, beat.beat, drumSound.subbeat);
-            subbeat[drumSound.drum].volume = drumSound.volume;
-          });
-        });
-        // update references
-        bassSection.forEachBeat(function(beat) {
-          bassSection.updateBassReferences(beat.beat);
-        });
-      });
     }
 
     ProjectManager.prototype.loadSection = function(index) {
@@ -264,8 +226,6 @@
       }
 
       var sectionData;
-
-      var bass = new Bass({strings: this.project.bassTuning});
       if (this.projectData) {
         sectionData = this.projectData[index];
       }
@@ -276,6 +236,8 @@
           sectionData = JSON.parse(data);
         }
       }
+      console.log(sectionData);
+
       if (sectionData) {
         this.loadSectionData(sectionData);
       }
@@ -285,6 +247,7 @@
 
     return new ProjectManager();
   }
+
 
   function ProjectController($scope, $timeout, audioVisualiser, projectManager) {
 

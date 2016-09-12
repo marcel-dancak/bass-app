@@ -3,7 +3,61 @@
 
   angular
     .module('bd.app')
-    .value('DrumSection', DrumSection);
+    .value('DrumSection', DrumSection)
+    .value('DrumTrackSection', DrumTrackSection);
+
+
+  function DrumTrackSection(data, instrument) {
+    this.data = data;
+    this.instrument = instrument;
+    this.type = 'drums';
+
+    this.forEachSound(function(sound, info) {
+      sound.drum = this.instrument.drumMap[sound.drum];
+    }, this);
+  }
+
+  DrumTrackSection.prototype.beat = function(bar, beat) {
+    for (var i = 0; i < this.data.length; i++) {
+      var beatData = this.data[i];
+      if (beatData.bar === bar && beatData.beat === beat) {
+        return beatData;
+      }
+    }
+  };
+
+  DrumTrackSection.prototype.sound = function(bar, beat, subbeat, drum) {
+    var items = this.beat(bar, beat).data;
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (item.subbeat === subbeat && item.sound.drum.name === drum) {
+        return item.sound;
+      }
+    }
+  };
+
+  DrumTrackSection.prototype.beatSounds = function(beat) {
+    return beat.data;
+  };
+
+  DrumTrackSection.prototype.forEachSound = function(callback, obj) {
+    if (obj) {
+      callback = callback.bind(obj);
+    }
+    for (var i = 0; i < this.data.length; i++) {
+      var beat = this.data[i];
+      for (var j = 0; j < beat.data.length; j++) {
+        var sound = beat.data[j];
+        var info = {
+          bar: beat.bar,
+          beat: beat.beat,
+          subbeat: beat.data[j].subbeat
+        };
+        callback(sound, info);
+      }
+    }
+  };
+
 
   function DrumSection(drums, section) {
     this.section = section;
@@ -12,6 +66,20 @@
     this.bars = [];
     this.setLength(section.length || 1);
   }
+
+  DrumSection.prototype.loadBeats = function(instrument, beats) {
+    this.instrument = instrument;
+
+    // override selected section data
+    beats.forEach(function(beat) {
+      var destBeat = this.beat(beat.bar, beat.beat);
+      destBeat.subdivision = beat.subdivision;
+      beat.data.forEach(function(sound) {
+        var subbeat = this.subbeat(beat.bar, beat.beat, sound.subbeat);
+        subbeat[sound.drum.name].volume = sound.volume;
+      }, this);
+    }, this);
+  };
 
   DrumSection.prototype.setLength = function(length) {
     console.log('set length '+length);
@@ -69,26 +137,8 @@
     }
   };
 
-  /*
-  Section.prototype.forEachDrumSubbeat = function(callback) {
-    var bar, barIndex, beatIndex;
-    for (barIndex = 0; barIndex < this.length; barIndex++) {
-      bar = this.bars[barIndex];
-      for (beatIndex = 0; beatIndex < this.timeSignature.top ; beatIndex++) {
-        var drumsBeat = bar.drumsBeats[beatIndex];
-        drumsBeat.subbeats.forEach(function(subbeat, index) {
-          callback({
-            data: subbeat,
-            bar: barIndex+1,
-            beat: beatIndex+1,
-            subbeat: index+1
-          });
-        });
-      }
-    }
-  };*/
 
-  DrumSection.prototype.getSounds = function(drumsBeat) {
+  DrumSection.prototype.beatSounds = function(drumsBeat) {
     var sounds = [];
     drumsBeat.subbeats.forEach(function(subbeat, subbeatIndex) {
       var drumName, drumSound;
@@ -99,7 +149,7 @@
           sounds.push({
             subbeat: subbeatIndex+1,
             volume: drumSound.volume,
-            drum: drumName
+            drum: drumSound.drum
           });
         }
       }
@@ -117,6 +167,12 @@
         }
       }
     });
+  };
+
+  DrumSection.prototype.forEachSound = function(callback, obj) {
+    this.forEachBeat(function(beat) {
+      this.beatSounds(beat.beat).forEach(callback, obj);
+    }, this);
   };
 
 })();

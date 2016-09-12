@@ -56,7 +56,7 @@
           bar: barIndex,
           beat: beatIndex,
           subdivision: bassBeat.subdivision,
-          sounds: workspace.trackSection.getSounds(beat)
+          sounds: workspace.trackSection.beatSounds(beat)
         });
       }
     };

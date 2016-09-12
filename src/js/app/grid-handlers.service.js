@@ -10,7 +10,7 @@
 
   /***************** Private helper functions ******************/
 
-  function findRootContainer(elem) {
+  function findGridContainer(elem) {
     var e = elem;
     var maxDepth = 10;
     while (e.className.indexOf("bass-subbeat") === -1) {
@@ -147,7 +147,7 @@
       onDragEnd: function(evt) {},
       onDrop: function(evt, data, dropGrid) {
         angular.extend(dropGrid.sound, data.sound);
-        dropGrid.sound.string = dropGrid.string;
+        dropGrid.sound.string = dropGrid.string.label;
         dropGrid.sound.noteLength.beatLength = dropGrid.sound.noteLength.length;
         audioPlayer.fetchSoundResources(dropGrid.sound);
       }
@@ -169,7 +169,7 @@
       },
       onDrop: function(evt, dragGrid, dropGrid) {
         angular.extend(dropGrid.sound, dragGrid.sound);
-        dropGrid.sound.string = dropGrid.string;
+        dropGrid.sound.string = dropGrid.string.label;
 
         if (evt.dataTransfer.dropEffect === "move") {
           // var sourceSound = workspaceSection.subbeat(dragGrid.bar, dragGrid.beat, dragGrid.subbeat)[dragGrid.string].sound;
@@ -242,7 +242,7 @@
         // console.log('to: ['+dropGrid.bar+','+dropGrid.beat+','+dropGrid.subbeat+']');
         function copySound(sound, destGrid) {
           angular.extend(destGrid.sound, sound);
-          destGrid.sound.string = destGrid.string;
+          destGrid.sound.string = destGrid.string.label;
         }
 
         var dragSounds = this.sourceSoundGrids.map(function(grid) {
@@ -311,8 +311,13 @@
           //   dragData.widths[4] = (3/2)*dragData.widths[3];
           // }
 
+          var sound = dragData.sound;
           var beatWidth = swiperControl.instrumentSwiper.slides[0].clientWidth;
-          var width = beatWidth * getSoundLength(dragData.sound);
+          var width = 0;
+          while (sound) {
+            width += beatWidth * getSoundLength(sound);
+            sound = sound.next? sound.next.ref : null;
+          }
           dragData.widths = {
             4: width,
             3: (2/3)*width
@@ -338,7 +343,7 @@
       if (data.sound.note.type === 'ghost') {
         return true;
       }
-      var fret = instrument.stringFret(grid.string, data.sound.note);
+      var fret = instrument.stringFret(grid.string.label, data.sound.note);
       return fret !== -1;
     };
 
@@ -351,19 +356,6 @@
       dropArea.elem.style.opacity = 0.001;
       // $scope.updateBassGrid(dropGrid);
     };
-
-    function findGridContainer(elem) {
-      var e = elem;
-      var maxDepth = 10;
-      while (e.className.indexOf("bass-subbeat") === -1) {
-        //console.log(e.className);
-        e = e.parentElement;
-        if (maxDepth-- === 0) {
-          return null;
-        };
-      }
-      return e;
-    }
 
     DragAndDrop.prototype.onDragEnter = function(beat, grid, evt) {
 
@@ -531,13 +523,12 @@
       },
       selectGrid: function(evt, grid, focus) {
         this.selected.grid = grid;
-        this.selected.element = findRootContainer(evt.target).querySelector('.bass-sound-container');
+        this.selected.element = findGridContainer(evt.target).querySelector('.bass-sound-container');
         if (focus) {
           this.selected.element.focus();
         }
       },
-      clearSelection: function(evt) {
-        console.log(evt.target.className);
+      clearSelection: function() {
         // if (evt.target.className.indexOf('bass-board-container') !== -1) {
         this.selected.grid = null;
         this.selected.element = null;
@@ -613,7 +604,9 @@
         if (this.selected.element) {
           switch (evt.keyCode) {
             case 46: // Del
-              return this.clearSound(this.selected.grid.sound);
+              workspace.trackSection.clearSound(this.selected.grid.sound);
+              this.clearSelection();
+              break;
             case 72: // h
               this.selected.grid.sound.style = 'hammer';
               this.soundStyleChanged('hammer');

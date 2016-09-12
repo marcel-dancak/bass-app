@@ -19,7 +19,7 @@
     });
 
   function AppController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager,
-                         Bass, Drums, Section, BassSection, Timeline, HighlightTimeline, swiperControl) {
+                         Bass, Drums, BassSection, DrumSection, Timeline, HighlightTimeline, swiperControl) {
     audioVisualiser.initialize(context, audioPlayer.bass.audio);
     audioPlayer.drums.audio.connect(context.destination);
     audioPlayer.bass.audio.connect(context.destination);
@@ -282,26 +282,46 @@
     function createSlides() {
       var timeSignature = $scope.section.timeSignature;
 
-      $scope.slides = [];
+      var slides = [];
       workspace.trackSection.forEachBeat(function(beat) {
         var slideId = beat.bar+'_'+beat.index;
-        $scope.slides.push({
+        var slide = {
           id: slideId,
           beat: beat.beat,
           type: $scope.ui.instrumentIndex
-        });
+        };
+        var prevValue = $scope.slides[slides.length];
+        if (prevValue) {
+          slide.initialized = prevValue.initialized;
+          slide.visible = prevValue.visible;
+        }
+        slides.push(slide);
+      });
+      $scope.slides = slides;
+    }
+
+    workspace.section.tracksSounds = {};
+    function loadTrackSectionSounds(woerspaceSection, sounds) {
+      // Get existing sounds
+      trackSection.beatSounds();
+      // clear existing sounds
+      var trackSection = workspace.bassSection;
+      trackSection.orEachBeat(function(beat) {
+        trackSection.clearBeat(beat.beat);
       });
     }
 
-    $scope.initializeWorkspace = function(track) {
-      $scope.workspace.track = track;
-      console.log(track);
-      $scope.workspace.trackSection = workspace.section.tracks[track.id];
-      // $scope.project.bass = track.instrument;
+    $scope.initializeWorkspace = function(bassTrack, drumsTrack) {
+      workspace.track = bassTrack;
+      // new Bass({strings: 'EADG'})
+      workspace.bassSection = new BassSection(bassTrack.instrument, workspace.section);
+      workspace.drumSection = new DrumSection(drumsTrack.instrument, workspace.section);
+      workspace.trackSection = workspace.bassSection;
+
       createSlides();
     };
 
-    $scope.initializeWorkspace(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
+    $scope.initializeWorkspace(projectManager.project.tracksMap['bass_0'], projectManager.project.tracksMap['drums_0']);
 
     $timeout(function() {
       swiperControl.setSlides($scope.slides, {
@@ -321,14 +341,23 @@
     };
 
     function sectionLoaded(section) {
-      clearSectionWorkspace();
+      // clearSectionWorkspace();
       $scope.section = section;
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.end = section.length + 1;
       $scope.updatePlaybackRange();
 
       console.log('sectionLoaded');
-      $scope.initializeWorkspace(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
+      console.log(workspace.section);
+      var bassTrack = projectManager.project.tracksMap['bass_0'];
+      var drumsTrack = projectManager.project.tracksMap['drums_0'];
+      $scope.initializeWorkspace(bassTrack, drumsTrack);
+      //workspace.section.tracks[bassTrack.id].loadBeats(bassTrack.instrument, section.tracksData[bassTrack.id].data);
+      //workspace.section.tracks[drumsTrack.id].loadBeats(drumsTrack.instrument, section.tracksData[drumsTrack.id].data);
+      workspace.trackSection = workspace.bassSection;
+      workspace.bassSection.loadBeats(bassTrack.instrument, section.tracksData[bassTrack.id].data);
+      workspace.drumSection.loadBeats(drumsTrack.instrument, section.tracksData[drumsTrack.id].data);
+      $scope.slides = [];
       createSlides();
       $timeout(function() {
         swiperControl.setSlides($scope.slides, {
@@ -383,7 +412,7 @@
           break;
       }
       console.log(workspace.section.tracks[trackId]);
-      var track = projectManager.project.tracks.find(function(t){return t.id === trackId});
+      var track = projectManager.project.tracksMap[trackId];
       $scope.selectTrack(track);
 
       swiperControl.switchInstrument(index);
@@ -395,12 +424,23 @@
       var instrumentIndex = track.type === 'bass'? 0 : 1;
       lastInstrumentTrackSelection[instrumentIndex] = track.id;
 
-      workspace.trackSection = workspace.section.tracks[track.id];
+      // workspace.trackSection = workspace.section.tracks[track.id];
+      workspace.trackSection = track.type === 'bass'? workspace.bassSection : workspace.drumSection;
+
+      workspace.trackSection.forEachBeat(function(beat) {
+        workspace.trackSection.clearBeat(beat.beat);
+      });
+      if (workspace.section.tracksData && workspace.section.tracksData[track.id]) {
+        workspace.trackSection.loadBeats(track.instrument, workspace.section.tracksData[track.id].data);
+      }
+
       workspace.track = track;
+
       if ($scope.ui.instrumentIndex !== instrumentIndex) {
         swiperControl.switchInstrument(instrumentIndex);
         $scope.ui.instrumentIndex = instrumentIndex;
       } else {
+        /*
         $scope.slides.forEach(function(slide) {
           slide.type = -1;
         });
@@ -408,6 +448,7 @@
         $timeout(function() {
           swiperControl.switchInstrument(instrumentIndex);
         });
+        */
         /*
         $scope.slides.forEach(function(slide) {
           var trackBeat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat);
@@ -417,7 +458,7 @@
       }
     };
 
-    $scope.selectTrack(projectManager.project.tracks.find(function(track) {return track.type === 'bass'}));
+    $scope.selectTrack(projectManager.project.tracksMap['bass_0']);
 
     // Load standard drums kit sounds
     var resources = Drums.Standard.map(function(drum) {

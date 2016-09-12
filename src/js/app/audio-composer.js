@@ -58,15 +58,22 @@
     return i;
   };
 
-  function soundWaveLength(sound) {
-    return [0.0324, 0.024272, 0.018182, 0.01362, 0.0102041][sound.string.index]/Math.pow(Math.pow(2, 1/12), sound.note.fret);
-  }
+  var StringWaveLength = {
+    'B': 0.0324,
+    'E': 0.024272,
+    'A': 0.018182,
+    'D': 0.01362,
+    'G': 0.0102041
+  };
 
   function fretWaveLength(string, fret) {
-    var openLength = [0.0324, 0.024272, 0.018182, 0.01362, 0.0102041][string.index];
+    var openLength = StringWaveLength[string];
     return openLength/Math.pow(Math.pow(2, 1/12), fret);
   }
 
+  function soundWaveLength(sound) {
+    return fretWaveLength(sound.string, sound.note.fret);
+  }
 
   AudioComposer.prototype.join = function(audio1, audio2) {
     var buffer1 = audio1.source.buffer.getChannelData(0);
@@ -441,7 +448,7 @@
     var timeSignature = {top: 4, bottom: 4};
     var sound = {
       style: 'slap',
-      string: {label: 'A'},
+      string: 'A',
       note: {
         fret: 0,
         type: 'slide',
