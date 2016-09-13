@@ -6,9 +6,8 @@
     .value('BassSection', BassSection)
     .value('BassTrackSection', BassTrackSection);
 
-  function BassTrackSection(data, instrument) {
+  function BassTrackSection(data) {
     this.data = data;
-    this.instrument = instrument;
     this.type = 'bass';
 
     this.forEachSound(function(sound, info) {
@@ -67,10 +66,9 @@
   };
 
   // TDOD: remove all code - use setSection, loadBeats
-  function BassSection(bass, section) {
+  function BassSection(section) {
     this.section = section;
     this.type = 'bass';
-    this.bass = bass;
     this.bars = [];
     this.setLength(section.length || 1);
   }
@@ -80,8 +78,12 @@
     this.setLength(section.length);
   };
 
-  BassSection.prototype.loadBeats = function(instrument, beats) {
-    this.instrument = instrument;
+  BassSection.prototype.assignTrack = function(track) {
+    this.instrument = track.instrument;
+    this.track = track;
+  };
+
+  BassSection.prototype.loadBeats = function(beats) {
 
     // override selected section data
     beats.forEach(function(beat) {
@@ -223,7 +225,7 @@
     for (var i = 0; i < sounds.length; i++) {
       var sound = sounds[i].sound;
 
-      var bass = this.bass;//new Bass("EADG");
+      var bass = this.instrument;
 
       if (sound.prev && angular.isUndefined(sound.prev.ref)) {
         Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});

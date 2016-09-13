@@ -7,14 +7,9 @@
     .value('DrumTrackSection', DrumTrackSection);
 
 
-  function DrumTrackSection(data, instrument) {
+  function DrumTrackSection(data) {
     this.data = data;
-    this.instrument = instrument;
     this.type = 'drums';
-
-    this.forEachSound(function(sound, info) {
-      sound.drum = this.instrument.drumMap[sound.drum];
-    }, this);
   }
 
   DrumTrackSection.prototype.beat = function(bar, beat) {
@@ -59,24 +54,30 @@
   };
 
 
-  function DrumSection(drums, section) {
+  function DrumSection(section) {
     this.section = section;
     this.type = 'drums';
-    this.drums = drums;
     this.bars = [];
     this.setLength(section.length || 1);
   }
 
-  DrumSection.prototype.loadBeats = function(instrument, beats) {
-    this.instrument = instrument;
+  DrumSection.prototype.assignTrack = function(track) {
+    this.instrument = track.instrument;
+    this.track = track;
+  };
 
+  DrumSection.prototype.loadBeats = function(beats) {
+    var nameToIndex = {};
+    this.instrument.forEach(function(drum, index) {
+      nameToIndex[drum.name] = index;
+    });
     // override selected section data
     beats.forEach(function(beat) {
       var destBeat = this.beat(beat.bar, beat.beat);
       destBeat.subdivision = beat.subdivision;
       beat.data.forEach(function(sound) {
         var subbeat = this.subbeat(beat.bar, beat.beat, sound.subbeat);
-        subbeat[sound.drum.name].volume = sound.volume;
+        subbeat[nameToIndex[sound.drum]].volume = sound.volume;
       }, this);
     }, this);
   };
@@ -101,12 +102,12 @@
       };
       for (subbeat = 0; subbeat < 4; subbeat++) {
         var drumSubbeatGrid = {};
-        this.drums.forEach(function(drum) {
-          drumSubbeatGrid[drum.name] = {
-            drum: drum,
+
+        for (var i = 0; i < 8; i++) {
+          drumSubbeatGrid[i] = {
             volume: 0.0
           }
-        });
+        }
         drumsBeat.subbeats.push(drumSubbeatGrid);
       }
       beats.push(drumsBeat);
@@ -149,11 +150,11 @@
           sounds.push({
             subbeat: subbeatIndex+1,
             volume: drumSound.volume,
-            drum: drumSound.drum
+            drum: this.instrument[drumName].name
           });
         }
       }
-    });
+    }, this);
     return sounds;
   };
 

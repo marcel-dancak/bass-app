@@ -4,7 +4,7 @@
   ng-keyup="keyPressed($event)">
   <div class="string-container">
     <div
-      ng-repeat="string in ::workspace.track.instrument.strings track by string.index"
+      ng-repeat="string in workspace.track.instrument.strings track by string.index"
       class="bass-string">
     </div>
   </div>
@@ -21,7 +21,7 @@
     }">
 
     <div
-      ng-repeat="string in ::workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
+      ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
       id="bass_{{::slide.beat.bar}}_{{::slide.beat.beat}}_{{::$parent.$index+1}}_{{::string.label}}"
 
       ng-init="grid={
@@ -39,8 +39,8 @@
         class="bass-grid"
         drop-channel="bassboard,fretboard"
         drop-validate="dropValidation(workspace.track.instrument, grid, $data)"
-        ui-on-drag-enter="onDragEnter(beat, grid, $event)"
-        ui-on-drag-leave="onDragLeave(beat, grid, $event)"
+        ui-on-drag-enter="onDragEnter(slide.beat, grid, $event)"
+        ui-on-drag-leave="onDragLeave(slide.beat, grid, $event)"
         ui-on-drop="onDrop($event, $data, grid)">
 
         <md-button

@@ -211,8 +211,8 @@
       source.start(context.currentTime, 0, 0.2);
     };
 
-    AudioPlayer.prototype._playDrumsSound = function(sound, startTime) {
-      var audioData = this.bufferLoader.loadResource(sound.drum.filename);
+    AudioPlayer.prototype._playDrumsSound = function(kit, sound, startTime) {
+      var audioData = this.bufferLoader.loadResource(kit.drumMap[sound.drum].filename);
       if (audioData) {
         var source = context.createBufferSource();
         source.buffer = audioData;
@@ -315,12 +315,8 @@
 
       if (!isFinalBeat) {
         // console.log('Play beat: '+beat);
-        var tracks = [
-          workspace.trackSection,
-          this.section.tracksData[(workspace.trackSection.type === 'bass')? 'drums_0' : 'bass_0']
-        ];
-
-        tracks.forEach(function(track) {
+        for (var trackId in this.section.tracks) {
+          var track = this.section.tracks[trackId];
 
           var trackBeat = track.beat(bar, beat);
           var noteBeatTime = trackBeat.subdivision === 3? beatTime*(2/3) : beatTime;
@@ -330,10 +326,11 @@
               this._playBassSound(subbeatSound.sound, startAt, noteBeatTime, timeSignature);
             } else {
               console.log(subbeatSound);
-              this._playDrumsSound(subbeatSound, startAt);
+              console.log(track);
+              this._playDrumsSound(track.instrument, subbeatSound, startAt);
             }
           }, this);
-        }, this);
+        }
       }
 
       var flatIndex = (bar-1)*this.section.timeSignature.top+beat-1;
@@ -438,7 +435,7 @@
 
       var resources = [];
 
-      // var trackData = section.tracksData['bass_0'];
+      // var trackData = section.tracks['bass_0'];
       var trackData = workspace.trackSection;
       if (trackData.type === 'bass') {
         trackData.forEachSound(function(bassSound) {
@@ -524,8 +521,10 @@
       this.bufferLoader.loadResources(resources, afterLoad);
     };
 
-    AudioPlayer.prototype.playDrumSample = function(drumSound) {
-      this._playDrumsSound(drumSound, context.currentTime);
+    AudioPlayer.prototype.playDrumSample = function(kit, drumSound) {
+      console.log(kit);
+      console.log(drumSound);
+      this._playDrumsSound(kit, drumSound, context.currentTime);
     };
 
     return new AudioPlayer();

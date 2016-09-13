@@ -210,7 +210,7 @@
       section.beatsPerView = sectionData.beatsPerView;
       section.beatsPerSlide = sectionData.beatsPerSlide;
 
-      section.tracksData = {
+      section.tracks = {
         bass_0: new BassTrackSection(sectionData.tracks['bass_0'], this.project.tracksMap['bass_0'].instrument),
         drums_0: new DrumTrackSection(sectionData.tracks['drums_0'], this.project.tracksMap['drums_0'].instrument)
       };
