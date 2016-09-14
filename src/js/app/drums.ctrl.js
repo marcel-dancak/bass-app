@@ -5,7 +5,7 @@
     .module('bd.app')
     .controller('DrumsController', DrumsController);
 
-  function DrumsController($scope, $timeout, audioPlayer) {
+  function DrumsController($scope, $timeout, audioPlayer, workspace) {
     var drumsVolumeLevels = [0.0, 0.85, 0.4];
 
     $scope.toggleDrum = function(sound) {
@@ -27,12 +27,11 @@
       }
     };
 
-    $scope.onDrop = function($event, $data, subbeat, section) {
-      subbeat.volume = $data.sound.volume;
-      console.log($data);
-      if (angular.isDefined($data.beat) && $event.dataTransfer.dropEffect === "move") {
-        var srcBeat = section.bars[$data.bar-1].drumsBeats[$data.beat-1];
-        srcBeat.subbeats[$data.subbeat-1][$data.sound.drum.name].volume = 0;
+    $scope.onDrop = function($event, data, subbeat) {
+      subbeat.volume = data.sound.volume;
+      if (angular.isDefined(data.beat) && $event.dataTransfer.dropEffect === "move") {
+        var srcSubbeat = workspace.trackSection.subbeat(data.bar, data.beat, data.subbeat);
+        srcSubbeat[data.index].volume = 0;
       }
     };
 

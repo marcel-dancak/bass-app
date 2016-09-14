@@ -21,16 +21,16 @@
         ng-click="toggleDrum(drumSubbeats[$index])"
 
         ui-draggable="true"
-        drag-channel="{{ ::drum.label }}"
-        drop-channel="{{ ::drum.label }}"
+        drag-channel="{{ ::drum.name }}"
+        drop-channel="{{ ::drum.name }}"
         drag="{
           sound: drumSubbeats[$index],
           bar: slide.beat.bar,
           beat: slide.beat.beat,
-          subbeat: $parent.$index+1
+          subbeat: $parent.$index+1,
+          index: $index
         }"
-        ui-on-drop="onDrop($event, $data, drumSubbeats[$index], section)"
-        >
+        ui-on-drop="onDrop($event, $data, drumSubbeats[$index], section)">
         <div
           class="volume-meter"
           ng-style="{
