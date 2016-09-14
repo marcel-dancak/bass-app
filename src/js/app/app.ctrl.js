@@ -18,17 +18,13 @@
       };
     });
 
-  function AppController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager,
-                         Bass, Drums, BassSection, DrumSection, BassTrackSection, DrumTrackSection, Timeline, HighlightTimeline, swiperControl) {
-    audioVisualiser.initialize(context, audioPlayer.bass.audio);
-    audioPlayer.drums.audio.connect(context.destination);
-    audioPlayer.bass.audio.connect(context.destination);
+  function AppController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums,
+                         BassSection, DrumSection, BassTrackSection, DrumTrackSection, HighlightTimeline, swiperControl) {
+    // audioVisualiser.initialize(context, audioPlayer.bass.audio);
 
     $scope.ui = {instrumentIndex: 0};
     $scope.player = {
       playing: false,
-      bass: audioPlayer.bass,
-      drums: audioPlayer.drums,
       input: audioPlayer.input,
       countdown: false,
       loop: true,
@@ -183,9 +179,6 @@
     var repeats;
     var timeline;
     $scope.play = function() {
-      audioPlayer.drums.audio.connect(context.destination);
-      audioPlayer.bass.audio.connect(context.destination);
-
       if ($scope.player.loop) {
         var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
         if (playbackRange > $scope.section.beatsPerView) {
@@ -271,13 +264,12 @@
       }
     };
 
-    $scope.playDrumSound = function(kit, drumName) {
-      audioPlayer.playDrumSample(
-        kit, {
-          drum: drumName,
-          volume: 0.85
-        }
-      );
+    $scope.playDrumSound = function(drumName) {
+      var sound = {
+        drum: drumName,
+        volume: 0.85
+      };
+      audioPlayer.playDrumSample(workspace.track, sound);
     };
 
 
@@ -309,14 +301,14 @@
     $scope.initializeWorkspace = function(bassTrack, drumsTrack) {
       workspace.bassSection = new BassSection(workspace.section);
       workspace.drumSection = new DrumSection(workspace.section);
-      workspace.bassSection.assignTrack(bassTrack);
-      workspace.drumSection.assignTrack(drumsTrack);
-      workspace.trackSection = workspace.bassSection;
-      workspace.track = bassTrack;
+      assignTrack(workspace.bassSection, bassTrack);
+      assignTrack(workspace.drumSection, drumsTrack);
+      workspace.trackSection = (!workspace.trackSection || workspace.trackSection.type === 'bass')? workspace.bassSection : workspace.drumSection;
+      workspace.track = workspace.trackSection.track;
     };
 
     $scope.initializeWorkspace(projectManager.project.tracksMap['bass_0'], projectManager.project.tracksMap['drums_0']);
-    createSlides(workspace.bassSection);
+    createSlides(workspace.trackSection);
     workspace.section.tracks = {
       'bass_0': workspace.bassSection,
       'drums_0': workspace.drumSection
@@ -343,7 +335,6 @@
       $scope.updatePlaybackRange();
 
       console.log('sectionLoaded');
-      console.log(workspace.section);
       var bassTrack = projectManager.project.tracksMap['bass_0'];
       var drumsTrack = projectManager.project.tracksMap['drums_0'];
       $scope.initializeWorkspace(bassTrack, drumsTrack);
@@ -354,7 +345,7 @@
         'drums_0': workspace.drumSection
       };
 
-      createSlides(workspace.bassSection);
+      createSlides(workspace.trackSection);
       $timeout(function() {
         swiperControl.setSlides($scope.slides, {
           slidesPerView: $scope.section.beatsPerView,
@@ -388,6 +379,12 @@
       }, 10)
     };
 
+    function assignTrack(trackSection, track) {
+      trackSection.instrument = track.instrument;
+      trackSection.track = track;
+      trackSection.audio = track.audio;
+    };
+
     $scope.selectInstrument = function(index) {
       workspace.trackSection = index === 0? workspace.bassSection : workspace.drumSection;
       workspace.track = workspace.trackSection.track;
@@ -411,7 +408,10 @@
       } else {
         convertedTrack = new DrumTrackSection(data);
       }
-      convertedTrack.instrument = workspace.trackSection.instrument;
+      var projectTrack = projectManager.project.tracksMap[workspace.track.id];
+      convertedTrack.audio = projectTrack.audio;
+      convertedTrack.instrument = projectTrack.instrument;
+      // convertedTrack.instrument = workspace.trackSection.instrument;
       workspace.section.tracks[workspace.track.id] = convertedTrack;
 
       // Clear instrument workspace
@@ -420,7 +420,7 @@
       });
 
       // Load instrument workspace with selected track data
-      workspace.trackSection.assignTrack(track);
+      assignTrack(workspace.trackSection, track);
       if (workspace.section.tracks && workspace.section.tracks[track.id]) {
         workspace.trackSection.loadBeats(workspace.section.tracks[track.id].data);
       }
@@ -449,6 +449,7 @@
     audioPlayer.bufferLoader.loadResources(resources);
 
     window.workspace = workspace;
+    window.pm = projectManager;
 
     // Prevent default context menu
     window.oncontextmenu = function() {

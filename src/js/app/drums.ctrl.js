@@ -14,10 +14,6 @@
       sound.volume = drumsVolumeLevels[nextIndex];
     };
 
-    $scope.playSound = function(sound) {
-      audioPlayer.playDrumSample(sound);
-    };
-
     $scope.volumeControl = function(sound, delta) {
       sound.volume += delta;
       if (sound.volume < 0) {

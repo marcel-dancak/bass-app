@@ -78,11 +78,6 @@
     this.setLength(section.length);
   };
 
-  BassSection.prototype.assignTrack = function(track) {
-    this.instrument = track.instrument;
-    this.track = track;
-  };
-
   BassSection.prototype.loadBeats = function(beats) {
 
     // override selected section data

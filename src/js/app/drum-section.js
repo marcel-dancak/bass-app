@@ -61,11 +61,6 @@
     this.setLength(section.length || 1);
   }
 
-  DrumSection.prototype.assignTrack = function(track) {
-    this.instrument = track.instrument;
-    this.track = track;
-  };
-
   DrumSection.prototype.loadBeats = function(beats) {
     var nameToIndex = {};
     this.instrument.forEach(function(drum, index) {

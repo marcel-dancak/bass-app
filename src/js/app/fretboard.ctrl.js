@@ -5,7 +5,7 @@
     .module('bd.app')
     .controller('FretboardController', FretboardController);
 
-  function FretboardController($scope, audioPlayer) {
+  function FretboardController($scope, audioPlayer, workspace) {
     
     $scope.fretboard = {
       style: 'finger',
@@ -23,7 +23,7 @@
         },
         volume: 0.75
       }, bassSound);
-      audioPlayer.playBassSample(sound);
+      audioPlayer.playBassSample(workspace.track, sound);
     };
 
   }

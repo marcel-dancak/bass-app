@@ -176,14 +176,14 @@
   }
 
 
-  AudioComposer.prototype.createSlide = function(prevAudio, sound, curve, startTime, beatTime, timeSignature) {
+  AudioComposer.prototype.createSlide = function(track, prevAudio, sound, curve, startTime, beatTime, timeSignature) {
     var st = performance.now();
 
     var sounds = [];
     var steps = Math.abs(sound.note.fret - sound.note.slide.endNote.fret);
     var direction = (sound.note.fret > sound.note.slide.endNote.fret)? -1 : 1;
 
-    var audio = prevAudio || this.player.createSoundAudio(sound, startTime, 0);
+    var audio = prevAudio || this.player.createSoundAudio(track, sound, startTime, 0);
     var buffer = audio.source.buffer.getChannelData(0);
     var waveLength = fretWaveLength(sound.string, sound.note.fret);
     var searchMaxSize = parseInt(1.5*waveLength*44100);
@@ -256,7 +256,7 @@
       // console.log('Waves: {0} Step: {1}'.format(wavesCount, step));
       searchMaxSize = parseInt(1.5*waveLength*44100);
 
-      var nextAudio = this.player.createSoundAudio(sound, 0, i+step);
+      var nextAudio = this.player.createSoundAudio(track, sound, 0, i+step);
       // determine next's sound offset
       buffer = nextAudio.source.buffer.getChannelData(0);
       var nextBufferOffset = parseInt(0.45*44100);

@@ -158,7 +158,7 @@
       <img
         ng-repeat="drum in workspace.track.instrument track by drum.name"
         ng-src="src/styles/images/{{ ::drum.name }}.svg"
-        ng-click="playDrumSound(workspace.track.instrument, drum.name)">
+        ng-click="playDrumSound(drum.name)">
     </div>
   </div>
 

@@ -6,7 +6,7 @@
     .controller('ProjectController', ProjectController)
     .factory('projectManager', projectManager);
 
-  function projectManager($http, $timeout, $q, Observable,
+  function projectManager($http, $timeout, $q, Observable, context,
       BassSection, DrumSection, Bass, Drums, BassTrackSection, DrumTrackSection) {
 
     function ProjectManager() {
@@ -28,6 +28,9 @@
       }
       track.id = track.type+'_'+idCouter[track.type];
       track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
+
+      track.audio = context.createGain();
+      track.audio.connect(context.destination);
       this.project.tracks.push(track);
       this.project.tracksMap[track.id] = track;
       idCouter[track.type] += 1;
@@ -45,6 +48,7 @@
     };
 
     ProjectManager.prototype.createSection = function(section) {
+      section.tracks
       this.section = section;
       return section;
     };
@@ -195,31 +199,16 @@
     };
 
 
-    ProjectManager.prototype.loadSectionData = function(sectionData) {
+    ProjectManager.prototype.loadSectionData = function(section) {
       console.log('loadSectionData');
-      console.log(sectionData);
-      var section = this.section;
-
-      section.name = sectionData.name;
-      if (sectionData.animationDuration) {
-        section.animationDuration = sectionData.animationDuration;
-      }
-      section.length = sectionData.length;
-      section.bpm = sectionData.bpm;
-      section.timeSignature = sectionData.timeSignature;
-      section.beatsPerView = sectionData.beatsPerView;
-      section.beatsPerSlide = sectionData.beatsPerSlide;
-
       section.tracks = {
-        bass_0: new BassTrackSection(sectionData.tracks['bass_0'], this.project.tracksMap['bass_0'].instrument),
-        drums_0: new DrumTrackSection(sectionData.tracks['drums_0'], this.project.tracksMap['drums_0'].instrument)
+        bass_0: new BassTrackSection(section.tracks['bass_0'], this.project.tracksMap['bass_0'].instrument),
+        drums_0: new DrumTrackSection(section.tracks['drums_0'], this.project.tracksMap['drums_0'].instrument)
       };
-      this.dispatchEvent('sectionLoaded', section);
-
+      return section;
     }
 
-    ProjectManager.prototype.loadSection = function(index) {
-      console.log('loadSection');
+    ProjectManager.prototype.getSection = function(index) {
       var sectionInfo = this.project.sections[index];
       if (!sectionInfo) {
         return;
@@ -236,13 +225,20 @@
           sectionData = JSON.parse(data);
         }
       }
-      console.log(sectionData);
 
       if (sectionData) {
-        this.loadSectionData(sectionData);
+        return this.loadSectionData(sectionData);
       }
+    }
+
+    ProjectManager.prototype.loadSection = function(index) {
+      console.log('loadSection');
+      var section = this.getSection(index);
+      angular.extend(this.section, section);
+      this.dispatchEvent('sectionLoaded', this.section);
+
       // TODO: remove, leaved temporary for backward compatibility
-      this.section.name = sectionInfo.name;
+      this.section.name = this.project.sections[index].name;
     };
 
     return new ProjectManager();
