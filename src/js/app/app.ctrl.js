@@ -32,7 +32,8 @@
         start: 1,
         end: 1
       },
-      graphEnabled: false
+      graphEnabled: false,
+      visibleBeatsOnly: false
     };
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
@@ -124,13 +125,22 @@
     $scope.player.playbackRange.end = $scope.section.length + 1;
 
     $scope.updatePlaybackRange = function() {
-      audioPlayer.firstBar = $scope.player.playbackRange.start;
-      audioPlayer.lastBar = $scope.player.playbackRange.end - 1;
-      var firstBeat = (audioPlayer.firstBar - 1) * $scope.section.timeSignature.top;
-      var lastBeat = (audioPlayer.lastBar) * $scope.section.timeSignature.top - 1;
+      var firstBar = $scope.player.playbackRange.start;
+      var lastBar = $scope.player.playbackRange.end - 1;
+      audioPlayer.playbackRange = {
+        start: {
+          bar: firstBar,
+          beat: 1
+        },
+        end: {
+          bar: lastBar,
+          beat: workspace.section.timeSignature.top
+        }
+      };
+      var firstBeat = (firstBar - 1) * $scope.section.timeSignature.top;
+      var lastBeat = (lastBar) * $scope.section.timeSignature.top - 1;
       audioVisualiser.firstBeat = firstBeat;
       audioVisualiser.lastBeat = lastBeat;
-
       swiperControl.setVisibleRange(firstBeat, lastBeat);
     }
 
@@ -148,7 +158,7 @@
     };
 
     function beatPrepared(evt) {
-      if (evt.playbackActive) {
+      if (evt.playbackActive && !$scope.player.visibleBeatsOnly) {
         var slide = evt.flatIndex - swiperControl.firstSlide;
         // console.log('flatIndex: '+evt.flatIndex+' slide: '+slide);
         // console.log('active index: '+swiperControl.barSwiper.activeIndex);
@@ -179,18 +189,33 @@
     var repeats;
     var timeline;
     $scope.play = function() {
-      if ($scope.player.loop) {
-        var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
-        if (playbackRange > $scope.section.beatsPerView) {
-          swiperControl.createLoop();
+      if ($scope.player.visibleBeatsOnly) {
+        var sFlatIndex = swiperControl.firstSlide + swiperControl.barSwiper.activeIndex;
+        var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
+        audioPlayer.playbackRange = {
+          start: {
+            bar: parseInt(sFlatIndex / workspace.section.timeSignature.top) + 1,
+            beat: (sFlatIndex % workspace.section.timeSignature.top) + 1
+          },
+          end: {
+            bar: parseInt(eFlatIndex / workspace.section.timeSignature.top) + 1,
+            beat: (eFlatIndex % workspace.section.timeSignature.top) + 1
+          }
+        };
+        audioVisualiser.firstBeat = sFlatIndex;
+        audioVisualiser.lastBeat = eFlatIndex;
+      } else {
+        if ($scope.player.loop) {
+          var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
+          if (playbackRange > $scope.section.beatsPerView) {
+            swiperControl.createLoop();
+          }
+        }
+        // go to start as soon as possible
+        if (swiperControl.barSwiper.activeIndex > 0) {
+          swiperControl.barSwiper.slideTo(0, 0, true);
         }
       }
-      // go to start as soon as possible
-      if (swiperControl.barSwiper.activeIndex > 0) {
-        swiperControl.barSwiper.slideTo(0, 0, true);
-      }
-
-      //return audioPlayer.composer.test();
 
       $scope.player.playing = true;
       audioPlayer.setBpm($scope.section.bpm);

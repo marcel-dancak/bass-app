@@ -221,7 +221,6 @@
         var source = context.createBufferSource();
         var gain = context.createGain();
         source.connect(gain);
-        console.log(track.audio);
         gain.connect(track.audio);
         source.buffer = audioData;
         return {
@@ -297,12 +296,13 @@
     AudioPlayer.prototype.playBeat = function(bar, beat, startTime) {
       if (!this.playing) return;
 
-      var isFinalBeat = (bar === 1 && beat === 1 && this.repeats === 0);
+      var playbackStart = bar === this.playbackRange.start.bar && beat === this.playbackRange.start.beat;
+      var isPlaybackEnd = playbackStart && (this.repeats--) === 0;
       var timeSignature = this.section.timeSignature;
       var currentTime = context.currentTime;
       var beatTime = 60/this.bpm;
 
-      if (!isFinalBeat) {
+      if (!isPlaybackEnd) {
         // console.log('Play beat: '+beat);
         for (var trackId in this.section.tracks) {
           var track = this.section.tracks[trackId];
@@ -321,9 +321,6 @@
       }
 
       var flatIndex = (bar-1)*this.section.timeSignature.top+beat-1;
-      if (flatIndex === 0) {
-        this.repeats--;
-      }
       this.beatPreparedCallback({
         bar: bar,
         beat: beat,
@@ -333,7 +330,7 @@
         duration: beatTime,
         timeSignature: this.section.timeSignature,
         flatIndex: flatIndex,
-        playbackActive: !isFinalBeat
+        playbackActive: !isPlaybackEnd
       });
 
       if (this.scheduledSounds.length) {
@@ -342,15 +339,22 @@
         });
       }
 
-      if (isFinalBeat) {
+      if (isPlaybackEnd) {
         $timeout(function() {
           this.stop();
         }.bind(this), 1000*(startTime - currentTime));
       } else {
+        var nextBar, nextBeat;
         var isLastBeatInBar = beat === timeSignature.top;
-        var isLastBar = isLastBeatInBar && bar === (this.lastBar || this.section.length);
-        var nextBar = isLastBar? this.firstBar || 1 : isLastBeatInBar? bar+1 : bar;
-        var nextBeat = isLastBeatInBar? 1 : beat+1;
+        var isPlaybackEnd = bar === this.playbackRange.end.bar && beat === this.playbackRange.end.beat;
+        if (isPlaybackEnd) {
+          nextBar = this.playbackRange.start.bar;
+          nextBeat = this.playbackRange.start.beat;
+        } else {
+          nextBar = isLastBeatInBar? bar+1 : bar;
+          nextBeat = isLastBeatInBar? 1 : beat+1;
+        }
+
         var nextBeatStart = startTime+beatTime;
 
         if (nextBeatStart < currentTime+0.075) {
@@ -384,8 +388,10 @@
 
       oscillator.start();
       */
-      var bar = this.firstBar || 1;
-      this.playBeat(bar, 1, context.currentTime);
+
+      var bar = this.playbackRange.start.bar;
+      var beat = this.playbackRange.start.beat;
+      this.playBeat(bar, beat, context.currentTime);
     };
 
     AudioPlayer.prototype.setBpm = function(bpm) {
@@ -431,7 +437,6 @@
       //   track.audio.connect(context.destination);
         if (track.type === 'bass') {
           track.forEachSound(function(bassSound) {
-            console.log(bassSound);
             if (bassSound.note && bassSound.style) {
               var subbeatResources = player._getSoundHandler(bassSound).getResources(bassSound);
               subbeatResources.forEach(function(resource) {
