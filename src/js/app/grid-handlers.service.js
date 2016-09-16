@@ -81,7 +81,7 @@
       bar: grid2.bar,
       beat: grid2.beat,
       subbeat: grid2.subbeat,
-      string: grid2.string
+      string: grid2.string.label
     };
     Object.defineProperty(grid1.sound.next, 'ref', {value: 'static', writable: true});
     grid1.sound.next.ref = grid2.sound;
@@ -90,10 +90,22 @@
       bar: grid1.bar,
       beat: grid1.beat,
       subbeat: grid1.subbeat,
-      string: grid1.string
+      string: grid1.string.label
     };
     Object.defineProperty(grid2.sound.prev, 'ref', {value: 'static', writable: true});
     grid2.sound.prev.ref = grid1.sound;
+  }
+
+  function disconnectGridSound(sound) {
+    console.log('disconnectGridSound');
+    if (sound.prev) {
+      delete getGridInfo(sound.prev).grid.sound.next;
+      delete sound.prev;
+    }
+    if (sound.next) {
+      delete getGridInfo(sound.next).grid.sound.prev;
+      delete sound.next;
+    }
   }
 
 
@@ -116,6 +128,9 @@
     var dragData;
 
     function getSoundLength(sound) {
+      if (sound.note.type === 'ghost') {
+        return 1/4; // or workspace.section.timeSignature.bottom * 1/16 ?
+      }
       var length = sound.noteLength.length;
       if (sound.noteLength.dotted) {
         length *= 1.5;
@@ -180,8 +195,12 @@
     };
 
     var groupSoundDragHandler = {
+      workspaceElem: null,
       onDragStart: function(evt, dragData, channel) {
         console.log('GROUP Drag Handler');
+        if (!this.workspaceElem) {
+          this.workspaceElem = document.querySelector('.instrument-grid');
+        }
         var grids = [dragData];
         var soundElements = [evt.target];
 
@@ -202,7 +221,6 @@
         }
 
         var dragElem = angular.element('<div class="drag-group"></div>');
-        // dragElem.addClass($scope.bass.settings.label);
         dragElem = dragElem[0];
         soundElements.forEach(function(elem) {
           var clone = elem.cloneNode(true);
@@ -211,7 +229,7 @@
           clone.style.display = 'inline-block';
           dragElem.appendChild(clone);
         });
-        document.body.appendChild(dragElem);
+        this.workspaceElem.appendChild(dragElem);
         evt.dataTransfer.setDragImage(dragElem, 10, 36);
         dropArea.width = dragElem.clientWidth;
         console.log(dragData);
@@ -257,8 +275,9 @@
           //   $scope.clearSound(grid.sound);
           // });
           // $scope.clearSound(this.sourceSoundGrids[0].sound);
-          this.sourceSoundGrids.forEach(function(sound) {
-            workspace.trackSection.clearSound(sound);
+          this.sourceSoundGrids.forEach(function(grid) {
+            console.log(grid);
+            workspace.trackSection.clearSound(grid.sound);
           });
         }
 
@@ -300,20 +319,15 @@
             dragHandler = singleSoundDragHandler;
           }
         }
+
         if (dragHandler) {
-
-          // var beat = workspace.trackSection.beat(dragData.bar, dragData.beat);
-          // dragData.widths = {};
-          // dragData.widths[beat.subdivision] = evt.target.offsetWidth;
-          // if (beat.subdivision === 4) {
-          //   dragData.widths[3] = (2/3)*dragData.widths[4];
-          // } else {
-          //   dragData.widths[4] = (3/2)*dragData.widths[3];
-          // }
-
-          var sound = dragData.sound;
           var beatWidth = swiperControl.instrumentSwiper.slides[0].clientWidth;
           var width = 0;
+          var sound = dragData.sound;
+          // go to the sound beginning and compute width of the whole sound
+          while (sound.prev) {
+            sound = sound.prev.ref;
+          }
           while (sound) {
             width += beatWidth * getSoundLength(sound);
             sound = sound.next? sound.next.ref : null;
@@ -358,6 +372,7 @@
     };
 
     DragAndDrop.prototype.onDragEnter = function(beat, grid, evt) {
+      // console.log('onDragEnter');
 
       setTimeout(function() {
         var target = findGridContainer(evt.target);
@@ -424,6 +439,32 @@
 
     var notesWidths;
     var resizeLength;
+
+    function afterGroupResize(grid) {
+      if (grid.sound.next) {
+        console.log('resize group');
+        // create copy of old 'next sounds chain' before deleting
+        var oldNextSounds = [];
+        var next = grid.sound.next;
+        while (next) {
+          var oldNextGrid = getGridInfo(next).grid;
+          oldNextSounds.push(angular.copy(oldNextGrid.sound));
+          next = oldNextGrid.sound.next;
+        }
+        console.log(oldNextSounds);
+        // delete old sounds chain
+        workspace.trackSection.clearSound(getGridInfo(grid.sound.next).grid.sound);
+
+        // make new 'next sounds chain' on correct positions
+        var prevGrid = grid;
+        oldNextSounds.forEach(function(oldNextSound) {
+          var newNextGrid = rightGrid(workspace, prevGrid);
+          angular.extend(newNextGrid.sound, oldNextSound);
+          connectGrids(prevGrid, newNextGrid);
+          prevGrid = newNextGrid;
+        });
+      }
+    }
 
     return {
       onResizeStart: function(grid, info, subdivision) {
@@ -507,10 +548,10 @@
         dropArea.elem.style.opacity = 0.001;
         $timeout(function() {
           angular.extend(grid.sound.noteLength, resizeLength);
+          afterGroupResize(grid);
         });
         evt.stopPropagation();
       }
-
     }
   }
 
