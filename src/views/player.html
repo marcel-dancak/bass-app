@@ -1,0 +1,74 @@
+<div
+  layout="row"
+  class="main-page"
+  ng-controller="PlayerController">
+
+  <div
+    layout="column"
+    class="playlist-panel project-toolbar">
+    <div class="toolbar">
+      Playlist:
+    </div>
+    <md-list
+      flex
+      class="playlist"
+      ng-keyup="playlistKeyPressed($event)">
+      <div
+        md-no-ink
+        ng-repeat="section in playlist"
+        class="playlist-item"
+        ng-class="{selected: selected.section === section}"
+        ng-click="selected.section = section"
+        layout="row"
+        ui-draggable="true"
+        drag="$index"
+        ui-on-drop="dropPlaylistSection($event, $data, $index, section)"
+        drag-channel="playlist"
+        drop-channel="playlist">
+        <div
+          class="repeats"
+          ng-class="{'one-repeat': section.repeats === 1}">
+          <input
+            type="number"
+            min="1"
+            ng-model="section.repeats">
+          <span>x</span>
+        </div>
+        <span>{{ section.name }}</span>
+      </div>
+    </md-list>
+  </div>
+  <div
+    flex
+    class="player-container"
+    layout="column">
+    <div>
+      <md-button
+        md-no-ink
+        aria-label="Play"
+        class="play-stop-button icon-hover"
+        ng-click="player.playing? stop() : play()">
+        <md-icon
+          md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
+        </md-icon>
+        {{ player.playing? 'Stop' : 'Play' }}
+      </md-button>
+    </div>
+
+    <div
+      flex
+      class="player swiper-container strings-4 name-and-fret"
+      ng-init="swiperControl.swiperConfig.visibleSubbeats = visibleSubbeats">
+      <!-- Additional required wrapper -->
+      <div class="swiper-wrapper">
+          <!-- Slides -->
+
+      </div>
+      <!-- If we need pagination -->
+      <div class="swiper-pagination"></div>
+      
+    </div>
+
+  </div>
+
+</div>

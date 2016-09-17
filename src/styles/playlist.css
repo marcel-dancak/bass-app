@@ -1,0 +1,138 @@
+.playlist .playlist-item {
+  border-bottom: 1px solid #eee;
+  height: 38px;
+  line-height: 38px;
+}
+
+.playlist .playlist-item.selected {
+  background-color: #ddd;
+}
+
+.playlist .playlist-item input {
+  width: 40px;
+  border: none;
+  margin-right: 8px;
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  text-align: right;
+}
+
+.playlist .playlist-item .repeats {
+  position: relative;
+}
+.playlist .playlist-item .repeats span {
+  position: absolute;
+  right: 16px;
+  top: 0;
+}
+
+.playlist .playlist-item .repeats:hover span,
+.playlist .playlist-item .repeats input:focus ~ span {
+  display: none;
+}
+.playlist .playlist-item .repeats:not(:hover).one-repeat,
+.playlist .playlist-item .repeats:not(:hover).one-repeat input {
+  color: transparent;
+}
+.playlist .playlist-item:hover input {
+  border-bottom: 1px solid rgb(63,81,181);
+}
+
+
+.playlist-panel {
+  height: 100%;
+  width: 300px;
+  padding: 0;
+}
+
+.playlist-panel .toolbar {
+  background-color: #777;
+  height: 44px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 44px;
+  padding: 0 4px;
+}
+
+.playlist {
+  overflow: auto;
+}
+
+.player-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 20px 40px;
+}
+
+.player.swiper-container,
+.player-container .swiper-wrapper {
+  height: 100%;
+  width: 100%;
+  padding-top: 25px;
+  padding-left: 5px;
+  padding-right: 10px;
+  xbackground-color: #ccc;
+}
+.player.swiper-container .swiper-slide {
+  xbackground-color: #ccc;
+}
+
+.player .bar-beat {
+  max-height: 100px;
+  height: 80px;
+}
+
+.player .swiper-slide .section-info {
+  min-width: 30px;
+}
+
+/*.player .swiper-slide .section-info::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 36px;
+  content: "";
+  width: 1px;
+  border: solid #aaa;
+  border-width: 0 2px;
+  z-index: 200;
+}*/
+
+.player .swiper-slide .section-info::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+  width: 3px;
+  height: 64px;
+  background-color: #aaa;
+  z-index: 200;
+}
+
+.player .swiper-slide .section-info .name {
+  position: absolute;
+  top: 100px;
+}
+
+.player .swiper-slide .time-signature {
+  font-size: 20px;
+  font-weight: bold;
+  right: 0;
+  top: 5px;
+  height: 80px;
+  padding: 0 15px;
+}
+
+.player .swiper-slide .section-info .bass-board {
+
+}
+
+.section-label {
+  position: absolute;
+  top: -44px;
+  left: 28px;
+  color: #777;
+  font-size: 15px;
+}
