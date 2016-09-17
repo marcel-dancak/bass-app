@@ -205,6 +205,11 @@
         bass_0: new BassTrackSection(section.tracks['bass_0'], this.project.tracksMap['bass_0'].instrument),
         drums_0: new DrumTrackSection(section.tracks['drums_0'], this.project.tracksMap['drums_0'].instrument)
       };
+      for (var trackId in section.tracks) {
+        var track = section.tracks[trackId];
+        track.audio = this.project.tracksMap[trackId].audio;
+        track.instrument = this.project.tracksMap[trackId].instrument;
+      }
       return section;
     }
 
@@ -225,8 +230,15 @@
           sectionData = JSON.parse(data);
         }
       }
-
+      console.log(sectionData);
+      if (!angular.isArray(sectionData.tracks[this.project.tracks[0].id])) {
+        // already converted to Track
+        return sectionData;
+      }
       if (sectionData) {
+        // TODO: remove, leaved temporary for backward compatibility
+        sectionData.name = this.project.sections[index].name;
+
         return this.loadSectionData(sectionData);
       }
     }
@@ -236,9 +248,6 @@
       var section = this.getSection(index);
       angular.extend(this.section, section);
       this.dispatchEvent('sectionLoaded', this.section);
-
-      // TODO: remove, leaved temporary for backward compatibility
-      this.section.name = this.project.sections[index].name;
     };
 
     return new ProjectManager();
