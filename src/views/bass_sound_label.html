@@ -1,0 +1,72 @@
+<div
+  class="label-wrapper"
+  ng-switch="sound.note.type">
+  <!-- Regular note label -->
+  <div ng-switch-when="regular">
+    <div ng-if="sound.style === 'ring'">
+      <label class="ring">⏝</label>
+    </div>
+    <div ng-if="sound.style !== 'ring'">
+      <label class="note">
+        {{ sound.note.name }}<sub>{{ sound.note.octave }}</sub>
+      </label>
+      <label class="fret">
+        {{ sound.note.fret }}
+      </label>
+    </div>
+  </div>
+
+  <!-- Ghost note label -->
+  <p ng-switch-when="ghost">x</p>
+
+  <!-- Slide note label -->
+  <div ng-switch-when="slide"
+    class="slide s-octave-{{ sound.note.octave}} e-octave-{{ sound.note.slide.endNote.octave }}">
+
+    <div ng-if="sound.style !== 'ring'">
+      <label class="note">
+        {{ sound.note.name }}<sub>{{ sound.note.octave }}</sub>
+      </label>
+      <label class="fret">
+        {{ sound.note.fret }}
+      </label>
+    </div>
+    <div
+      class="slide-slash"
+      ng-class="{up: sound.note.fret < sound.note.slide.endNote.fret }">|</div>
+    <div>
+      <label class="note">
+        {{ sound.note.slide.endNote.name }}
+        <sub>{{ sound.note.slide.endNote.octave }}</sub>
+      </label>
+      <label class="fret">
+        {{ sound.note.slide.endNote.fret }}
+      </label>
+    </div>
+  </div>
+
+  <div
+    ng-switch-when="grace">
+    <label class="note">
+      <span class="grace">
+        {{ string.notes[sound.note.fret-2].label[0] }}
+        <sub>{{ string.notes[sound.note.fret-2].octave }}</sub>
+      </span>
+      {{ sound.note.name }}<sub>{{ sound.note.octave }}</sub>
+    </label>
+    <label class="fret">
+      <span class="grace">
+        {{ sound.note.fret-2 }}
+      </span>
+      {{ sound.note.fret }}
+    </label>
+  </div>
+
+  <div
+    ng-if="sound.style === 'hammer' || sound.style === 'pull'"
+    class="hammer-on-label">
+    <span>)</span>
+    <span>{{ sound.style === 'hammer'? 'H' : 'P'}}</span>
+  </div>
+
+</div>
