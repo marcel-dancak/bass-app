@@ -4,13 +4,13 @@
   angular
     .module('bd.app')
     .controller('BassBeatController', BassBeatController)
-    .factory('bassFormService', bassFormService)
+    .factory('bassSoundForm', bassSoundForm)
     .run(function(workspace, basicHandler) {
       workspace.selected = basicHandler.selected;
     });
 
 
-  function BassBeatController($scope, $timeout, basicHandler, dragHandler, resizeHandler, bassFormService) {
+  function BassBeatController($scope, $timeout, basicHandler, dragHandler, resizeHandler, bassSoundForm) {
 
     $scope.selectGrid = basicHandler.selectGrid.bind(basicHandler);
     $scope.keyPressed = basicHandler.keyPressed.bind(basicHandler);
@@ -32,10 +32,10 @@
     $scope.onResize = resizeHandler.onResize;
     $scope.onResizeEnd = resizeHandler.onResizeEnd;
 
-    $scope.openBassSoundMenu = bassFormService.openMenu;
+    $scope.openBassSoundMenu = bassSoundForm.openMenu;
   }
 
-  function bassFormService($timeout, $mdMenu, audioPlayer, $compile, $mdCompiler) {
+  function bassSoundForm($timeout, $mdMenu, audioPlayer, $mdCompiler, basicHandler) {
 
     var menu = {
       element: null,
@@ -131,6 +131,7 @@
         // console.log(fretsStringNotes);
         menu.fretsStringNotes = fretsStringNotes;
         menu.inlineStringNotes = inlineStringNotes;
+        basicHandler.selectGrid(evt, grid);
       },
       openMenu: function(evt, grid) {
         if (menu.open) {
@@ -151,6 +152,13 @@
             menu.open(evt);
           });
         });
+      },
+      playSound: function() {
+        var sound = menu.sound;
+        while (sound.prev) {
+          sound = sound.prev.ref;
+        }
+        audioPlayer.playBassSample(workspace.track, sound);
       }
     };
 
