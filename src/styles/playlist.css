@@ -63,7 +63,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  padding: 20px 40px;
+  padding: 5px 20px 20px 20px;
 }
 
 .player.swiper-container,
@@ -74,6 +74,9 @@
   padding-left: 5px;
   padding-right: 10px;
   xbackground-color: #ccc;
+}
+.player.swiper-container {
+  margin-top: 15px;
 }
 .player.swiper-container .swiper-slide {
   xbackground-color: #ccc;
@@ -111,6 +114,29 @@
   z-index: 200;
 }
 
+.player .swiper-slide > div:last-child .beat::after {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  content: "";
+  width: 3px;
+  height: 64px;
+  background-color: #aaa;
+  z-index: 200;
+}
+.player .swiper-slide > div:last-child > .bass-board::after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  left: auto;
+  right: -3px;
+  content: "";
+  width: 3px;
+  background-color: #ccc;
+  z-index: 200;
+}
+
 .player .swiper-slide .section-info .name {
   position: absolute;
   top: 100px;
@@ -124,9 +150,27 @@
   height: 80px;
   padding: 0 15px;
 }
-
+.player .swiper-slide .section-info .bpm {
+  position: absolute;
+  font-size: 13px;
+  font-weight: bold;
+  top: 72px;
+  z-index: 200;
+  text-align: center;
+  color: #555;
+}
 .player .swiper-slide .section-info .bass-board {
-
+  border-left: 2px solid #ccc;
+}
+.player .swiper-slide .section-info .bass-board p {
+  padding: 0;
+  margin: 0;
+  line-height: 36px;
+  height: 36px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  color: #444;
 }
 
 .section-label {

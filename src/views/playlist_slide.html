@@ -9,17 +9,24 @@
     <div
       ng-if="::beat.sectionInfo"
       class="section-info">
-<!--       <p>
-        Bpm: {{ ::beat.sectionInfo.bpm }}
-      </p>
-      <p class="name">
-        {{ ::beat.sectionInfo.name }}
-      </p> -->
+       <div class="bpm">
+        {{ ::beat.sectionInfo.bpm }} bpm
+      </div>
+
       <div class="time-signature">
         <div>{{ ::beat.sectionInfo.timeSignature.top }}</div>
         <div>{{ ::beat.sectionInfo.timeSignature.bottom }}</div>
       </div>
-      <div class="bass-board instrument-slide"></div>
+      <div class="bass-board instrument-slide">
+        <!-- <div
+          ng-repeat="string in ::workspace.track.instrument.strings"
+          class="">
+          <span>{{ ::string.label }}</span>
+        </div> -->
+        <p ng-repeat="string in ::workspace.track.instrument.strings | orderBy:string.index:'-'">
+          {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
+        </p>
+      </div>
 
     </div>
 
@@ -64,7 +71,7 @@
     <!-- Instrument -->
     <div
       ng-if-end
-      class="bass-board instrument-slide">
+      class="bass-board instrument-slide beat-{{ ::beat.beat }}">
       <div class="string-container">
         <div
           ng-repeat="string in ::workspace.track.instrument.strings"
