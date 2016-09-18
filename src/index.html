@@ -39,21 +39,8 @@
     <script type="text/javascript" src="bower_components/angularjs-slider/dist/rzslider.min.js"></script>
     <script type="text/javascript" src="bower_components/file-saver/FileSaver.min.js"></script>
 
-    <script type="text/javascript">
-    // First, checks if it isn't implemented yet.
-    if (!String.prototype.format) {
-      String.prototype.format = function() {
-        var args = arguments;
-        return this.replace(/{(\d+)}/g, function(match, number) {
-          return typeof args[number] != 'undefined'
-            ? args[number]
-            : match
-          ;
-        });
-      };
-    }
-    </script>
 
+    <script src="lib/string-format.js"></script>
     <script src="lib/buffer-loader.js"></script>
     <script src="lib/audiobuffer-to-wav.js"></script>
     <script src="js/app/app.module.js"></script>
