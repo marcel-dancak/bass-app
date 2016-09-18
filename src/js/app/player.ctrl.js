@@ -83,8 +83,14 @@
     };
 
 
-    function generateSlide(position, count) {
-      var section = projectManager.getSection(position.section);
+    function generateSlide(playlist, position, count) {
+      console.log('generateSlide');
+      console.log(position);
+      var section = playlist[position.section];
+      if (!section) {
+        console.log('end');
+        return;
+      }
       var beats = [];
 
       var track = section.tracks['bass_0'];
@@ -114,11 +120,14 @@
           if (position.bar > section.length) {
             position.bar = 1;
             position.section++;
-            section = projectManager.getSection(position.section);
+            console.log('section index: '+position.section);
+            section = playlist[position.section];
+            if (!section) break;
             track = section.tracks['bass_0'];
           }
         }
       }
+      console.log(position);
 
       var scope = $scope.$new(false);
       scope.beats = beats;
@@ -152,7 +161,7 @@
         console.log('activeIndex: {0} slides: {1}'.format(s.activeIndex, s.slides.length));
         if (s.slides.length - s.activeIndex <=  3 ) {
           console.log('generate NEXT slide');
-          generateSlide(playlistSlidePosition, beatsPerSlide);
+          generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
         }
         if (s.activeIndex > 1) {
           // angular.element(s.slides[0]).scope().$destroy();
@@ -172,43 +181,62 @@
       });
     }
 
-    $timeout(function() {
-      initializeSwiper();
-      // playerSwiper.appendSlide('<div class="swiper-slide">Slide 1</div>');
-      // playerSwiper.appendSlide('<div class="swiper-slide">Slide 2</div>');
-      // playerSwiper.appendSlide('<div class="swiper-slide">Slide 3</div>');
-      // playerSwiper.appendSlide('<div class="swiper-slide">Slide 4</div>');
-      // playerSwiper.appendSlide('<div class="swiper-slide">Slide 5</div>');
-
-      // playerSwiper.slideTo(1, 0, false);
-    });
-
-    var playlistSlidePosition = {
-      section: 0,
-      bar: 1,
-      beat: 1
-    };
-    var beatsPerSlide = 5;
-
-    $timeout(function() {
-      generateSlide(playlistSlidePosition, beatsPerSlide);
-      generateSlide(playlistSlidePosition, beatsPerSlide);
-      generateSlide(playlistSlidePosition, beatsPerSlide);
-      generateSlide(playlistSlidePosition, beatsPerSlide);
-    }, 500);
+    initializeSwiper();
 
     var playlist;
+    var playlistSlidePosition;
+    var beatsPerSlide = 8;
+    var playbackState = {
+      section: 0,
+      beatsCounter: 0
+    };
+
+    $timeout(function() {
+      playlist = [
+        projectManager.getSection(0),
+        projectManager.getSection(17),
+        projectManager.getSection(16),
+        projectManager.getSection(17),
+        projectManager.getSection(16),
+        // projectManager.getSection(9)
+      ];
+      playlistSlidePosition = {
+        section: 0,
+        bar: 1,
+        beat: 1
+      };
+      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+    }, 500);
+
+    function beatSync(evt) {
+      console.log(evt);
+      var activeSlideElem = playerSwiper.slides[playerSwiper.activeIndex];
+
+      var activeElems = activeSlideElem.querySelectorAll('.subbeat.active');
+      for (var i = 0; i < activeElems.length; i++) {
+        angular.element(activeElems[i]).removeClass('active');
+      }
+
+      var beatElem = activeSlideElem.querySelector('#beat_{0}_{1}'.format(evt.bar, evt.beat));
+      if (beatElem) {
+        beatElem = beatElem.children[0];
+        angular.element(beatElem).addClass('active');
+      }
+      playbackState.beatsCounter++;
+      if (playbackState.beatsCounter > beatsPerSlide) {
+        playbackState.beatsCounter = 0;
+        playerSwiper.slideNext();
+      }
+    }
+
     $scope.player = {};
     $scope.play = function() {
-      if (!playlist) {
-        var s1 = projectManager.getSection(17);
-        var s2 = projectManager.getSection(16);
-        playlist = [
-          s1, s2
-        ].reverse();
-      }
       $scope.player.playing = true;
-      var section = playlist.pop();
+      var section = playlist[playbackState.section];
+      console.log(playlist);
+      console.log(playbackState);
       audioPlayer.setBpm(section.bpm);
 
       audioPlayer.playbackRange = {
@@ -221,18 +249,20 @@
           beat: section.timeSignature.top
         }
       }
-      audioPlayer.play(section);
+      audioPlayer.play(section, beatSync);
     };
     $scope.stop = function() {
+      playbackState.section = playlist.length;
       audioPlayer.stop();
     };
 
     audioPlayer.on('playbackStopped', function(evt) {
-      if (playlist.length > 0) {
+      playbackState.section++;
+      if (playbackState.section < playlist.length) {
         $scope.play();
       } else {
+        playbackState.section = 0;
         $scope.player.playing = false;
-        playlist = null;
       }
     });
 
