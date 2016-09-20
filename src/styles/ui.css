@@ -124,6 +124,59 @@ md-input-container.input-inline-label label {
 .control-panel md-menu {
   padding: 0;
 }
+
+.control-panel md-input-container.track {
+  padding: 0 10px;
+  min-width: 150px;
+}
+.control-panel md-input-container.track md-icon.track-selected {
+  fill: #777;
+  position: absolute;
+  left: 10px;
+  top: 8px;
+}
+.control-panel md-input-container.track .md-select-value {
+  padding-left: 36px;
+}
+md-select-menu .instrument-group::before {
+  position: absolute;
+  top: 12px;
+  height: 1px;
+  left: 8px;
+  right: 8px;
+  content: "";
+  background-color: #aaa;
+}
+md-select-menu .instrument-group {
+  font-size: 11px;
+  xfont-weight: bold;
+  color: #aaa;
+  line-height: 24px;
+  height: 24px;
+  padding: 0 16px;
+  text-align: right;
+  position: relative;
+}
+md-select-menu .instrument-group label {
+  background-color: white;
+  position: absolute;
+  top: 4px;
+  right: 18px;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 5px;
+}
+
+md-select-menu .instrument-group md-icon {
+  position: absolute;
+  left: 0px;
+  padding: 0 8px;
+  background-color: white;
+  fill: #aaa;
+}
+
+
+
 .select-editable .md-select-value {
   border: none;
   min-width: 16px;

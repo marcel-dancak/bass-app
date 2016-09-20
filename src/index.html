@@ -49,6 +49,7 @@
     <script src="js/app/bass-section.js"></script>
     <script src="js/app/drum-section.js"></script>
     <script src="js/app/app.ctrl.js"></script>
+    <script src="js/app/edit-mode.ctrl.js"></script>
     <script src="js/app/project.ctrl.js"></script>
     <script src="js/app/bar.ctrl.js"></script>
     <script src="js/app/bass-beat.ctrl.js"></script>
@@ -75,16 +76,11 @@
         // .constant('soundsUrl', 'https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/');
     </script>
   </head>
-  <body ng-init="mode = 1">
+
+  <body>
     <div
-      ng-if="::mode === 0"
       layout-fill
       ng-include="'views/app.html'">
-    </div>
-    <div
-      ng-if="::mode === 1"
-      layout-fill
-      ng-include="'views/player.html'">
     </div>
   </body>
 </html>

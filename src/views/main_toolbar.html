@@ -5,40 +5,42 @@
   <div
     layout="row"
     class="instruments-toolbar">
-    <div
-      layout="row"
-      class="instruments-field">
-      <md-button
-        flex
+
+    <!-- Track selectbox -->
+    <md-input-container class="track">
+      <md-icon
+        class="track-selected"
+        md-svg-icon="{{ {bass: 'bass-guitar', drums: 'drums'}[workspace.track.type] }}">
+      </md-icon>
+      <md-select
         md-no-ink
-        aria-label="Bass"
-        class="no-hover"
-        ng-class="{
-          active: ui.instrumentIndex === 0
-        }"
-        ng-click="selectInstrument(0)">
-        Bass
-        <md-icon md-svg-icon="bass-guitar"></md-icon>
-      </md-button>
-      <md-button
-        flex
-        md-no-ink
-        aria-label="Drums"
-        class="icon-hover"
-        ng-class="{
-          active: ui.instrumentIndex === 1
-        }"
-        ng-click="selectInstrument(1)">
-        Drums
-        <md-icon md-svg-icon="drums"></md-icon>
-      </md-button>
-      <md-ink-bar
-        ng-class="{
-          'md-left': ui.instrumentIndex === 0,
-          'md-right': ui.instrumentIndex === 1
-        }">
-      </md-ink-bar>
-    </div>
+        aria-label="Track"
+        class="tracks-list"
+        ng-init="ui.trackId = workspace.track.id"
+        ng-model="ui.trackId"
+        ng-change="ui.selectTrack(ui.trackId)">
+
+        <div class="instrument-group">
+          <label>Bass</label>
+          <md-icon md-svg-icon="bass-guitar"></md-icon>
+        </div>
+        <md-option
+          ng-repeat="track in project.tracks | filter:{type: 'bass'} track by track.id"
+          ng-value="track.id">
+          {{ track.name }}
+        </md-option>
+
+        <div class="instrument-group">
+          <label>Drums</label>
+          <md-icon md-svg-icon="drums"></md-icon>
+        </div>
+        <md-option
+          ng-repeat="track in project.tracks | filter:{type: 'drums'} track by track.id"
+          ng-value="track.id">
+          {{ track.name }}
+        </md-option>
+      </md-select>
+    </md-input-container>
 
     <md-menu
       md-offset="56 10">
@@ -89,7 +91,7 @@
             </md-button>
           </md-list-item>
 
-<!--           <md-list-item
+          <!-- <md-list-item
             class="volume-field bottom-border">
             <label>Bass Volume</label>
             <rzslider
@@ -116,10 +118,10 @@
                 md-svg-icon="{{ player.bass.muted? 'volume-mute' : 'volume-medium' }}">
               </md-icon>
             </md-button>
-          </md-list-item> -->
+          </md-list-item>
 
 
-<!--           <md-list-item
+          <md-list-item
             class="volume-field bottom-border">
             <label>Drums Volume</label>
             <rzslider
@@ -181,33 +183,6 @@
       </md-menu-content>
     </md-menu>
 
-<!--     <md-input-container class="track">
-      <md-select
-        md-no-ink
-        aria-label="Track"
-        class="tracks-list"
-        ng-model="workspace.trackName"
-        ng-change="selectTrack(workspace.trackName)">
-        <md-option
-          ng-repeat="track in section.tracksList track by $index"
-          ng-value="track">
-          {{ track }}
-        </md-option>
-      </md-select>
-    </md-input-container> -->
-
-  </div>
-  <div
-    layout="row"
-    class="instrument-tracks">
-    <a
-      ng-repeat="track in project.tracks track by track.id"
-      class="item"
-      ng-show="track.type === ['bass', 'drums'][ui.instrumentIndex]"
-      ng-class="{active: workspace.track === track}"
-      ng-click="selectTrack(track)">
-      / {{ track.name }}
-    </a>
   </div>
 
   <div flex></div>
@@ -231,7 +206,7 @@
       md-no-ink
       aria-label="Play"
       class="play-stop-button icon-hover"
-      ng-click="player.playing? stop() : play()">
+      ng-click="player.playing? player.stop() : player.play()">
       <md-icon
         md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
       </md-icon>
@@ -310,6 +285,16 @@
         </md-list>
       </md-menu-content>
     </md-menu>
+
+    <md-button
+      md-no-ink
+      aria-label="Loop"
+      class="toolbar-separated-button icon-hover"
+      ng-class="{active: player.mode}"
+      ng-click="player.mode = player.mode === 0? 1 : 0">
+      mode
+      <md-tooltip md-delay="1000">Player mode</md-tooltip>
+    </md-button>
 
   </div>
 

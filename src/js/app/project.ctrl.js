@@ -60,7 +60,6 @@
         var task = $q.defer();
         var sectionsIndex = [];
         $http.get(startupProject+'.json').then(function(response) {
-          console.log(response);
           this.projectData = response.data.sections;
           Array.prototype.push.apply(sectionsIndex, response.data.index);
           // task.resolve(response.data.index);
@@ -230,12 +229,13 @@
           sectionData = JSON.parse(data);
         }
       }
-      console.log(sectionData);
-      if (!angular.isArray(sectionData.tracks[this.project.tracks[0].id])) {
-        // already converted to Track
-        return sectionData;
-      }
+
       if (sectionData) {
+        if (angular.isFunction(sectionData.tracks[this.project.tracks[0].id].beat)) {
+          console.log('Already converted section');
+          // already converted to Track
+          return sectionData;
+        }
         // TODO: remove, leaved temporary for backward compatibility
         sectionData.name = this.project.sections[index].name;
 

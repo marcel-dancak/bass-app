@@ -42,18 +42,6 @@
     flex
     class="player-container"
     layout="column">
-    <div>
-      <md-button
-        md-no-ink
-        aria-label="Play"
-        class="play-stop-button icon-hover"
-        ng-click="player.playing? stop() : play()">
-        <md-icon
-          md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
-        </md-icon>
-        {{ player.playing? 'Stop' : 'Play' }}
-      </md-button>
-    </div>
 
     <div
       flex

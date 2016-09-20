@@ -2,171 +2,161 @@
   layout="column"
   class="main-page"
   ng-controller="AppController"
-  ng-init="ui.instrumentIndex=0">
+  ng-init="player.mode = 0">
 
   <ng-include
     flex="none"
     src="'views/main_toolbar.html'">
   </ng-include>
 
-  <div style="height: 4%;max-height: 50px;"></div>
-
   <div
-    class="bar-container"
-    ng-controller="BarController"
-    msd-wheel="
-      section.beatsPerView=section.beatsPerView+$delta;
-      swiperControl.updateSlidesSize(section.beatsPerView);
-      $event.preventDefault()
-    ">
-    <div class="bar swiper-container">
-      <div class="swiper-wrapper">
-        <!-- Slides -->
-        <div
-          ng-repeat="slide in slides track by slide.id"
-          class="swiper-slide bar-slide beat beat-{{ ::slide.beat.beat }}">
-          <label class="bar-label">
-            {{ ::slide.beat.bar }}
-          </label>
+    ng-if="player.mode === 0"
+    flex
+    layout="column"
+    ng-controller="EditModeController">
+    <div style="height: 4%;max-height: 50px;"></div>
+    <div
+      class="bar-container"
+      ng-controller="BarController"
+      msd-wheel="
+        section.beatsPerView=section.beatsPerView+$delta;
+        swiperControl.updateSlidesSize(section.beatsPerView);
+        $event.preventDefault()
+      ">
+      <div class="bar swiper-container">
+        <div class="swiper-wrapper">
+          <!-- Slides -->
           <div
-            id="beat_{{ ::slide.beat.bar }}_{{ ::slide.beat.beat }}"
-            class="bar-beat"
-            layout="row"
-            ng-right-click="contextMenu.open($event, $index)"
-            ng-include src="'views/bar_slide.html'">
+            ng-repeat="slide in slides track by slide.id"
+            class="swiper-slide bar-slide beat beat-{{ ::slide.beat.beat }}">
+            <label class="bar-label">
+              {{ ::slide.beat.bar }}
+            </label>
+            <div
+              id="beat_{{ ::slide.beat.bar }}_{{ ::slide.beat.beat }}"
+              class="bar-beat"
+              layout="row"
+              ng-right-click="contextMenu.open($event, $index)"
+              ng-include src="'views/bar_slide.html'">
+            </div>
           </div>
         </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
       </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-button-next"></div>
-    </div>
-
-    <div
-      class="bar-preferences"
-      ng-include src="'views/bars_form.html'">
-    </div>
-    <div
-      class="context-menu"
-      ng-include src="'views/bar_context_menu.html'">
-    </div>
-  </div>
-  <div flex
-    class="workspace"
-    layout="column">
-    <div flex="none"
-      class="instrument-grid strings-4"
-      ng-class="[
-        bass.settings.label,
-        'strings-'+workspace.track.instrument.strings.length,
-        {
-          'no-colors': !bass.settings.colors,
-          'graph-enabled': player.graphEnabled
-        }
-      ]">
-
-    <div
-      ng-show="ui.instrumentIndex === 0"
-      class="instrument-left-panel">
-
-      <md-button
-        md-no-ink
-        class="audio-graph-toggle no-hover"
-        ng-class="{enabled: player.graphEnabled}"
-        ng-click="player.graphEnabled = !player.graphEnabled">
-        <md-icon md-svg-icon="audio-signal"></md-icon>
-        <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
-      </md-button>
 
       <div
-        class="bass-preferences"
-        ng-include src="'views/bass_board_form.html'">
+        class="bar-preferences"
+        ng-include src="'views/bars_form.html'">
+      </div>
+      <div
+        class="context-menu"
+        ng-include src="'views/bar_context_menu.html'">
       </div>
     </div>
-
-    <div class="instrument swiper-container">
-      <div class="swiper-wrapper">
-        <!-- Slides -->
-        <div
-          ng-repeat="slide in slides track by slide.id"
-          class="swiper-slide swiper-no-swiping instrument-slide beat-{{ ::slide.beat.beat }}">
-          <div ng-switch="slide.type" ng-class="{obsolete: slide.obsolete}">
-            <div
-              ng-switch-when="0"
-              xng-init="beat=slide.beat"
-              ng-controller="BassBeatController">
-                <div class="audio-graph-container">
-                  <canvas
-                    id="canvas_{{ $index }}"
-                    class="audio-graph">
-                  </canvas>
-                </div>
-                <div class="bass-board"
-                  ng-include="'views/bass_board_slide.html'">
-                </div>
-            </div>
-            <div
-              ng-switch-when="1"
-              ng-controller="DrumsController"
-              class="drums-beat-grid">
-              <div
-                class="drums-beat-container"
-                ng-if="slide.visible"
-                ng-include="'views/drums_board_slide.html'">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    </div>
-    <div flex style="max-height: 40px;"></div>
-<!--     <div
-      ng-show="ui.instrumentIndex === 0"
-      class="bass-left-panel"
+    <div flex
+      class="workspace"
       layout="column">
+      <div flex="none"
+        class="instrument-grid strings-4"
+        ng-class="[
+          bass.settings.label,
+          'strings-'+workspace.track.instrument.strings.length,
+          {
+            'no-colors': !bass.settings.colors,
+            'graph-enabled': player.graphEnabled
+          }
+        ]">
 
-      <md-button
-        md-no-ink
-        class="audio-graph-toggle no-hover"
-        ng-class="{enabled: player.graphEnabled}"
-        ng-click="player.graphEnabled = !player.graphEnabled">
-        <md-icon md-svg-icon="audio-signal"></md-icon>
-        <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
-      </md-button>
+      <div
+        ng-show="workspace.track.type === 'bass'"
+        class="instrument-left-panel">
 
-      <div style="position:relative;" flex="none">
+        <md-button
+          md-no-ink
+          class="audio-graph-toggle no-hover"
+          ng-class="{enabled: player.graphEnabled}"
+          ng-click="player.graphEnabled = !player.graphEnabled">
+          <md-icon md-svg-icon="audio-signal"></md-icon>
+          <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
+        </md-button>
+
         <div
           class="bass-preferences"
           ng-include src="'views/bass_board_form.html'">
         </div>
       </div>
-    </div> -->
-    <div ng-show="ui.instrumentIndex === 0">
-      <div
-        style="margin-bottom: 20px;"
-        ng-include src="'views/fretboard.html'">
-      </div>
-      <span flex></span>
-    </div>
 
-    <div
-      ng-show="ui.instrumentIndex === 1"
-      layout="column"
-      class="drums-labels-container">
-      <img
-        ng-repeat="drum in workspace.track.instrument track by drum.name"
-        ng-src="src/styles/images/{{ ::drum.name }}.svg"
-        ng-click="playDrumSound(drum.name)">
+      <div class="instrument swiper-container">
+        <div class="swiper-wrapper">
+          <!-- Slides -->
+          <div
+            ng-repeat="slide in slides track by slide.id"
+            class="swiper-slide swiper-no-swiping instrument-slide beat-{{ ::slide.beat.beat }}">
+            <div ng-switch="slide.type" ng-class="{obsolete: slide.obsolete}">
+              <div
+                ng-switch-when="bass"
+                ng-controller="BassBeatController">
+                  <div class="audio-graph-container">
+                    <canvas
+                      id="canvas_{{ $index }}"
+                      class="audio-graph">
+                    </canvas>
+                  </div>
+                  <div class="bass-board"
+                    ng-include="'views/bass_board_slide.html'">
+                  </div>
+              </div>
+              <div
+                ng-switch-when="drums"
+                ng-controller="DrumsController"
+                class="drums-beat-grid">
+                <div
+                  class="drums-beat-container"
+                  ng-if="slide.visible"
+                  ng-include="'views/drums_board_slide.html'">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </div>
+      <div flex style="max-height: 40px;"></div>
+
+      <div ng-show="workspace.track.type === 'bass'">
+        <div
+          style="margin-bottom: 20px;"
+          ng-include src="'views/fretboard.html'">
+        </div>
+        <span flex></span>
+      </div>
+
+      <div
+        ng-show="workspace.track.type === 'drums'"
+        layout="column"
+        class="drums-labels-container">
+        <img
+          ng-repeat="drum in workspace.track.instrument track by drum.name"
+          ng-src="src/styles/images/{{ ::drum.name }}.svg"
+          ng-click="playDrumSound(drum.name)">
+      </div>
     </div>
   </div>
 
   <div
+    ng-if="player.mode === 1"
+    flex
+    ng-include="'views/player.html'">
+  </div>
+
+<!--   <div
     id="time-marker"
     class="time-marker"
     style="visibility:hidden;">
-  </div>
+  </div> -->
 
   <!-- <div flex></div> -->
 </div>

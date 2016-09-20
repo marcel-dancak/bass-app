@@ -6,36 +6,15 @@
     .controller('PlayerController', PlayerController);
 
   function PlayerController($scope, $timeout, audioPlayer, projectManager, workspace, $mdCompiler) {
-    window.pm = projectManager;
     $scope.selected = {section: null};
 
-    $scope.barLabels = {
-      3: ['trip', 'let'],
-      4: ['e', 'and', 'a']
-    };
-
-    projectManager.createProject([
-      {
-        type: 'bass',
-        name: 'Bassline',
-        strings: 'EADG',
-        tuning: [0, 0, 0, 0]
-      }, {
-        type: 'drums',
-        kit: 'Standard',
-        name: 'Standard'
-      }
-    ]);
     workspace.track = projectManager.project.tracksMap['bass_0'];
-    $scope.workspace = workspace;
 
-    $timeout(function() {
-      var playlist = angular.copy(projectManager.project.sections);
-      playlist.forEach(function(section) {
-        section.repeats = 1;
-      });
-      $scope.playlist = angular.copy(playlist);
-    }, 400);
+    var playlist = angular.copy(projectManager.project.sections);
+    playlist.forEach(function(section) {
+      section.repeats = 1;
+    });
+    $scope.playlist = angular.copy(playlist);
 
     $scope.dropPlaylistSection = function(event, dragSectionIndex, dropSectionIndex, dropSection) {
       var dragSection = $scope.playlist[dragSectionIndex];
@@ -91,6 +70,7 @@
         console.log('end');
         return;
       }
+      console.log(section);
       var beats = [];
 
       var track = section.tracks['bass_0'];
@@ -231,8 +211,7 @@
       }
     }
 
-    $scope.player = {};
-    $scope.play = function() {
+    $scope.player.play = function() {
       $scope.player.playing = true;
       var section = playlist[playbackState.section];
       console.log(playlist);
@@ -251,19 +230,25 @@
       }
       audioPlayer.play(section, beatSync);
     };
-    $scope.stop = function() {
+    $scope.player.stop = function() {
       playbackState.section = playlist.length;
       audioPlayer.stop();
     };
 
-    audioPlayer.on('playbackStopped', function(evt) {
+    function playbackStopped(evt) {
       playbackState.section++;
       if (playbackState.section < playlist.length) {
-        $scope.play();
+        $scope.player.play();
       } else {
         playbackState.section = 0;
         $scope.player.playing = false;
       }
+    }
+
+    audioPlayer.on('playbackStopped', playbackStopped);
+
+    $scope.$on('$destroy', function() {
+      audioPlayer.un('playbackStopped', playbackStopped);
     });
 
   }

@@ -69,7 +69,7 @@
 
     <md-menu-item>
       <md-button
-        ng-click="copyBar(contextMenu.barBeat.bar, ui.instrumentIndex===0? 'bass' : 'drums')">
+        ng-click="copyBar(contextMenu.barBeat.bar, workspace.track.type)">
         Copy
       </md-button>
     </md-menu-item>
@@ -84,7 +84,7 @@
 
     <md-menu-item>
       <md-button
-        ng-click="clearBar(contextMenu.barBeat.bar, ui.instrumentIndex===0? 'bass' : 'drums')">
+        ng-click="clearBar(contextMenu.barBeat.bar, workspace.track.type)">
         Clear
       </md-button>
     </md-menu-item>
