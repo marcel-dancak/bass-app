@@ -1,51 +1,98 @@
 <div
-  layout="row"
-  class="main-page"
-  ng-controller="PlayerController">
+  layout-fill
+  ng-init="ui.playlist.mode = 'edit'">
 
   <div
-    layout="column"
-    class="playlist-panel project-toolbar md-whiteframe-10dp">
-    <div class="toolbar">
-      Playlist:
-    </div>
-    <md-list
-      flex
-      class="playlist"
-      ng-keyup="playlistKeyPressed($event)">
-      <div
-        md-no-ink
-        ng-repeat="section in playlist"
-        class="playlist-item"
-        ng-class="{selected: selected.section === section}"
-        ng-click="selected.section = section"
-        layout="row"
-        ui-draggable="true"
-        drag="$index"
-        ui-on-drop="dropPlaylistSection($event, $data, $index, section)"
-        drag-channel="playlist"
+    ng-if="ui.playlist.mode === 'edit'"
+    ng-controller="PlaylistEditor"
+    layout-fill
+    layout="row"
+    class="playlist-editor">
+
+    <div flex></div>
+    <div
+      layout="column"
+      class="playlist-panel">
+      <div class="toolbar">
+        <label>Playlist</label>
+      </div>
+      <md-list
+        flex
+        class="playlist md-whiteframe-6dp"
+        ng-keyup="playlistKeyPressed($event)"
+        ui-on-drop="dropPlaylistSection($event, playlist, $data, playlist.length)"
         drop-channel="playlist">
         <div
-          class="repeats"
-          ng-class="{'one-repeat': section.repeats === 1}">
-          <input
-            type="number"
-            min="1"
-            ng-model="section.repeats">
-          <span>x</span>
+          md-no-ink
+          ng-repeat="section in playlist track by $index"
+          class="playlist-item"
+          ng-class="{selected: selected.section === section}"
+          ng-click="selected.section = section"
+          layout="row"
+          ui-draggable="true"
+          drag="{
+            index: $index,
+            data: section
+          }"
+          ui-on-drop="dropPlaylistSection($event, playlist, $data, $index, section)"
+          drag-channel="playlist"
+          drop-channel="playlist">
+          <div
+            class="repeats"
+            ng-class="{'one-repeat': section.repeats === 1}">
+            <input
+              type="number"
+              min="1"
+              ng-model="section.repeats">
+            <span>x</span>
+          </div>
+          <span>{{ section.name }}</span>
         </div>
-        <span>{{ section.name }}</span>
-      </div>
-    </md-list>
-  </div>
-  <div
-    flex
-    class="player-container"
-    layout="column">
+      </md-list>
+      <md-button class="playlist-button">
+        <md-icon md-svg-icon="x"></md-icon>
+        Clear
+      </md-button>
+    </div>
 
+    <div
+      layout="column"
+      class="playlist-panel">
+      <div class="toolbar">
+        <label>Sections</label>
+      </div>
+      <md-list
+        flex
+        class="playlist md-whiteframe-6dp">
+        <div
+          md-no-ink
+          ng-repeat="section in availableSections track by section.id"
+          class="playlist-item"
+          layout="row"
+          ui-draggable="true"
+          drag="{data: section}"
+          drag-channel="playlist">
+          <span>{{ section.name }}</span>
+        </div>
+      </md-list>
+      <md-button class="playlist-button">
+        <md-icon md-svg-icon="arrow-left"></md-icon>
+        Move all
+      </md-button>
+    </div>
+    <!-- <div flex></div> -->
+    <p class="info-note">
+      Drag sections from <b>Section</b> list into the <b>Playlist</b>.
+    </p>
+  </div>
+
+  <div
+    class="viewer-container"
+    ng-if="ui.playlist.mode === 'view'">
     <div
       flex
       class="player swiper-container strings-4 name-and-fret"
+      ng-controller="PlaylistViewer"
       ng-init="swiperControl.swiperConfig.visibleSubbeats = visibleSubbeats">
       <!-- Additional required wrapper -->
       <div class="swiper-wrapper">
@@ -56,7 +103,6 @@
       <div class="swiper-pagination"></div>
       
     </div>
-
   </div>
 
 </div>

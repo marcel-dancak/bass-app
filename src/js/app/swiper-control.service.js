@@ -390,6 +390,15 @@
       });
     }
 
+    SwiperControl.prototype.getBeatElem = function(bar, beat) {
+      var beatSelector = '.swiper-slide:not(.swiper-slide-duplicate) #beat_{0}_{1}'.format(bar, beat);
+      return this.barSwiper.wrapper[0].querySelector(beatSelector);
+    };
+
+    SwiperControl.prototype.getBarWrapper = function() {
+      return this.barSwiper.wrapper[0];
+    };
+
     return new SwiperControl();
   }
 })();

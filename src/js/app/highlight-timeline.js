@@ -10,7 +10,7 @@
   }
 
   HighlightTimeline.prototype._removeActiveClass = function() {
-    var activeElems = this.swiperControl.barSwiper.wrapper[0].querySelectorAll('.swiper-slide .subbeat.active');
+    var activeElems = this.swiperControl.getBarWrapper().querySelectorAll('.swiper-slide .subbeat.active');
     for (var i = 0; i < activeElems.length; i++) {
       angular.element(activeElems[i]).removeClass('active');
     }
@@ -31,8 +31,7 @@
     if (evt.playbackActive) {
       var beatDelay = evt.startTime - evt.eventTime;
 
-      var beatSelector = '.swiper-slide:not(.swiper-slide-duplicate) #beat_{0}_{1}'.format(evt.bar, evt.beat);
-      var beatElem = this.swiperControl.barSwiper.wrapper[0].querySelector(beatSelector);
+      var beatElem = this.swiperControl.getBeatElem(evt.bar, evt.beat);
       var subbeatElements = beatElem.querySelectorAll('.subbeat:not(.hidden)');
 
       subbeatElements.forEach(function(subbeatElem, index) {

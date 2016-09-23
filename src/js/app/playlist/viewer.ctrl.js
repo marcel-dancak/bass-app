@@ -3,49 +3,13 @@
 
   angular
     .module('bd.app')
-    .controller('PlayerController', PlayerController);
+    .controller('PlaylistViewer', PlaylistViewer);
 
-  function PlayerController($scope, $timeout, audioPlayer, projectManager, workspace, $mdCompiler) {
+  function PlaylistViewer($scope, $timeout, audioPlayer, projectManager, workspace, $mdCompiler, HighlightTimeline) {
+
     $scope.selected = {section: null};
 
     workspace.track = projectManager.project.tracksMap['bass_0'];
-
-    var playlist = angular.copy(projectManager.project.sections);
-    playlist.forEach(function(section) {
-      section.repeats = 1;
-    });
-    $scope.playlist = angular.copy(playlist);
-
-    $scope.dropPlaylistSection = function(event, dragSectionIndex, dropSectionIndex, dropSection) {
-      var dragSection = $scope.playlist[dragSectionIndex];
-
-      // move dragged section item into dropped position
-      $scope.playlist.splice(dropSectionIndex, 0, dragSection);
-      var removeIndex = dragSectionIndex;
-      if (dragSectionIndex > dropSectionIndex) {
-        removeIndex += 1;
-      }
-      $scope.playlist.splice(removeIndex, 1);
-    };
-
-    $scope.playlistKeyPressed = function(evt) {
-      console.log(evt);
-      switch (evt.keyCode) {
-        case 46: // Del
-          if ($scope.selected.section) {
-            var index = $scope.playlist.indexOf($scope.selected.section);
-            console.log(index);
-            $scope.playlist.splice(index, 1);
-            $scope.selected.section = $scope.playlist[index];
-            var nextItemElem = evt.target.nextElementSibling;
-            if (nextItemElem) {
-              $timeout(function() {
-                nextItemElem.focus();
-              });
-            }
-          }
-      }
-    };
 
     $scope.visibleSubbeats = {
       3: {
@@ -125,6 +89,23 @@
     }
 
     var playerSwiper;
+
+    var timeline = new HighlightTimeline({
+      getBeatElem: function(bar, beat) {
+        var slideElem = playerSwiper.slides[playerSwiper.activeIndex];
+        var beatElem = slideElem.querySelector('#beat_{0}_{1}'.format(bar, beat));
+
+        if (!beatElem) {
+          slideElem = playerSwiper.slides[playerSwiper.activeIndex+1];
+          beatElem = slideElem.querySelector('#beat_{0}_{1}'.format(bar, beat));
+        }
+        return beatElem;
+      },
+      getBarWrapper: function() {
+        return playerSwiper.wrapper[0];
+      }
+    });
+
     function initializeSwiper() {
       var swiperElem = document.querySelector('.player.swiper-container');
       playerSwiper = new Swiper(swiperElem, {
@@ -171,39 +152,24 @@
       beatsCounter: 0
     };
 
-    $timeout(function() {
-      playlist = [
-        projectManager.getSection(0),
-        projectManager.getSection(17),
-        projectManager.getSection(16),
-        projectManager.getSection(17),
-        projectManager.getSection(16),
-        // projectManager.getSection(9)
-      ];
-      playlistSlidePosition = {
-        section: 0,
-        bar: 1,
-        beat: 1
-      };
-      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
-      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
-      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
-    }, 500);
+
+    playlist = projectManager.project.playlists[0].map(function(item) {
+      return projectManager.getSection(item.id);
+    });
+
+    playlistSlidePosition = {
+      section: 0,
+      bar: 1,
+      beat: 1
+    };
+    generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+    generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+    generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
 
     function beatSync(evt) {
       console.log(evt);
-      var activeSlideElem = playerSwiper.slides[playerSwiper.activeIndex];
+      timeline.beatSync(evt);
 
-      var activeElems = activeSlideElem.querySelectorAll('.subbeat.active');
-      for (var i = 0; i < activeElems.length; i++) {
-        angular.element(activeElems[i]).removeClass('active');
-      }
-
-      var beatElem = activeSlideElem.querySelector('#beat_{0}_{1}'.format(evt.bar, evt.beat));
-      if (beatElem) {
-        beatElem = beatElem.children[0];
-        angular.element(beatElem).addClass('active');
-      }
       playbackState.beatsCounter++;
       if (playbackState.beatsCounter > beatsPerSlide) {
         playbackState.beatsCounter = 0;
@@ -227,7 +193,8 @@
           bar: section.length,
           beat: section.timeSignature.top
         }
-      }
+      };
+      timeline.start();
       audioPlayer.play(section, beatSync);
     };
     $scope.player.stop = function() {
@@ -240,6 +207,7 @@
       if (playbackState.section < playlist.length) {
         $scope.player.play();
       } else {
+        timeline.stop();
         playbackState.section = 0;
         $scope.player.playing = false;
       }

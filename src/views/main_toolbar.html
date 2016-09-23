@@ -267,7 +267,7 @@
                 minRange: 1,
                 pushRange: true,
                 showTicks: true,
-                onEnd: updatePlaybackRange,
+                onEnd: player.playbackRangeChanged,
                 showTicksValues: true
               }">
             </rzslider>
@@ -286,24 +286,28 @@
       </md-menu-content>
     </md-menu>
 
-    <md-button
-      md-no-ink
-      aria-label="Loop"
-      class="toolbar-separated-button icon-hover"
-      ng-class="{active: player.mode}"
-      ng-click="player.mode = player.mode === 0? 1 : 0">
-      mode
-      <md-tooltip md-delay="1000">Player mode</md-tooltip>
-    </md-button>
-
   </div>
 
   <div flex></div>
 
-  <div
+
+  <md-button
+    md-no-ink
+    aria-label="Loop"
+    class="toggle-button toolbar-button icon-hover"
+    ng-class="{active: player.mode}"
+    ng-click="player.mode = player.mode === 0? 1 : 0">
+    <md-icon
+      md-svg-icon="playlist">
+    </md-icon>
+    <md-tooltip md-delay="1000">Playlist mode</md-tooltip>
+  </md-button>
+
+  <div ng-if="player.mode === 0"
     layout="row"
     class="project-toolbar"
     ng-controller="ProjectController">
+
     <md-input-container>
       <label>Section</label>
       <input
@@ -396,4 +400,94 @@
       </md-menu-content>
     </md-menu>
   </div>
+
+  <div ng-if="player.mode === 1"
+    layout="row"
+    class="project-toolbar">
+
+    <md-input-container>
+      <label>Playlist</label>
+      <input
+        type="text"
+        ng-model="playlist.name">
+    </md-input-container>
+    <md-input-container>
+      <md-select
+        md-no-ink
+        ng-show="project.sections.length > 0"
+        aria-label="Section"
+        class="select-editable"
+        md-container-class="sections-list"
+        ng-model="ui.selectedPlaylistIndex"
+        ng-change="loadPlaylist(ui.selectedPlaylistIndex)">
+        <md-option
+          ui-draggable="true"
+          drag="$index"
+          ui-on-drag-enter=""
+          ui-on-drag-leave=""
+          ui-on-drop="dropSection($event, $data, $index, section)"
+          drag-channel="section"
+          drop-channel="section"
+
+          ng-repeat="playlist in project.playlists | orderBy:playlist.index track by $index"
+          ng-value="::$index">
+          {{ playlist.name }}
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <md-button
+      md-no-ink
+      aria-label="Save"
+      class="toolbar-button icon-hover"
+      ng-click="saveSection(project.selectedSectionIndex)">
+      <md-icon
+        md-svg-icon="pen">
+      </md-icon>
+      <md-tooltip md-delay="1000">Save section</md-tooltip>
+    </md-button>
+    <md-menu
+      md-position-mode="target-right target">
+      <md-button
+        md-no-ink
+        aria-label="Menu"
+        class="toolbar-button icon-hover"
+        ng-click="$mdOpenMenu($event)">
+        <md-icon
+          md-svg-icon="menu-dots">
+        </md-icon>
+        <md-tooltip md-delay="1000">Options</md-tooltip>
+      </md-button>
+      <md-menu-content
+        md-no-ink
+        class="md-whiteframe-16dp">
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="New"
+            ng-click="newSection()">
+            New
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="Delete"
+            ng-click="deleteSection(project.selectedSectionIndex)">
+            Delete
+          </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="Show"
+            ng-click="ui.showPlaylist()">
+            Show
+          </md-button>
+        </md-menu-item>
+
+      </md-menu-content>
+    </md-menu>
+  </div>
+
 </div>
