@@ -32,6 +32,11 @@
       var section = playlist[position.section];
       if (!section) {
         console.log('end');
+        if (!playerSwiper.lastSlide) {
+          console.log('create empty slide');
+          playerSwiper.appendSlide('<div class="swiper-slide"></div>');
+          playerSwiper.lastSlide = true;
+        }
         return;
       }
       console.log(section);
@@ -147,27 +152,33 @@
     var playlist;
     var playlistSlidePosition;
     var beatsPerSlide = 8;
-    var playbackState = {
-      section: 0,
-      beatsCounter: 0
-    };
+    var playbackState;
 
 
-    playlist = projectManager.project.playlists[0].map(function(item) {
-      return projectManager.getSection(item.id);
-    });
+    function initPlaylistSlides() {
+      playlist = projectManager.project.playlists[0].map(function(item) {
+        return projectManager.getSection(item.id);
+      });
 
-    playlistSlidePosition = {
-      section: 0,
-      bar: 1,
-      beat: 1
-    };
-    generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
-    generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
-    generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+      playlistSlidePosition = {
+        section: 0,
+        bar: 1,
+        beat: 1
+      };
+      playbackState = {
+        section: 0,
+        beatsCounter: 0
+      };
+      playerSwiper.slideTo(0, 0, false);
+      playerSwiper.removeAllSlides();
+      playerSwiper.lastSlide = false;
+      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+      generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+    }
+    initPlaylistSlides();
 
     function beatSync(evt) {
-      console.log(evt);
       timeline.beatSync(evt);
 
       playbackState.beatsCounter++;
@@ -177,8 +188,7 @@
       }
     }
 
-    $scope.player.play = function() {
-      $scope.player.playing = true;
+    function playSection() {
       var section = playlist[playbackState.section];
       console.log(playlist);
       console.log(playbackState);
@@ -196,7 +206,16 @@
       };
       timeline.start();
       audioPlayer.play(section, beatSync);
+    }
+
+    $scope.player.play = function() {
+      initPlaylistSlides();
+      $scope.player.playing = true;
+      $timeout(function() {
+        playSection();
+      }, 200);
     };
+
     $scope.player.stop = function() {
       playbackState.section = playlist.length;
       audioPlayer.stop();
@@ -205,7 +224,7 @@
     function playbackStopped(evt) {
       playbackState.section++;
       if (playbackState.section < playlist.length) {
-        $scope.player.play();
+        playSection();
       } else {
         timeline.stop();
         playbackState.section = 0;
