@@ -149,7 +149,14 @@
   <div
     ng-if="player.mode === 1"
     flex
-    ng-include="'views/player.html'">
+    layout="column"
+    ng-include="'views/playlist.html'"
+    ng-class="[
+      bass.settings.label,
+      {
+        'no-colors': !bass.settings.colors
+      }
+    ]">
   </div>
 
 <!--   <div

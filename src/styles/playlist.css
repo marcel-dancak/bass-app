@@ -2,6 +2,7 @@
   border-bottom: 1px solid #eee;
   height: 38px;
   line-height: 38px;
+  padding: 0 10px;
 }
 
 .playlist .playlist-item.selected {
@@ -41,42 +42,46 @@
 
 .playlist-panel {
   height: 100%;
-  width: 300px;
+  width: 320px;
   padding: 0;
+  margin: 0 16px;
 }
 
 .playlist-panel .toolbar {
-  background-color: #777;
+  background-color: #455A64;
   height: 44px;
   color: #fff;
   font-weight: bold;
   font-size: 14px;
   line-height: 44px;
   padding: 0 4px;
+  text-align: center;
 }
 
 .playlist {
   overflow: auto;
 }
 
-.player-container {
-  position: relative;
-  width: 100%;
-  height: 100%;
+.playlist-container {
   padding: 5px 20px 20px 20px;
+}
+.viewer-container {
+  position: relative;
+  height: 100%;
+  margin: 0 20px 0 20px;
 }
 
 .player.swiper-container,
-.player-container .swiper-wrapper {
+.viewer-container .swiper-wrapper {
   height: 100%;
   width: 100%;
-  padding-top: 25px;
+  padding-top: 30px;
   padding-left: 5px;
   padding-right: 10px;
   xbackground-color: #ccc;
 }
 .player.swiper-container {
-  margin-top: 15px;
+  xmargin-top: 15px;
 }
 .player.swiper-container .swiper-slide {
   xbackground-color: #ccc;
@@ -179,4 +184,29 @@
   left: 28px;
   color: #777;
   font-size: 15px;
+}
+
+.playlist-editor {
+  padding-bottom: 10px;
+  padding-top: 35px;
+  position: absolute;
+  right: 0;
+  top: 20px;
+  bottom: 0;
+  background-color: #fff;
+  z-index: 2;
+}
+.playlist-editor .info-note {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 13px;
+  color: #777;
+}
+
+.playlist-button {
+  text-align: left;
+  text-transform: none;
 }
