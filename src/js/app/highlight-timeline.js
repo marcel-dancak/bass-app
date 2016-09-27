@@ -34,19 +34,19 @@
       var beatElem = this.swiperControl.getBeatElem(evt.bar, evt.beat);
       var subbeatElements = beatElem.querySelectorAll('.subbeat:not(.hidden)');
 
-      subbeatElements.forEach(function(subbeatElem, index) {
+      for (var index = 0; index < subbeatElements.length; index++) {
         var subbeatDelay = evt.duration*index/subbeatElements.length;
 
         var timerKey = window.performance.now().toFixed(2);
-        var timerId = setTimeout(function(key) {
+        var timerId = setTimeout(function(subbeatElem, key) {
           delete this.activeTimers[key];
 
           this._removeActiveClass();
           angular.element(subbeatElem).addClass('active');
 
-        }.bind(this), 1000*(beatDelay+subbeatDelay), timerKey);
+        }.bind(this), 1000*(beatDelay+subbeatDelay), subbeatElements[index], timerKey);
         this.activeTimers[timerKey] = timerId;
-      }, this);
+      }
     }
   };
 
