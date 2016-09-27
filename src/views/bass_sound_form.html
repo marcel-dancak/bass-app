@@ -178,7 +178,7 @@
           <label class="md-label">Length</label>
           <md-select
             ng-model="menu.sound.noteLength.length"
-            md-on-close="updateBassGrid(menu.grid)"
+            md-on-close="menu.soundLengthChanged(menu.sound)"
             ng-disabled="menu.sound.note.type === 'ghost'">
             <md-option
               ng-repeat="value in [
@@ -200,7 +200,7 @@
           aria-label="Staccato"
           ng-model="menu.sound.noteLength.dotted"
           ng-disabled="menu.sound.note.type==='ghost'"
-          ng-change="updateBassGrid(menu.grid)">
+          ng-change="menu.soundLengthChanged(menu.sound)">
           Dotted
         </md-checkbox>
         <md-checkbox

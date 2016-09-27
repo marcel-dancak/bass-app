@@ -89,6 +89,13 @@
           nextSound = nextSound.next;
         }
       },
+      soundLengthChanged: function(sound) {
+        var beatLength = sound.noteLength.length;
+        if (sound.noteLength.dotted) {
+          beatLength *= 1.5;
+        }
+        sound.noteLength.beatLength = beatLength;
+      },
       updateSlide: function() {
         var endindex = this.sound.note.fret+this.sound.note.slide;
         if (endindex < 0) {
