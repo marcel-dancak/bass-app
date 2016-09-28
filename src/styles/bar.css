@@ -3,6 +3,7 @@
   text-align: center;
   height: 100%;
   position: relative;
+  color: #777;
 }
 
 .subbeat.active {
@@ -30,6 +31,7 @@
 .bar-beat .subbeat:first-child {
   font-weight: bold;
   font-size: 20px;
+  color: #333;
 }
 .beat-1 .bar-beat .subbeat:first-child::before {
   width: 3px;

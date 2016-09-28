@@ -79,7 +79,10 @@
               }
             }"
             >
-            {{ ::note.label.join(' / ') }}
+            <div layout="row">
+              <span flex>{{ ::note.label[0] }}</span>
+              <span flex class="second-label">{{ ::note.label[1] }}</span>
+            </div>
           </td>
         </tr>
       </tbody>

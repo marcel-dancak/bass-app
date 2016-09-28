@@ -8,6 +8,7 @@
 
     <!-- Track selectbox -->
     <md-input-container class="track">
+      <label>Track</label>
       <md-icon
         class="track-selected"
         md-svg-icon="{{ {bass: 'bass-guitar', drums: 'drums'}[workspace.track.type] }}">
@@ -43,7 +44,7 @@
     </md-input-container>
 
     <md-menu
-      md-offset="56 10">
+      md-offset="10 10">
       <md-button
         md-no-ink
         aria-label="Preferences"
@@ -52,7 +53,7 @@
         <md-icon
           md-svg-icon="preferences">
         </md-icon>
-        <md-tooltip md-delay="1000">Volume preferences</md-tooltip>
+        <md-tooltip md-delay="1500">Volume preferences</md-tooltip>
       </md-button>
 
       <md-menu-content
@@ -61,10 +62,15 @@
         class="preferences md-whiteframe-16dp">
         <md-list>
 
+<!--           <div class="instrument-group">
+            <label>Bass</label>
+            <md-icon md-svg-icon="bass-guitar"></md-icon>
+          </div> -->
+
           <md-list-item
-            ng-repeat="track in project.tracks track by track.id"
+            ng-repeat="track in project.tracks | filter:{type: 'bass'} track by track.id"
             class="volume-field bottom-border">
-            <label>{{ track.name }}</label>
+            <label><md-icon style="padding-right: 8px;" md-svg-icon="bass-guitar"></md-icon>{{ track.name }}</label>
             <rzslider
               rz-slider-model="track.audio.gain.value"
               rz-slider-options="{
@@ -91,11 +97,17 @@
             </md-button>
           </md-list-item>
 
-          <!-- <md-list-item
+<!--           <div class="instrument-group">
+            <label>Drums</label>
+            <md-icon md-svg-icon="drums"></md-icon>
+          </div> -->
+
+          <md-list-item
+            ng-repeat="track in project.tracks | filter:{type: 'drums'} track by track.id"
             class="volume-field bottom-border">
-            <label>Bass Volume</label>
+            <label><md-icon style="padding-right: 8px;" md-svg-icon="drums"></md-icon>{{ track.name }}</label>
             <rzslider
-              rz-slider-model="player.bass.audio.gain.value"
+              rz-slider-model="track.audio.gain.value"
               rz-slider-options="{
                 floor: 0,
                 ceil: 1,
@@ -104,51 +116,21 @@
                 hideLimitLabels: true,
                 hidePointerLabels: true,
                 showSelectionBar: true,
-                disabled: player.bass.muted
+                disabled: track.muted
               }">
             </rzslider>
             <md-button
               md-no-ink
               aria-label="Mute"
               class="mute-button"
-              ng-class="{active: !player.bass.muted}"
+              ng-class="{active: !track.muted}"
               md-prevent-menu-close
-              ng-click="toggleVolumeMute(player.bass)">
+              ng-click="toggleVolumeMute(track)">
               <md-icon
-                md-svg-icon="{{ player.bass.muted? 'volume-mute' : 'volume-medium' }}">
+                md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
               </md-icon>
             </md-button>
           </md-list-item>
-
-
-          <md-list-item
-            class="volume-field bottom-border">
-            <label>Drums Volume</label>
-            <rzslider
-              rz-slider-model="player.drums.audio.gain.value"
-              rz-slider-options="{
-                floor: 0,
-                ceil: 1,
-                step: 0.01,
-                precision: 2,
-                hideLimitLabels: true,
-                hidePointerLabels: true,
-                showSelectionBar: true,
-                disabled: player.drums.muted
-              }">
-            </rzslider>
-            <md-button
-              md-no-ink
-              aria-label="Mute"
-              class="mute-button"
-              ng-class="{active: !player.drums.muted}"
-              md-prevent-menu-close
-              ng-click="toggleVolumeMute(player.drums)">
-              <md-icon
-                md-svg-icon="{{ player.drums.muted? 'volume-mute' : 'volume-medium' }}">
-              </md-icon>
-            </md-button>
-          </md-list-item> -->
 
           <md-list-item
             class="volume-field bottom-border">
@@ -222,7 +204,7 @@
       <md-icon
         md-svg-icon="countdown">
       </md-icon>
-      <md-tooltip md-delay="1000">Countdown</md-tooltip>
+      <md-tooltip md-delay="1500">Countdown</md-tooltip>
     </md-button>
 
     <md-button
@@ -234,12 +216,12 @@
       <md-icon
         md-svg-icon="loop">
       </md-icon>
-      <md-tooltip md-delay="1000">Repeat mode</md-tooltip>
+      <md-tooltip md-delay="1500">Repeat mode</md-tooltip>
     </md-button>
 
     <md-menu
       md-position-mode="target target"
-      md-offset="0, 56">
+      md-offset="10, 0">
       <md-button
         md-no-ink
         class="toggle-button toolbar-separated-button icon-hover"
@@ -248,7 +230,7 @@
         }"
         ng-click="$mdOpenMenu($event)">
         <md-icon md-svg-icon="playback-range"></md-icon>
-        <md-tooltip md-delay="1000">Playback range</md-tooltip>
+        <md-tooltip md-delay="1500">Playback range</md-tooltip>
       </md-button>
       <md-menu-content
         class="preferences playback-range md-whiteframe-16dp">
@@ -290,18 +272,31 @@
 
   <div flex></div>
 
-
-  <md-button
-    md-no-ink
-    aria-label="Loop"
-    class="toggle-button toolbar-button icon-hover"
-    ng-class="{active: player.mode}"
-    ng-click="player.mode = player.mode === 0? 1 : 0">
-    <md-icon
-      md-svg-icon="playlist">
-    </md-icon>
-    <md-tooltip md-delay="1000">Playlist mode</md-tooltip>
-  </md-button>
+  <div class="mode-switch">
+    <label>Mode</label>
+    <md-button
+      md-no-ink
+      aria-label="Loop"
+      class="toggle-button toolbar-button icon-hover"
+      ng-class="{active: player.mode === 0}"
+      ng-click="player.mode = 0">
+      <md-icon
+        md-svg-icon="section-mode">
+      </md-icon>
+      <md-tooltip md-delay="1500">Section mode</md-tooltip>
+    </md-button>
+    <md-button
+      md-no-ink
+      aria-label="Loop"
+      class="toggle-button toolbar-button icon-hover"
+      ng-class="{active: player.mode === 1}"
+      ng-click="player.mode = 1">
+      <md-icon
+        md-svg-icon="playlist-mode">
+      </md-icon>
+      <md-tooltip md-delay="1500">Playlist mode</md-tooltip>
+    </md-button>
+  </div>
 
   <div ng-if="player.mode === 0"
     layout="row"
@@ -346,7 +341,7 @@
       <md-icon
         md-svg-icon="pen">
       </md-icon>
-      <md-tooltip md-delay="1000">Save section</md-tooltip>
+      <md-tooltip md-delay="1500">Save section</md-tooltip>
     </md-button>
     <md-menu
       md-position-mode="target-right target">
@@ -358,7 +353,7 @@
         <md-icon
           md-svg-icon="menu-dots">
         </md-icon>
-        <md-tooltip md-delay="1000">Options</md-tooltip>
+        <md-tooltip md-delay="1500">Options</md-tooltip>
       </md-button>
       <md-menu-content
         md-no-ink
@@ -443,7 +438,7 @@
       <md-icon
         md-svg-icon="pen">
       </md-icon>
-      <md-tooltip md-delay="1000">Save section</md-tooltip>
+      <md-tooltip md-delay="1500">Save section</md-tooltip>
     </md-button>
     <md-menu
       md-position-mode="target-right target">
@@ -455,7 +450,7 @@
         <md-icon
           md-svg-icon="menu-dots">
         </md-icon>
-        <md-tooltip md-delay="1000">Options</md-tooltip>
+        <md-tooltip md-delay="1500">Options</md-tooltip>
       </md-button>
       <md-menu-content
         md-no-ink
@@ -480,9 +475,9 @@
         <md-menu-item>
           <md-button
             md-no-ink
-            aria-label="Show"
-            ng-click="ui.showPlaylist()">
-            Show
+            aria-label="Toggle Editor"
+            ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
+            {{ ui.playlist.showEditor? 'Close' : 'Open' }} plalist editor
           </md-button>
         </md-menu-item>
 

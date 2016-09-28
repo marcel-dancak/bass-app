@@ -64,118 +64,16 @@ md-input-container.input-inline-label label {
   opacity: 1;
   transform: none;
 }
-.playback-fields {
-  margin: 0 10px;
-  border-radius: 5px;
-}
-.play-stop-button {
-  margin: 2px;
-  padding: 0 10px 0 0;
-  line-height: 44px;
-}
-.play-stop-button md-icon {
-  margin-bottom: 4px;
-  padding: 0px 0;
-  width: 32px;
-  height: 32px;
-}
-/*
-.bpm-field {
-  width: 80px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 2px 4px 0 4px;
-}
-*/
-.playback-fields .bpm-field {
-  width: 70px;
-  margin: 13px 5px 0px 5px;
-}
 
-.control-panel {
-  margin: 5px 10px 25px 60px;
+
+md-list-item.volume-field {
   min-height: 44px;
-  height: 44px;
+  height: 52px;
 }
 
-.control-panel md-input-container {
-  margin-top: 11px;
-  margin-bottom: 0;
-  min-height: 29px;
-  height: 29px;
+md-list-item.volume-field .rzslider {
+  margin-top: 30px;
 }
-.control-panel md-input-container label {
-  padding: 0 0 2px 0;
-  margin-top: 0px;
-  font-size: 15px;
-}
-.control-panel md-input-container input {
-  height: 28px;
-  padding-top: 0;
-}
-.control-panel .md-button {
-  color: #444;
-}
-
-.control-panel .tracks-list {
-  min-width: 100px;
-}
-
-.control-panel md-menu {
-  padding: 0;
-}
-
-.control-panel md-input-container.track {
-  padding: 0 10px;
-  min-width: 150px;
-}
-.control-panel md-input-container.track md-icon.track-selected {
-  fill: #777;
-  position: absolute;
-  left: 10px;
-  top: 8px;
-}
-.control-panel md-input-container.track .md-select-value {
-  padding-left: 36px;
-}
-md-select-menu .instrument-group::before {
-  position: absolute;
-  top: 12px;
-  height: 1px;
-  left: 8px;
-  right: 8px;
-  content: "";
-  background-color: #aaa;
-}
-md-select-menu .instrument-group {
-  font-size: 11px;
-  xfont-weight: bold;
-  color: #aaa;
-  line-height: 24px;
-  height: 24px;
-  padding: 0 16px;
-  text-align: right;
-  position: relative;
-}
-md-select-menu .instrument-group label {
-  background-color: white;
-  position: absolute;
-  top: 4px;
-  right: 18px;
-  height: 16px;
-  line-height: 16px;
-  padding: 0 5px;
-}
-
-md-select-menu .instrument-group md-icon {
-  position: absolute;
-  left: 0px;
-  padding: 0 8px;
-  background-color: white;
-  fill: #aaa;
-}
-
-
 
 .select-editable .md-select-value {
   border: none;
@@ -203,10 +101,6 @@ md-select-menu .instrument-group md-icon {
   display: none;
 }
 
-.project-toolbar {
-  border-radius: 5px;
-  padding: 2px 4px 0 4px;
-}
 
 md-backdrop.md-select-backdrop {
   z-index: 100;
@@ -215,61 +109,6 @@ md-backdrop.md-select-backdrop {
   z-index: 101;
 }
 
-.instrument-tab.ng-hide:not(.ng-hide-animate) {
-  display: block !important;
-  visibility: hidden;
-}
-
-
-.instruments-field {
-  position: relative;
-  margin-right: 6px;
-  max-height: 44px;
-}
-
-.instruments-field .md-button {
-  text-transform: none;
-  margin: 0;
-  padding: 0 10px;
-  height: 100%;
-  flex: 1 1 0;
-  opacity: 0.6;
-  line-height: 46px;
-}
-
-.instruments-field .md-button.active {
-  color: rgb(63,81,181);
-  opacity: 1;
-}
-
-.instruments-field md-icon {
-  width: 28px;
-  height: 28px;
-  margin: 0 2px 2px 5px;
-}
-
-.instruments-field .md-button.active md-icon {
-  color: rgb(63,81,181);
-  opacity: 0.85
-}
-
-.instruments-field md-ink-bar {
-  position: absolute;
-  background-color: rgb(63,81,181);
-  margin: 0 4px;
-  height: 2px;
-  bottom: 3px;
-}
-
-.instruments-field md-ink-bar.md-left {
-  left: 0;
-  right: 50%;
-}
-
-.instruments-field md-ink-bar.md-right {
-  left: 50%;
-  right: 0;
-}
 
 .md-open-menu-container .preferences {
   max-width: 300px;
@@ -289,11 +128,11 @@ md-backdrop.md-select-backdrop {
 .preferences .volume-field .md-button {
   min-width: 48px;
   margin: 0 5px;
-  padding: 6px 0;
+  padding: 12px 0 0 0;
   background-color: transparent;
 }
 .preferences .volume-field .md-button.active md-icon {
-  color: rgb(63,81,181);
+  color: #2196F3;
 }
 
 .preferences md-list-item {
@@ -438,7 +277,7 @@ md-menu-item.menu-group-item .group-item-title {
 }
 
 .toggle-button.active md-icon {
-  fill: rgb(63, 81, 181);
+  fill: #2196F3;
 }
 
 .swiper-pagination {
@@ -468,11 +307,11 @@ md-menu-item.menu-group-item .group-item-title {
   top: -10px;
   width: 24px;
   height: 24px;
-  background-color:  rgb(63, 81, 181);
+  background-color:  #2196F3;
 }
 
 .rzslider .rz-pointer.rz-active::after {
-  background-color:  rgb(63, 81, 181);
+  background-color:  #2196F3;
 }
 .rzslider .rz-pointer:after {
   top: calc(50% - 3px);
@@ -510,7 +349,7 @@ md-menu-item.menu-group-item .group-item-title {
   background-color: rgba(0,0,0,0.26);
 }
 .rz-bar-wrapper .rz-bar.rz-selection {
-  background-color:  rgb(63, 81, 181);
+  background-color:  #2196F3;
   margin: 0;
   width: 100%;
 }
@@ -520,7 +359,7 @@ md-menu-item.menu-group-item .group-item-title {
   border-radius: 0;
 }
 .rzslider .rz-ticks .rz-tick.rz-selected {
-  background-color: rgb(63, 81, 181);
+  background-color: #2196F3;
 }
 
 .rz-tick-value {
@@ -530,6 +369,7 @@ md-menu-item.menu-group-item .group-item-title {
 .volume-field .rzslider {
   margin-left: 10px;
 }
+
 /**
   Playback range slider
 */
@@ -645,19 +485,38 @@ md-list-item.range-slider-item {
   bottom: 0;
 }
 
-.instrument-tracks {
-  position: absolute;
-  top: 64px;
-  left: 58px;
-  font-size: 13.5px;
+
+md-menu-content,
+md-select-menu {
+  border-radius: 3px;
 }
 
-.instrument-tracks a {
-  padding: 0 10px;
-  color: #999;
-  cursor: pointer;
+md-select-menu:not(.md-overflow) md-content {
+  padding: 0;
+  border-radius: 3px;
 }
-.instrument-tracks a:hover,
-.instrument-tracks a.active {
-  color: rgb(63,81,181);
+
+
+.toggle-button.active md-icon {
+  fill: #2196F3;
+}
+
+
+md-select-menu md-option[selected],
+md-select-menu md-option[selected]:focus {
+  color: #2196F3;
+}
+
+md-input-container:not(.md-input-invalid).md-input-focused .md-input,
+md-select:not([disabled]):focus .md-select-value {
+  border-color: #2196F3;
+}
+
+
+md-checkbox.md-checked .md-icon {
+  background-color: #2196F3;
+}
+
+md-input-container:not(.md-input-invalid).md-input-focused label {
+  color: #2196F3;
 }

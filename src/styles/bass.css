@@ -321,6 +321,7 @@
 
 .ghost.bass-sound-wrapper {
   min-width: 25%;
+  max-width: 25%;
 }
 .bass-sound-wrapper.selected .bass-sound-container {
   border: 2px solid #333;
@@ -519,17 +520,6 @@
   pointer-events: none;
   opacity: 0.4;
 }
-
-
-md-select-menu {
-  border-radius: 5px;
-}
-
-md-select-menu:not(.md-overflow) md-content {
-  padding: 0;
-  border-radius: 5px;
-}
-
 
 .hidden .bass-button {
   display: none;

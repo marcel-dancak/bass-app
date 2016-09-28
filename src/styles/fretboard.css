@@ -37,6 +37,7 @@
 
 .fretboard .fret-box {
   height: 30px;
+  max-height: 30px;
   line-height: 30px;
   text-align: center;
   color: #333;
@@ -165,4 +166,40 @@ md-input-container.input-inline-label label {
   text-align: center;
   border-bottom: 1px solid #fff;
   outline: none;
+}
+
+.fret-box div {
+  position: relative;
+  xborder: 2px solid;
+  xborder-radius: 2px;
+  border-color: transparent;
+  box-sizing: content-box;
+}
+/*.fret-box:hover div {
+  border-color: #333;
+}*/
+
+.ghost-note:hover {
+  opacity: 0.8;
+  font-weight: bold;
+  color: #111;
+}
+.fret-box:hover {
+  opacity: 0.92;
+}
+.fret-box span:hover {
+  color: #222;
+  font-weight: bold;
+}
+
+.fret-box .second-label:not(.empty)::before {
+  content: "/";
+  color: #333;
+  font-weight: normal;
+  position: absolute;
+  top: 0;
+  left: calc(50% - 2px);
+}
+.fret-box .second-label:empty {
+  display: none;
 }

@@ -1,0 +1,267 @@
+/*
+.control-panel::after {
+  position: absolute;
+  content: "";
+  bottom: -10px;
+  height: 1px;
+  left: 5px;
+  right: 5px;
+  background-color: #ddd;
+}
+*/
+.control-panel {
+  margin: 5px 10px 25px 10px;
+  min-height: 44px;
+  height: 44px;
+  position: relative;
+}
+
+.instruments-toolbar {
+  margin-left: 10px;
+}
+
+.control-panel md-input-container {
+  margin-top: 16px;
+  margin-bottom: 0;
+  min-height: 29px;
+  height: 29px;
+}
+.control-panel md-input-container label {
+  padding: 0 0 2px 0;
+  margin-top: 0px;
+  font-size: 15px;
+}
+.control-panel md-input-container input {
+  height: 28px;
+  padding-top: 0;
+}
+.control-panel .md-button {
+  color: #444;
+}
+
+.control-panel .tracks-list {
+  min-width: 100px;
+}
+
+.control-panel md-menu {
+  padding: 0;
+}
+
+.control-panel md-input-container.track {
+  padding: 0;
+  min-width: 160px;
+  xmargin-left: 5px;
+  margin-right: 10px;
+}
+.control-panel md-input-container.track md-icon.track-selected {
+  fill: #777;
+  position: absolute;
+  left: 2px;
+  bottom: 0;
+}
+.control-panel md-input-container.track .md-select-value {
+  padding-left: 36px;
+}
+.instrument-group::before {
+  position: absolute;
+  top: 12px;
+  height: 1px;
+  left: 8px;
+  right: 8px;
+  content: "";
+  background-color: #aaa;
+}
+.instrument-group {
+  font-size: 11px;
+  xfont-weight: bold;
+  color: #aaa;
+  line-height: 24px;
+  height: 24px;
+  padding: 0 16px;
+  text-align: right;
+  position: relative;
+}
+.instrument-group label {
+  background-color: white;
+  position: absolute;
+  top: 4px;
+  right: 18px;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 5px;
+}
+
+.instrument-group md-icon {
+  position: absolute;
+  left: 0px;
+  padding: 0 8px;
+  background-color: white;
+  fill: #aaa;
+}
+
+
+.instrument-tab.ng-hide:not(.ng-hide-animate) {
+  display: block !important;
+  visibility: hidden;
+}
+
+
+.instrument-tracks {
+  position: absolute;
+  top: 64px;
+  left: 58px;
+  font-size: 13.5px;
+}
+
+.instrument-tracks a {
+  padding: 0 10px;
+  color: #999;
+  cursor: pointer;
+}
+.instrument-tracks a:hover,
+.instrument-tracks a.active {
+  color: #2196F3;
+}
+
+/*  Playback tools  */
+
+.playback-fields {
+  margin: 0 10px;
+  border-radius: 5px;
+}
+.play-stop-button {
+  margin: 2px;
+  padding: 0 10px 0 0;
+  line-height: 44px;
+}
+.play-stop-button md-icon {
+  margin-bottom: 4px;
+  padding: 0px 0;
+  width: 32px;
+  height: 32px;
+}
+
+
+.playback-fields .bpm-field {
+  width: 70px;
+  margin: 16px 5px 0px 5px;
+}
+
+
+.mode-switch {
+  border: 1px solid #777;
+  position: relative;
+  margin: 5px;
+  border-radius: 5px;
+}
+.mode-switch .md-button {
+  margin-top: 2px;
+}
+
+.control-panel .mode-switch label {
+  margin: 0;
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  right: 20px;
+  line-height: 9px;
+  height: 9px;
+  font-size: 9px;
+  text-align: center;
+  color: #bbb;
+  background-color: #455A64;
+}
+
+/*Toolbar borders*/
+
+/*.control-panel {
+  margin-left: 0;
+}
+.control-panel md-input-container {
+  margin-top: 9px;
+}
+
+.instruments-toolbar {
+  height: 50px;
+  border-bottom: 2px solid #ccc;
+  border-right: 1px solid #ccc;
+  border-bottom-right-radius: 10px;
+  padding: 0 15px;
+  position: relative;
+  margin-left: 0;
+}
+
+.playback-fields {
+  height: 50px;
+  border-bottom: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 0 15px;
+  position: relative;
+}
+
+.playback-fields::before {
+  position: absolute;
+  width: 1px;
+  height: 120%;
+  content: "";
+  background-color: #ccc;
+  transform: translate(-26px, -10px) rotate(-25deg);
+}
+
+x.instruments-toolbar::after,
+.playback-fields::after {
+  position: absolute;
+  width: 1px;
+  height: 120%;
+  content: "";
+  background-color: #ccc;
+  right: 0;
+  transform: translate(11px, -10px) rotate(25deg);
+}*/
+
+
+.control-panel .md-button.icon-hover:not(.active) {
+  opacity: 0.85;
+}
+
+.control-panel .md-button.icon-hover:not(.active):hover {
+  opacity: 1;
+}
+
+.control-panel {
+  background-color: #455A64;
+  padding: 0 5px;
+  margin: 0;
+  height: 52px;
+  color: #fff;
+}
+.control-panel md-select:not([disabled]):focus .md-select-value,
+.control-panel md-select .md-select-value.md-select-placeholder,
+.control-panel .md-button,
+.control-panel input {
+  color: #fff;
+}
+
+.toolbar-separated-button.md-button {
+  border-left: 1px solid #999;
+  xborder-left: 1px solid transparent;
+}
+
+.control-panel md-input-container label {
+  color: #bbb;
+}
+.control-panel md-input-container:not(.md-input-invalid).md-input-has-value label {
+  color: #bbb;
+}
+.control-panel md-input-container .md-input,
+.control-panel md-select .md-select-value {
+  border-bottom-color: #999;
+}
+.control-panel md-select .md-select-value {
+  height: 26px;
+}
+
+.control-panel md-input-container.track md-icon.track-selected,
+.control-panel md-icon {
+  fill: #fff;
+}

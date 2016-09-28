@@ -41,7 +41,8 @@
       this.project = {
         sections: this.getSectionsList(),
         tracks: [],
-        tracksMap: {}
+        tracksMap: {},
+        playlists: []
       };
       tracks.forEach(this.addTrack.bind(this));
       return this.project;

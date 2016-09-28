@@ -5,7 +5,7 @@
   ng-init="player.mode = 0">
 
   <ng-include
-    flex="none"
+    flex="none" class="md-whiteframe-3dp"
     src="'views/main_toolbar.html'">
   </ng-include>
 
@@ -14,7 +14,7 @@
     flex
     layout="column"
     ng-controller="EditModeController">
-    <div style="height: 4%;max-height: 50px;"></div>
+    <div flex="none" style="height: 5%;max-height: 65px;">&nbsp</div>
     <div
       class="bar-container"
       ng-controller="BarController"
@@ -75,7 +75,7 @@
 
         <md-button
           md-no-ink
-          class="audio-graph-toggle no-hover"
+          class="audio-graph-toggle icon-hover"
           ng-class="{enabled: player.graphEnabled}"
           ng-click="player.graphEnabled = !player.graphEnabled">
           <md-icon md-svg-icon="audio-signal"></md-icon>
