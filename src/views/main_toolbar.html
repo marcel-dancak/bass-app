@@ -339,9 +339,9 @@
       class="toolbar-button icon-hover"
       ng-click="saveSection(project.selectedSectionIndex)">
       <md-icon
-        md-svg-icon="pen">
+        md-svg-icon="save">
       </md-icon>
-      <md-tooltip md-delay="1500">Save section</md-tooltip>
+      <md-tooltip md-delay="1500">Save</md-tooltip>
     </md-button>
     <md-menu
       md-position-mode="target-right target">
@@ -400,11 +400,18 @@
     layout="row"
     class="project-toolbar">
 
-    <md-input-container>
+    <md-input-container class="playlist-field">
       <label>Playlist</label>
       <input
         type="text"
         ng-model="playlist.name">
+      <md-button
+        md-no-ink
+        class="toolbar-button icon-hover toggle-button edit-playlist"
+        ng-class="{active: ui.playlist.showEditor}"
+        ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
+        <md-icon md-svg-icon="pen"></md-icon>
+      </md-button>
     </md-input-container>
     <md-input-container>
       <md-select
@@ -434,11 +441,11 @@
       md-no-ink
       aria-label="Save"
       class="toolbar-button icon-hover"
-      ng-click="saveSection(project.selectedSectionIndex)">
+      ng-click="savePlaylist()">
       <md-icon
-        md-svg-icon="pen">
+        md-svg-icon="save">
       </md-icon>
-      <md-tooltip md-delay="1500">Save section</md-tooltip>
+      <md-tooltip md-delay="1500">Save</md-tooltip>
     </md-button>
     <md-menu
       md-position-mode="target-right target">
@@ -472,14 +479,14 @@
           </md-button>
         </md-menu-item>
 
-        <md-menu-item>
+<!--         <md-menu-item>
           <md-button
             md-no-ink
             aria-label="Toggle Editor"
             ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
             {{ ui.playlist.showEditor? 'Close' : 'Open' }} plalist editor
           </md-button>
-        </md-menu-item>
+        </md-menu-item> -->
 
       </md-menu-content>
     </md-menu>

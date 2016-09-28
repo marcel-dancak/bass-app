@@ -172,6 +172,20 @@
   background-color: #455A64;
 }
 
+.control-panel .playlist-field {
+  position: relative;
+}
+.md-button.edit-playlist {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  right: 5px;
+  bottom: 2px;
+}
+.edit-playlist md-icon {
+  width: 18px;
+}
+
 /*Toolbar borders*/
 
 /*.control-panel {

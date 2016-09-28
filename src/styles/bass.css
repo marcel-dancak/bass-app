@@ -15,10 +15,10 @@
   margin: 0;
 }
 .audio-graph-toggle md-icon {
-  fill: #ccc;
+  fill: #777;
 }
 .audio-graph-toggle.enabled md-icon {
-  fill: rgb(63,81,181);
+  fill: #2196F3;
 }
 
 .audio-graph-container {
