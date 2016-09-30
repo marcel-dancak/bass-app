@@ -8,12 +8,13 @@
 }
 
 .fretboard {
-  padding: 0 10px 0 65px;
+  padding: 0 10px 0 10px;
   position: relative;
 }
 
 .fretboard-scroller {
   overflow-x: auto;
+  padding-left: 55px;
 }
 .fretboard-table {
   width: calc(100% - 2px);

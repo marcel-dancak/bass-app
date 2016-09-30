@@ -53,18 +53,13 @@
   xmargin-left: 5px;
   margin-right: 10px;
 }
-.control-panel md-input-container.track md-icon.track-selected {
-  fill: #777;
-  position: absolute;
-  left: 2px;
-  bottom: 0;
-}
-.control-panel md-input-container.track .md-select-value {
-  padding-left: 36px;
+
+.control-panel md-input-container.track .md-select-value md-icon {
+  padding: 0 2px 14px 2px;
 }
 .instrument-group::before {
   position: absolute;
-  top: 12px;
+  top: 8px;
   height: 1px;
   left: 8px;
   right: 8px;
@@ -75,8 +70,8 @@
   font-size: 11px;
   xfont-weight: bold;
   color: #aaa;
-  line-height: 24px;
-  height: 24px;
+  line-height: 12px;
+  height: 16px;
   padding: 0 16px;
   text-align: right;
   position: relative;
@@ -84,8 +79,8 @@
 .instrument-group label {
   background-color: white;
   position: absolute;
-  top: 4px;
-  right: 18px;
+  top: 1px;
+  right: 24px;
   height: 16px;
   line-height: 16px;
   padding: 0 5px;
@@ -141,12 +136,37 @@
   height: 32px;
 }
 
-
+.playback-fields .playback-speed-field,
 .playback-fields .bpm-field {
-  width: 70px;
+  width: 78px;
   margin: 16px 5px 0px 5px;
 }
+.playlist-mode .bpm-field {
+  display: none;
+}
+.bpm-field::after {
+  content: "bpm";
+  position: absolute;
+  left: 34px;
+  bottom: 8px;
+  font-size: 12px;
+}
+.playback-speed-field::after {
+  content: "%";
+  position: absolute;
+  left: 36px;
+  bottom: 8px;
+  font-size: 12px;
+}
 
+.section-mode .playback-speed-field {
+  display: none;
+}
+
+.playlist-mode .playback-range-menu {
+  pointer-events: none;
+  opacity: 0.45;
+}
 
 .mode-switch {
   border: 1px solid #777;
@@ -273,9 +293,14 @@ x.instruments-toolbar::after,
 }
 .control-panel md-select .md-select-value {
   height: 26px;
+  line-height: 26px;
 }
 
-.control-panel md-input-container.track md-icon.track-selected,
 .control-panel md-icon {
   fill: #fff;
+}
+
+
+.control-panel md-input-container.md-input-invalid.md-input-focused label {
+  color: #2196F3;
 }

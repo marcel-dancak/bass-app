@@ -324,7 +324,7 @@ md-menu-content.beat-menu-content {
   padding-top: 3px;
 }
 .beat-menu.md-open .button {
-  border-color: rgba(63,81,181,0.6);
+  border-color: rgba(33,150,243,0.6);
 }
 
 .bar-slide::after {
@@ -337,18 +337,17 @@ md-menu-content.beat-menu-content {
 }
 .bar-slide:hover::after {
   transition-delay: 0.5s;
-  background-color: rgba(63,81,181,0.6);
+  background-color: rgba(33,150,243,0.6);
 }
 
 .beat-menu.md-open {
-  xborder-color: rgba(63,81,181,0.6);
+  xborder-color: rgba(33,150,243,0.6);
 }
 
 .beat-menu {
   overflow: hidden;
   top: 0;
   left: 0;
-  xbackground-color: red;
   z-index: 100;
   pointer-events: none;
   padding: 0;
@@ -374,5 +373,5 @@ md-menu-content.beat-menu-content {
 }
 
 .beat-menu.md-open .button {
-  border-color: rgba(63,81,181,0.6);
+  border-color: rgba(33,150,243,0.6);
 }

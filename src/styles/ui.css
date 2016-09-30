@@ -496,11 +496,30 @@ md-select-menu:not(.md-overflow) md-content {
   border-radius: 3px;
 }
 
-
 .toggle-button.active md-icon {
   fill: #2196F3;
 }
 
+
+md-checkbox.md-checked .md-icon {
+  background-color: #2196F3;
+}
+
+md-input-container:not(.md-input-invalid).md-input-focused label {
+  color: #2196F3;
+}
+
+/*  Menu - Item hover  */
+
+md-select-menu md-option {
+  background-color: transparent!important;
+}
+md-select-menu md-option:hover,
+md-menu-item .md-button:not([disabled]):hover /*,
+md-menu-content .md-button:not([disabled]):hover,
+md-menu-content .md-button.md-focused:not([disabled]) */{
+  background-color: #ffffe0!important;
+}
 
 md-select-menu md-option[selected],
 md-select-menu md-option[selected]:focus {
@@ -512,11 +531,9 @@ md-select:not([disabled]):focus .md-select-value {
   border-color: #2196F3;
 }
 
-
-md-checkbox.md-checked .md-icon {
-  background-color: #2196F3;
+md-option md-icon {
+  margin-right: 5px;
 }
-
-md-input-container:not(.md-input-invalid).md-input-focused label {
-  color: #2196F3;
+md-option[selected] md-icon {
+  fill: #2196F3;
 }

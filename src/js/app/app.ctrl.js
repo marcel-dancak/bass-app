@@ -18,12 +18,9 @@
       };
     });
 
-  function AppController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums,
-                         BassSection, DrumSection, BassTrackSection, DrumTrackSection, HighlightTimeline, swiperControl) {
+  function AppController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums) {
 
     $scope.ui = {
-      instrumentIndex: 0,
-      selectInstrument: angular.noop,
       selectTrack: angular.noop
     };
     $scope.player = {
@@ -32,10 +29,12 @@
       input: audioPlayer.input,
       countdown: false,
       loop: true,
+      speed: 100,
       playbackRange: {
         start: 1,
         end: 1
       },
+      playbackRangeChanged: angular.noop,
       graphEnabled: false,
       visibleBeatsOnly: false
     };
@@ -76,18 +75,19 @@
       }
     };
 
+    $scope.projectManager = projectManager;
     $scope.project = projectManager.createProject([
       {
         type: 'bass',
         name: 'Bassline',
         strings: 'EADG',
         tuning: [0, 0, 0, 0]
-      }, {
+      }, /*{
         type: 'bass',
         name: 'Melody',
         strings: 'BEADG',
         tuning: [0, 0, 0, 0, 0]
-      }, {
+      }, */{
         type: 'drums',
         kit: 'Standard',
         name: 'Standard'

@@ -1,6 +1,7 @@
 <div
   layout="row"
-  class="control-panel">
+  class="control-panel"
+  ng-class="[player.mode === 0? 'section-mode' : 'playlist-mode']">
 
   <div
     layout="row"
@@ -9,10 +10,6 @@
     <!-- Track selectbox -->
     <md-input-container class="track">
       <label>Track</label>
-      <md-icon
-        class="track-selected"
-        md-svg-icon="{{ {bass: 'bass-guitar', drums: 'drums'}[workspace.track.type] }}">
-      </md-icon>
       <md-select
         md-no-ink
         aria-label="Track"
@@ -23,21 +20,21 @@
 
         <div class="instrument-group">
           <label>Bass</label>
-          <md-icon md-svg-icon="bass-guitar"></md-icon>
         </div>
         <md-option
           ng-repeat="track in project.tracks | filter:{type: 'bass'} track by track.id"
           ng-value="track.id">
+          <md-icon md-svg-icon="bass-guitar"></md-icon>
           {{ track.name }}
         </md-option>
 
         <div class="instrument-group">
           <label>Drums</label>
-          <md-icon md-svg-icon="drums"></md-icon>
         </div>
         <md-option
           ng-repeat="track in project.tracks | filter:{type: 'drums'} track by track.id"
           ng-value="track.id">
+          <md-icon md-svg-icon="drums"></md-icon>
           {{ track.name }}
         </md-option>
       </md-select>
@@ -61,11 +58,6 @@
         width="4"
         class="preferences md-whiteframe-16dp">
         <md-list>
-
-<!--           <div class="instrument-group">
-            <label>Bass</label>
-            <md-icon md-svg-icon="bass-guitar"></md-icon>
-          </div> -->
 
           <md-list-item
             ng-repeat="track in project.tracks | filter:{type: 'bass'} track by track.id"
@@ -96,11 +88,6 @@
               </md-icon>
             </md-button>
           </md-list-item>
-
-<!--           <div class="instrument-group">
-            <label>Drums</label>
-            <md-icon md-svg-icon="drums"></md-icon>
-          </div> -->
 
           <md-list-item
             ng-repeat="track in project.tracks | filter:{type: 'drums'} track by track.id"
@@ -174,14 +161,25 @@
     class="playback-fields">
 
     <md-input-container class="bpm-field">
-      <label>bpm</label>
+      <label>Speed</label>
       <input
         type="number"
         min="30"
         max="200"
         step="5"
         ng-model="section.bpm"
-        ng-change="bpmChanged(section.bpm)">
+        ng-change="ui.bpmChanged(section.bpm)">
+    </md-input-container>
+
+    <md-input-container class="playback-speed-field">
+      <label>Speed</label>
+      <input
+        type="number"
+        min="20"
+        max="300"
+        step="5"
+        ng-model="player.speed"
+        ng-change="ui.playbackSpeedChanged(player.speed)">
     </md-input-container>
 
     <md-button
@@ -221,7 +219,8 @@
 
     <md-menu
       md-position-mode="target target"
-      md-offset="10, 0">
+      md-offset="10, 0"
+      class="playback-range-menu">
       <md-button
         md-no-ink
         class="toggle-button toolbar-separated-button icon-hover"
@@ -302,47 +301,50 @@
     layout="row"
     class="project-toolbar"
     ng-controller="ProjectController">
+    <form>
+      <md-input-container>
+        <label>Section</label>
+        <input
+          required
+          type="text"
+          autocomplete="off"
+          ng-model="section.name">
+      </md-input-container>
+      <md-input-container>
+        <md-select
+          md-no-ink
+          ng-show="project.sections.length > 1"
+          aria-label="Section"
+          class="select-editable"
+          md-container-class="sections-list"
+          ng-model="project.selectedSectionIndex"
+          ng-change="loadSection(project.selectedSectionIndex)">
+          <md-option
+            ui-draggable="true"
+            drag="$index"
+            ui-on-drag-enter=""
+            ui-on-drag-leave=""
+            ui-on-drop="dropSection($event, $data, $index, section)"
+            drag-channel="section"
+            drop-channel="section"
 
-    <md-input-container>
-      <label>Section</label>
-      <input
-        type="text"
-        ng-model="section.name">
-    </md-input-container>
-    <md-input-container>
-      <md-select
+            ng-repeat="section in project.sections | orderBy:section.index track by $index"
+            ng-value="::$index">
+            {{ section.name }}
+          </md-option>
+        </md-select>
+      </md-input-container>
+      <md-button type="submit"
         md-no-ink
-        ng-show="project.sections.length > 0"
-        aria-label="Section"
-        class="select-editable"
-        md-container-class="sections-list"
-        ng-model="project.selectedSectionIndex"
-        ng-change="loadSection(project.selectedSectionIndex)">
-        <md-option
-          ui-draggable="true"
-          drag="$index"
-          ui-on-drag-enter=""
-          ui-on-drag-leave=""
-          ui-on-drop="dropSection($event, $data, $index, section)"
-          drag-channel="section"
-          drop-channel="section"
-
-          ng-repeat="section in project.sections | orderBy:section.index track by $index"
-          ng-value="::$index">
-          {{ section.name }}
-        </md-option>
-      </md-select>
-    </md-input-container>
-    <md-button
-      md-no-ink
-      aria-label="Save"
-      class="toolbar-button icon-hover"
-      ng-click="saveSection(project.selectedSectionIndex)">
-      <md-icon
-        md-svg-icon="save">
-      </md-icon>
-      <md-tooltip md-delay="1500">Save</md-tooltip>
-    </md-button>
+        aria-label="Save"
+        class="toolbar-button icon-hover"
+        ng-click="projectManager.saveSection(project.selectedSectionIndex)">
+        <md-icon
+          md-svg-icon="save">
+        </md-icon>
+        <md-tooltip md-delay="1500">Save</md-tooltip>
+      </md-button>
+    </form>
     <md-menu
       md-position-mode="target-right target">
       <md-button

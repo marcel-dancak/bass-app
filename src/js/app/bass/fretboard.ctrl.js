@@ -6,7 +6,26 @@
     .controller('FretboardController', FretboardController);
 
   function FretboardController($scope, audioPlayer, workspace) {
-    
+
+    $scope.playingStyles = [
+      {
+        name: 'finger',
+        label: 'Finger'
+      }, {
+        name: 'slap',
+        label: 'Slap'
+      }, {
+        name: 'pop',
+        label: 'Pop'
+      }, {
+        name: 'pick',
+        label: 'Pick'
+      }, {
+        name: 'tap',
+        label: 'Tap'
+      }
+    ];
+
     $scope.fretboard = {
       style: 'finger',
       noteLength: {

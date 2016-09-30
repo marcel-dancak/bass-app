@@ -3,7 +3,10 @@
     md-no-ink
     aria-label="Bass Preferences"
     class="bass-tunning-button"
-    ng-click="$mdOpenMenu($event)">
+    ng-click="
+      ui.bassLayout = workspace.trackSection.instrument.layout;
+      $mdOpenMenu($event)
+    ">
     <p ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index">
       {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
     </p>
@@ -19,8 +22,8 @@
           <md-select
             aria-label="Strings"
             md-container-class="preferences"
-            ng-model="project.bassTuning"
-            ng-change="setStringsLayout(project.bassTuning)">
+            ng-model="ui.bassLayout"
+            ng-change="workspace.trackSection.instrument.setLayout(ui.bassLayout)">
             <md-option value="BEADG">B E A D G</md-option>
             <md-option value="EADG">E A D G</md-option>
           </md-select>

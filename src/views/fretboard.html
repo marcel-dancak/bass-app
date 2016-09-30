@@ -93,13 +93,16 @@
     layout="row"
     class="fretboard-settings">
 
-    <md-input-container>
+    <md-input-container
+      layout="row"
+      class="input-inline-label">
+      <label class="md-label md-no-float">Style</label>
       <md-select
         aria-label="Style"
         class="style-selectbox"
         ng-model="fretboard.style">
         <md-option
-          ng-repeat="style in ::bass.playingStyles"
+          ng-repeat="style in ::playingStyles"
           ng-value="::style.name">
           {{ ::style.label }}
         </md-option>

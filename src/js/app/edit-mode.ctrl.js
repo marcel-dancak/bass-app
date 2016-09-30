@@ -14,7 +14,8 @@
 
     $scope.player.playbackRange.end = $scope.section.length + 1;
 
-    $scope.updatePlaybackRange = function() {
+    $scope.player.playbackRangeChanged = function() {
+      console.log('playbackRangeChanged');
       var firstBar = $scope.player.playbackRange.start;
       var lastBar = $scope.player.playbackRange.end - 1;
       audioPlayer.playbackRange = {
@@ -37,7 +38,7 @@
 
     timeline = new HighlightTimeline(swiperControl);
 
-    $scope.bpmChanged = function(value) {
+    $scope.ui.bpmChanged = function(value) {
       console.log('bpm changed: '+value);
       audioPlayer.setBpm($scope.section.bpm);
     };
@@ -163,7 +164,7 @@
           slidesPerView: $scope.section.beatsPerView,
           slidesPerGroup: $scope.section.beatsPerSlide
         });
-        $scope.updatePlaybackRange();
+        $scope.player.playbackRangeChanged();
       });
     }
 
@@ -190,7 +191,7 @@
       workspace.bassSection.forEachBeat(function(beat) {
         workspace.trackSection.clearBeat(beat.beat);
       });
-      workspace.drumsSection.forEachBeat(function(beat) {
+      workspace.drumSection.forEachBeat(function(beat) {
         workspace.trackSection.clearBeat(beat.beat);
       });
 
@@ -201,7 +202,7 @@
       $scope.section = section;
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.end = section.length + 1;
-      $scope.updatePlaybackRange();
+      $scope.player.playbackRangeChanged();
 
       console.log('sectionLoaded');
       var bassTrack = projectManager.project.tracksMap['bass_0'];
