@@ -231,22 +231,6 @@
     projectManager.on('sectionDeleted', clearSectionWorkspace);
     projectManager.on('sectionLoaded', sectionLoaded);
 
-    $scope.setStringsLayout = function(strings) {
-      console.log(strings);
-      var bassSlides = $scope.slides.bass;
-      $scope.slides.bass = [];
-      $scope.bass.initStrings(strings);
-
-
-      $timeout(function() {
-        updateSlides();
-        // updateSlides will delete 'visibleSubbeats' attribute from beats
-        updateSubbeatsVisibility();
-        $timeout(function() {
-          $scope.bassSwiper.update();
-        }, 10);
-      }, 10)
-    };
 
     function assignTrack(trackSection, track) {
       trackSection.instrument = track.instrument;
@@ -269,18 +253,14 @@
       if (workspace.trackSection.track.id !== track.id) {
 
         // Save/Convert sounds from instrument workspace into simple track data
-        var convertedTrack;
-        var data = angular.copy(projectManager.serializeSectionTrack(workspace.trackSection));
-        if (workspace.trackSection.type === 'bass') {
-          convertedTrack = new BassTrackSection(data);
-        } else {
-          convertedTrack = new DrumTrackSection(data);
-        }
-        var projectTrack = projectManager.project.tracksMap[workspace.track.id];
-        convertedTrack.audio = projectTrack.audio;
-        convertedTrack.instrument = projectTrack.instrument;
-        // convertedTrack.instrument = workspace.trackSection.instrument;
-        workspace.section.tracks[workspace.track.id] = convertedTrack;
+        var convertedTrack = workspace.trackSection.convertToTrackSection();
+
+        // id of actual instrument's track (currently loaded)
+        var instrumentTrackId = workspace.trackSection.track.id;
+        var instrumentTrack = projectManager.project.tracksMap[instrumentTrackId];
+        convertedTrack.audio = instrumentTrack.audio;
+        convertedTrack.instrument = instrumentTrack.instrument;
+        workspace.section.tracks[instrumentTrackId] = convertedTrack;
 
         // Clear instrument workspace
         workspace.trackSection.forEachBeat(function(beat) {
@@ -298,10 +278,9 @@
       workspace.track = track;
     };
 
-
     $scope.updateSlides = function() {
       workspace.bassSection.setLength(workspace.section.length);
-      workspace.bassSection.setLength(workspace.section.length);
+      workspace.drumSection.setLength(workspace.section.length);
       createSlides(workspace.trackSection);
       $scope.player.playbackRange.end = workspace.section.length + 1;
       updateSwiperSlides();

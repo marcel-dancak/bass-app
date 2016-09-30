@@ -65,6 +65,11 @@
     }
   };
 
+  BassTrackSection.prototype.rawData = function() {
+    return this.data;
+  };
+
+
   // TDOD: remove all code - use setSection, loadBeats
   function BassSection(section) {
     this.section = section;
@@ -93,7 +98,7 @@
     // update references
     this.forEachBeat(function(beat) {
       this.updateBassReferences(beat.beat);
-    }.bind(this));
+    }, this);
   };
 
   BassSection.prototype.setLength = function(length) {
@@ -243,6 +248,24 @@
     this.forEachBeat(function(beat) {
       this.beatSounds(beat.beat).map(function(i) {return i.sound}).forEach(callback, obj);
     }, this);
+  };
+
+  BassSection.prototype.rawData = function() {
+    var data = [];
+    this.forEachBeat(function(beat) {
+      data.push({
+        bar: beat.bar,
+        beat: beat.index,
+        subdivision: beat.beat.subdivision,
+        data: this.beatSounds(beat.beat)
+      });
+    }, this);
+    return data;
+  };
+
+  BassSection.prototype.convertToTrackSection = function() {
+    var data = angular.copy(this.rawData());
+    return new BassTrackSection(data);
   };
 
 })();

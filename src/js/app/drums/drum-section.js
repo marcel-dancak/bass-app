@@ -35,6 +35,10 @@
     return beat.data;
   };
 
+  DrumTrackSection.prototype.rawData = function() {
+    return this.data;
+  };
+
   DrumTrackSection.prototype.forEachSound = function(callback, obj) {
     if (obj) {
       callback = callback.bind(obj);
@@ -119,7 +123,10 @@
     return this.bars[bar-1][beat-1].subbeats[subbeat-1];
   };
 
-  DrumSection.prototype.forEachBeat = function(callback) {
+  DrumSection.prototype.forEachBeat = function(callback, obj) {
+    if (obj) {
+      callback = callback.bind(obj);
+    }
     var bar, barIndex, beatIndex;
     for (barIndex = 0; barIndex < this.section.length; barIndex++) {
       bar = this.bars[barIndex];
@@ -169,6 +176,24 @@
     this.forEachBeat(function(beat) {
       this.beatSounds(beat.beat).forEach(callback, obj);
     }, this);
+  };
+
+  DrumSection.prototype.rawData = function() {
+    var data = [];
+    this.forEachBeat(function(beat) {
+      data.push({
+        bar: beat.bar,
+        beat: beat.index,
+        subdivision: beat.beat.subdivision,
+        data: this.beatSounds(beat.beat)
+      });
+    }, this);
+    return data;
+  };
+
+  DrumSection.prototype.convertToTrackSection = function() {
+    var data = angular.copy(this.rawData());
+    return new DrumTrackSection(data);
   };
 
 })();
