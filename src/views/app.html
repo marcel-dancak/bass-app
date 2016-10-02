@@ -19,8 +19,9 @@
       class="bar-container"
       ng-controller="BarController"
       msd-wheel="
-        section.beatsPerView=section.beatsPerView+$delta;
-        swiperControl.updateSlidesSize(section.beatsPerView);
+        workspace.section.beatsPerView=workspace.section.beatsPerView+$delta;
+        swiperControl.updateSlidesSize(workspace.section.beatsPerView);
+        slidesSizeChanged();
         $event.preventDefault()
       ">
       <div class="bar swiper-container">

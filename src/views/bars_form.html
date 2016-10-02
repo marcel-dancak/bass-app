@@ -5,10 +5,10 @@
     class="time-signature-button"
     ng-click="$mdOpenMenu($event)">
     <p>
-      {{ section.timeSignature.top }}
+      {{ workspace.section.timeSignature.top }}
     </p>
     <p>
-      {{ section.timeSignature.bottom }}
+      {{ workspace.section.timeSignature.bottom }}
     </p>
   </md-button>
   <md-menu-content
@@ -26,7 +26,7 @@
             min="2"
             max="12"
             step="1"
-            ng-model="section.timeSignature.top"
+            ng-model="workspace.section.timeSignature.top"
             ng-change="updateSlides()">
         </md-input-container>
         <span style="margin: 20px 4px 0 6px;">/</span>
@@ -34,7 +34,7 @@
           <md-select
             aria-label="Bottom"
             class="time-signature"
-            ng-model="section.timeSignature.bottom">
+            ng-model="workspace.section.timeSignature.bottom">
             <md-option
               ng-repeat="value in ::[2,4,8,16]"
               ng-value="{{ ::value }}">
@@ -53,7 +53,7 @@
             min="1"
             max="24"
             step="1"
-            ng-model="section.length"
+            ng-model="workspace.section.length"
             ng-change="updateSlides()">
         </md-input-container>
       </md-list-item>
@@ -67,8 +67,8 @@
             min="1"
             max="16"
             step="1"
-            ng-model="section.beatsPerView"
-            ng-change="swiperControl.updateSlidesSize(section.beatsPerView)">
+            ng-model="workspace.section.beatsPerView"
+            ng-change="swiperControl.updateSlidesSize(workspace.section.beatsPerView)">
         </md-input-container>
       </md-list-item>
 
@@ -81,7 +81,7 @@
             min="0"
             max="1500"
             step="50"
-            ng-model="section.animationDuration">
+            ng-model="workspace.section.animationDuration">
         </md-input-container>
         <span>&nbsp&nbsp</span>
         <md-input-container>
@@ -91,7 +91,7 @@
             min="1"
             max="8"
             step="1"
-            ng-model="section.beatsPerSlide"
+            ng-model="workspace.section.beatsPerSlide"
             ng-change="updateSwipers()">
         </md-input-container>
       </md-list-item>

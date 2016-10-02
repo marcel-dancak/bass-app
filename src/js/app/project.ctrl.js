@@ -14,13 +14,6 @@
     }
     ProjectManager.prototype = Object.create(Observable.prototype);
 
-    function queryStringParam(item) {
-      var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
-      if (svalue !== null) {
-        return decodeURIComponent(svalue ? svalue[1] : svalue);
-      }
-    }
-
     var idCouter = {};
     ProjectManager.prototype.addTrack = function(track) {
       if (angular.isUndefined(idCouter[track.type])) {
@@ -39,12 +32,24 @@
 
     ProjectManager.prototype.createProject = function(tracks) {
       this.project = {
-        sections: this.getSectionsList(),
+        sections: [],
         tracks: [],
         tracksMap: {},
         playlists: []
       };
       tracks.forEach(this.addTrack.bind(this));
+      return this.project;
+    };
+
+    ProjectManager.prototype.loadProject = function(projectData) {
+      this.project = {
+        sections: projectData.index,
+        tracks: [],
+        tracksMap: {},
+        playlists: []
+      };
+      this.projectData = projectData.sections;
+      projectData.tracks.forEach(this.addTrack.bind(this));
       return this.project;
     };
 
@@ -59,6 +64,7 @@
 
       console.log('New id: '+newId);
       section.id = newId;
+      section.tracks = {};
       this.project.sections.push(section);
       this.project.selectedSectionIndex = this.project.sections.length-1;
       this.section = section;
@@ -67,45 +73,16 @@
 
     ProjectManager.prototype.getSectionsList = function() {
 
-      var startupProject = queryStringParam("PROJECT");
-      if (startupProject) {
-        var task = $q.defer();
-        var sectionsIndex = [];
-        $http.get(startupProject+'.json').then(function(response) {
-          this.projectData = response.data.sections;
-          Array.prototype.push.apply(sectionsIndex, response.data.index);
-          // task.resolve(response.data.index);
-        }.bind(this));
-        return sectionsIndex;
-        // return task.promise;
-      }
-      /*
-      var storageKeyPrefix = 'v9.section.';
-      var sectionsNames = [];
-      var i;
-      for (i=0; i<localStorage.length; i++) {
-        var key = localStorage.key(i);
-        if (key.startsWith(storageKeyPrefix)) {
-          sectionsNames.push({
-            id: key.substring(storageKeyPrefix.length),
-            name: key.substring(storageKeyPrefix.length)
-          });
-        }
-      }
-      console.log(sectionsNames);
-      return sectionsNames;
-      */
-
       var storageKey = 'v9.project';
       var jsonData = localStorage.getItem(storageKey);
       if (jsonData) {
         console.log(jsonData);
-        return JSON.parse(jsonData).sections;
+        return JSON.parse(jsonData);
       }
       return [];
     }
 
-    ProjectManager.prototype.saveSectionsIndex = function() {
+    ProjectManager.prototype.saveProjectInfo = function() {
       var storageKey = 'v9.project';
       var sectionsIndex = this.project.sections.map(function(section) {
         return {
@@ -113,7 +90,21 @@
           name: section.name
         };
       });
-      var jsonData = JSON.stringify(sectionsIndex);
+      var trackExcludedProperties = ['id', 'instrument', 'audio'];
+      var tracks = this.project.tracks.map(function(track) {
+        return Object.keys(track).reduce(function(obj, property) {
+          if (trackExcludedProperties.indexOf(property) === -1) {
+            obj[property] = track[property];
+          }
+          return obj;
+        }, {});
+      });
+
+      var data = {
+        index: sectionsIndex,
+        tracks: tracks
+      }
+      var jsonData = JSON.stringify(data);
       console.log(jsonData);
       // localStorage.setItem(storageKey, jsonData);
     }
@@ -149,7 +140,7 @@
       }
       this.project.selectedSectionIndex = -1;
       this.section.name = '';
-      this.saveSectionsIndex();
+      this.saveProjectInfo();
       this.dispatchEvent('sectionDeleted');
     };
 
@@ -171,6 +162,7 @@
     ProjectManager.prototype.serializeSection = function(section) {
 
       var data = {
+        name: section.name,
         timeSignature: section.timeSignature,
         length: section.length,
         // other section configuration
@@ -205,21 +197,20 @@
       var data = this.serializeSection(this.section);
       console.log(data);
       localStorage.setItem(storageKey, data);
-      this.saveSectionsIndex();
+      this.saveProjectInfo();
     };
 
 
     ProjectManager.prototype.loadSectionData = function(section) {
       console.log('loadSectionData');
       console.log(section);
-      section.tracks = {
-        bass_0: new BassTrackSection(section.tracks['bass_0'], this.project.tracksMap['bass_0'].instrument),
-        drums_0: new DrumTrackSection(section.tracks['drums_0'], this.project.tracksMap['drums_0'].instrument)
-      };
+
       for (var trackId in section.tracks) {
-        var track = section.tracks[trackId];
+        var trackData = section.tracks[trackId];
+        var track = trackId.startsWith('bass')? new BassTrackSection(trackData) : new DrumTrackSection(trackData);
         track.audio = this.project.tracksMap[trackId].audio;
         track.instrument = this.project.tracksMap[trackId].instrument;
+        section.tracks[trackId] = track;
       }
       return section;
     }
@@ -257,8 +248,7 @@
 
     ProjectManager.prototype.loadSection = function(index) {
       console.log('loadSection');
-      var section = this.getSection(index);
-      angular.extend(this.section, section);
+      this.section = this.getSection(index);
       this.dispatchEvent('sectionLoaded', this.section);
     };
 
@@ -297,7 +287,7 @@
         projectManager.project.selectedSectionIndex = newSelectedIndex;
       }
       // save the actual list
-      projectManager.saveSectionsIndex();
+      projectManager.saveProjectInfo();
     }
 
     $scope.exportToFile = function() {

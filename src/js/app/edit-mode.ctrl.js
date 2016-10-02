@@ -12,7 +12,6 @@
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
 
-    $scope.player.playbackRange.end = $scope.section.length + 1;
 
     $scope.player.playbackRangeChanged = function() {
       console.log('playbackRangeChanged');
@@ -28,8 +27,8 @@
           beat: workspace.section.timeSignature.top
         }
       };
-      var firstBeat = (firstBar - 1) * $scope.section.timeSignature.top;
-      var lastBeat = (lastBar) * $scope.section.timeSignature.top - 1;
+      var firstBeat = (firstBar - 1) * workspace.section.timeSignature.top;
+      var lastBeat = (lastBar) * workspace.section.timeSignature.top - 1;
       audioVisualiser.firstBeat = firstBeat;
       audioVisualiser.lastBeat = lastBeat;
       swiperControl.setVisibleRange(firstBeat, lastBeat);
@@ -40,7 +39,7 @@
 
     $scope.ui.bpmChanged = function(value) {
       console.log('bpm changed: '+value);
-      audioPlayer.setBpm($scope.section.bpm);
+      audioPlayer.setBpm(workspace.section.bpm);
     };
 
     function beatPrepared(evt) {
@@ -60,7 +59,7 @@
         //setTimeout(function() {
           swiperControl.barSwiper.slideTo(
             slide,
-            (slide === 0)? 0 : $scope.section.animationDuration,
+            (slide === 0)? 0 : workspace.section.animationDuration,
             true
           );
         //}, parseInt(timeToBeat*1000)-50);
@@ -93,7 +92,7 @@
       } else {
         if ($scope.player.loop) {
           var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
-          if (playbackRange > $scope.section.beatsPerView) {
+          if (playbackRange > workspace.section.beatsPerView) {
             swiperControl.createLoop();
           }
         }
@@ -103,7 +102,7 @@
         }
       }
       $scope.player.playing = true;
-      audioPlayer.setBpm($scope.section.bpm);
+      audioPlayer.setBpm(workspace.section.bpm);
       if ($scope.player.graphEnabled) {
         audioVisualiser.setBeatsCount($scope.slides.length);
         audioVisualiser.activate(workspace.bassSection.audio);
@@ -111,7 +110,7 @@
       audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
       repeats = 1;
-      audioPlayer.play($scope.section, beatPrepared, $scope.player.loop? -1 : 1);
+      audioPlayer.play(workspace.section, beatPrepared, $scope.player.loop? -1 : 1);
     };
 
     $scope.player.stop = function() {
@@ -126,7 +125,7 @@
       // TODO: check if loop slides was created properly, this is not reliable
       if ($scope.player.loop) {
         var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
-        if (playbackRange > $scope.section.beatsPerView) {
+        if (playbackRange > workspace.section.beatsPerView) {
           swiperControl.destroyLoop();
         }
       }
@@ -144,7 +143,7 @@
 
 
     function createSlides(trackSection) {
-      var timeSignature = $scope.section.timeSignature;
+      var timeSignature = workspace.section.timeSignature;
 
       var slides = [];
       trackSection.forEachBeat(function(beat) {
@@ -161,8 +160,8 @@
     function updateSwiperSlides() {
       $timeout(function() {
         swiperControl.setSlides($scope.slides, {
-          slidesPerView: $scope.section.beatsPerView,
-          slidesPerGroup: $scope.section.beatsPerSlide
+          slidesPerView: workspace.section.beatsPerView,
+          slidesPerGroup: workspace.section.beatsPerSlide
         });
         $scope.player.playbackRangeChanged();
       });
@@ -177,13 +176,6 @@
       workspace.track = workspace.trackSection.track;
     };
 
-    $scope.initializeWorkspace(projectManager.project.tracksMap['bass_0'], projectManager.project.tracksMap['drums_0']);
-    createSlides(workspace.trackSection);
-    workspace.section.tracks = {
-      'bass_0': workspace.bassSection,
-      'drums_0': workspace.drumSection
-    };
-    updateSwiperSlides();
 
     function clearSectionWorkspace() {
       audioVisualiser.clear();
@@ -199,33 +191,42 @@
 
     function sectionLoaded(section) {
       // clearSectionWorkspace();
-      $scope.section = section;
+      console.log('sectionLoaded');
+      console.log(section);
+
+      workspace.section = section;
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.end = section.length + 1;
-      $scope.player.playbackRangeChanged();
+      // $scope.player.playbackRangeChanged();
 
-      console.log('sectionLoaded');
-      var bassTrack = projectManager.project.tracksMap['bass_0'];
-      var drumsTrack = projectManager.project.tracksMap['drums_0'];
+      var bassTrack = projectManager.project.tracksMap[workspace.bassSection? workspace.bassSection.track.id : 'bass_0'];
+      var drumsTrack = projectManager.project.tracksMap[workspace.drumSection? workspace.drumSection.track.id : 'drums_0'];
       $scope.initializeWorkspace(bassTrack, drumsTrack);
-      workspace.bassSection.loadBeats(section.tracks[bassTrack.id].data);
-      workspace.drumSection.loadBeats(section.tracks[drumsTrack.id].data);
-      workspace.section.tracks = {
-        'bass_0': workspace.bassSection,
-        'drums_0': workspace.drumSection
-      };
+      if (section.tracks[bassTrack.id]) {
+        var track = section.tracks[bassTrack.id];
+        workspace.bassSection.loadBeats(track.data || track.rawData());
+      }
+      if (section.tracks[drumsTrack.id]) {
+        var track = section.tracks[drumsTrack.id];
+        workspace.drumSection.loadBeats(track.data || track.rawData());
+      }
+      section.tracks[bassTrack.id] = workspace.bassSection;
+      section.tracks[drumsTrack.id] = workspace.drumSection;
+
 
       createSlides(workspace.trackSection);
       $timeout(function() {
         swiperControl.setSlides($scope.slides, {
-          slidesPerView: $scope.section.beatsPerView,
-          slidesPerGroup: $scope.section.beatsPerSlide
+          slidesPerView: workspace.section.beatsPerView,
+          slidesPerGroup: workspace.section.beatsPerSlide
         });
-      });
-
-      $timeout(function () {
+        $scope.player.playbackRangeChanged();
         $scope.$broadcast('rzSliderForceRender');
       });
+    }
+
+    if (workspace.section) {
+      sectionLoaded(workspace.section);
     }
 
     projectManager.on('sectionCreated', clearSectionWorkspace);

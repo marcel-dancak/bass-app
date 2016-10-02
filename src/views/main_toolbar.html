@@ -14,7 +14,7 @@
         md-no-ink
         aria-label="Track"
         class="tracks-list"
-        ng-init="ui.trackId = workspace.track.id"
+        ng-init="ui.trackId = 'bass_0'"
         ng-model="ui.trackId"
         ng-change="ui.selectTrack(ui.trackId)">
 
@@ -167,8 +167,8 @@
         min="30"
         max="200"
         step="5"
-        ng-model="section.bpm"
-        ng-change="ui.bpmChanged(section.bpm)">
+        ng-model="workspace.section.bpm"
+        ng-change="ui.bpmChanged(workspace.section.bpm)">
     </md-input-container>
 
     <md-input-container class="playback-speed-field">
@@ -225,7 +225,7 @@
         md-no-ink
         class="toggle-button toolbar-separated-button icon-hover"
         ng-class="{
-          active: player.playbackRange.start > 1 || player.playbackRange.end < section.length+1
+          active: player.playbackRange.start > 1 || player.playbackRange.end < workspace.section.length+1
         }"
         ng-click="$mdOpenMenu($event)">
         <md-icon md-svg-icon="playback-range"></md-icon>
@@ -238,12 +238,12 @@
             <label>Playback range</label>
             <rzslider
               class="range-slider"
-              ng-class="{ long: section.length > 10 }"
+              ng-class="{ long: workspace.section.length > 10 }"
               rz-slider-model="player.playbackRange.start"
               rz-slider-high="player.playbackRange.end"
               rz-slider-options="{
                 floor: 1,
-                ceil: section.length+1,
+                ceil: workspace.section.length+1,
                 step: 1,
                 minRange: 1,
                 pushRange: true,
@@ -308,7 +308,7 @@
           required
           type="text"
           autocomplete="off"
-          ng-model="section.name">
+          ng-model="workspace.section.name">
       </md-input-container>
       <md-input-container>
         <md-select
@@ -317,8 +317,8 @@
           aria-label="Section"
           class="select-editable"
           md-container-class="sections-list"
-          ng-model="project.selectedSectionIndex"
-          ng-change="loadSection(project.selectedSectionIndex)">
+          ng-model="workspace.selectedSectionIndex"
+          ng-change="loadSection(workspace.selectedSectionIndex)">
           <md-option
             ui-draggable="true"
             drag="$index"
@@ -338,7 +338,7 @@
         md-no-ink
         aria-label="Save"
         class="toolbar-button icon-hover"
-        ng-click="projectManager.saveSection(project.selectedSectionIndex)">
+        ng-click="projectManager.saveSection(workspace.selectedSectionIndex)">
         <md-icon
           md-svg-icon="save">
         </md-icon>
@@ -380,7 +380,7 @@
           <md-button
             md-no-ink
             aria-label="Delete"
-            ng-click="deleteSection(project.selectedSectionIndex)">
+            ng-click="deleteSection(workspace.selectedSectionIndex)">
             Delete
           </md-button>
         </md-menu-item>
@@ -468,7 +468,7 @@
           <md-button
             md-no-ink
             aria-label="New"
-            ng-click="newSection()">
+            ng-click="createPlaylist()">
             New
           </md-button>
         </md-menu-item>
@@ -476,7 +476,7 @@
           <md-button
             md-no-ink
             aria-label="Delete"
-            ng-click="deleteSection(project.selectedSectionIndex)">
+            ng-click="deletePlaylist()">
             Delete
           </md-button>
         </md-menu-item>

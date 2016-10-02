@@ -18,7 +18,14 @@
       };
     });
 
-  function AppController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums) {
+  function AppController($scope, $timeout, $http, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums) {
+
+    function queryStringParam(item) {
+      var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+      if (svalue !== null) {
+        return decodeURIComponent(svalue ? svalue[1] : svalue);
+      }
+    }
 
     $scope.ui = {
       selectTrack: angular.noop
@@ -76,45 +83,49 @@
     };
 
     $scope.projectManager = projectManager;
-    $scope.project = projectManager.createProject([
-      {
-        type: 'bass',
-        name: 'Bassline',
-        strings: 'EADG',
-        tuning: [0, 0, 0, 0]
-      }, /*{
-        type: 'bass',
-        name: 'Melody',
-        strings: 'BEADG',
-        tuning: [0, 0, 0, 0, 0]
-      }, */{
-        type: 'drums',
-        kit: 'Standard',
-        name: 'Standard'
-      }, {
-        type: 'drums',
-        kit: 'Bongo',
-        name: 'Bongo'
-      }
-    ]);
 
-    $scope.section = projectManager.createSection({
-      timeSignature: {
-        top: 4,
-        bottom: 4
-      },
-      bpm: 80,
-      length: 3,
-      beatsPerSlide: 1,
-      beatsPerView: 10,
-      animationDuration: 300
-    });
+    var startupProject = queryStringParam("PROJECT");
+    if (startupProject) {
+      $http.get(startupProject+'.json').then(function(response) {
+        $scope.project = projectManager.loadProject(response.data);
+        workspace.selectedSectionIndex = 0;
+        projectManager.loadSection(workspace.selectedSectionIndex);
+      });
+    } else {
+      $scope.project = projectManager.createProject([
+        {
+          type: 'bass',
+          name: 'Bassline',
+          strings: 'EADG',
+          tuning: [0, 0, 0, 0]
+        }, /*{
+          type: 'bass',
+          name: 'Melody',
+          strings: 'BEADG',
+          tuning: [0, 0, 0, 0, 0]
+        }, */{
+          type: 'drums',
+          kit: 'Standard',
+          name: 'Standard'
+        }, {
+          type: 'drums',
+          kit: 'Bongo',
+          name: 'Bongo'
+        }
+      ]);
+      workspace.section = projectManager.createSection({
+        timeSignature: {
+          top: 4,
+          bottom: 4
+        },
+        bpm: 80,
+        length: 3,
+        beatsPerSlide: 1,
+        beatsPerView: 10,
+        animationDuration: 300
+      });
+    }
 
-    angular.extend(workspace, {
-      selectedSectionIndex: -1,
-      section: $scope.section,
-      data: null
-    });
     $scope.workspace = workspace;
 
     $scope.barLabels = {
@@ -164,6 +175,9 @@
       }
     };
 
+    $scope.slidesSizeChanged = function() {
+      audioVisualiser.updateSize();
+    };
 
     // Load standard drums kit sounds
     var resources = Drums.Standard.map(function(drum) {
