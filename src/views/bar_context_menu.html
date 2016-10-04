@@ -70,22 +70,22 @@
 
     <md-menu-item>
       <md-button
-        ng-click="copyBar(contextMenu.barBeat.bar, workspace.track.type)">
+        ng-click="copyBar()">
         Copy
       </md-button>
     </md-menu-item>
 
     <md-menu-item>
       <md-button
-        ng-disabled="bassClipboard.length+drumsClipboard.length === 0"
-        ng-click="pasteBar(contextMenu.barBeat.bar)">
+        ng-disabled="workspace.clipboard.length === 0 || workspace.clipboard.type !== workspace.trackSection.type"
+        ng-click="pasteBar()">
         Paste
       </md-button>
     </md-menu-item>
 
     <md-menu-item>
       <md-button
-        ng-click="clearBar(contextMenu.barBeat.bar, workspace.track.type)">
+        ng-click="clearBar()">
         Clear
       </md-button>
     </md-menu-item>

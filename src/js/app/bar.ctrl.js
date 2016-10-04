@@ -39,79 +39,41 @@
       });
     };
 
-    $scope.setBeatSubdivision = function() {
 
-    };
+    workspace.clipboard = [];
+    $scope.copyBar = function() {
+      var barIndex = $scope.contextMenu.beat.bar;
+      console.log('Copy bar: '+barIndex);
 
-    var clipboard = [];
-    $scope.copyBar = function(barIndex, instrument) {
-      console.log('Copy bar: '+barIndex+' : '+instrument);
-      var section = $scope.section;
-
-      clipboard.splice(0, clipboard.length);
-      var beatIndex;
-      for (beatIndex = 1; beatIndex <= workspace.section.timeSignature.top; beatIndex++) {
+      workspace.clipboard.splice(0, workspace.clipboard.length);
+      for (var beatIndex = 1; beatIndex <= workspace.section.timeSignature.top; beatIndex++) {
         var beat = workspace.trackSection.beat(barIndex, beatIndex);
-        clipboard.push({
-          bar: barIndex,
-          beat: beatIndex,
-          subdivision: bassBeat.subdivision,
-          sounds: workspace.trackSection.beatSounds(beat)
-        });
+        workspace.clipboard.push(workspace.trackSection.rawBeatData(beat));
       }
+      workspace.clipboard = angular.copy(workspace.clipboard);
+      workspace.clipboard.type = workspace.trackSection.type;
     };
 
-    $scope.pasteBar = function(barIndex) {
-      console.log('Paste bar: '+barIndex);
-      var section = $scope.section;
+    $scope.pasteBar = function() {
+      if (workspace.clipboard.type !== workspace.trackSection.type) {
+        return;
+      }
 
-      var barOffset = barIndex - clipboard[0].bar;
-      // paste bass sounds
-      clipboard.forEach(function(beat) {
-        // var destBassBeat = section.bassBeat(barIndex, beat.beat);
-        // if (beat.subdivision !== destBassBeat.subdivision) {
-        //   var flatIndex = (barIndex-1)*section.timeSignature.top+beat.beat-1;
-        //   var barBeat = $scope.slides.bars[flatIndex];
-        //   $scope.setBeatSubdivision(barBeat, destBassBeat, beat.subdivision);
-        // }
-        // beat.sounds.forEach(function(bassSound) {
-        //   var subbeat = $scope.section.bassSubbeat(barIndex, beat.beat, bassSound.subbeat);
-        //   var destSound = subbeat[bassSound.sound.string.label].sound;
-        //   angular.extend(destSound, angular.copy(bassSound.sound));
-        //   if (destSound.next) {
-        //     destSound.next.bar += barOffset;
-        //     delete destSound.next.ref;
-        //   }
-        //   if (destSound.prev) {
-        //     destSound.prev.bar += barOffset;
-        //     delete destSound.prev.ref;
-        //   }
-        // });
-        // section.updateBassReferences(destBassBeat);
+      var barIndex = $scope.contextMenu.beat.bar;
+      workspace.clipboard.forEach(function(beat) {
+        beat.bar = barIndex;
+        var destBeat = workspace.trackSection.beat(barIndex, beat.beat);
+        workspace.trackSection.clearBeat(destBeat);
       });
 
-      // paste drum sounds
-      drumsClipboard.forEach(function(beat) {
-        beat.sounds.forEach(function(drumSound) {
-          var subbeat = $scope.section.drumsSubbeat(barIndex, beat.beat, drumSound.subbeat);
-          subbeat[drumSound.drum].volume = drumSound.volume;
-        });
-      });
-      // bassClipboard.splice(0, bassClipboard.length);
-      // drumsClipboard.splice(0, drumsClipboard.length);
+      workspace.trackSection.loadBeats(workspace.clipboard);
     };
 
-    $scope.clearBar = function(barIndex, instrument) {
-      var bar = $scope.section.bars[barIndex-1];
-      if (instrument === 'bass') {
-        bar.bassBeats.forEach(function(bassBeat) {
-          $scope.section.clearBeat(bassBeat);
-        });
-      }
-      if (instrument === 'drums') {
-        bar.drumsBeats.forEach(function(drumsBeat) {
-          $scope.section.clearBeat(drumsBeat);
-        });
+    $scope.clearBar = function() {
+      var barIndex = $scope.contextMenu.beat.bar;
+      for (var beatIndex = 1; beatIndex <= workspace.section.timeSignature.top; beatIndex++) {
+        var beat = workspace.trackSection.beat(barIndex, beatIndex);
+        workspace.trackSection.clearBeat(beat);
       }
     };
   }

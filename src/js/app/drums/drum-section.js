@@ -178,6 +178,15 @@
     }, this);
   };
 
+  DrumSection.prototype.rawBeatData = function(beat) {
+    return {
+      bar: beat.bar,
+      beat: beat.beat,
+      subdivision: beat.subdivision,
+      data: this.beatSounds(this.beat(beat.bar, beat.beat))
+    };
+  };
+
   DrumSection.prototype.rawData = function() {
     var data = [];
     this.forEachBeat(function(beat) {
