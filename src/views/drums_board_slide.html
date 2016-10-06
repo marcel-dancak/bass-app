@@ -6,9 +6,8 @@
     ng-repeat="drumSubbeats in slide.beat.subbeats track by $index"
     class="drums-column"
     ng-class="{
-      hidden: slides.visibleSubbeats.indexOf($index+1) === -1
+      hidden: !swiperControl.swiperConfig.visibleSubbeats[slide.beat.subdivision][$index+1]
     }">
-
     <div
       flex
       aria-label="Drum sound"

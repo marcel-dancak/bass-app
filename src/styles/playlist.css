@@ -68,7 +68,7 @@
 .viewer-container {
   position: relative;
   height: 100%;
-  margin: 0 20px 0 20px;
+  margin: 0 15px 0 0px;
 }
 
 .player.swiper-container,
@@ -94,6 +94,8 @@
 
 .player .swiper-slide .section-info {
   min-width: 30px;
+  position: relative;
+  color: #555;
 }
 
 /*.player .swiper-slide .section-info::before {
@@ -108,7 +110,8 @@
   z-index: 200;
 }*/
 
-.player .swiper-slide .section-info::before {
+
+/*.player .swiper-slide .section-info::before {
   position: absolute;
   top: 0;
   left: 0;
@@ -117,8 +120,11 @@
   height: 64px;
   background-color: #aaa;
   z-index: 200;
-}
+}*/
 
+.player .swiper-slide .section-info .instrument-slide::before{
+  display: none;
+}
 .player .swiper-slide > div:last-child .beat::after {
   position: absolute;
   top: 0;
@@ -141,7 +147,9 @@
   background-color: #ccc;
   z-index: 200;
 }
-
+.player .subbeat-label.align-right {
+  padding-left: 24px;
+}
 .player .swiper-slide .section-info .name {
   position: absolute;
   top: 100px;
@@ -149,23 +157,39 @@
 
 .player .swiper-slide .time-signature {
   font-size: 20px;
-  font-weight: bold;
+  xfont-weight: bold;
   right: 0;
   top: 5px;
   height: 80px;
   padding: 0 15px;
 }
+.player .swiper-slide .beat .section-info .time-signature {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: 34px;
+  height: 50px;
+  padding: 0;
+  text-align: center;
+}
+
 .player .swiper-slide .section-info .bpm {
   position: absolute;
-  font-size: 13px;
-  font-weight: bold;
-  top: 72px;
+  font-size: 15px;
+  top: -50px;
   z-index: 200;
-  text-align: center;
-  color: #555;
+  text-align: left;
+  left: 0;
+  transform: translate3d(52px, 0, 0);
 }
+.player .swiper-slide .beat .section-info .bpm {
+  transform: translate3d(12px, 0, 0);
+}
+
 .player .swiper-slide .section-info .bass-board {
-  border-left: 2px solid #ccc;
+  xborder-left: 2px solid #ccc;
+  border-left: none;
 }
 .player .swiper-slide .section-info .bass-board p {
   padding: 0;
@@ -173,16 +197,15 @@
   line-height: 36px;
   height: 36px;
   text-align: center;
-  font-weight: bold;
+  xfont-weight: bold;
   font-size: 20px;
-  color: #444;
 }
 
 .section-label {
   position: absolute;
-  top: -44px;
-  left: 28px;
-  color: #777;
+  top: -50px;
+  left: 64px;
+  color: #555;
   font-size: 15px;
 }
 

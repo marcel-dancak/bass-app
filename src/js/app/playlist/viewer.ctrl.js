@@ -7,7 +7,7 @@
 
   function PlaylistViewer($scope, $timeout, $q, audioPlayer, projectManager, workspace, $mdCompiler, HighlightTimeline) {
 
-    $scope.selected = {section: null};
+    workspace.playlist = projectManager.project.playlists[0];
 
     // workspace.track = projectManager.project.tracksMap['bass_0'];
     var projectSections = angular.copy(projectManager.project.sections);
@@ -51,24 +51,32 @@
       var beats = [];
 
       var track = section.tracks['bass_0'];
-      while (count--) {
+      var counter = count;
+      while (counter--) {
         var sectionFirstsBeat = position.bar === 1 && position.beat === 1;
-        if (sectionFirstsBeat) {
+        /*
+        if (sectionFirstsBeat && beats.length > 0) {
           beats.push({
             sectionInfo: section,
           });
-          // count--;
+          // counter--;
         }
+        */
         var trackBeat = track.beat(position.bar, position.beat);
         beats.push({
           bar: position.bar,
           beat: position.beat,
           subdivision: trackBeat.subdivision,
           sounds: track.beatSounds(trackBeat),
+          timeSignature: section.timeSignature,
+          bpm: section.bpm,
           subbeats: [1, 2, 3, 4]
         });
         if (sectionFirstsBeat) {
-          beats[beats.length-1].label = section.name;
+          beats[beats.length-1].sectionInfo = {
+            name: section.name,
+          };
+
         }
         position.beat++;
         if (position.beat > section.timeSignature.top) {
@@ -82,6 +90,14 @@
             track = section.tracks['bass_0'];
           }
         }
+      }
+      // generate empty beats to fill slide (when needed)
+      while (beats.length < count) {
+        beats.push({
+          subdivision: 1,
+          beat: ' ',
+          sounds: []
+        });
       }
 
       var scope = $scope.$new(false);
@@ -139,7 +155,8 @@
         }
         if (s.activeIndex > 1) {
           // angular.element(s.slides[0]).scope().$destroy();
-          s.removeSlide(0);
+          /* auto-removing of slides */
+          // s.removeSlide(0);
         }
       });
 
@@ -166,8 +183,8 @@
     function initPlaylistSlides() {
       var task = $q.defer();
       playlist = [];
-      projectManager.project.playlists[0].forEach(function(item) {
-        var section = projectManager.getSection(item.id);
+      workspace.playlist.items.forEach(function(item) {
+        var section = projectManager.getSectionById(item.id);
         for (var i = 0; i < item.repeats; i++) {
           playlist.push(section);
         }
@@ -201,15 +218,12 @@
 
     $scope.updatePlaylist = initPlaylistSlides;
 
-    if (!projectManager.project.playlists[0] || projectManager.project.playlists[0].length === 0) {
-      projectManager.project.playlists[0] = [
-        {id: 17, repeats: 1},
-        {id: 16, repeats: 1},
-        {id: 17, repeats: 1},
-        {id: 16, repeats: 1}
-      ];
+    if (!projectManager.project.playlists[0] || projectManager.project.playlists[0].items.length === 0) {
+      console.log('SHOW PLAYLIST EDITOR');
+      $scope.ui.playlist.showEditor = true;
+    } else {
+      initPlaylistSlides();
     }
-    initPlaylistSlides();
 
     function beatSync(evt) {
       timeline.beatSync(evt);

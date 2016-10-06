@@ -2,8 +2,7 @@
   class="viewer-container"
   ng-controller="PlaylistViewer"
   flex
-  layout="column"
-  ng-init="ui.playlist.showEditor = false">
+  layout="column">
 
   <div
     flex
@@ -35,11 +34,11 @@
           flex
           class="playlist"
           ng-keyup="playlistKeyPressed($event)"
-          ui-on-drop="dropPlaylistSection($event, playlist, $data, playlist.length)"
+          ui-on-drop="dropPlaylistSection($event, workspace.playlist.items, $data, workspace.playlist.items.length)"
           drop-channel="playlist">
           <div
             md-no-ink
-            ng-repeat="section in playlist track by $index"
+            ng-repeat="section in workspace.playlist.items track by $index"
             class="playlist-item"
             ng-class="{selected: selected.section === section}"
             ng-click="selected.section = section"
@@ -49,7 +48,7 @@
               index: $index,
               data: section
             }"
-            ui-on-drop="dropPlaylistSection($event, playlist, $data, $index, section)"
+            ui-on-drop="dropPlaylistSection($event, workspace.playlist.items, $data, $index, section)"
             drag-channel="playlist"
             drop-channel="playlist">
             <div

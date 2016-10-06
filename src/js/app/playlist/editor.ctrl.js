@@ -8,7 +8,6 @@
   function PlaylistEditor($scope, $timeout, projectManager, workspace) {
 
     $scope.selected = {section: null};
-    $scope.playlist = projectManager.project.playlists[0];
 
     var projectSections = projectManager.project.sections.map(function(section) {
       return {
@@ -20,7 +19,7 @@
     $scope.availableSections = [];
     function updateAvailableSection() {
       $scope.availableSections = projectSections.filter(function(projectSection) {
-        return !$scope.playlist.some(function(playlistSection) {
+        return !workspace.playlist.items.some(function(playlistSection) {
           return playlistSection.id === projectSection.id;
         });
       });
@@ -46,9 +45,9 @@
       switch (evt.keyCode) {
         case 46: // Del
           if ($scope.selected.section) {
-            var index = $scope.playlist.indexOf($scope.selected.section);
-            $scope.playlist.splice(index, 1);
-            $scope.selected.section = $scope.playlist[index];
+            var index = workspace.playlist.items.indexOf($scope.selected.section);
+            workspace.playlist.items.splice(index, 1);
+            $scope.selected.section = workspace.playlist.items[index];
             var nextItemElem = evt.target.nextElementSibling;
             if (nextItemElem) {
               $timeout(function() {
@@ -61,7 +60,7 @@
     };
 
     $scope.clearPlaylist = function() {
-      $scope.playlist.splice(0, $scope.playlist.length);
+      workspace.playlist.items.splice(0, workspace.playlist.items.length);
       updateAvailableSection();
     };
 
@@ -69,7 +68,7 @@
       $scope.availableSections.forEach(function(projectSection) {
         var item = angular.copy(projectSection);
         item.repeats = 1;
-        $scope.playlist.push(item)
+        workspace.playlist.items.push(item)
       });
       $scope.availableSections = [];
     };

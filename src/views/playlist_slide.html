@@ -1,47 +1,61 @@
 <div
   class="swiper-slide"
   layout="row">
+
   <div
-    ng-repeat="beat in ::beats"
     layout="column"
-    style="position:relative;"
-    ng-attr-flex="{{ beat.beat? '' : 'none' }}">
+    flex="none">
     <div
-      ng-if="::beat.sectionInfo"
+      ng-init="beat = beats[0]"
       class="section-info">
        <div class="bpm">
-        {{ ::beat.sectionInfo.bpm }} bpm
+        𝅘𝅥 &nbsp;={{ ::beat.bpm }}
       </div>
 
       <div class="time-signature">
-        <div>{{ ::beat.sectionInfo.timeSignature.top }}</div>
-        <div>{{ ::beat.sectionInfo.timeSignature.bottom }}</div>
+        <div>{{ ::beat.timeSignature.top }}</div>
+        <div>{{ ::beat.timeSignature.bottom }}</div>
       </div>
       <div class="bass-board instrument-slide">
-        <!-- <div
-          ng-repeat="string in ::workspace.track.instrument.strings"
-          class="">
-          <span>{{ ::string.label }}</span>
-        </div> -->
         <p ng-repeat="string in ::workspace.track.instrument.strings | orderBy:string.index:'-'">
           {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
         </p>
       </div>
 
     </div>
+  </div>
+
+  <div
+    ng-repeat="beat in ::beats"
+    layout="column"
+    style="position:relative;"
+    ng-attr-flex="{{ beat.beat? '' : 'none' }}">
 
     <!-- Bar -->
     <div
-      ng-if-start="::!beat.sectionInfo"
       class="beat beat-{{ ::beat.beat }}">
+
+      <div
+        ng-if="::beat.sectionInfo && $index > 0"
+        class="section-info">
+        <div class="time-signature">
+          <div>{{ ::beat.timeSignature.top }}</div>
+          <div>{{ ::beat.timeSignature.bottom }}</div>
+        </div>
+
+         <div class="bpm">
+          𝅘𝅥 &nbsp;={{ ::beat.bpm }}
+        </div>
+
+      </div>
+
+      <label
+        class="section-label">
+        {{ ::beat.sectionInfo.name }}
+      </label>
 
       <label class="bar-label">
         {{ ::beat.bar }}
-      </label>
-      <label
-        ng-if="::beat.label"
-        class="section-label">
-        {{ ::beat.label }}
       </label>
       <div
         id="beat_{{ ::beat.bar }}_{{ ::beat.beat }}"
@@ -50,12 +64,12 @@
         <div
           flex
           class="subbeat">
-          <label class="subbeat-label">
+          <label class="subbeat-label {{ ::beat.sectionInfo? 'align-right' : '' }}">
             {{ ::beat.beat }}
           </label>
         </div>
         <div
-          ng-repeat="label in barLabels[beat.subdivision] track by $index"
+          ng-repeat="label in ::barLabels[beat.subdivision] track by $index"
           flex
           class="subbeat"
           ng-class="{
@@ -70,7 +84,6 @@
 
     <!-- Instrument -->
     <div
-      ng-if-end
       class="bass-board instrument-slide beat-{{ ::beat.beat }}">
       <div class="string-container">
         <div
@@ -90,7 +103,7 @@
         style="
           left: {{ ::100*(item.subbeat-1)/beat.subdivision }}%;
           top: {{ ::{G: '0', D: '36px', A: '72px', E: '108px', B: '144px'}[item.sound.string] }};
-          width: {{ ::(100 * 4 * item.sound.noteLength.beatLength) }}%;">
+          width: {{ ::(100 * beat.timeSignature.bottom * item.sound.noteLength.beatLength * (beat.subdivision === 3? 2/3 : 1)) }}%;">
         <div
           class="top-label">
         </div>
