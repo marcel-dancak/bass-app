@@ -71,24 +71,32 @@
       timeline.beatSync(evt);
     }
 
+    function updateLockedPlayerRange() {
+      console.log('** updateLockedPlayerRange');
+      // var sFlatIndex = swiperControl.barSwiper.snapIndex
+      var sFlatIndex = swiperControl.firstSlide + swiperControl.barSwiper.snapIndex * workspace.section.beatsPerSlide;
+      var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
+      audioPlayer.playbackRange = {
+        start: {
+          bar: parseInt(sFlatIndex / workspace.section.timeSignature.top) + 1,
+          beat: (sFlatIndex % workspace.section.timeSignature.top) + 1
+        },
+        end: {
+          bar: parseInt(eFlatIndex / workspace.section.timeSignature.top) + 1,
+          beat: (eFlatIndex % workspace.section.timeSignature.top) + 1
+        }
+      };
+      audioVisualiser.firstBeat = sFlatIndex;
+      audioVisualiser.lastBeat = eFlatIndex;
+    }
+
     var repeats;
     var timeline;
     $scope.player.play = function() {
       if ($scope.player.visibleBeatsOnly) {
-        var sFlatIndex = swiperControl.firstSlide + swiperControl.barSwiper.activeIndex;
-        var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
-        audioPlayer.playbackRange = {
-          start: {
-            bar: parseInt(sFlatIndex / workspace.section.timeSignature.top) + 1,
-            beat: (sFlatIndex % workspace.section.timeSignature.top) + 1
-          },
-          end: {
-            bar: parseInt(eFlatIndex / workspace.section.timeSignature.top) + 1,
-            beat: (eFlatIndex % workspace.section.timeSignature.top) + 1
-          }
-        };
-        audioVisualiser.firstBeat = sFlatIndex;
-        audioVisualiser.lastBeat = eFlatIndex;
+        updateLockedPlayerRange();
+        // TODO: swiper slide size change also affect updateLockedPlayerRange
+        swiperControl.barSwiper.on('transitionEnd', updateLockedPlayerRange);
       } else {
         if ($scope.player.loop) {
           var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
@@ -128,6 +136,9 @@
         if (playbackRange > workspace.section.beatsPerView) {
           swiperControl.destroyLoop();
         }
+      }
+      if ($scope.player.visibleBeatsOnly) {
+        swiperControl.barSwiper.off('transitionEnd', updateLockedPlayerRange);
       }
     }
     audioPlayer.on('playbackStopped', playbackStopped);
