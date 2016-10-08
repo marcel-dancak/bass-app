@@ -6,7 +6,7 @@
     .controller('EditModeController', EditModeController)
 
   function EditModeController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums,
-                         BassSection, DrumSection, BassTrackSection, DrumTrackSection, HighlightTimeline, swiperControl) {
+                         BassSection, DrumSection, BassTrackSection, DrumTrackSection, HighlightTimeline, swiperControl, $mdDialog) {
 
 
     $scope.swiperControl = swiperControl;
@@ -192,10 +192,10 @@
       audioVisualiser.clear();
 
       workspace.bassSection.forEachBeat(function(beat) {
-        workspace.trackSection.clearBeat(beat.beat);
+        workspace.bassSection.clearBeat(beat.beat);
       });
       workspace.drumSection.forEachBeat(function(beat) {
-        workspace.trackSection.clearBeat(beat.beat);
+        workspace.drumSection.clearBeat(beat.beat);
       });
 
     };
@@ -204,7 +204,17 @@
       // clearSectionWorkspace();
       console.log('sectionLoaded');
       console.log(section);
-
+      if (workspace.section) {
+        for (var trackId in workspace.section.tracks) {
+          var track = workspace.section.tracks[trackId];
+          if (track.convertToTrackSection) {
+            var convertedTrack = track.convertToTrackSection();
+            convertedTrack.audio = track.audio;
+            convertedTrack.instrument = track.instrument;
+            workspace.section.tracks[trackId] = convertedTrack;
+          }
+        }
+      }
       workspace.section = section;
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.end = section.length + 1;
@@ -215,6 +225,7 @@
       $scope.initializeWorkspace(bassTrack, drumsTrack);
       if (section.tracks[bassTrack.id]) {
         var track = section.tracks[bassTrack.id];
+        console.log('loading section data into editor');
         workspace.bassSection.loadBeats(track.data || track.rawData());
       }
       if (section.tracks[drumsTrack.id]) {
@@ -223,7 +234,6 @@
       }
       section.tracks[bassTrack.id] = workspace.bassSection;
       section.tracks[drumsTrack.id] = workspace.drumSection;
-
 
       createSlides(workspace.trackSection);
       $timeout(function() {
@@ -251,6 +261,64 @@
       trackSection.audio = track.audio;
     };
 
+
+    $scope.ui.addTrack = function(evt) {
+      var scope = $scope.$new(true);
+      scope.instruments = [
+        {
+          name: 'Bass',
+          type: 'bass',
+          strings: 'EADG'
+        }, {
+          name: 'Standard',
+          kit: 'Standard',
+          type: 'drums'
+        }, {
+          name: 'Bongo',
+          kit: 'Bongo',
+          type: 'drums'
+        }
+      ];
+      scope.close = $mdDialog.hide;
+      scope.addTrack = function(trackInfo) {
+        console.log(trackInfo);
+        projectManager.addTrack(trackInfo);
+        scope.close();
+      }
+
+      $mdDialog.show({
+        templateUrl: 'views/new_track.html',
+        autoWrap: false,
+        scope: scope,
+        // targetEvent: evt
+      });
+    };
+
+    $scope.ui.removeTrack = function(trackId) {
+      console.log('remove track: '+trackId);
+
+      var track = projectManager.project.tracksMap[trackId];
+      var index = projectManager.project.tracks.indexOf(track);
+
+      var nextSelected = projectManager.project.tracks.find(function(t) {
+        return t.type === track.type && t.id !== trackId;
+      });
+      if (nextSelected) {
+        $scope.ui.selectTrack(nextSelected.id);
+
+        // projectManager.removeTrack(trackId);
+        projectManager.project.tracks.splice(index, 1);
+        delete projectManager.project.tracksMap[trackId];
+      } else {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .title("Warning")
+            .textContent("Can't remove this track, it's the last track of its instrument kind!")
+            .ok("Close")
+        );
+      }
+
+    }
 
     $scope.ui.selectTrack = function(trackId) {
       console.log('selectTrack: '+trackId);
@@ -305,6 +373,7 @@
       projectManager.un('sectionLoaded', sectionLoaded);
       audioPlayer.un('playbackStopped', playbackStopped);
     });
+    window.sw = swiperControl;
 
   }
 })();

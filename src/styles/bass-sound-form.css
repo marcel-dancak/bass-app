@@ -2,6 +2,7 @@
   background-color: white;
   font-size: 15px;
   max-height: 400px;
+  min-height: 250px;
   xposition: fixed;
   z-index: 300;
 }
@@ -48,4 +49,8 @@
   padding: 4px;
   min-width: 250px;
   width: 280px;
+}
+
+.bass-sound-form .note-symbol {
+  font-size: 22px;
 }

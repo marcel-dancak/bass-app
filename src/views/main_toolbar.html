@@ -16,27 +16,32 @@
         class="tracks-list"
         ng-init="ui.trackId = 'bass_0'"
         ng-model="ui.trackId"
-        ng-change="ui.selectTrack(ui.trackId)">
+        ng-change="ui.trackId && ui.selectTrack(ui.trackId)"
+        md-on-close="ui.trackId = workspace.track.id">
 
-        <!-- <div class="instrument-group">
-          <label>Bass</label>
-        </div> -->
         <md-option
-          ng-repeat="track in project.tracks | filter:{type: 'bass'} track by track.id"
+          ng-repeat="track in project.tracks track by track.id"
           ng-value="track.id">
-          <md-icon md-svg-icon="bass"></md-icon>
+          <md-icon md-svg-icon="{{ track.type }}"></md-icon>
           {{ track.name }}
         </md-option>
 
-        <!-- <div class="instrument-group">
-          <label>Drums</label>
-        </div> -->
-        <md-option
-          ng-repeat="track in project.tracks | filter:{type: 'drums'} track by track.id"
-          ng-value="track.id">
-          <md-icon md-svg-icon="drums"></md-icon>
-          {{ track.name }}
-        </md-option>
+        <md-divider></md-divider>
+        <div layout="row" class="track-split-item">
+          <md-option
+            ng-value="false"
+            ng-click="ui.addTrack($event)">
+            <md-icon md-svg-icon="plus"></md-icon>
+            New
+          </md-option>
+          <md-option
+            ng-value="false"
+            ng-click="ui.removeTrack(ui.trackId)">
+            <md-icon md-svg-icon="x"></md-icon>
+            Remove
+          </md-option>
+        </div>
+
       </md-select>
     </md-input-container>
 
@@ -46,6 +51,7 @@
         md-no-ink
         aria-label="Volume"
         class="preferences icon-hover toolbar-button"
+        ng-disabled="workspace.trackSection.type === 'drums'"
         ng-click="
           ui.bassLayout = workspace.trackSection.instrument.layout;
           $mdOpenMenu($event)
@@ -53,7 +59,7 @@
         <md-icon
           md-svg-icon="preferences">
         </md-icon>
-        <md-tooltip md-delay="1500">Bass preferences</md-tooltip>
+        <md-tooltip md-delay="1500">Instrument preferences</md-tooltip>
       </md-button>
       <md-menu-content
         width="4"
@@ -252,7 +258,7 @@
             </rzslider>
           </md-list-item>
 
-          <md-list-item md-no-ink class="checkbox-item">
+          <!-- <md-list-item md-no-ink class="checkbox-item">
             <md-input-container>
               <md-checkbox
                 ng-model="player.visibleBeatsOnly"
@@ -260,11 +266,26 @@
                 Visible beats only
               </md-checkbox>
             </md-input-container>
-          </md-list-item>
+          </md-list-item> -->
 
         </md-list>
       </md-menu-content>
     </md-menu>
+
+    <md-button
+      md-no-ink
+      aria-label="Loop"
+      class="screen-playback toggle-button toolbar-separated-button icon-hover"
+      ng-class="{active: player.visibleBeatsOnly}"
+      ng-click="
+        player.visibleBeatsOnly =! player.visibleBeatsOnly;
+        !player.visibleBeatsOnly && player.playbackRangeChanged()
+      ">
+      <md-icon
+        md-svg-icon="screen-playback">
+      </md-icon>
+      <md-tooltip md-delay="1500">Visible screen playback</md-tooltip>
+    </md-button>
 
   </div>
 
@@ -296,11 +317,11 @@
     </md-button>
   </div>
 
-  <div ng-if="player.mode === 0"
+  <div
     layout="row"
     class="project-toolbar"
     ng-controller="ProjectController">
-    <form>
+    <form ng-if="player.mode === 0">
       <md-input-container>
         <label>Section</label>
         <input
@@ -344,12 +365,63 @@
         <md-tooltip md-delay="1500">Save</md-tooltip>
       </md-button>
     </form>
+
+    <form ng-if="player.mode === 1">
+      <md-input-container class="playlist-field">
+        <label>Playlist</label>
+        <input
+          type="text"
+          ng-model="workspace.playlist.name">
+        <md-button
+          md-no-ink
+          class="toolbar-button icon-hover toggle-button edit-playlist"
+          ng-class="{active: ui.playlist.showEditor}"
+          ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
+          <md-icon md-svg-icon="pen"></md-icon>
+        </md-button>
+      </md-input-container>
+      <md-input-container>
+        <md-select
+          md-no-ink
+          ng-show="project.sections.length > 1"
+          aria-label="Section"
+          class="select-editable"
+          md-container-class="sections-list"
+          ng-model="ui.selectedPlaylistIndex"
+          ng-change="loadPlaylist(ui.selectedPlaylistIndex)">
+          <md-option
+            ui-draggable="true"
+            drag="$index"
+            ui-on-drag-enter=""
+            ui-on-drag-leave=""
+            ui-on-drop="dropSection($event, $data, $index, section)"
+            drag-channel="section"
+            drop-channel="section"
+
+            ng-repeat="playlist in project.playlists | orderBy:playlist.index track by $index"
+            ng-value="::$index">
+            {{ playlist.name }}
+          </md-option>
+        </md-select>
+      </md-input-container>
+      <md-button
+        md-no-ink
+        aria-label="Save"
+        class="toolbar-button icon-hover"
+        ng-click="projectManager.savePlaylists()">
+        <md-icon
+          md-svg-icon="save">
+        </md-icon>
+        <md-tooltip md-delay="1500">Save</md-tooltip>
+      </md-button>
+    </form>
+
     <md-menu
       md-position-mode="target-right target">
       <md-button
         md-no-ink
         aria-label="Menu"
-        class="toolbar-button icon-hover"
+        class="toolbar-separated-button icon-hover"
         ng-click="$mdOpenMenu($event)">
         <md-icon
           md-svg-icon="menu-dots">
@@ -358,7 +430,48 @@
       </md-button>
       <md-menu-content
         md-no-ink
-        class="md-whiteframe-16dp">
+        width="3"
+        class="big md-whiteframe-16dp">
+
+
+        <md-menu-item class="menu-group-item">
+          <md-divider></md-divider>
+          <div layout="row">
+            <span flex></span>
+            <span flex="none" class="group-item-title">Project</span>
+            <span flex="5"></span>
+          </div>
+        </md-menu-item>
+
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="New"
+            ng-click="">
+            New
+          </md-button>
+        </md-menu-item>
+
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="Open"
+            ng-click="">
+            Open
+          </md-button>
+        </md-menu-item>
+
+        <md-menu-item
+          ng-if-start="player.mode === 0"
+          class="menu-group-item">
+          <md-divider></md-divider>
+          <div layout="row">
+            <span flex></span>
+            <span flex="none" class="group-item-title">Section</span>
+            <span flex="5"></span>
+          </div>
+        </md-menu-item>
+
         <md-menu-item>
           <md-button
             md-no-ink
@@ -379,12 +492,11 @@
           <md-button
             md-no-ink
             aria-label="Delete"
-            ng-click="deleteSection(workspace.selectedSectionIndex)">
+            ng-click="projectManager.deleteSection(workspace.selectedSectionIndex)">
             Delete
           </md-button>
         </md-menu-item>
-
-        <md-menu-item>
+        <md-menu-item ng-if-end>
           <md-button
             md-no-ink
             aria-label="Export"
@@ -393,76 +505,17 @@
           </md-button>
         </md-menu-item>
 
-      </md-menu-content>
-    </md-menu>
-  </div>
+        <md-menu-item
+          ng-if-start="player.mode === 1"
+          class="menu-group-item">
+          <md-divider></md-divider>
+          <div layout="row">
+            <span flex></span>
+            <span flex="none" class="group-item-title">Playlist</span>
+            <span flex="5"></span>
+          </div>
+        </md-menu-item>
 
-  <div ng-if="player.mode === 1"
-    layout="row"
-    class="project-toolbar">
-
-    <md-input-container class="playlist-field">
-      <label>Playlist</label>
-      <input
-        type="text"
-        ng-model="playlist.name">
-      <md-button
-        md-no-ink
-        class="toolbar-button icon-hover toggle-button edit-playlist"
-        ng-class="{active: ui.playlist.showEditor}"
-        ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
-        <md-icon md-svg-icon="pen"></md-icon>
-      </md-button>
-    </md-input-container>
-    <md-input-container>
-      <md-select
-        md-no-ink
-        ng-show="project.sections.length > 0"
-        aria-label="Section"
-        class="select-editable"
-        md-container-class="sections-list"
-        ng-model="ui.selectedPlaylistIndex"
-        ng-change="loadPlaylist(ui.selectedPlaylistIndex)">
-        <md-option
-          ui-draggable="true"
-          drag="$index"
-          ui-on-drag-enter=""
-          ui-on-drag-leave=""
-          ui-on-drop="dropSection($event, $data, $index, section)"
-          drag-channel="section"
-          drop-channel="section"
-
-          ng-repeat="playlist in project.playlists | orderBy:playlist.index track by $index"
-          ng-value="::$index">
-          {{ playlist.name }}
-        </md-option>
-      </md-select>
-    </md-input-container>
-    <md-button
-      md-no-ink
-      aria-label="Save"
-      class="toolbar-button icon-hover"
-      ng-click="savePlaylist()">
-      <md-icon
-        md-svg-icon="save">
-      </md-icon>
-      <md-tooltip md-delay="1500">Save</md-tooltip>
-    </md-button>
-    <md-menu
-      md-position-mode="target-right target">
-      <md-button
-        md-no-ink
-        aria-label="Menu"
-        class="toolbar-button icon-hover"
-        ng-click="$mdOpenMenu($event)">
-        <md-icon
-          md-svg-icon="menu-dots">
-        </md-icon>
-        <md-tooltip md-delay="1500">Options</md-tooltip>
-      </md-button>
-      <md-menu-content
-        md-no-ink
-        class="md-whiteframe-16dp">
         <md-menu-item>
           <md-button
             md-no-ink
@@ -471,7 +524,7 @@
             New
           </md-button>
         </md-menu-item>
-        <md-menu-item>
+        <md-menu-item ng-if-end>
           <md-button
             md-no-ink
             aria-label="Delete"
@@ -479,15 +532,6 @@
             Delete
           </md-button>
         </md-menu-item>
-
-<!--         <md-menu-item>
-          <md-button
-            md-no-ink
-            aria-label="Toggle Editor"
-            ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
-            {{ ui.playlist.showEditor? 'Close' : 'Open' }} plalist editor
-          </md-button>
-        </md-menu-item> -->
 
       </md-menu-content>
     </md-menu>

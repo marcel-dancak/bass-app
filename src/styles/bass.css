@@ -113,7 +113,7 @@
 .strings-5 .bass-board {
   height: 180px;
 }
-
+/*
 .bass-tunning-button {
   xposition: absolute;
   min-width: 36px;
@@ -126,6 +126,25 @@
 .bass-tunning-button p {
   margin: 0;
   height: 36px;
+}
+*/
+
+.strings-labels {
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  left: 0;
+  width: 42px;
+  font-weight: 500;
+  font-size: 20px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.strings-labels p {
+  margin: 0;
+  height: 36px;
+  line-height: 36px;
 }
 
 .string-container {
@@ -484,10 +503,12 @@
   transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   pointer-events: none;
 }
+/** Can't hide whole resize-container, because right click menu hack (with backdrop) will not work */
 .ghost .bass-sound-container .resize-handler,
-.ghost .bass-sound-container .resize-container {
+.ghost .bass-sound-container .resize-container .rg-right {
   display: none;
 }
+
 
 .bass-sound-container .resize-handler {
   display: block;
@@ -551,6 +572,7 @@ md-input-container.slide-field > span {
 
 .bass-sound-container .label-wrapper {
   display: inline;
+  white-space: nowrap;
 }
 
 .bass-sound-container .slide-slash {

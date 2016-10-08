@@ -83,10 +83,12 @@
           <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
         </md-button>
 
-        <div
-          class="bass-preferences"
-          ng-include src="'views/bass_board_form.html'">
+        <div class="strings-labels">
+          <p ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index">
+            {{ ::string.label }}<sub class="octave-index">{{ ::string.octave }}</sub><br>
+          </p>
         </div>
+
       </div>
 
       <div class="instrument swiper-container">
