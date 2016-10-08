@@ -18,19 +18,19 @@
         ng-model="ui.trackId"
         ng-change="ui.selectTrack(ui.trackId)">
 
-        <div class="instrument-group">
+        <!-- <div class="instrument-group">
           <label>Bass</label>
-        </div>
+        </div> -->
         <md-option
           ng-repeat="track in project.tracks | filter:{type: 'bass'} track by track.id"
           ng-value="track.id">
-          <md-icon md-svg-icon="bass-guitar"></md-icon>
+          <md-icon md-svg-icon="bass"></md-icon>
           {{ track.name }}
         </md-option>
 
-        <div class="instrument-group">
+        <!-- <div class="instrument-group">
           <label>Drums</label>
-        </div>
+        </div> -->
         <md-option
           ng-repeat="track in project.tracks | filter:{type: 'drums'} track by track.id"
           ng-value="track.id">
@@ -41,14 +41,36 @@
     </md-input-container>
 
     <md-menu
+      md-offset="0 10">
+      <md-button
+        md-no-ink
+        aria-label="Volume"
+        class="preferences icon-hover toolbar-button"
+        ng-click="
+          ui.bassLayout = workspace.trackSection.instrument.layout;
+          $mdOpenMenu($event)
+        ">
+        <md-icon
+          md-svg-icon="preferences">
+        </md-icon>
+        <md-tooltip md-delay="1500">Bass preferences</md-tooltip>
+      </md-button>
+      <md-menu-content
+        width="4"
+        class="preferences md-whiteframe-16dp">
+        <ng-include src="'views/bass_settings.html'"></ng-include>
+      </md-menu-content>
+    </md-menu>
+
+    <md-menu
       md-offset="10 10">
       <md-button
         md-no-ink
-        aria-label="Preferences"
+        aria-label="Volume"
         class="preferences icon-hover toolbar-separated-button"
         ng-click="$mdOpenMenu($event)">
         <md-icon
-          md-svg-icon="preferences">
+          md-svg-icon="volume-medium">
         </md-icon>
         <md-tooltip md-delay="1500">Volume preferences</md-tooltip>
       </md-button>
@@ -60,39 +82,15 @@
         <md-list>
 
           <md-list-item
-            ng-repeat="track in project.tracks | filter:{type: 'bass'} track by track.id"
+            ng-repeat="track in project.tracks track by track.id"
             class="volume-field bottom-border">
-            <label><md-icon style="padding-right: 8px;" md-svg-icon="bass-guitar"></md-icon>{{ track.name }}</label>
-            <rzslider
-              rz-slider-model="track.audio.gain.value"
-              rz-slider-options="{
-                floor: 0,
-                ceil: 1,
-                step: 0.01,
-                precision: 2,
-                hideLimitLabels: true,
-                hidePointerLabels: true,
-                showSelectionBar: true,
-                disabled: track.muted
-              }">
-            </rzslider>
-            <md-button
-              md-no-ink
-              aria-label="Mute"
-              class="mute-button"
-              ng-class="{active: !track.muted}"
-              md-prevent-menu-close
-              ng-click="toggleVolumeMute(track)">
+            <label>
               <md-icon
-                md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
+                style="padding-right: 8px;"
+                md-svg-icon="{{ track.type }}">
               </md-icon>
-            </md-button>
-          </md-list-item>
-
-          <md-list-item
-            ng-repeat="track in project.tracks | filter:{type: 'drums'} track by track.id"
-            class="volume-field bottom-border">
-            <label><md-icon style="padding-right: 8px;" md-svg-icon="drums"></md-icon>{{ track.name }}</label>
+              {{ track.name }}
+            </label>
             <rzslider
               rz-slider-model="track.audio.gain.value"
               rz-slider-options="{
@@ -257,7 +255,8 @@
           <md-list-item md-no-ink class="checkbox-item">
             <md-input-container>
               <md-checkbox
-                ng-model="player.visibleBeatsOnly">
+                ng-model="player.visibleBeatsOnly"
+                ng-change="!player.visibleBeatsOnly && player.playbackRangeChanged()">
                 Visible beats only
               </md-checkbox>
             </md-input-container>
