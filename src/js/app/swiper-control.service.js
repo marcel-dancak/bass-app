@@ -167,6 +167,12 @@
       this.updateSubbeatsVisibility();
     };
 
+    SwiperControl.prototype.updateBeatsPerSlide = function(beatsPerSlide) {
+      this.barSwiper.params.slidesPerGroup = beatsPerSlide;
+      this.instrumentSwiper.params.slidesPerGroup = beatsPerSlide;
+      this.barSwiper.updateSlidesSize();
+    };
+
     SwiperControl.prototype.setVisibleRange = function(first, last) {
       console.log(first+' to '+last);
       this.firstSlide = first;
