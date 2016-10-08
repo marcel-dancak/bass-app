@@ -1,0 +1,55 @@
+<md-dialog class="new-track-dialog">
+  <div class="dialog-header">
+    New Track
+  </div>
+  <md-dialog-content>
+    <md-subheader class="md-no-sticky">Instrument</md-subheader>
+    <md-list
+      md-no-ink
+      ng-init="
+        form = {
+          selected: -1,
+          name: '',
+          track: {}
+        }
+      ">
+
+      <md-list-item
+        ng-repeat="track in ::instruments"
+        ng-class="{
+          selected: form.selected === $index
+        }"
+        ng-click="
+          form.selected = $index;
+          form.track = track;
+          form.name = track.name
+        ">
+        <md-icon md-svg-icon="{{ ::track.type }}"></md-icon>
+        {{ ::track.name }}
+      </md-list-item>
+
+    </md-list>
+
+    <md-input-container class="">
+      <label>Track name</label>
+      <input
+        type="text"
+        ng-model="form.name">
+    </md-input-container>
+
+  </md-dialog-content>
+  <md-dialog-actions>
+    <md-button
+      ng-click="close()">
+      Cancel
+    </md-button>
+    <md-button
+      ng-disabled="!form.track.type || !form.name"
+      ng-click="
+        form.track.name = form.name;
+        addTrack(form.track)
+      ">
+      Ok
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>
