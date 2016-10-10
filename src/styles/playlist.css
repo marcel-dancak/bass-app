@@ -85,6 +85,9 @@
   height: 80px;
 }
 
+.player .swiper-slide {
+  xbackground-color: #fff;
+}
 .player .swiper-slide .section-info {
   min-width: 30px;
   position: relative;
@@ -205,6 +208,7 @@
   left: 64px;
   color: #555;
   font-size: 15px;
+  width: 200%;
 }
 
 .playlist-editor {
@@ -227,7 +231,47 @@
   color: #777;
 }
 
+.playlist-editor.ng-enter, .playlist-editor.ng-leave {
+  transition: cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.45s;
+  transition-property: opacity,transform;
+}
+
+.playlist-editor.ng-enter,
+.playlist-editor.ng-leave.ng-leave-active {
+  opacity: 0.01;
+  transform: translate3d(50%, 0, 0);
+}
+
+.playlist-editor.ng-leave,
+.playlist-editor.ng-enter.ng-enter-active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+
+
 .playlist-button {
   text-align: left;
   text-transform: none;
+}
+
+.md-button.edit-playlist2 {
+  position: absolute;
+  right: 32px;
+  min-width: 36px;
+  min-height: 36px;
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+  background-color: #fff
+}
+.md-button.icon-hover.edit-playlist2 {
+  opacity: 1!important;
+
+}
+.md-button.edit-playlist2:not(.active) md-icon {
+  fill: #aaa;
+}
+.md-button.edit-playlist2:hover:not(.active) md-icon {
+  fill: #909090;
 }

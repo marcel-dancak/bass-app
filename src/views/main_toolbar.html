@@ -11,7 +11,6 @@
     <md-input-container class="track">
       <label>Track</label>
       <md-select
-        md-no-ink
         aria-label="Track"
         class="tracks-list"
         ng-init="ui.trackId = 'bass_0'"
@@ -20,6 +19,7 @@
         md-on-close="ui.trackId = workspace.track.id">
 
         <md-option
+          md-no-ink
           ng-repeat="track in project.tracks track by track.id"
           ng-value="track.id">
           <md-icon md-svg-icon="{{ track.type }}"></md-icon>
@@ -233,7 +233,13 @@
         }"
         ng-click="$mdOpenMenu($event)">
         <md-icon md-svg-icon="playback-range"></md-icon>
-        <md-tooltip md-delay="1500">Playback range</md-tooltip>
+        <md-tooltip
+          md-delay="1500"
+          class="multiline-tooltip">
+          <p><b>Playback range</b></p>
+          <md-divider></md-divider>
+          <p>Use it to specify range of the playback and visible bars within section</p>
+        </md-tooltip>
       </md-button>
       <md-menu-content
         class="preferences playback-range md-whiteframe-16dp">
@@ -284,7 +290,18 @@
       <md-icon
         md-svg-icon="screen-playback">
       </md-icon>
-      <md-tooltip md-delay="1500">Visible screen playback</md-tooltip>
+      <md-tooltip
+        md-delay="1500"
+        class="multiline-tooltip">
+        <p><b>Visible screen playback</b></p>
+        <md-divider></md-divider>
+        <p>
+          <ul>
+            <li>Restricts playback to visible screen</li>
+            <li>Disables automatic slides transition during playback</li>
+          </ul>
+        </p>
+      </md-tooltip>
     </md-button>
 
   </div>
@@ -302,7 +319,18 @@
       <md-icon
         md-svg-icon="section-mode">
       </md-icon>
-      <md-tooltip md-delay="1500">Section mode</md-tooltip>
+      <md-tooltip
+        md-delay="1500"
+        class="multiline-tooltip">
+        <p><b>Section mode</b></p>
+        <md-divider></md-divider>
+        <p>
+          <ul>
+            <li>Creating and editation of sections</li>
+            <li>Horizontal sliding</li>
+          </ul>
+        </p>
+      </md-tooltip>
     </md-button>
     <md-button
       md-no-ink
@@ -313,7 +341,18 @@
       <md-icon
         md-svg-icon="playlist-mode">
       </md-icon>
-      <md-tooltip md-delay="1500">Playlist mode</md-tooltip>
+      <md-tooltip
+        md-delay="1500"
+        class="multiline-tooltip">
+        <p><b>Playlist mode</b></p>
+        <md-divider></md-divider>
+        <p>
+          <ul>
+            <li>Playback of multiple sections (playlists)</li>
+            <li>Vertical sliding</li>
+          </ul>
+        </p>
+      </md-tooltip>
     </md-button>
   </div>
 
@@ -326,6 +365,7 @@
         <label>Section</label>
         <input
           required
+          md-no-asterisk
           type="text"
           autocomplete="off"
           ng-model="workspace.section.name">
@@ -358,7 +398,7 @@
         md-no-ink
         aria-label="Save"
         class="toolbar-button icon-hover"
-        ng-click="projectManager.saveSection(workspace.selectedSectionIndex)">
+        ng-click="ui.save()">
         <md-icon
           md-svg-icon="save">
         </md-icon>
@@ -372,13 +412,13 @@
         <input
           type="text"
           ng-model="workspace.playlist.name">
-        <md-button
+        <!-- <md-button
           md-no-ink
           class="toolbar-button icon-hover toggle-button edit-playlist"
           ng-class="{active: ui.playlist.showEditor}"
           ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
           <md-icon md-svg-icon="pen"></md-icon>
-        </md-button>
+        </md-button> -->
       </md-input-container>
       <md-input-container>
         <md-select

@@ -18,7 +18,8 @@
       };
     });
 
-  function AppController($scope, $timeout, $http, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums) {
+  function AppController($scope, $timeout, $http, context, workspace,
+      audioPlayer, audioVisualiser, projectManager, Drums, ProjectLocalStore) {
 
     function queryStringParam(item) {
       var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
@@ -28,7 +29,10 @@
     }
 
     $scope.ui = {
-      selectTrack: angular.noop
+      selectTrack: angular.noop,
+      addTrack:  angular.noop,
+      removeTrack: angular.noop,
+      playlist: {},
     };
     $scope.player = {
       playing: false,
@@ -84,13 +88,19 @@
 
     $scope.projectManager = projectManager;
 
-    var startupProject = queryStringParam("PROJECT");
-    if (startupProject) {
-      $http.get(startupProject+'.json').then(function(response) {
+    var projectParam = queryStringParam("PROJECT");
+    var storageProject = localStorage.getItem('v9.project');
+    if (projectParam) {
+      $http.get(projectParam+'.json').then(function(response) {
         $scope.project = projectManager.loadProject(response.data);
         workspace.selectedSectionIndex = 0;
         projectManager.loadSection(workspace.selectedSectionIndex);
       });
+    } else if (storageProject) {
+      $scope.project = projectManager.loadProject(JSON.parse(storageProject));
+      workspace.selectedSectionIndex = 0;
+      projectManager.loadSection(workspace.selectedSectionIndex);
+      workspace.section = projectManager.section;
     } else {
       $scope.project = projectManager.createProject([
         {
@@ -98,12 +108,7 @@
           name: 'Bassline',
           strings: 'EADG',
           tuning: [0, 0, 0, 0]
-        }, /*{
-          type: 'bass',
-          name: 'Melody',
-          strings: 'BEADG',
-          tuning: [0, 0, 0, 0, 0]
-        }, */{
+        }, {
           type: 'drums',
           kit: 'Standard',
           name: 'Standard'
@@ -113,17 +118,7 @@
           name: 'Bongo'
         }
       ]);
-      workspace.section = projectManager.createSection({
-        timeSignature: {
-          top: 4,
-          bottom: 4
-        },
-        bpm: 80,
-        length: 3,
-        beatsPerSlide: 1,
-        beatsPerView: 10,
-        animationDuration: 300
-      });
+      workspace.section = projectManager.createSection();
     }
 
     $scope.workspace = workspace;

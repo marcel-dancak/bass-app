@@ -37,24 +37,24 @@
           <span class="expand-arrow">▶</span>
         </md-menu-item>
         <md-menu-content>
-          <md-menu-item class="checkbox-item">
-            <md-button ng-click="contextMenu.beat.subdivision = 4">
-              Standard
-            </md-button>
-            <md-icon
-              ng-show="contextMenu.beat.subdivision === 4"
-              md-svg-icon="check">
-            </md-icon>
+          <md-menu-item
+            type="radio"
+            class="md-indent"
+            ng-model="contextMenu.beat.subdivision"
+            value="4">
+            <md-icon md-svg-icon="check"></md-icon>
+            <md-button>Standard</md-button>
           </md-menu-item>
-          <md-menu-item class="checkbox-item">
-            <md-button ng-click="contextMenu.beat.subdivision = 3">
-              Triplet
-            </md-button>
-            <md-icon
-              ng-show="contextMenu.beat.subdivision === 3"
-              md-svg-icon="check">
-            </md-icon>
+
+          <md-menu-item
+            type="radio"
+            class="md-indent"
+            ng-model="contextMenu.beat.subdivision"
+            value="3">
+            <md-icon md-svg-icon="check"></md-icon>
+            <md-button>Triplet</md-button>
           </md-menu-item>
+
         </md-menu-content>
       </md-menu>
     </md-menu-item>

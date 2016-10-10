@@ -247,6 +247,7 @@ md-slider .md-focus-ring {
 
 .buttons-spinner {
   margin-top: 10px;
+  margin-right: 8px;
   height: 48px;
 }
 .buttons-spinner .md-button {
@@ -293,27 +294,43 @@ md-slider .md-focus-ring {
   height: 13vh;
 }
 
-.swiper-button-prev,
-.swiper-button-next {
-  top: auto;
-  bottom: 0px;
+.swiper-controls {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+ }
+
+.bar-container .swiper-button-prev,
+.bar-container .swiper-button-next {
+  position: static;
+  display: inline-block;
+  margin: 0;
   width: 38px;
   height: 18px;
-  opacity: 0.45;
-}
-.swiper-button-prev.swiper-button-disabled,
-.swiper-button-next.swiper-button-disabled {
-  opacity: 0.1;
+  opacity: 0.35;
 }
 
-.swiper-button-prev {
-  left: 10px;
-  padding: 2px 5px 2px 5px;
+.bar-container .swiper-pagination {
+  position: static;
+  display: inline-block;
 }
-.bar-container .swiper-button-next {
-  right: 10px;
-  padding: 2px 9px 2px 5px;
+.bar-container .swiper-pagination .swiper-pagination-bullet {
+  margin: 0 4px;
+  border: 2px solid white;
 }
+
+.swiper-pagination {
+  opacity: 0.35;
+}
+.swiper-pagination span:only-child {
+  display: none;
+}
+
+.swiper-button-prev.swiper-button-disabled,
+.swiper-button-next.swiper-button-disabled {
+  opacity: 0.075;
+}
+
 
 /**
  * Beat menu

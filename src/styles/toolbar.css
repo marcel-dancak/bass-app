@@ -55,13 +55,13 @@
   margin-right: 10px;
 }
 
-.control-panel md-input-container.track .md-select-value md-icon {
-  padding: 0 2px 14px 2px;
-}
 .control-panel md-input-container.track > label {
   left: 0;
 }
 
+.control-panel md-input-container.track md-icon {
+  margin-bottom: 3px;
+}
 .track-split-item md-option {
   height: 36px;
 }
@@ -75,44 +75,6 @@
   height: 16px;
 }
 
-/*
-.instrument-group::before {
-  position: absolute;
-  top: 8px;
-  height: 1px;
-  left: 8px;
-  right: 8px;
-  content: "";
-  background-color: #aaa;
-}
-.instrument-group {
-  font-size: 11px;
-  xfont-weight: bold;
-  color: #aaa;
-  line-height: 12px;
-  height: 16px;
-  padding: 0 16px;
-  text-align: right;
-  position: relative;
-}
-.instrument-group label {
-  background-color: white;
-  position: absolute;
-  top: 1px;
-  right: 24px;
-  height: 16px;
-  line-height: 16px;
-  padding: 0 5px;
-}
-
-.instrument-group md-icon {
-  position: absolute;
-  left: 0px;
-  padding: 0 8px;
-  background-color: white;
-  fill: #aaa;
-}
-*/
 
 .instrument-tab.ng-hide:not(.ng-hide-animate) {
   display: block !important;
@@ -355,31 +317,9 @@ md-select-menu md-content {
   margin: 24px 16px 4px 16px;
 }
 
+.md-subheader {
+  background-color: transparent;
+}
 .md-subheader .md-subheader-inner {
   padding: 16px 16px 8px 16px;
 }
-
-
-.new-track-dialog md-list-item:hover,
-.new-track-dialog md-list-item .md-button:hover {
-  background-color: #ffffe0;
-}
-
-.new-track-dialog md-list-item.selected .md-button {
-  color: #2196F3;
-}
-
-.new-track-dialog md-list-item .md-list-item-inner {
-  border-bottom: 1px solid #ccc;
-}
-
-.new-track-dialog md-list-item.selected .md-list-item-inner {
-  border-bottom: 1px solid #2196F3;
-}
-.new-track-dialog md-list-item.selected md-icon {
-  fill: #2196F3;
-}
-/*.md-dialog-container {
-  justify-content: flex-start;
-  -webkit-justify-content: flex-start;
-}*/

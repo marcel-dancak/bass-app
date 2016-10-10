@@ -1,3 +1,6 @@
+body {
+  background-color: #fff;
+}
 .main-page {
   padding: 0;
   overflow-x: hidden;
@@ -13,6 +16,11 @@
   position: fixed;
   top: 100px;
   z-index: 200;
+}
+
+md-icon {
+  min-width: 16px;
+  min-height: 16px;
 }
 
 .md-button md-icon {
@@ -190,25 +198,16 @@ input[type=number]::-webkit-inner-spin-button {
     0px 6px 30px 5px rgba(0, 0, 0, 0.12);
 }
 
-md-menu-content .checkbox-item {
-  position: relative;
-}
-
-md-menu-content .checkbox-item md-icon {
+md-menu-item md-icon {
   position: absolute;
-  left: 0px;
-  top: 14px;
-  width: 20px;
-  height: 20px;
+  padding: 11px 4px;
+  width: 36px;
+  z-index: 1;
 }
-md-menu-content .checkbox-item .md-button {
-  padding-left: 55px;
-  padding-right: 20px;
+md-menu-item.md-indent .md-button {
+  padding-left: 44px;
 }
 
-.md-menu .md-button {
-  text-transform: none;
-}
 .md-menu .expand-arrow {
   width: 10px;
   height: 10px;
@@ -262,20 +261,11 @@ md-menu-item.menu-group-item .group-item-title {
   fill: #2196F3;
 }
 
-.swiper-pagination {
-  opacity: 0.45;
-}
-
-.swiper-pagination span:only-child {
-  display: none;
-}
-
 .md-select-menu-container.sections-list md-content {
   overflow-x: hidden;
 }
 
 .sections-list md-option {
-  font-size: 13px;
   min-width: 160px;
 }
 
@@ -502,9 +492,12 @@ md-menu-content .md-button:not([disabled]):hover,
 md-menu-content .md-button.md-focused:not([disabled]) */{
   background-color: #ffffe0!important;
 }
+md-menu-item .md-button.md-focused:not([disabled]) {
+  background-color: #ffffe0;
+}
 
-md-select-menu md-option[selected],
-md-select-menu md-option[selected]:focus {
+md-select-menu md-content md-option[selected],
+md-select-menu md-content md-option[selected]:focus {
   color: #2196F3;
 }
 
@@ -513,6 +506,9 @@ md-select:not([disabled]):focus .md-select-value {
   border-color: #2196F3;
 }
 
+md-menu-item ._md-nested-menu {
+  padding: 0;
+}
 md-option md-icon {
   margin-right: 5px;
 }
@@ -524,6 +520,67 @@ md-menu-content.big {
   max-height: 400px;
 }
 
-md-dialog .md-button.md-default-theme.md-primary {
+md-dialog .md-button.md-primary {
   color: #333;
 }
+
+
+/** Tooltips */
+
+md-tooltip .md-content {
+  font-size: 12.5px;
+  font-weight: normal;
+  opacity: 1!important;
+  background-color: #444;
+}
+
+md-tooltip .md-content ul {
+  padding-left: 18px;
+}
+md-tooltip.multiline-tooltip {
+  transform: translate3d(0, -2px, 0);
+}
+md-tooltip.multiline-tooltip .md-content {
+  opacity: 1;
+  height: auto;
+  max-width: 220px;
+  white-space: normal;
+  line-height: 18px;
+}
+md-tooltip.multiline-tooltip .md-content p {
+  padding: 0;
+  margin: 5px 2px;
+}
+md-tooltip md-divider {
+  background-color: #fff;
+}
+
+
+/** Dialog windows */
+
+.new-track-dialog md-list-item:hover {
+  background-color: #ffffe0;
+}
+.new-track-dialog md-list-item .md-button.md-focused,
+.new-track-dialog md-list-item .md-button:hover {
+  background-color: transparent;
+}
+
+.new-track-dialog md-list-item.selected .md-button {
+  color: #2196F3;
+}
+
+.new-track-dialog md-list-item .md-list-item-inner {
+  border-bottom: 1px solid #ccc;
+}
+
+.new-track-dialog md-list-item.selected .md-list-item-inner {
+  border-bottom: 1px solid #2196F3;
+}
+.new-track-dialog md-list-item.selected md-icon {
+  fill: #2196F3;
+}
+/*.md-dialog-container {
+  justify-content: flex-start;
+  -webkit-justify-content: flex-start;
+}*/
