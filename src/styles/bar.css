@@ -173,11 +173,6 @@
 }
 
 
-
-.subbeat-form {
-  overflow: hidden;
-}
-
 .md-open-menu-container {
   border-radius: 8px;
 }
@@ -219,23 +214,6 @@ md-slider .md-focus-ring {
   font-size: 60px;
   max-height: 38px;
   vertical-align: top;
-}
-
-.subbeat-form md-input-container {
-  margin-bottom: 4px;
-  height: 42px;
-}
-
-.subbeat-form md-checkbox {
-  margin: 24px 5px 0px 10px;
-  vertical-align: bottom;
-  line-height: 30px;
-  height: 30px;
-  bottom: 0;
-}
-
-.subbeat-form input {
-  height: 34px;
 }
 
 .note-length-title {
@@ -297,6 +275,8 @@ md-slider .md-focus-ring {
 .swiper-controls {
   position: absolute;
   bottom: 0;
+  position: relative;
+  bottom: 22px;
   width: 100%;
  }
 

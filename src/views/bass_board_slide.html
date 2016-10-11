@@ -47,8 +47,8 @@
           md-no-ink
           aria-label="Sound"
           class="bass-button"
-          ng-click="openBassSoundMenu($event, grid)"
-          ng-right-click="openBassSoundMenu($event, grid)">+
+          ng-click="openBassSoundMenu($event, grid, bass)"
+          ng-right-click="openBassSoundMenu($event, grid, bass)">+
         </md-button>
       </div>
 
@@ -78,7 +78,7 @@
           ng-attr-octave="{{ grid.sound.note.octave }}"
           class="bass-sound-container"
           ng-click="selectGrid($event, grid);$event.stopPropagation()"
-          ng-right-click="openBassSoundMenu($event, grid)">
+          ng-right-click="openBassSoundMenu($event, grid, bass)">
 
           <div class="resize-handler">
 <!--             <div>❮</div>

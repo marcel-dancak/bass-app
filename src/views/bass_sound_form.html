@@ -1,252 +1,248 @@
-<md-menu id="bass-sound-menu" md-ofset="0 0" md-position-mode="target target">
-  <md-button
-    ng-init="menu.open=$mdOpenMenu"
-    ng-click="$mdOpenMenu($event)"
-    aria-label="Note properties">
-  </md-button>
-  <md-menu-content
-    class="bass-sound-form md-whiteframe-16dp">
-    <div class="subbeat-form" layout="column">
-      <div layout="row">
-        <md-input-container flex>
-          <label class="md-label">Style</label>
-          <md-select
-            flex
-            ng-model="menu.sound.style"
-            md-on-close="soundStyleChanged(menu.sound.style)">
-            <md-option
-              ng-repeat="style in ::bass.playingStyles"
-              ng-value="::style.name">
-              {{ ::style.label }}
-            </md-option>
-          </md-select>
-        </md-input-container>
+<div
+  layout="column"
+  class="bass-sound-form md-whiteframe-16dp">
+  <div layout="row">
+    <md-input-container flex>
+      <label>Style</label>
+      <md-select
+        flex
+        md-no-ink
+        ng-model="sound.style"
+        md-on-close="soundStyleChanged(sound.style)">
+        <md-option
+          ng-repeat="style in ::bass.playingStyles"
+          ng-value="::style.name">
+          {{ ::style.label }}
+        </md-option>
+      </md-select>
+    </md-input-container>
 
-        <md-input-container flex>
-          <label class="md-label">Note</label>
-          <md-select
-            flex
-            ng-model="menu.sound.note.type"
-            md-on-close="">
-            <md-option value="regular">
-              Regular
-            </md-option>
-            <md-option value="ghost">
-              Ghost
-            </md-option>
-            <md-option value="slide">
-              Slide
-            </md-option>
-            <md-option value="grace">
-              Grace
-            </md-option>
-            <md-option value="bended" ng-disabled="true">
-              Bended
-            </md-option>
-          </md-select>
-        </md-input-container>
-      </div>
+    <md-input-container flex>
+      <label>Note</label>
+      <md-select
+        flex
+        md-no-ink
+        ng-model="sound.note.type"
+        md-on-close="">
+        <md-option ng-value="'regular'">
+          Regular
+        </md-option>
+        <md-option ng-value="'ghost'">
+          Ghost
+        </md-option>
+        <md-option ng-value="'slide'">
+          Slide
+        </md-option>
+        <md-option ng-value="'grace'">
+          Grace
+        </md-option>
+        <md-option ng-value="'bended'" ng-disabled="true">
+          Bended
+        </md-option>
+      </md-select>
+    </md-input-container>
+  </div>
 
-      <div layout="row">
-        <md-input-container flex>
-          <label class="md-label">Pitch</label>
-          <md-select
-            ng-disabled="menu.sound.style === 'ring' || menu.sound.note.type === 'ghost'"
-            md-container-class="note-select-menu"
-            ng-model="menu.sound.note.code"
-            md-on-close="menu.soundPitchChanged(menu.sound.note)">
-            <div
-              ng-repeat="note in menu.fretsStringNotes"
-              layout="row">
-              <span class="fret-index">( {{ ::$index }} )</span>
-
-              <md-option
-                flex
-                ng-if-end
-                ng-value="note[0].code">
-                {{ ::note[0].name }} <sub>{{ ::note[0].octave }}</sub>
-              </md-option>
-              <span
-                ng-if-start="note[1]">/
-              </span>
-              <md-option
-                flex
-                ng-if-end
-                ng-value="note[1].code">
-                {{ ::note[1].name }} <sub>{{ ::note[1].octave }}</sub>
-              </md-option>
-            </div>
-          </md-select>
-        </md-input-container>
+  <div
+    layout="row"
+    ng-disabled="!sound.note.type || sound.style === 'ring' || sound.note.type === 'ghost'">
+    <md-input-container flex>
+      <label>Pitch</label>
+      <md-select
+        md-no-ink
+        md-container-class="note-select-menu"
+        ng-model="sound.note.code"
+        md-on-close="soundPitchChanged(sound.note)">
         <div
-          class="buttons-spinner"
-          layout="column">
-          <md-button
-            aria-label="Next note"
-            md-prevent-menu-close
-            ng-click="menu.nextNote(menu.sound.note)">
-            <md-icon md-svg-icon="plus"></md-icon>
-          </md-button>
-          <md-button
-            aria-label="Previous note"
-            md-prevent-menu-close
-            ng-click="menu.prevNote(menu.sound.note)">
-            <md-icon md-svg-icon="minus"></md-icon>
-          </md-button>
-        </div>
+          ng-repeat="note in fretsStringNotes"
+          layout="row">
+          <span class="fret-index">( {{ ::$index }} )</span>
 
-        <md-input-container flex
-          ng-if-start="menu.sound.note.type === 'slide'"
-          ng-init="
-            menu.sound.note.slide.endNote = menu.sound.note.slide.endNote || {
-              code: menu.sound.note.code,
-              name: menu.sound.note.name,
-              octave: menu.sound.note.octave,
-              fret: menu.sound.note.fret
-            }">
-          <label class="md-label">Slide To</label>
-          <md-select
-            md-container-class="note-select-menu"
-            ng-model="menu.sound.note.slide.endNote.code"
-            md-on-close="menu.soundPitchChanged(menu.sound.note.slide.endNote)"
-            >
-            <div
-              ng-repeat="note in menu.fretsStringNotes"
-              layout="row">
-              <span class="fret-index">( {{ ::$index }} )</span>
-              
-              <md-option
-                flex
-                ng-if-end 
-                ng-value="note[0].code">
-                {{ ::note[0].name }} <sub>{{ ::note[0].octave }}</sub>
-              </md-option>
-              <span
-                ng-if-start="note[1]">/
-              </span>
-              <md-option
-                flex
-                ng-if-end 
-                ng-value="note[1].code">
-                {{ ::note[1].name }} <sub>{{ ::note[1].octave }}</sub>
-              </md-option>
-            </div>
-          </md-select>
-        </md-input-container>
-        <div
-          ng-if-end
-          class="buttons-spinner"
-          layout="column">
-          <md-button
-            aria-label="Next note"
-            md-prevent-menu-close
-            ng-click="menu.nextNote(menu.sound.note.slide.endNote)">
-            <md-icon md-svg-icon="plus"></md-icon>
-          </md-button>
-          <md-button
-            aria-label="Previous note"
-            md-prevent-menu-close
-            ng-click="menu.prevNote(menu.sound.note.slide.endNote)">
-            <md-icon md-svg-icon="minus"></md-icon>
-          </md-button>
-        </div>
-
-        <!-- <md-input-container
-          flex="50"
-          class="slide-field"
-          ng-if="menu.sound.note.type === 'slide'"
-          ng-init="menu.updateSlide()">
-          <label class="md-label">Slide semitones</label>
-          <input
-            type="number"
-            min="-24"
-            max="24"
-            xstep="1"
-            ng-model="menu.sound.note.slide"
-            ng-change="menu.updateSlide()">
+          <md-option
+            flex
+            ng-if-end
+            ng-value="note[0].code">
+            {{ ::note[0].name }} <sub>{{ ::note[0].octave }}</sub>
+          </md-option>
           <span
-            ng-show="menu.sound.note.slide">
-            ({{ menu.sound.note.slide < 0? 'down to' : 'up to' }}
-            {{ menu.slideEndNote.label[0] }}
-            <sub>{{ menu.slideEndNote.octave }}</sub>)
+            ng-if-start="note[1]">/
           </span>
-        </md-input-container> -->
-      </div>
-
-      <div layout="row">
-        <md-input-container flex="30">
-          <label class="md-label">Length</label>
-          <md-select
-            ng-model="menu.sound.noteLength.length"
-            md-on-close="menu.soundLengthChanged(menu.sound)"
-            ng-disabled="menu.sound.note.type === 'ghost'">
-            <md-option
-              ng-repeat="value in [
-                ['𝅝', 'Whole', 1],
-                ['𝅗𝅥', 'Half', 0.5],
-                ['𝅘𝅥', 'Quarter', 0.25],
-                ['𝅘𝅥𝅮', 'Eighth', 0.125],
-                ['𝅘𝅥𝅯', 'Sixteenth', 0.0625]
-              ]"
-              ng-value="{{ value[2] }}">
-              <span class="note-symbol">{{ ::value[0] }}</span>
-              <span class="note-length-title"> {{ ::value[1] }}</span>
-            </md-option>
-          </md-select>
-        </md-input-container>
-        <md-checkbox
-          flex="30"
-          aria-label="Staccato"
-          ng-model="menu.sound.noteLength.dotted"
-          ng-disabled="menu.sound.note.type==='ghost'"
-          ng-change="menu.soundLengthChanged(menu.sound)">
-          Dotted
-        </md-checkbox>
-        <md-checkbox
-          flex="40"
-          aria-label="Staccato"
-          ng-model="menu.sound.noteLength.staccato"
-          ng-disabled="menu.sound.note.type==='ghost'">
-          Staccato
-        </md-checkbox>
-      </div>
-
-      <div
-        layout="row"
-        class="volume-field">
-        <md-input-container
-          flex="none">
-          <label>Volume</label>
-          <input
-            type="number"
-            min="0.01"
-            max="1"
-            step="0.01"
-            ng-model="menu.sound.volume">
-        </md-input-container>
-        <rzslider
-          rz-slider-model="menu.sound.volume"
-          rz-slider-options="{
-            floor: 0,
-            ceil: 1,
-            step: 0.01,
-            precision: 2,
-            minLimit: 0.01,
-            hideLimitLabels: true,
-            hidePointerLabels: true,
-            showSelectionBar: true
-          }">
-        </rzslider>
-
-        <md-button
-          md-no-ink
-          aria-label="Play"
-          class="play-button icon-hover"
-          md-prevent-menu-close
-          ng-click="menu.playSound()">
-          <md-icon md-svg-icon="play"></md-icon>
-        </md-button>
-      </div>
+          <md-option
+            flex
+            ng-if-end
+            ng-value="note[1].code">
+            {{ ::note[1].name }} <sub>{{ ::note[1].octave }}</sub>
+          </md-option>
+        </div>
+      </md-select>
+    </md-input-container>
+    <div
+      class="buttons-spinner"
+      layout="column">
+      <md-button
+        aria-label="Next note"
+        md-prevent-menu-close
+        ng-click="nextNote(sound.note)">
+        <md-icon md-svg-icon="arrow-up"></md-icon>
+      </md-button>
+      <md-button
+        aria-label="Previous note"
+        md-prevent-menu-close
+        ng-click="prevNote(sound.note)">
+        <md-icon md-svg-icon="arrow-down"></md-icon>
+      </md-button>
     </div>
-  </md-menu-content>
-</md-menu>
+
+    <md-input-container flex
+      ng-if-start="sound.note.type === 'slide'"
+      ng-init="
+        sound.note.slide.endNote = sound.note.slide.endNote || {
+          code: sound.note.code,
+          name: sound.note.name,
+          octave: sound.note.octave,
+          fret: sound.note.fret
+        }">
+      <label class="md-label">Slide To</label>
+      <md-select
+        md-container-class="note-select-menu"
+        ng-model="sound.note.slide.endNote.code"
+        md-on-close="soundPitchChanged(sound.note.slide.endNote)"
+        >
+        <div
+          ng-repeat="note in fretsStringNotes"
+          layout="row">
+          <span class="fret-index">( {{ ::$index }} )</span>
+          
+          <md-option
+            flex
+            ng-if-end 
+            ng-value="note[0].code">
+            {{ ::note[0].name }} <sub>{{ ::note[0].octave }}</sub>
+          </md-option>
+          <span
+            ng-if-start="note[1]">/
+          </span>
+          <md-option
+            flex
+            ng-if-end 
+            ng-value="note[1].code">
+            {{ ::note[1].name }} <sub>{{ ::note[1].octave }}</sub>
+          </md-option>
+        </div>
+      </md-select>
+    </md-input-container>
+    <div
+      ng-if-end
+      class="buttons-spinner"
+      layout="column">
+      <md-button
+        aria-label="Next note"
+        md-prevent-menu-close
+        ng-click="nextNote(sound.note.slide.endNote)">
+        <md-icon md-svg-icon="plus"></md-icon>
+      </md-button>
+      <md-button
+        aria-label="Previous note"
+        md-prevent-menu-close
+        ng-click="prevNote(sound.note.slide.endNote)">
+        <md-icon md-svg-icon="minus"></md-icon>
+      </md-button>
+    </div>
+
+    <!-- <md-input-container
+      flex="50"
+      class="slide-field"
+      ng-if="sound.note.type === 'slide'"
+      ng-init="menu.updateSlide()">
+      <label class="md-label">Slide semitones</label>
+      <input
+        type="number"
+        min="-24"
+        max="24"
+        xstep="1"
+        ng-model="sound.note.slide"
+        ng-change="menu.updateSlide()">
+      <span
+        ng-show="sound.note.slide">
+        ({{ sound.note.slide < 0? 'down to' : 'up to' }}
+        {{ menu.slideEndNote.label[0] }}
+        <sub>{{ menu.slideEndNote.octave }}</sub>)
+      </span>
+    </md-input-container> -->
+  </div>
+
+  <div
+    layout="row"
+    ng-disabled="!sound.note.type || sound.note.type === 'ghost'">
+    <md-input-container flex="35">
+      <label class="md-label">Length</label>
+      <md-select
+        md-no-ink
+        ng-model="sound.noteLength.length"
+        md-on-close="soundLengthChanged(sound)">
+        <md-option
+          ng-repeat="value in [
+            ['𝅝', 'Whole', 1],
+            ['𝅗𝅥', 'Half', 0.5],
+            ['𝅘𝅥', 'Quarter', 0.25],
+            ['𝅘𝅥𝅮', 'Eighth', 0.125],
+            ['𝅘𝅥𝅯', 'Sixteenth', 0.0625]
+          ]"
+          ng-value="{{ value[2] }}">
+          <span class="note-symbol">{{ ::value[0] }}</span>
+          <span class="note-length-title"> {{ ::value[1] }}</span>
+        </md-option>
+      </md-select>
+    </md-input-container>
+    <md-checkbox
+      flex="30"
+      aria-label="Staccato"
+      ng-model="sound.noteLength.dotted"
+      ng-change="soundLengthChanged(sound)">
+      Dotted
+    </md-checkbox>
+    <md-checkbox
+      flex="40"
+      aria-label="Staccato"
+      ng-model="sound.noteLength.staccato">
+      Staccato
+    </md-checkbox>
+  </div>
+
+  <div
+    layout="row"
+    class="volume-field">
+    <md-input-container
+      flex="none">
+      <label>Volume</label>
+      <input
+        type="number"
+        min="0.01"
+        max="1"
+        step="0.01"
+        ng-model="sound.volume">
+    </md-input-container>
+    <rzslider
+      rz-slider-model="sound.volume"
+      rz-slider-options="{
+        floor: 0,
+        ceil: 1,
+        step: 0.01,
+        precision: 2,
+        minLimit: 0.01,
+        hideLimitLabels: true,
+        hidePointerLabels: true,
+        showSelectionBar: true
+      }">
+    </rzslider>
+
+    <md-button
+      md-no-ink
+      aria-label="Play"
+      class="play-button icon-hover"
+      md-prevent-menu-close
+      ng-click="playSound()">
+      <md-icon md-svg-icon="play"></md-icon>
+    </md-button>
+  </div>
+</div>

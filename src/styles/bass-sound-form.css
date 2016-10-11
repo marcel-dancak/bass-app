@@ -13,6 +13,27 @@
   transform: translate3d(-100px, -120px, 0px) scale3d(0.5, 0.25, 1);
 }
 
+.bass-sound-form [disabled="disabled"] md-input-container,
+.bass-sound-form [disabled="disabled"] md-checkbox,
+.bass-sound-form [disabled="disabled"] .md-button {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+
+.bass-sound-form md-input-container {
+  margin-bottom: 4px;
+  height: 42px;
+}
+
+.bass-sound-form md-checkbox {
+  margin: 24px 5px 0px 10px;
+  vertical-align: bottom;
+  line-height: 30px;
+  height: 30px;
+  bottom: 0;
+}
+
 .bass-sound-form .volume-field md-input-container {
   width: 65px;
   height: 35px;
@@ -47,8 +68,8 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 4px;
-  min-width: 250px;
-  width: 280px;
+  min-width: 260px;
+  width: 290px;
 }
 
 .bass-sound-form .note-symbol {

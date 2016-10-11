@@ -141,27 +141,23 @@
     /****************** Drag Handlers ******************/
 
     var fretboardDragHandler = {
+
       onDragStart: function(evt, dragData, channel) {
         var sound = dragData.sound;
         if (sound.note.type !== 'ghost') {
           var elemBox = evt.target.getBoundingClientRect();
-          // console.log(evt.clientX);
-          // console.log(evt.clientX - elemBox.left);
-          if (sound.note.label.length > 1 && evt.clientX > elemBox.left+elemBox.width/2) {
-            sound.note.name = sound.note.label[1];
-          } else {
-            sound.note.name = sound.note.label[0];
-          }
           sound.note.code = sound.note.name + sound.note.octave;
+
+          // store note name depending on drag click position (use it at drop)
+          var secondName = sound.note.label.length > 1 && evt.clientX > elemBox.left+elemBox.width/2;
+          fretboardDragHandler._noteName = sound.note.label[secondName? 1 : 0];
         }
-        // update transfer data
-        var transferDataText = angular.toJson({data: {sound: sound}});
-        evt.dataTransfer.setData('text', transferDataText);
-        console.log(transferDataText);
       },
       onDragEnd: function(evt) {},
       onDrop: function(evt, data, dropGrid) {
         angular.extend(dropGrid.sound, data.sound);
+        dropGrid.sound.note.name = fretboardDragHandler._noteName;
+        dropGrid.sound.note.code = dropGrid.sound.note.name + dropGrid.sound.note.octave;
         dropGrid.sound.string = dropGrid.string.label;
         dropGrid.sound.noteLength.beatLength = dropGrid.sound.noteLength.length;
         audioPlayer.fetchSoundResources(dropGrid.sound);

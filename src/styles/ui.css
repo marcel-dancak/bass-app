@@ -478,7 +478,7 @@ md-checkbox.md-checked .md-icon {
 }
 
 md-input-container:not(.md-input-invalid).md-input-focused label {
-  color: #2196F3;
+  color: #2196F3!important;
 }
 
 /*  Menu - Item hover  */
