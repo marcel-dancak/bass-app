@@ -201,7 +201,8 @@
     };
 
     function sectionLoaded(section) {
-      // clearSectionWorkspace();
+      audioVisualiser.clear();
+      audioVisualiser.reinitialize();
       console.log('sectionLoaded');
       console.log(section);
       if (workspace.section) {
@@ -220,8 +221,23 @@
       $scope.player.playbackRange.end = section.length + 1;
       // $scope.player.playbackRangeChanged();
 
-      var bassTrack = projectManager.project.tracksMap[workspace.bassSection? workspace.bassSection.track.id : 'bass_0'];
-      var drumsTrack = projectManager.project.tracksMap[workspace.drumSection? workspace.drumSection.track.id : 'drums_0'];
+      var bassTrack;
+      var drumsTrack;
+      if (workspace.bassSection) {
+        // choose already selected bass track
+        bassTrack = projectManager.project.tracksMap[workspace.bassSection.track.id];
+      }
+      if (!bassTrack) {
+        bassTrack = projectManager.project.tracksMap['bass_0'];
+      }
+      if (workspace.drumSection) {
+        // choose already selected bass track
+        drumsTrack = projectManager.project.tracksMap[workspace.drumSection.track.id];
+      }
+      if (!drumsTrack) {
+        drumsTrack = projectManager.project.tracksMap['drums_0'];
+      }
+
       $scope.initializeWorkspace(bassTrack, drumsTrack);
       if (section.tracks[bassTrack.id]) {
         var track = section.tracks[bassTrack.id];
@@ -250,8 +266,18 @@
       sectionLoaded(workspace.section);
     }
 
+    function sectionDeleted() {
+      // select another section or create a new section
+      if (projectManager.project.sections.length > 0) {
+        workspace.selectedSectionId = projectManager.project.sections[0].id;
+      } else {
+        workspace.selectedSectionId = projectManager.createSection().id;
+      }
+      projectManager.loadSection(workspace.selectedSectionId);
+    }
+
     projectManager.on('sectionCreated', clearSectionWorkspace);
-    projectManager.on('sectionDeleted', clearSectionWorkspace);
+    projectManager.on('sectionDeleted', sectionDeleted);
     projectManager.on('sectionLoaded', sectionLoaded);
 
 
@@ -262,9 +288,9 @@
     };
 
 
-    $scope.ui.addTrack = function(evt) {
-      var scope = $scope.$new(true);
-      scope.instruments = [
+    function AddTrackController($scope, projectManager, $mdDialog) {
+      $scope.close = $mdDialog.hide;
+      $scope.instruments = [
         {
           name: 'Bass',
           type: 'bass',
@@ -279,17 +305,18 @@
           type: 'drums'
         }
       ];
-      scope.close = $mdDialog.hide;
-      scope.addTrack = function(trackInfo) {
-        console.log(trackInfo);
+      $scope.addTrack = function() {
         projectManager.addTrack(trackInfo);
-        scope.close();
+        $mdDialog.hide();
       }
+    }
+    $scope.ui.addTrack = function(evt) {
 
       $mdDialog.show({
         templateUrl: 'views/new_track.html',
+        controller: AddTrackController,
         autoWrap: false,
-        scope: scope,
+        clickOutsideToClose: true
         // targetEvent: evt
       });
     };
@@ -314,6 +341,7 @@
           $mdDialog.alert()
             .title("Warning")
             .textContent("Can't remove this track, it's the last track of its instrument kind!")
+            .theme(' ')
             .ok("Close")
         );
       }
@@ -367,6 +395,33 @@
       updateSwiperSlides();
     };
 
+    $scope.ui.save = function() {
+      if (!workspace.section.name) {
+        return;
+      }
+      if (!projectManager.project.name) {
+        // Project will be saved into the browser's local storage
+        var confirm = $mdDialog.prompt()
+          .title('Saving Project')
+          .textContent("Please enter project name:")
+          .placeholder('Name')
+          .ariaLabel('Name')
+          .theme(' ')
+          .ok('Save')
+          .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function(projectName) {
+          if (projectName) {
+            document.title = projectName;
+            projectManager.project.name = projectName;
+            projectManager.saveSection();
+          }
+        });
+
+      } else {
+        projectManager.saveSection();
+      }
+    }
     $scope.$on('$destroy', function() {
       projectManager.un('sectionCreated', clearSectionWorkspace);
       projectManager.un('sectionDeleted', clearSectionWorkspace);

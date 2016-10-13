@@ -114,10 +114,13 @@
     };
 
     AudioVisualiser.prototype.clear = function() {
-      this.beats.forEach(function(beat) {
-        beat.ctx.clearRect(0, 0, beat.canvas.offsetWidth, beat.canvas.offsetHeight);
-        beat.lastFrame = 0;
-      });
+      for (var i = 0; i < this.beats.length; i++) {
+        var beat = this.beats[i];
+        if (beat && beat.canvas) {
+          beat.ctx.clearRect(0, 0, beat.canvas.offsetWidth, beat.canvas.offsetHeight);
+          beat.lastFrame = 0;
+        }
+      };
     };
 
     AudioVisualiser.prototype.activate = function(input) {
@@ -139,6 +142,7 @@
           delete beat.canvas;
         }
       }
+      this.beats = [];
     };
 
     AudioVisualiser.prototype.deactivate = function() {

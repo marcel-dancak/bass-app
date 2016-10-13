@@ -1,8 +1,6 @@
 <div
   layout="row"
-  class="control-panel"
-  ng-class="[player.mode === 0? 'section-mode' : 'playlist-mode']">
-
+  class="control-panel">
   <div
     layout="row"
     class="instruments-toolbar">
@@ -11,23 +9,29 @@
     <md-input-container class="track">
       <label>Track</label>
       <md-select
+        md-no-ink
         aria-label="Track"
         class="tracks-list"
         ng-init="ui.trackId = 'bass_0'"
         ng-model="ui.trackId"
         ng-change="ui.trackId && ui.selectTrack(ui.trackId)"
-        md-on-close="ui.trackId = workspace.track.id">
+        md-on-close="ui.trackId = workspace.track.id"
+        md-on-open="filter=['bass']"
+        md-container-class="tracks-list">
 
         <md-option
           md-no-ink
           ng-repeat="track in project.tracks track by track.id"
+          type="{{ ::track.type }}"
           ng-value="track.id">
-          <md-icon md-svg-icon="{{ track.type }}"></md-icon>
+          <md-icon md-svg-icon="{{ ::track.type }}"></md-icon>
           {{ track.name }}
         </md-option>
 
         <md-divider></md-divider>
-        <div layout="row" class="track-split-item">
+        <div
+          layout="row"
+          class="track-split-item">
           <md-option
             ng-value="false"
             ng-click="ui.addTrack($event)">
@@ -377,24 +381,25 @@
           aria-label="Section"
           class="select-editable"
           md-container-class="sections-list"
-          ng-model="workspace.selectedSectionIndex"
-          ng-change="loadSection(workspace.selectedSectionIndex)">
+          ng-model="workspace.selectedSectionId"
+          ng-change="projectManager.loadSection(workspace.selectedSectionId)">
           <md-option
             ui-draggable="true"
-            drag="$index"
+            drag="section.id"
             ui-on-drag-enter=""
             ui-on-drag-leave=""
-            ui-on-drop="dropSection($event, $data, $index, section)"
+            ui-on-drop="itemReorderHandler($event, $data, section.id, project.sections)"
             drag-channel="section"
             drop-channel="section"
 
-            ng-repeat="section in project.sections | orderBy:section.index track by $index"
-            ng-value="::$index">
-            {{ section.name }}
+            ng-repeat="section in project.sections track by section.id"
+            ng-value="section.id">
+            <!-- <b>{{ section.id }}</b> --> {{ section.name }}
           </md-option>
         </md-select>
       </md-input-container>
-      <md-button type="submit"
+      <md-button
+        type="submit"
         md-no-ink
         aria-label="Save"
         class="toolbar-button icon-hover"
@@ -410,7 +415,10 @@
       <md-input-container class="playlist-field">
         <label>Playlist</label>
         <input
+          required
+          md-no-asterisk
           type="text"
+          autocomplete="off"
           ng-model="workspace.playlist.name">
         <!-- <md-button
           md-no-ink
@@ -423,32 +431,33 @@
       <md-input-container>
         <md-select
           md-no-ink
-          ng-show="project.sections.length > 1"
+          ng-show="project.playlists.length > 1"
           aria-label="Section"
           class="select-editable"
           md-container-class="sections-list"
-          ng-model="ui.selectedPlaylistIndex"
-          ng-change="loadPlaylist(ui.selectedPlaylistIndex)">
+          ng-model="workspace.selectedPlaylistId"
+          ng-change="projectManager.loadPlaylist(workspace.selectedPlaylistId)">
           <md-option
             ui-draggable="true"
-            drag="$index"
+            drag="playlist.id"
             ui-on-drag-enter=""
             ui-on-drag-leave=""
-            ui-on-drop="dropSection($event, $data, $index, section)"
+            ui-on-drop="itemReorderHandler($event, $data, playlist.id, project.playlists)"
             drag-channel="section"
             drop-channel="section"
 
-            ng-repeat="playlist in project.playlists | orderBy:playlist.index track by $index"
-            ng-value="::$index">
-            {{ playlist.name }}
+            ng-repeat="playlist in project.playlists track by playlist.id"
+            ng-value="playlist.id">
+            <!-- <b>{{ playlist.id }}</b> --> {{ playlist.name }}
           </md-option>
         </md-select>
       </md-input-container>
       <md-button
+        type="submit"
         md-no-ink
-        aria-label="Save"
+        aria-label="Save playlists"
         class="toolbar-button icon-hover"
-        ng-click="projectManager.savePlaylists()">
+        ng-click="workspace.playlist.name && projectManager.savePlaylists()">
         <md-icon
           md-svg-icon="save">
         </md-icon>
@@ -487,7 +496,7 @@
           <md-button
             md-no-ink
             aria-label="New"
-            ng-click="">
+            ng-click="newProject()">
             New
           </md-button>
         </md-menu-item>
@@ -496,7 +505,7 @@
           <md-button
             md-no-ink
             aria-label="Open"
-            ng-click="">
+            ng-click="openProject()">
             Open
           </md-button>
         </md-menu-item>
@@ -532,7 +541,7 @@
           <md-button
             md-no-ink
             aria-label="Delete"
-            ng-click="projectManager.deleteSection(workspace.selectedSectionIndex)">
+            ng-click="projectManager.deleteSection(workspace.selectedSectionId)">
             Delete
           </md-button>
         </md-menu-item>
@@ -560,7 +569,7 @@
           <md-button
             md-no-ink
             aria-label="New"
-            ng-click="createPlaylist()">
+            ng-click="newPlaylist()">
             New
           </md-button>
         </md-menu-item>

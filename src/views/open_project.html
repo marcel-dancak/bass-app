@@ -1,0 +1,38 @@
+<md-dialog class="open-project-dialog">
+  <div class="dialog-header">
+    Open Project
+  </div>
+  <md-dialog-content>
+    <!-- <md-subheader class="md-no-sticky">Instrument</md-subheader> -->
+    <md-list
+      md-no-ink
+      ng-init="
+        form = {
+          selected: -1
+        }
+      ">
+
+      <md-list-item
+        ng-repeat="project in ::projects"
+        ng-class="{
+          selected: form.selected === $index
+        }"
+        ng-click="form.selected = $index">
+        {{ ::project.name }}
+      </md-list-item>
+
+    </md-list>
+
+  </md-dialog-content>
+  <md-dialog-actions>
+    <md-button
+      ng-click="close()">
+      Cancel
+    </md-button>
+    <md-button
+      ng-disabled="form.selected === -1"
+      ng-click="selectProject(projects[form.selected].id)">
+      Ok
+    </md-button>
+  </md-dialog-actions>
+</md-dialog>

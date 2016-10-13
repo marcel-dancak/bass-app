@@ -19,7 +19,7 @@
     });
 
   function AppController($scope, $timeout, $http, context, workspace,
-      audioPlayer, audioVisualiser, projectManager, Drums, ProjectLocalStore) {
+      audioPlayer, audioVisualiser, projectManager, Drums, ProjectLocalStore, $mdDialog) {
 
     function queryStringParam(item) {
       var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
@@ -88,24 +88,14 @@
 
     $scope.projectManager = projectManager;
 
-    var projectParam = queryStringParam("PROJECT");
-    var storageProject = localStorage.getItem('v9.project');
-    if (projectParam) {
-      $http.get(projectParam+'.json').then(function(response) {
-        $scope.project = projectManager.loadProject(response.data);
-        workspace.selectedSectionIndex = 0;
-        projectManager.loadSection(workspace.selectedSectionIndex);
-      });
-    } else if (storageProject) {
-      $scope.project = projectManager.loadProject(JSON.parse(storageProject));
-      workspace.selectedSectionIndex = 0;
-      projectManager.loadSection(workspace.selectedSectionIndex);
-      workspace.section = projectManager.section;
-    } else {
+    $scope.newProject = function() {
+      document.title = "New Project";
+      workspace.bassSection = null;
+      workspace.drumSection = null;
       $scope.project = projectManager.createProject([
         {
           type: 'bass',
-          name: 'Bassline',
+          name: 'Bass',
           strings: 'EADG',
           tuning: [0, 0, 0, 0]
         }, {
@@ -118,7 +108,61 @@
           name: 'Bongo'
         }
       ]);
-      workspace.section = projectManager.createSection();
+      var section = projectManager.createSection();
+      workspace.selectedSectionId = section.id;
+      if (workspace.section) {
+        projectManager.loadSection(workspace.selectedSectionId);
+      } else {
+        workspace.section = section;
+      }
+    };
+
+    $scope.loadProject = function(projectId) {
+      $scope.project = projectManager.loadProject(projectId);
+      document.title = $scope.project.name;
+      workspace.selectedSectionId = $scope.project.sections[0].id;
+      projectManager.loadSection(workspace.selectedSectionId);
+      workspace.section = projectManager.section;
+    };
+
+    function OpenProjectController($scope, $mdDialog, projectManager) {
+      $scope.projects = projectManager.store.projectsList();
+      $scope.close = $mdDialog.hide;
+      $scope.selectProject = function(projectId) {
+        $mdDialog.hide(projectId);
+      }
+    }
+    $scope.openProject = function() {
+      $mdDialog.show({
+        templateUrl: 'views/open_project.html',
+        controller: OpenProjectController,
+        autoWrap: false,
+        clickOutsideToClose: true
+      }).then(function(projectId) {
+        if (projectId) {
+          console.log($scope);
+          $scope.loadProject(projectId);
+        }
+      });
+    };
+
+    var projectParam = queryStringParam("PROJECT");
+    if (projectParam) {
+      /*
+      $http.get(projectParam+'.json').then(function(response) {
+        $scope.project = projectManager.loadProject(response.data);
+        workspace.selectedSectionIndex = 0;
+        projectManager.loadSection(workspace.selectedSectionIndex);
+      });
+      */
+    } else {
+      if (projectManager.store.projects.length) {
+        // open last project
+        var startupProject = projectManager.store.projects[0];
+        $scope.loadProject(startupProject.id);
+      } else {
+        $scope.newProject();
+      }
     }
 
     $scope.workspace = workspace;
@@ -187,6 +231,7 @@
 
     window.workspace = workspace;
     window.pm = projectManager;
+    window.audioVisualiser = audioVisualiser;
 
     // Prevent default context menu
     window.oncontextmenu = function() {

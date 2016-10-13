@@ -7,11 +7,11 @@
 
   function PlaylistEditor($scope, $timeout, projectManager, workspace) {
 
-    $scope.selected = {section: null};
+    $scope.selected = {item: null};
 
     var projectSections = projectManager.project.sections.map(function(section) {
       return {
-        id: section.id,
+        section: section.id,
         repeats: 1
       };
     });
@@ -19,10 +19,11 @@
     $scope.availableSections = [];
     function updateAvailableSection() {
       $scope.availableSections = projectSections.filter(function(projectSection) {
-        return !workspace.playlist.items.some(function(playlistSection) {
-          return playlistSection.id === projectSection.id;
+        return !workspace.playlist.items.some(function(playlistItem) {
+          return playlistItem.section === projectSection.section;
         });
       });
+      console.log($scope.availableSections);
       $scope.updatePlaylist();
     }
     updateAvailableSection();
@@ -44,8 +45,8 @@
     $scope.playlistKeyPressed = function(evt) {
       switch (evt.keyCode) {
         case 46: // Del
-          if ($scope.selected.section) {
-            var index = workspace.playlist.items.indexOf($scope.selected.section);
+          if ($scope.selected.item) {
+            var index = workspace.playlist.items.indexOf($scope.selected.item);
             workspace.playlist.items.splice(index, 1);
             $scope.selected.section = workspace.playlist.items[index];
             var nextItemElem = evt.target.nextElementSibling;

@@ -16,7 +16,6 @@
       $scope.sectionNames[section.id] = section.name;
     });
 
-
     $scope.visibleSubbeats = {
       3: {
         1: true,
@@ -184,7 +183,7 @@
       var task = $q.defer();
       playlist = [];
       workspace.playlist.items.forEach(function(item) {
-        var section = projectManager.getSectionById(item.id);
+        var section = projectManager.getSection(item.section);
         for (var i = 0; i < item.repeats; i++) {
           playlist.push(section);
         }
@@ -279,8 +278,16 @@
 
     audioPlayer.on('playbackStopped', playbackStopped);
 
+    function playlistLoaded(playlist) {
+      workspace.playlist = playlist;
+      initPlaylistSlides();
+    }
+
+    projectManager.on('playlistLoaded', playlistLoaded);
+
     $scope.$on('$destroy', function() {
       audioPlayer.un('playbackStopped', playbackStopped);
+      projectManager.un('playlistLoaded', playlistLoaded);
     });
 
   }
