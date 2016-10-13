@@ -81,8 +81,9 @@
 }
 
 .player .bar-beat {
-  max-height: 100px;
-  height: 80px;
+  max-height: 65px;
+  height: 8vh;
+  margin-bottom: 10px;
 }
 
 .player .swiper-slide {
@@ -121,6 +122,7 @@
 .player .swiper-slide .section-info .instrument-slide::before{
   display: none;
 }
+
 .player .swiper-slide > div:last-child .beat::after {
   position: absolute;
   top: 0;
@@ -249,7 +251,6 @@
 }
 
 
-
 .playlist-button {
   text-align: left;
   text-transform: none;
@@ -257,21 +258,6 @@
 
 .md-button.edit-playlist2 {
   position: absolute;
-  right: 32px;
-  min-width: 36px;
-  min-height: 36px;
-  width: 36px;
-  height: 36px;
-  line-height: 36px;
-  background-color: #fff
-}
-.md-button.icon-hover.edit-playlist2 {
-  opacity: 1!important;
-
-}
-.md-button.edit-playlist2:not(.active) md-icon {
-  fill: #aaa;
-}
-.md-button.edit-playlist2:hover:not(.active) md-icon {
-  fill: #909090;
+  right: 26px;
+  top: 1px;
 }

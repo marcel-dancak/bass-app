@@ -28,7 +28,7 @@
       $scope.contextMenu.element.style.left = parentBox.left+'px';
       $scope.contextMenu.element.style.top = parentBox.top+'px';
       $scope.contextMenu.element.style.width = parentBox.width+'px';
-      $scope.contextMenu.element.style.height = (parentBox.height-2)+'px';
+      $scope.contextMenu.element.style.height = parentBox.height+'px';
 
       var offsetElem = $scope.contextMenu.element.getElementsByTagName("offset")[0];
       offsetElem.style.left = (evt.clientX-parentBox.left)+'px';

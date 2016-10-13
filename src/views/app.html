@@ -1,8 +1,7 @@
 <div
   layout="column"
   class="main-page"
-  ng-controller="AppController"
-  ng-init="player.mode = 0">
+  ng-cloak>
 
   <ng-include
     flex="none" class="md-whiteframe-3dp"
@@ -18,6 +17,9 @@
     <div
       class="bar-container"
       ng-controller="BarController"
+      ng-class="{
+        'graph-enabled': player.graphEnabled
+      }"
       msd-wheel="
         workspace.section.beatsPerView=workspace.section.beatsPerView+$delta;
         swiperControl.updateSlidesSize(workspace.section.beatsPerView);
@@ -40,6 +42,11 @@
               ng-right-click="contextMenu.open($event, $index)"
               ng-include src="'views/bar_slide.html'">
             </div>
+
+            <div class="audio-graph-container">
+              <canvas class="audio-graph"></canvas>
+            </div>
+
           </div>
         </div>
         <div layout="row" class="swiper-controls">
@@ -52,9 +59,22 @@
       </div>
 
       <div
-        class="bar-preferences"
-        ng-include src="'views/bars_form.html'">
+        class="bar-toolbar">
+        <div
+          class="bar-preferences"
+          ng-include src="'views/bars_form.html'">
+        </div>
+
+        <md-button
+          md-no-ink
+          class="md-fab toggle-button icon-hover audio-graph-toggle"
+          ng-class="{active: player.graphEnabled}"
+          ng-click="player.graphEnabled = !player.graphEnabled">
+          <md-icon md-svg-icon="audio-signal"></md-icon>
+          <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
+        </md-button>
       </div>
+
       <div
         class="context-menu"
         ng-include src="'views/bar_context_menu.html'">
@@ -69,23 +89,13 @@
           bass.settings.label,
           'strings-'+workspace.track.instrument.strings.length,
           {
-            'no-colors': !bass.settings.colors,
-            'graph-enabled': player.graphEnabled
+            'no-colors': !bass.settings.colors
           }
         ]">
 
       <div
         ng-show="workspace.track.type === 'bass'"
         class="instrument-left-panel">
-
-        <md-button
-          md-no-ink
-          class="audio-graph-toggle icon-hover"
-          ng-class="{enabled: player.graphEnabled}"
-          ng-click="player.graphEnabled = !player.graphEnabled">
-          <md-icon md-svg-icon="audio-signal"></md-icon>
-          <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
-        </md-button>
 
         <div class="strings-labels">
           <p ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index">
@@ -105,12 +115,6 @@
               <div
                 ng-switch-when="bass"
                 ng-controller="BassBeatController">
-                  <div class="audio-graph-container">
-                    <canvas
-                      id="canvas_{{ $index }}"
-                      class="audio-graph">
-                    </canvas>
-                  </div>
                   <div class="bass-board"
                     ng-include="'views/bass_board_slide.html'">
                   </div>

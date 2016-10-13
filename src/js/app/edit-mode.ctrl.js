@@ -29,8 +29,6 @@
       };
       var firstBeat = (firstBar - 1) * workspace.section.timeSignature.top;
       var lastBeat = (lastBar) * workspace.section.timeSignature.top - 1;
-      audioVisualiser.firstBeat = firstBeat;
-      audioVisualiser.lastBeat = lastBeat;
       swiperControl.setVisibleRange(firstBeat, lastBeat);
     }
 
@@ -65,9 +63,17 @@
         //}, parseInt(timeToBeat*1000)-50);
       }
 
-      if ($scope.player.graphEnabled) {
+
+      if (!audioVisualiser.enabled && $scope.player.graphEnabled) {
+        audioVisualiser.activate(workspace.track.audio);
+      }
+      if (audioVisualiser.enabled && !$scope.player.graphEnabled) {
+        audioVisualiser.deactivate();
+      }
+      if (audioVisualiser.enabled) {
         audioVisualiser.beatSync(evt);
       }
+
       timeline.beatSync(evt);
     }
 
@@ -86,8 +92,6 @@
           beat: (eFlatIndex % workspace.section.timeSignature.top) + 1
         }
       };
-      audioVisualiser.firstBeat = sFlatIndex;
-      audioVisualiser.lastBeat = eFlatIndex;
     }
 
     var repeats;
@@ -99,7 +103,7 @@
         swiperControl.barSwiper.on('transitionEnd', updateLockedPlayerRange);
       } else {
         if ($scope.player.loop) {
-          var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
+          var playbackRange = swiperControl.lastSlide-swiperControl.firstSlide + 1;
           if (playbackRange > workspace.section.beatsPerView) {
             swiperControl.createLoop();
           }
@@ -111,10 +115,6 @@
       }
       $scope.player.playing = true;
       audioPlayer.setBpm(workspace.section.bpm);
-      if ($scope.player.graphEnabled) {
-        audioVisualiser.setBeatsCount($scope.slides.length);
-        audioVisualiser.activate(workspace.bassSection.audio);
-      }
       audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
       repeats = 1;
@@ -132,7 +132,7 @@
 
       // TODO: check if loop slides was created properly, this is not reliable
       if ($scope.player.loop) {
-        var playbackRange = audioVisualiser.lastBeat-audioVisualiser.firstBeat + 1;
+        var playbackRange = swiperControl.lastSlide-swiperControl.firstSlide + 1;
         if (playbackRange > workspace.section.beatsPerView) {
           swiperControl.destroyLoop();
         }

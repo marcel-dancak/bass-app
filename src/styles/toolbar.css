@@ -43,6 +43,10 @@
   min-width: 100px;
 }
 
+.playlist-mode .tracks-list md-option[type="drums"] {
+  display: none;
+}
+
 .control-panel md-menu {
   padding: 0;
   margin: 2px 0;
@@ -61,6 +65,10 @@
 
 .control-panel md-input-container.track md-icon {
   margin-bottom: 3px;
+}
+
+.playlist-mode .track-split-item {
+  display: none;
 }
 .track-split-item md-option {
   height: 36px;
@@ -296,25 +304,13 @@ md-select-menu md-content {
   max-height: 360px;
 }
 
-.new-track-dialog {
-  max-width: 400px;
-  max-height: 500px;
-  left: 50px;
-  transform: none;
-}
 
-.new-track-dialog .dialog-header {
+md-dialog .dialog-header {
   text-align: center;
   height: 36px;
   line-height: 36px;
   background-color: #455A64;
   color: #fff;
-}
-.new-track-dialog md-list-item md-icon {
-  margin: 5px 10px 5px 0!important;
-}
-.new-track-dialog md-input-container {
-  margin: 24px 16px 4px 16px;
 }
 
 .md-subheader {

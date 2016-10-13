@@ -5,15 +5,16 @@
     .module('bd.app')
     .factory('audioVisualiser', audioVisualiser);
 
-  function audioVisualiser() {
+  function audioVisualiser(context, swiperControl) {
     function AudioVisualiser() {
       this.beats = [];
       this.drawBeatIndex = -1;
       this.analyzeBeatIndex = -1;
-      this.lastInitBeatsCount = 0;
+      this._initialzie();
     }
 
-    AudioVisualiser.prototype.initializeBeat = function(index) {
+    AudioVisualiser.prototype.initializeBeat = function(evt) {
+      var index = evt.flatIndex;
       var beat = this.beats[index];
       if (!beat) {
         beat = {
@@ -21,33 +22,42 @@
         };
         this.beats[index] = beat;
       }
+
       if (!beat.canvas) {
-        var canvasId = 'canvas_'+index;
-        beat.canvas = document.getElementById(canvasId);
+        var beatWrapperElem = swiperControl.getBeatElem(evt.bar, evt.beat).parentElement;
+        beat.canvas = beatWrapperElem.querySelector('canvas');
+        beat.ctx = beat.canvas.getContext("2d");
       }
 
-      beat.ctx = beat.canvas.getContext("2d");
       beat.ctx.fillStyle = 'rgb(240, 240, 240)';
       beat.ctx.lineWidth = 1;
       beat.ctx.strokeStyle = 'rgb(180, 0, 0)';
 
       beat.index = index;
-      beat.width = beat.canvas.offsetWidth;
-      beat.height = beat.canvas.offsetHeight;
-      beat.canvas.setAttribute('width', beat.width);
-      beat.canvas.setAttribute('height', beat.height);
+
+      // update 'width' and 'height' canvas attributes only when needed
+      if (beat.width !== beat.canvas.offsetWidth) {
+        beat.width = beat.canvas.offsetWidth;
+        beat.canvas.setAttribute('width', beat.width);
+      }
+      if (beat.height !== beat.canvas.offsetHeight) {
+        beat.height = beat.canvas.offsetHeight;
+        beat.canvas.setAttribute('height', beat.height);
+      }
+
       beat.x = 0;
       beat.y = beat.height/2;
       beat.frame = 0;
       beat.lastFrame = 0;
       beat.complete = 0;
+      // beat.nextBeatIndex will be corrected in beatSynch call
+      beat.nextBeatIndex = evt.flatIndex + 1;
+
       return beat;
     }
 
-    AudioVisualiser.prototype.initialize = function(context, input) {
+    AudioVisualiser.prototype._initialzie = function() {
       var _this = this;
-      this.context = context;
-      this.input = input;
       this.enabled = false;
 
       // window.addEventListener("resize", this.redraw.bind(this));
@@ -69,8 +79,7 @@
           var beatTime = beat.endTime - beat.startTime;
 
           if (currentTime >= beat.endTime) {
-            var nextBeat;
-            nextBeat = _this.beats[_this.nextBeatIndex(_this.analyzeBeatIndex)];
+            var nextBeat = _this.beats[beat.nextBeatIndex];
             // nextBeat.startTime = beat.endTime;
             // nextBeat.endTime = nextBeat.startTime + beatTime;
 
@@ -96,26 +105,12 @@
           beat.complete = nextBeat? 1 : (currentTime - beat.startTime) / beatTime;
           if (nextBeat) {
             // console.log('BEAT size: '+beat.data.length);
-            _this.analyzeBeatIndex = _this.nextBeatIndex(_this.analyzeBeatIndex);
+            _this.analyzeBeatIndex = beat.nextBeatIndex;
             nextBeat.y = beat.data[beat.data.length-1];
             nextBeat.y = 0;
           }
         }
       };
-    };
-
-    AudioVisualiser.prototype.nextBeatIndex = function(index) {
-      var next = index+1;
-      var lastBeat = this.lastBeat || this.beatsCount-1;
-      var firstBeat = this.firstBeat || 0;
-      if (next > lastBeat) {
-        next = firstBeat;
-      }
-      return next;
-    };
-
-    AudioVisualiser.prototype.setBeatsCount = function(count) {
-      this.beatsCount = count;
     };
 
     AudioVisualiser.prototype.clear = function() {
@@ -125,25 +120,25 @@
       });
     };
 
-    AudioVisualiser.prototype.activate = function() {
+    AudioVisualiser.prototype.activate = function(input) {
       this.enabled = true;
       this.drawing = false;
       this.analyzeBeatIndex = -1;
       // console.log('activate visualizer');
+      this.input = input;
       this.input.connect(this.audioProcessor);
-      this.audioProcessor.connect(this.context.destination);
+      this.audioProcessor.connect(context.destination);
+      // this.clear();
+    };
 
-      var reinitialize = this.lastInitBeatsCount !== this.beatsCount;
-      for (var i = 0; i < this.beatsCount; i++) {
+    AudioVisualiser.prototype.reinitialize = function(input) {
+      for (var i = 0; i < this.beats.length; i++) {
         var beat = this.beats[i];
-        if (beat && beat.canvas && (reinitialize || !document.contains(beat.canvas))) {
+        if (beat && beat.canvas && !document.contains(beat.canvas)) {
           delete beat.ctx;
           delete beat.canvas;
         }
-        this.initializeBeat(i);
       }
-      this.lastInitBeatsCount = this.beatsCount;
-      // console.log(this.beats);
     };
 
     AudioVisualiser.prototype.deactivate = function() {
@@ -151,29 +146,41 @@
       console.log(this.input);
       try {
         this.input.disconnect(this.audioProcessor);
-        this.audioProcessor.disconnect(this.context.destination);
+        this.audioProcessor.disconnect(context.destination);
       } catch (ex) {
         console.log(ex);
       }
+      // this.beat = null;
     };
 
     AudioVisualiser.prototype.beatSync = function(evt) {
       // console.log('BEAT Sync: '+evt.flatIndex);
+      if (!evt.playbackActive) {
+        return;
+      }
+
+      if (this.analyzeBeatIndex !== -1) {
+        var curDrawingBeat = this.beats[this.analyzeBeatIndex];
+        if (curDrawingBeat) {
+          curDrawingBeat.nextBeatIndex = evt.flatIndex;
+        }
+      }
       var beat = this.beats[evt.flatIndex];
+
+      beat = this.initializeBeat(evt);
+      beat.isFirst = evt.playbackStart;
+
       beat.startTime = evt.playbackActive? evt.startTime : -1;
       beat.endTime = evt.endTime;
       beat.lastFrame = 0;
       beat.frame = 0;
-
-      // console.log(beat);
 
       if (!this.drawing) {
         this.drawing = true;
         this.drawBeatIndex = evt.flatIndex;
         this.analyzeBeatIndex = evt.flatIndex;
 
-        var delay = 1000*(evt.startTime-this.context.currentTime);
-        // console.log('Start drawing in '+delay);
+        var delay = 1000*(evt.startTime-context.currentTime);
         if (delay > 0) {
           setTimeout(this.draw.bind(this), delay);
         } else {
@@ -186,19 +193,12 @@
     AudioVisualiser.prototype.draw = function() {
       var beat = this.beats[this.drawBeatIndex];
       if (beat) {
-        var firstBeat = this.firstBeat || 0;
-        if (this.drawBeatIndex === firstBeat && beat.x === 0) {
-          // console.log('FIRST DRAW: '+this.beatsCount);
-          beat.ctx.clearRect(0, 0, beat.canvas.offsetWidth, beat.canvas.offsetHeight);
-          for (var i = firstBeat+1; i < this.beatsCount; i++) {
-            var b = this.beats[i];
-            if (b && b.ctx && b.lastFrame) {
-              // console.log('clearing beat canvas '+i);
-              b.ctx.clearRect(0, 0, b.canvas.offsetWidth, b.canvas.offsetHeight);
-              b.lastFrame = 0;
-            }
-          }
+        // clear all canvases when starting drawing the first playback beat
+        if (beat.isFirst && beat.x === 0) {
+          this.clear();
+          beat.isFirst = false;
         }
+
         var newFrames = beat.lastFrame-beat.frame;
         if (newFrames > 1024/this.saveRate || beat.complete === 1) {
           // console.log('frames available: ' + newFrames);
@@ -221,7 +221,7 @@
           beat.frame = beat.lastFrame;
         }
         if (beat.x >= beatWidth) {
-          this.drawBeatIndex = this.nextBeatIndex(this.drawBeatIndex);
+          this.drawBeatIndex = beat.nextBeatIndex;
           var nextBeat = this.beats[this.drawBeatIndex];
 
           if (nextBeat) {
@@ -269,7 +269,7 @@
     };
 
     AudioVisualiser.prototype.updateSize = function() {
-      for (var i = 0; i < this.beatsCount; i++) {
+      for (var i = 0; i < this.beats.length; i++) {
         var beat = this.beats[i];
         if (beat.width !== beat.canvas.offsetWidth) {
           // console.log('resize '+beat.width+' -> '+beat.canvas.offsetWidth);

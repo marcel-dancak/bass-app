@@ -330,7 +330,8 @@
         duration: beatTime,
         timeSignature: this.section.timeSignature,
         flatIndex: flatIndex,
-        playbackActive: !isPlaybackEnd
+        playbackActive: !isPlaybackEnd,
+        playbackStart: playbackStart
       });
 
       if (this.scheduledSounds.length) {
@@ -388,7 +389,6 @@
 
       oscillator.start();
       */
-
       var bar = this.playbackRange.start.bar;
       var beat = this.playbackRange.start.beat;
       this.playBeat(bar, beat, context.currentTime);
@@ -434,7 +434,6 @@
 
       for (var trackId in section.tracks) {
         var track = section.tracks[trackId];
-      //   track.audio.connect(context.destination);
         if (track.type === 'bass') {
           track.forEachSound(function(bassSound) {
             if (bassSound.note && bassSound.style) {
