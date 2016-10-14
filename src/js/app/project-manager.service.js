@@ -46,7 +46,7 @@
 
   ProjectLocalStore.prototype.loadProject = function(projectId) {
     var projectConfig = JSON.parse(localStorage.getItem(projectKey(projectId)));
-    var playlists = JSON.parse(localStorage.getItem(playlistsKey(projectId)));
+    var playlists = JSON.parse(localStorage.getItem(playlistsKey(projectId))) || [];
 
     this.project = {
       id: projectId,

@@ -1,6 +1,7 @@
 <div
   layout="row"
-  class="control-panel">
+  class="control-panel"
+  ng-controller="ProjectController">
   <div
     layout="row"
     class="instruments-toolbar">
@@ -362,8 +363,7 @@
 
   <div
     layout="row"
-    class="project-toolbar"
-    ng-controller="ProjectController">
+    class="project-toolbar">
     <form ng-if="player.mode === 0">
       <md-input-container>
         <label>Section</label>
@@ -403,7 +403,7 @@
         md-no-ink
         aria-label="Save"
         class="toolbar-button icon-hover"
-        ng-click="ui.save()">
+        ng-click="saveSection()">
         <md-icon
           md-svg-icon="save">
         </md-icon>
@@ -457,7 +457,7 @@
         md-no-ink
         aria-label="Save playlists"
         class="toolbar-button icon-hover"
-        ng-click="workspace.playlist.name && projectManager.savePlaylists()">
+        ng-click="savePlaylists()">
         <md-icon
           md-svg-icon="save">
         </md-icon>

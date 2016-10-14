@@ -6,7 +6,100 @@
     .controller('ProjectController', ProjectController);
 
 
-  function ProjectController($scope, $timeout, audioVisualiser, projectManager) {
+  function queryStringParam(item) {
+    var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
+    if (svalue !== null) {
+      return decodeURIComponent(svalue ? svalue[1] : svalue);
+    }
+  }
+
+  function ProjectController($scope, $timeout, $mdToast, $mdDialog, projectManager, workspace) {
+
+    // function showSaveNotification() {
+    //   $mdToast.show({
+    //     template:
+    //       '<md-toast>\
+    //         <div class="md-toast-content">\
+    //           <span><b>{0}</b> section was saved</span>\
+    //         </div>\
+    //       </md-toast>'.format(workspace.section.name),
+    //     position: 'bottom right',
+    //     hideDelay: 2500
+    //   });
+    // }
+
+    function showNotification(htmlContent) {
+      $mdToast.show({
+        template:
+          '<md-toast>\
+            <div class="md-toast-content">{0}</div>\
+          </md-toast>'.format(htmlContent),
+        position: 'bottom right',
+        hideDelay: 2500
+      });
+    }
+
+    function showSaveNotification(sectionName) {
+      showNotification('<span>Section <b>{0}</b> was saved</span>'.format(sectionName));
+    }
+
+    $scope.newProject = function() {
+      document.title = "New Project";
+      workspace.bassSection = null;
+      workspace.drumSection = null;
+      $scope.project = projectManager.createProject([
+        {
+          type: 'bass',
+          name: 'Bass',
+          strings: 'EADG',
+          tuning: [0, 0, 0, 0]
+        }, {
+          type: 'drums',
+          kit: 'Standard',
+          name: 'Standard'
+        }, {
+          type: 'drums',
+          kit: 'Bongo',
+          name: 'Bongo'
+        }
+      ]);
+      var section = projectManager.createSection();
+      workspace.selectedSectionId = section.id;
+      if (workspace.section) {
+        projectManager.loadSection(workspace.selectedSectionId);
+      } else {
+        workspace.section = section;
+      }
+    };
+
+    $scope.loadProject = function(projectId) {
+      $scope.project = projectManager.loadProject(projectId);
+      document.title = $scope.project.name;
+      workspace.selectedSectionId = $scope.project.sections[0].id;
+      projectManager.loadSection(workspace.selectedSectionId);
+      workspace.section = projectManager.section;
+    };
+
+    function OpenProjectController($scope, $mdDialog, projectManager) {
+      $scope.projects = projectManager.store.projectsList();
+      $scope.close = $mdDialog.hide;
+      $scope.selectProject = function(projectId) {
+        $mdDialog.hide(projectId);
+      }
+    }
+    $scope.openProject = function() {
+      $mdDialog.show({
+        templateUrl: 'views/open_project.html',
+        controller: OpenProjectController,
+        autoWrap: false,
+        clickOutsideToClose: true
+      }).then(function(projectId) {
+        if (projectId) {
+          console.log($scope);
+          $scope.loadProject(projectId);
+        }
+      });
+    };
 
     $scope.newSection = function() {
       var config = {};
@@ -20,10 +113,48 @@
       projectManager.loadSection(workspace.selectedSectionId);
     };
 
+    $scope.saveSection = function() {
+      if (!workspace.section.name) {
+        return;
+      }
+      if (!projectManager.project.name) {
+        // Project will be saved into the browser's local storage
+        var confirm = $mdDialog.prompt()
+          .title('Saving Project')
+          .textContent("Please enter project name:")
+          .placeholder('Name')
+          .ariaLabel('Name')
+          .theme(' ')
+          .ok('Save')
+          .cancel('Cancel');
+
+        $mdDialog.show(confirm).then(function(projectName) {
+          if (projectName) {
+            document.title = projectName;
+            projectManager.project.name = projectName;
+            projectManager.saveSection();
+            showSaveNotification(workspace.section.name);
+          }
+        });
+
+      } else {
+        projectManager.saveSection();
+        showSaveNotification(workspace.section.name);
+      }
+    }
+
+    $scope.savePlaylists = function() {
+      if (workspace.playlist.name) {
+        projectManager.savePlaylists();
+        showNotification('<span>Playlists was saved</span>');
+      }
+    };
+
     $scope.newPlaylist = function() {
       workspace.playlist = projectManager.createPlaylist();
       workspace.selectedPlaylistId = workspace.playlist.id;
     };
+
 
     $scope.itemReorderHandler = function(event, dragItemId, dropItemId, list) {
       var dragItemIndex = list.findIndex(function(item) {
@@ -35,6 +166,26 @@
       });
       list.splice(dropItemIndex, 0, dragItem);
     }
+
+    var projectParam = queryStringParam("PROJECT");
+    if (projectParam) {
+      /*
+      $http.get(projectParam+'.json').then(function(response) {
+        $scope.project = projectManager.loadProject(response.data);
+        workspace.selectedSectionIndex = 0;
+        projectManager.loadSection(workspace.selectedSectionIndex);
+      });
+      */
+    } else {
+      if (projectManager.store.projects.length) {
+        // open last project
+        var startupProject = projectManager.store.projects[0];
+        $scope.loadProject(startupProject.id);
+      } else {
+        $scope.newProject();
+      }
+    }
+
 
     $scope.exportToFile = function() {
       if (workspace.section.name) {
