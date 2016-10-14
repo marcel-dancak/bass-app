@@ -7,6 +7,8 @@
 
   function PlaylistViewer($scope, $timeout, $q, audioPlayer, projectManager, workspace, $mdCompiler, HighlightTimeline) {
 
+    var viewerTrackId = workspace.bassSection.track.id;
+
     workspace.playlist = projectManager.project.playlists[0];
 
     // workspace.track = projectManager.project.tracksMap['bass_0'];
@@ -49,18 +51,11 @@
       console.log(section);
       var beats = [];
 
-      var track = section.tracks['bass_0'];
+      var track = section.tracks[viewerTrackId];
       var counter = count;
       while (counter--) {
         var sectionFirstsBeat = position.bar === 1 && position.beat === 1;
-        /*
-        if (sectionFirstsBeat && beats.length > 0) {
-          beats.push({
-            sectionInfo: section,
-          });
-          // counter--;
-        }
-        */
+
         var trackBeat = track.beat(position.bar, position.beat);
         beats.push({
           bar: position.bar,
@@ -249,18 +244,27 @@
           beat: section.timeSignature.top
         }
       };
+      // audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
-      audioPlayer.play(section, beatSync);
+      var countdown = $scope.player.countdown && playbackState.section === 0;
+      audioPlayer.play(section, beatSync, countdown);
     }
 
     $scope.player.play = function() {
       initPlaylistSlides().then(function() {
+        var sections = playlist.reduce(function(list, section) {
+          if (list.indexOf(section) === -1) {
+            list.push(section);
+          }
+          return list;
+        }, []);
         $scope.player.playing = true;
-        playSection();
+        audioPlayer.fetchResources(sections).then(playSection);
       });
     };
 
     $scope.player.stop = function() {
+      $scope.player.playing = false;
       playbackState.section = playlist.length;
       audioPlayer.stop();
     };
@@ -270,18 +274,38 @@
       if (playbackState.section < playlist.length) {
         playSection();
       } else {
-        timeline.stop();
-        playbackState.section = 0;
-        $scope.player.playing = false;
+        if ($scope.player.playing && $scope.player.loop) {
+          // repeat playlist playback
+          playbackState.section = 0;
+          playbackState.beatsCounter = 0;
+          playerSwiper.slideTo(0, 0);
+          playSection();
+        } else {
+          // stop playback
+          timeline.stop();
+          playbackState.section = 0;
+          $scope.player.playing = false;
+        }
       }
     }
 
     audioPlayer.on('playbackStopped', playbackStopped);
 
+    $scope.ui.selectTrack = function(trackId) {
+      workspace.track = projectManager.project.tracksMap[trackId];
+      viewerTrackId = trackId;
+      initPlaylistSlides();
+    }
+
     function playlistLoaded(playlist) {
       workspace.playlist = playlist;
       initPlaylistSlides();
     }
+
+    audioPlayer.setPlaybackSpeed($scope.player.speed/100);
+    $scope.ui.playbackSpeedChanged = function(speed) {
+      audioPlayer.setPlaybackSpeed(speed/100);
+    };
 
     projectManager.on('playlistLoaded', playlistLoaded);
 

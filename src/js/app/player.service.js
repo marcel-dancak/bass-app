@@ -5,33 +5,15 @@
     .module('bd.app')
     .factory('audioPlayer', audioPlayer);
 
-  var noteFileName = {
-    'C' : 'C',
-    'C♯': 'Db',
-    'D♭': 'Db',
-    'D' : 'D',
-    'D♯': 'Eb',
-    'E♭': 'Eb',
-    'E' : 'E',
-    'F' : 'F',
-    'F♯': 'Gb',
-    'G♭': 'Gb',
-    'G' : 'G',
-    'G♯': 'Ab',
-    'A♭': 'Ab',
-    'A' : 'A',
-    'A♯': 'Bb',
-    'B♭': 'Bb',
-    'B' : 'B'
-  };
 
-  function audioPlayer($timeout, $http, context, soundsUrl, Observable, AudioComposer, projectManager) {
+  function audioPlayer($timeout, $http, $q, context, soundsUrl, Observable, AudioComposer, projectManager) {
 
     function AudioPlayer() {
       Observable.call(this, ["playbackStarted", "playbackStopped"]);
       this.playing = false;
       this.countdown = false;
       this.setBpm(60);
+      this.setPlaybackSpeed(1);
       this.bufferLoader = new BufferLoader(context, soundsUrl);
       this.scheduledSounds = [];
 
@@ -293,14 +275,14 @@
       return audio;
     }
 
-    AudioPlayer.prototype.playBeat = function(bar, beat, startTime) {
+    AudioPlayer.prototype.playBeat = function(bar, beat, startTime, initializationBeat) {
       if (!this.playing) return;
 
       var playbackStart = bar === this.playbackRange.start.bar && beat === this.playbackRange.start.beat;
-      var isPlaybackEnd = playbackStart && (this.repeats--) === 0;
+      var isPlaybackEnd = playbackStart && !initializationBeat;
       var timeSignature = this.section.timeSignature;
       var currentTime = context.currentTime;
-      var beatTime = 60/this.bpm;
+      var beatTime = 60/(this.bpm * this.playbackSpeed);
 
       if (!isPlaybackEnd) {
         // console.log('Play beat: '+beat);
@@ -391,12 +373,16 @@
       */
       var bar = this.playbackRange.start.bar;
       var beat = this.playbackRange.start.beat;
-      this.playBeat(bar, beat, context.currentTime);
+      this.playBeat(bar, beat, context.currentTime, true);
     };
 
     AudioPlayer.prototype.setBpm = function(bpm) {
       this.bpm = bpm;
     }
+
+    AudioPlayer.prototype.setPlaybackSpeed = function(playbackSpeed) {
+      this.playbackSpeed = playbackSpeed;
+    };
 
     AudioPlayer.prototype.fetchSoundResources = function(sound) {
       if (sound.style && sound.note) {
@@ -405,55 +391,73 @@
       }
     }
 
-    AudioPlayer.prototype.play = function(section, beatPreparedCallback, repeats) {
+    AudioPlayer.prototype.fetchResources = function(sections, doneCallback) {
+      if (!angular.isArray(sections)) {
+        sections = [sections];
+      }
+
+      var callbackThis = arguments[2];
+      var callbackArgs = Array.prototype.slice.call(arguments, 3);
+      var task = $q.defer();
+      function resourcesFetched() {
+        task.resolve();
+        if (doneCallback) {
+          doneCallback.apply(callbackThis, callbackArgs);
+        }
+      }
+
+      var resources = [];
+      sections.forEach(function(section) {
+        for (var trackId in section.tracks) {
+          var track = section.tracks[trackId];
+          if (track.type === 'bass') {
+            track.forEachSound(function(bassSound) {
+              if (bassSound.note && bassSound.style) {
+                var subbeatResources = this._getSoundHandler(bassSound).getResources(bassSound);
+                subbeatResources.forEach(function(resource) {
+                  if (resources.indexOf(resource) === -1) {
+                    resources.push(resource);
+                  }
+                });
+              }
+            }, this);
+          }
+        }
+      }, this);
+      console.log(resources);
+      if (resources.length) {
+        this.bufferLoader.loadResources(resources, resourcesFetched);
+      } else {
+        if (doneCallback) {
+          doneCallback.apply(callbackThis, callbackArgs);
+        }
+        return $q.when();
+      }
+      return task.promise;
+    };
+
+    AudioPlayer.prototype.play = function(section, beatPreparedCallback, countdown) {
       console.log('PLAY');
       this.section = section;
       this.playing = true;
       this.lastSyncTimerId = 0;
-      this.repeats = repeats || 1;
 
       var player = this;
       this.beatPreparedCallback = angular.isFunction(beatPreparedCallback)? beatPreparedCallback : angular.noop;
-      function afterLoad() {
-        var count = player.countdown? 3 : 0;
-        function countdown() {
-          if (count > 0) {
-            count--;
-            if (player.playing) {
-              player._playDrumStick();
-              setTimeout(countdown, 60000/player.bpm);
-            }
-          } else {
-            player._play();
+
+      var count = countdown? 3 : 0;
+      function countDownTick() {
+        if (count > 0) {
+          count--;
+          if (player.playing) {
+            player._playDrumStick();
+            setTimeout(countDownTick, 60000/(player.bpm * player.playbackSpeed));
           }
-        }
-        countdown();
-      }
-
-      var resources = [];
-
-      for (var trackId in section.tracks) {
-        var track = section.tracks[trackId];
-        if (track.type === 'bass') {
-          track.forEachSound(function(bassSound) {
-            if (bassSound.note && bassSound.style) {
-              var subbeatResources = player._getSoundHandler(bassSound).getResources(bassSound);
-              subbeatResources.forEach(function(resource) {
-                if (resources.indexOf(resource) === -1) {
-                  resources.push(resource);
-                }
-              });
-            }
-          }, this);
+        } else {
+          player._play();
         }
       }
-
-      console.log(resources);
-      if (resources.length) {
-        this.bufferLoader.loadResources(resources, afterLoad);
-      } else {
-        afterLoad();
-      }
+      countDownTick();
     };
 
     AudioPlayer.prototype.stop = function(noteLength) {
@@ -509,7 +513,7 @@
             track,
             bassSound,
             context.currentTime,
-            60/player.bpm,
+            60 / (player.bpm * player.playbackSpeed),
             { top: 4, bottom: 4 }
           );
           player.playingBassSample.source.playing = true;

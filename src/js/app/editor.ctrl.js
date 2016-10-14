@@ -11,6 +11,7 @@
 
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
+    audioPlayer.setPlaybackSpeed(1);
 
 
     $scope.player.playbackRangeChanged = function() {
@@ -94,7 +95,6 @@
       };
     }
 
-    var repeats;
     var timeline;
     $scope.player.play = function() {
       if ($scope.player.visibleBeatsOnly) {
@@ -115,17 +115,24 @@
       }
       $scope.player.playing = true;
       audioPlayer.setBpm(workspace.section.bpm);
-      audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
-      repeats = 1;
-      audioPlayer.play(workspace.section, beatPrepared, $scope.player.loop? -1 : 1);
+
+      audioPlayer.fetchResources(workspace.section)
+        .then(audioPlayer.play.bind(audioPlayer, workspace.section, beatPrepared, $scope.player.countdown));
+
     };
 
     $scope.player.stop = function() {
+      $scope.player.playing = false;
       audioPlayer.stop();
     };
 
     function playbackStopped() {
+      if ($scope.player.playing && $scope.player.loop) {
+        // loop mode
+        audioPlayer.play(workspace.section, beatPrepared);
+        return;
+      }
       $scope.player.playing = false;
       audioVisualiser.deactivate();
       timeline.stop();
@@ -185,6 +192,7 @@
       assignTrack(workspace.drumSection, drumsTrack);
       workspace.trackSection = (!workspace.trackSection || workspace.trackSection.type === 'bass')? workspace.bassSection : workspace.drumSection;
       workspace.track = workspace.trackSection.track;
+      $scope.ui.trackId = workspace.track.id;
     };
 
 
@@ -197,7 +205,6 @@
       workspace.drumSection.forEachBeat(function(beat) {
         workspace.drumSection.clearBeat(beat.beat);
       });
-
     };
 
     function sectionLoaded(section) {
@@ -262,9 +269,6 @@
       });
     }
 
-    if (workspace.section) {
-      sectionLoaded(workspace.section);
-    }
 
     function sectionDeleted() {
       // select another section or create a new section
@@ -383,9 +387,12 @@
         }
         workspace.section.tracks[track.id] = workspace.trackSection;
       }
-
       workspace.track = track;
     };
+
+    if (workspace.section) {
+      sectionLoaded(workspace.section);
+    }
 
     $scope.updateSlides = function() {
       workspace.bassSection.setLength(workspace.section.length);
