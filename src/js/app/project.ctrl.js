@@ -15,19 +15,6 @@
 
   function ProjectController($scope, $timeout, $mdToast, $mdDialog, projectManager, workspace) {
 
-    // function showSaveNotification() {
-    //   $mdToast.show({
-    //     template:
-    //       '<md-toast>\
-    //         <div class="md-toast-content">\
-    //           <span><b>{0}</b> section was saved</span>\
-    //         </div>\
-    //       </md-toast>'.format(workspace.section.name),
-    //     position: 'bottom right',
-    //     hideDelay: 2500
-    //   });
-    // }
-
     function showNotification(htmlContent) {
       $mdToast.show({
         template:
@@ -41,6 +28,66 @@
 
     function showSaveNotification(sectionName) {
       showNotification('<span>Section <b>{0}</b> was saved</span>'.format(sectionName));
+    }
+
+
+    function AddTrackController($scope, projectManager, $mdDialog) {
+      $scope.close = $mdDialog.hide;
+      $scope.instruments = [
+        {
+          name: 'Bass',
+          type: 'bass',
+          strings: 'EADG'
+        }, {
+          name: 'Standard',
+          kit: 'Standard',
+          type: 'drums'
+        }, {
+          name: 'Bongo',
+          kit: 'Bongo',
+          type: 'drums'
+        }
+      ];
+      $scope.addTrack = function(trackInfo) {
+        projectManager.addTrack(trackInfo);
+        $mdDialog.hide();
+      }
+    }
+    $scope.addTrackDialog = function(evt) {
+
+      $mdDialog.show({
+        templateUrl: 'views/new_track.html',
+        controller: AddTrackController,
+        autoWrap: false,
+        clickOutsideToClose: true
+        // targetEvent: evt
+      });
+    };
+
+    $scope.removeTrack = function(trackId) {
+      console.log('remove track: '+trackId);
+
+      var track = projectManager.project.tracksMap[trackId];
+      var index = projectManager.project.tracks.indexOf(track);
+
+      var nextSelected = projectManager.project.tracks.find(function(t) {
+        return t.type === track.type && t.id !== trackId;
+      });
+      if (nextSelected) {
+        $scope.ui.selectTrack(nextSelected.id);
+
+        // projectManager.removeTrack(trackId);
+        projectManager.project.tracks.splice(index, 1);
+        delete projectManager.project.tracksMap[trackId];
+      } else {
+        $mdDialog.show(
+          $mdDialog.alert()
+            .title("Warning")
+            .textContent("Can't remove this track, it's the last track of its instrument kind!")
+            .theme(' ')
+            .ok("Close")
+        );
+      }
     }
 
     $scope.newProject = function() {

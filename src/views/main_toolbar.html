@@ -17,7 +17,6 @@
         ng-model="ui.trackId"
         ng-change="ui.trackId && ui.selectTrack(ui.trackId)"
         md-on-close="ui.trackId = workspace.track.id"
-        md-on-open="filter=['bass']"
         md-container-class="tracks-list">
 
         <md-option
@@ -35,13 +34,13 @@
           class="track-split-item">
           <md-option
             ng-value="false"
-            ng-click="ui.addTrack($event)">
+            ng-click="addTrackDialog($event)">
             <md-icon md-svg-icon="plus"></md-icon>
             New
           </md-option>
           <md-option
             ng-value="false"
-            ng-click="ui.removeTrack(ui.trackId)">
+            ng-click="removeTrack(ui.trackId)">
             <md-icon md-svg-icon="x"></md-icon>
             Remove
           </md-option>

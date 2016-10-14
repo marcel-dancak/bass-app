@@ -19,12 +19,10 @@
     });
 
   function AppController($scope, $timeout, $http, context, workspace,
-      audioPlayer, audioVisualiser, projectManager, Drums, ProjectLocalStore, $mdDialog) {
+      audioPlayer, audioVisualiser, projectManager, Drums, ProjectLocalStore) {
 
     $scope.ui = {
       selectTrack: angular.noop,
-      addTrack:  angular.noop,
-      removeTrack: angular.noop,
       playlist: {},
     };
     $scope.player = {

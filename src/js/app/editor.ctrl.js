@@ -6,7 +6,7 @@
     .controller('EditModeController', EditModeController)
 
   function EditModeController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums,
-                         BassSection, DrumSection, BassTrackSection, DrumTrackSection, HighlightTimeline, swiperControl, $mdDialog) {
+                         BassSection, DrumSection, BassTrackSection, DrumTrackSection, HighlightTimeline, swiperControl) {
 
 
     $scope.swiperControl = swiperControl;
@@ -292,66 +292,6 @@
     };
 
 
-    function AddTrackController($scope, projectManager, $mdDialog) {
-      $scope.close = $mdDialog.hide;
-      $scope.instruments = [
-        {
-          name: 'Bass',
-          type: 'bass',
-          strings: 'EADG'
-        }, {
-          name: 'Standard',
-          kit: 'Standard',
-          type: 'drums'
-        }, {
-          name: 'Bongo',
-          kit: 'Bongo',
-          type: 'drums'
-        }
-      ];
-      $scope.addTrack = function() {
-        projectManager.addTrack(trackInfo);
-        $mdDialog.hide();
-      }
-    }
-    $scope.ui.addTrack = function(evt) {
-
-      $mdDialog.show({
-        templateUrl: 'views/new_track.html',
-        controller: AddTrackController,
-        autoWrap: false,
-        clickOutsideToClose: true
-        // targetEvent: evt
-      });
-    };
-
-    $scope.ui.removeTrack = function(trackId) {
-      console.log('remove track: '+trackId);
-
-      var track = projectManager.project.tracksMap[trackId];
-      var index = projectManager.project.tracks.indexOf(track);
-
-      var nextSelected = projectManager.project.tracks.find(function(t) {
-        return t.type === track.type && t.id !== trackId;
-      });
-      if (nextSelected) {
-        $scope.ui.selectTrack(nextSelected.id);
-
-        // projectManager.removeTrack(trackId);
-        projectManager.project.tracks.splice(index, 1);
-        delete projectManager.project.tracksMap[trackId];
-      } else {
-        $mdDialog.show(
-          $mdDialog.alert()
-            .title("Warning")
-            .textContent("Can't remove this track, it's the last track of its instrument kind!")
-            .theme(' ')
-            .ok("Close")
-        );
-      }
-
-    }
-
     $scope.ui.selectTrack = function(trackId) {
       console.log('selectTrack: '+trackId);
       var track = projectManager.project.tracksMap[trackId];
@@ -402,33 +342,7 @@
       updateSwiperSlides();
     };
 
-    $scope.ui.save = function() {
-      if (!workspace.section.name) {
-        return;
-      }
-      if (!projectManager.project.name) {
-        // Project will be saved into the browser's local storage
-        var confirm = $mdDialog.prompt()
-          .title('Saving Project')
-          .textContent("Please enter project name:")
-          .placeholder('Name')
-          .ariaLabel('Name')
-          .theme(' ')
-          .ok('Save')
-          .cancel('Cancel');
 
-        $mdDialog.show(confirm).then(function(projectName) {
-          if (projectName) {
-            document.title = projectName;
-            projectManager.project.name = projectName;
-            projectManager.saveSection();
-          }
-        });
-
-      } else {
-        projectManager.saveSection();
-      }
-    }
     $scope.$on('$destroy', function() {
       projectManager.un('sectionCreated', clearSectionWorkspace);
       projectManager.un('sectionDeleted', clearSectionWorkspace);
