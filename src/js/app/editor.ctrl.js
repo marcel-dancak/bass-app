@@ -265,7 +265,6 @@
           slidesPerGroup: workspace.section.beatsPerSlide
         });
         $scope.player.playbackRangeChanged();
-        $scope.$broadcast('rzSliderForceRender');
       });
     }
 

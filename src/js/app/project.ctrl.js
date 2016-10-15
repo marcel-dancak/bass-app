@@ -244,6 +244,9 @@
       }
     }
 
+    $scope.initSliders = function() {
+      $scope.$broadcast('rzSliderForceRender');
+    };
 
     $scope.exportToFile = function() {
       if (workspace.section.name) {

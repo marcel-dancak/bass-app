@@ -216,6 +216,10 @@
       }
 
       track.audio = context.createGain();
+      if (track.volume) {
+        track.audio.gain.value = track.volume.muted? 0.0001 : track.volume.value;
+        track._volume = track.volume.value;
+      }
       // track.audio.connect(context.destination);
       track.audio.connect(compressor);
       compressor.connect(context.destination);
@@ -358,12 +362,17 @@
       if (!this.store.project) {
         return;
       }
-      var trackExcludedProperties = ['id', 'instrument', 'audio'];
+      var trackExcludedProperties = ['id', 'instrument', 'audio', '_volume'];
       var tracks = this.project.tracks.map(function(track) {
         return Object.keys(track).reduce(function(obj, property) {
           if (trackExcludedProperties.indexOf(property) === -1) {
             obj[property] = track[property];
           }
+          var muted = track.audio.gain.value <= 0.001;
+          obj.volume = {
+            muted: muted,
+            value: muted? track._volume : track.audio.gain.value
+          };
           return obj;
         }, {});
       });

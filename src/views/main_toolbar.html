@@ -78,7 +78,10 @@
         md-no-ink
         aria-label="Volume"
         class="preferences icon-hover toolbar-separated-button"
-        ng-click="$mdOpenMenu($event)">
+        ng-click="
+          initSliders();
+          $mdOpenMenu($event)
+        ">
         <md-icon
           md-svg-icon="volume-medium">
         </md-icon>
@@ -235,7 +238,10 @@
         ng-class="{
           active: player.playbackRange.start > 1 || player.playbackRange.end < workspace.section.length+1
         }"
-        ng-click="$mdOpenMenu($event)">
+        ng-click="
+          initSliders();
+          $mdOpenMenu($event)
+        ">
         <md-icon md-svg-icon="playback-range"></md-icon>
         <md-tooltip
           md-delay="1500"
