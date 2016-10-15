@@ -18,8 +18,8 @@
       };
     });
 
-  function AppController($scope, $timeout, $http, context, workspace,
-      audioPlayer, audioVisualiser, projectManager, Drums, ProjectLocalStore) {
+  function AppController($scope, $timeout, context, workspace,
+      audioPlayer, audioVisualiser, projectManager, Drums) {
 
     $scope.ui = {
       selectTrack: angular.noop,

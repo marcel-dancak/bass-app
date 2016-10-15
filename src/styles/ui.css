@@ -78,32 +78,6 @@ md-list-item.volume-field .rzslider {
   margin-top: 30px;
 }
 
-.select-editable .md-select-value {
-  border: none;
-  min-width: 16px;
-  width: 16px;
-  padding: 0;
-}
-
-.select-editable .md-select-icon {
-  margin: 0;
-}
-.toolbar-button {
-  min-width: 32px;
-  margin: 6px 2px 5px 2px;
-}
-
-.select-editable:not([disabled]):focus .md-select-value,
-.select-editable .md-select-value {
-  border: none;
-  min-width: 16px;
-  width: 16px;
-  padding: 0;
-}
-.select-editable .md-select-value span:not(.md-select-icon) {
-  display: none;
-}
-
 
 md-backdrop.md-select-backdrop {
   z-index: 100;

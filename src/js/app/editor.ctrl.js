@@ -269,19 +269,7 @@
       });
     }
 
-
-    function sectionDeleted() {
-      // select another section or create a new section
-      if (projectManager.project.sections.length > 0) {
-        workspace.selectedSectionId = projectManager.project.sections[0].id;
-      } else {
-        workspace.selectedSectionId = projectManager.createSection().id;
-      }
-      projectManager.loadSection(workspace.selectedSectionId);
-    }
-
     projectManager.on('sectionCreated', clearSectionWorkspace);
-    projectManager.on('sectionDeleted', sectionDeleted);
     projectManager.on('sectionLoaded', sectionLoaded);
 
 
@@ -345,7 +333,6 @@
 
     $scope.$on('$destroy', function() {
       projectManager.un('sectionCreated', clearSectionWorkspace);
-      projectManager.un('sectionDeleted', clearSectionWorkspace);
       projectManager.un('sectionLoaded', sectionLoaded);
       audioPlayer.un('playbackStopped', playbackStopped);
     });

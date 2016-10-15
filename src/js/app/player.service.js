@@ -300,21 +300,20 @@
             }
           }, this);
         }
+        var flatIndex = (bar-1)*this.section.timeSignature.top+beat-1;
+        this.beatPreparedCallback({
+          bar: bar,
+          beat: beat,
+          eventTime: currentTime,
+          startTime: startTime,
+          endTime: startTime+beatTime,
+          duration: beatTime,
+          timeSignature: this.section.timeSignature,
+          flatIndex: flatIndex,
+          playbackActive: !isPlaybackEnd,
+          playbackStart: playbackStart
+        });
       }
-
-      var flatIndex = (bar-1)*this.section.timeSignature.top+beat-1;
-      this.beatPreparedCallback({
-        bar: bar,
-        beat: beat,
-        eventTime: currentTime,
-        startTime: startTime,
-        endTime: startTime+beatTime,
-        duration: beatTime,
-        timeSignature: this.section.timeSignature,
-        flatIndex: flatIndex,
-        playbackActive: !isPlaybackEnd,
-        playbackStart: playbackStart
-      });
 
       if (this.scheduledSounds.length) {
         this.scheduledSounds = this.scheduledSounds.filter(function(playingNote) {

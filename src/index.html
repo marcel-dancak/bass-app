@@ -47,7 +47,7 @@
     <script src="js/app/app.module.js"></script>
     <script src="js/app/observable.js"></script>
     <script src="js/app/app.ctrl.js"></script>
-    <script src="js/app/edit-mode.ctrl.js"></script>
+    <script src="js/app/editor.ctrl.js"></script>
     <script src="js/app/project.ctrl.js"></script>
     <script src="js/app/bar.ctrl.js"></script>
 
@@ -87,7 +87,10 @@
   <body
     ng-controller="AppController"
     ng-init="player.mode = 0"
-    ng-class="[player.mode === 0? 'section-mode' : 'playlist-mode']">
+    ng-class="[
+      player.mode === 0? 'section-mode' : 'playlist-mode',
+      { 'readonly-project': projectManager.store.readOnly }
+    ]">
     <div
       layout-fill
       ng-include="'views/app.html'">

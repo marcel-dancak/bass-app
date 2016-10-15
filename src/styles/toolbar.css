@@ -32,7 +32,7 @@
   font-size: 15px;
 }
 .control-panel md-input-container input {
-  height: 28px;
+  height: 30px;
   padding-top: 0;
 }
 .control-panel .md-button {
@@ -53,7 +53,6 @@
 }
 
 .control-panel md-input-container.track {
-  padding: 0;
   min-width: 160px;
   xmargin-left: 5px;
   margin-right: 10px;
@@ -168,9 +167,6 @@
   background-color: #455A64;
 }
 
-.control-panel .playlist-field {
-  position: relative;
-}
 .md-button.edit-playlist {
   position: absolute;
   margin: 0;
@@ -184,25 +180,8 @@
 
 /*Toolbar borders*/
 
-/*.control-panel {
-  margin-left: 0;
-}
-.control-panel md-input-container {
-  margin-top: 9px;
-}
-
-.instruments-toolbar {
-  height: 50px;
-  border-bottom: 2px solid #ccc;
-  border-right: 1px solid #ccc;
-  border-bottom-right-radius: 10px;
-  padding: 0 15px;
-  position: relative;
-  margin-left: 0;
-}
-
 .playback-fields {
-  height: 50px;
+  height: 53px;
   border-bottom: 2px solid #ccc;
   border-radius: 10px;
   padding: 0 15px;
@@ -218,7 +197,6 @@
   transform: translate(-26px, -10px) rotate(-25deg);
 }
 
-x.instruments-toolbar::after,
 .playback-fields::after {
   position: absolute;
   width: 1px;
@@ -227,7 +205,7 @@ x.instruments-toolbar::after,
   background-color: #ccc;
   right: 0;
   transform: translate(11px, -10px) rotate(25deg);
-}*/
+}
 
 
 .control-panel .md-button.icon-hover:not([disabled]):not(.active) {
@@ -318,4 +296,60 @@ md-dialog .dialog-header {
 }
 .md-subheader .md-subheader-inner {
   padding: 16px 16px 8px 16px;
+}
+
+
+.readonly-project .md-button[aria-label="Save Section"],
+.readonly-project .md-button[aria-label="Save Playlists"],
+.readonly-project md-menu-item > .md-button[aria-label="Open Project"],
+.readonly-project md-menu-item > .md-button[aria-label="New Section"],
+.readonly-project md-menu-item > .md-button[aria-label="Save As"],
+.readonly-project md-menu-item > .md-button[aria-label="Delete Section"] {
+  opacity: 0.5!important;
+  pointer-events: none;
+}
+
+
+.control-panel md-input-container {
+  height: 32px;
+  padding: 0;
+}
+
+.select-text-container {
+  display: inline-block;
+  position: relative;
+  min-width: 180px;
+}
+.select-text-container > md-input-container:first-child {
+  width: 100%;
+}
+.select-text-container > md-input-container:last-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 50px;
+}
+
+.select-text-container > md-input-container:last-child:not(.md-input-focused) label {
+  display: none;
+}
+.select-text-container > md-input-container:last-child:not(.md-input-focused) input {
+  border-color: transparent;
+}
+.select-text-container > md-input-container:last-child.md-input-focused input {
+  width: calc(100% + 50px);
+  padding-right: 30px;
+}
+.select-editable .md-select-value span:not(.md-select-icon) {
+  visibility: hidden;
+}
+
+.project-toolbar {
+  margin-left: 10px;
+}
+
+.toolbar-button {
+  min-width: 32px;
+  margin: 6px 2px 5px 2px;
 }

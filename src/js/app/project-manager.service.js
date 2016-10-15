@@ -3,8 +3,35 @@
 
   angular
     .module('bd.app')
+    .value('ReadOnlyStore', ReadOnlyStore)
     .value('ProjectLocalStore', ProjectLocalStore)
     .factory('projectManager', projectManager);
+
+
+  function ReadOnlyStore(projectData) {
+    this.readOnly = true;
+    this.projectData = projectData;
+  }
+
+  ReadOnlyStore.prototype.getProject = function(projectId) {
+    return {
+      id: 1,
+      name: this.projectData.name,
+      tracks: this.projectData.tracks,
+      sections: this.projectData.index,
+      playlists: this.projectData.playlists || []
+    };
+  }
+
+  ReadOnlyStore.prototype.getSection = function(sectionId) {
+    var index = this.projectData.index.findIndex(function(item) {
+      return item.id === sectionId;
+    });
+    var section = this.projectData.sections[index];
+    section.name = this.projectData.index[index].name;
+    return section;
+  };
+
 
 
   function ProjectLocalStore() {
@@ -44,7 +71,7 @@
   };
 
 
-  ProjectLocalStore.prototype.loadProject = function(projectId) {
+  ProjectLocalStore.prototype.getProject = function(projectId) {
     var projectConfig = JSON.parse(localStorage.getItem(projectKey(projectId)));
     var playlists = JSON.parse(localStorage.getItem(playlistsKey(projectId))) || [];
 
@@ -163,7 +190,10 @@
 
     function ProjectManager() {
       this.store = new ProjectLocalStore();
-      Observable.call(this, ["sectionLoaded", "sectionDeleted", "sectionCreated", "playlistLoaded"]);
+      Observable.call(this, [
+        "projectLoaded", "playlistLoaded",
+        "sectionLoaded", "sectionDeleted", "sectionCreated"
+      ]);
     }
     ProjectManager.prototype = Object.create(Observable.prototype);
 
@@ -220,7 +250,7 @@
     ProjectManager.prototype.loadProject = function(projectId) {
       idCouter = {};
       compressors = {};
-      var projectData = this.store.loadProject(projectId);
+      var projectData = this.store.getProject(projectId);
       this.project = {
         name: projectData.name,
         sections: angular.copy(projectData.sections),

@@ -13,7 +13,7 @@
     }
   }
 
-  function ProjectController($scope, $timeout, $mdToast, $mdDialog, projectManager, workspace) {
+  function ProjectController($scope, $timeout, $http, $mdToast, $mdDialog, projectManager, workspace, ReadOnlyStore) {
 
     function showNotification(htmlContent) {
       $mdToast.show({
@@ -190,6 +190,18 @@
       }
     }
 
+    $scope.deleteSection = function() {
+      projectManager.deleteSection(workspace.selectedSectionId);
+
+      // select another section or create a new section
+      if (projectManager.project.sections.length > 0) {
+        workspace.selectedSectionId = projectManager.project.sections[0].id;
+      } else {
+        workspace.selectedSectionId = projectManager.createSection().id;
+      }
+      projectManager.loadSection(workspace.selectedSectionId);
+    };
+
     $scope.savePlaylists = function() {
       if (workspace.playlist.name) {
         projectManager.savePlaylists();
@@ -216,13 +228,12 @@
 
     var projectParam = queryStringParam("PROJECT");
     if (projectParam) {
-      /*
       $http.get(projectParam+'.json').then(function(response) {
-        $scope.project = projectManager.loadProject(response.data);
+        projectManager.store = new ReadOnlyStore(response.data);
+        $scope.project = projectManager.loadProject(1);
         workspace.selectedSectionIndex = 0;
         projectManager.loadSection(workspace.selectedSectionIndex);
       });
-      */
     } else {
       if (projectManager.store.projects.length) {
         // open last project
