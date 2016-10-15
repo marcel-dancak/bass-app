@@ -21,8 +21,7 @@
         'graph-enabled': player.graphEnabled
       }"
       msd-wheel="
-        workspace.section.beatsPerView=workspace.section.beatsPerView+$delta;
-        swiperControl.updateSlidesSize(workspace.section.beatsPerView);
+        workspace.section.beatsPerView = swiperControl.setBeatsPerView(workspace.section.beatsPerView+$delta);
         slidesSizeChanged();
         $event.preventDefault()
       ">
@@ -71,7 +70,7 @@
           ng-class="{active: player.graphEnabled}"
           ng-click="player.graphEnabled = !player.graphEnabled">
           <md-icon md-svg-icon="audio-signal"></md-icon>
-          <md-tooltip md-delay="1000" md-direction="right">Toggle bass audio graph</md-tooltip>
+          <md-tooltip md-delay="1000" md-direction="right">Toggle audio graph</md-tooltip>
         </md-button>
       </div>
 

@@ -136,9 +136,10 @@
       this._updateLastSlideClass();
     };
 
-    SwiperControl.prototype.updateSlidesSize = function(slidesPerView) {
+    SwiperControl.prototype.setBeatsPerView = function(slidesPerView) {
       var lockSwiper = false;
-      slidesPerView = Math.min(slidesPerView, 12);
+      slidesPerView = Math.max(slidesPerView, 4); // Restricts min value
+      slidesPerView = Math.min(slidesPerView, 12); // Restricts max value
       var slidesCount = this.maxSlides || this.barSwiper.slides.length;
       console.log('updateSlidesSize: '+slidesPerView+' / max: '+slidesCount);
       if (slidesPerView >= slidesCount) {
@@ -165,9 +166,10 @@
       }
       this.updateSlidesVisibility();
       this.updateSubbeatsVisibility();
+      return slidesPerView;
     };
 
-    SwiperControl.prototype.updateBeatsPerSlide = function(beatsPerSlide) {
+    SwiperControl.prototype.setBeatsPerSlide = function(beatsPerSlide) {
       this.barSwiper.params.slidesPerGroup = beatsPerSlide;
       this.instrumentSwiper.params.slidesPerGroup = beatsPerSlide;
       this.barSwiper.updateSlidesSize();
@@ -185,7 +187,7 @@
       this.maxSlides = last - first + 1;
       if (this.maxSlides <= this.barSwiper.params.slidesPerView) {
         // fit slides to view and lock swiper
-        this.updateSlidesSize(this.maxSlides);
+        this.setBeatsPerView(this.maxSlides);
       } else {
         if (!this.barSwiper.params.allowSwipeToNext) {
           this.barSwiper.unlockSwipes();

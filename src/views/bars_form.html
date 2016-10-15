@@ -68,7 +68,7 @@
             max="16"
             step="1"
             ng-model="workspace.section.beatsPerView"
-            ng-change="swiperControl.updateSlidesSize(workspace.section.beatsPerView)">
+            ng-change="workspace.section.beatsPerView = swiperControl.setBeatsPerView(workspace.section.beatsPerView)">
         </md-input-container>
       </md-list-item>
 
@@ -92,7 +92,7 @@
             max="8"
             step="1"
             ng-model="workspace.section.beatsPerSlide"
-            ng-change="swiperControl.updateBeatsPerSlide(workspace.section.beatsPerSlide)">
+            ng-change="swiperControl.setBeatsPerSlide(workspace.section.beatsPerSlide)">
         </md-input-container>
       </md-list-item>
 
