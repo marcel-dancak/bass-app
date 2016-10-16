@@ -42,26 +42,18 @@
     };
 
     function beatPrepared(evt) {
-      if (evt.playbackActive && !$scope.player.visibleBeatsOnly) {
+      if (!$scope.player.visibleBeatsOnly) {
         var slide = evt.flatIndex - swiperControl.firstSlide;
-        // console.log('flatIndex: '+evt.flatIndex+' slide: '+slide);
-        // console.log('active index: '+swiperControl.barSwiper.activeIndex);
-        if (slide < swiperControl.barSwiper.activeIndex) {
-          // compute index of 'cloned' looped slide
-          slide = swiperControl.lastSlide - swiperControl.firstSlide + 1 + slide;
-        }
-        // console.log('slide to '+slide);
-
         var timeToBeat = evt.startTime - evt.eventTime;
         // console.log(slide-$scope.barSwiper.activeIndex);
         // console.log(timeToBeat);
-        //setTimeout(function() {
-          swiperControl.barSwiper.slideTo(
+        setTimeout(function() {
+          swiperControl.slideTo(
             slide,
-            (slide === 0)? 0 : workspace.section.animationDuration,
+            workspace.section.animationDuration,
             true
           );
-        //}, parseInt(timeToBeat*1000)-50);
+        }, parseInt(timeToBeat*1000));
       }
 
 
@@ -102,15 +94,13 @@
         // TODO: swiper slide size change also affect updateLockedPlayerRange
         swiperControl.barSwiper.on('transitionEnd', updateLockedPlayerRange);
       } else {
+        swiperControl.reset();
+
         if ($scope.player.loop) {
           var playbackRange = swiperControl.lastSlide-swiperControl.firstSlide + 1;
           if (playbackRange > workspace.section.beatsPerView) {
             swiperControl.createLoop();
           }
-        }
-        // go to start as soon as possible
-        if (swiperControl.barSwiper.activeIndex > 0) {
-          swiperControl.barSwiper.slideTo(0, 0, true);
         }
       }
       $scope.player.playing = true;

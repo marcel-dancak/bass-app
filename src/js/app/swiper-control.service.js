@@ -254,19 +254,21 @@
 
       var instrumentSwiper = loopConfig.ctrl.instrumentSwiper;
 
-      console.log('Range: {0} - {1} Active index: {2} Loop start: {3}'.format(firstSlide, firstSlide, s.activeIndex, normalSlidesCount));
-      if (s.activeIndex >= playbackSlidesCount) {
-        var index = s.activeIndex-playbackSlidesCount;
-        console.log('LAST SLIDE, going to: '+index);
-        s.slideTo(index, 0, false, true);
+      var slideIndex = s.snapIndex * workspace.section.beatsPerSlide;
+      // console.log('Range: {0} - {1} Active index: {2} Loop start: {3}'.format(firstSlide, firstSlide, s.activeIndex, normalSlidesCount));
+      if (slideIndex >= playbackSlidesCount) {
+        console.log('LAST SLIDE, fast switch {0} -> {1}: '.format(slideIndex, slideIndex-playbackSlidesCount));
+        slideIndex = slideIndex-playbackSlidesCount;
+        s.slideTo(slideIndex, 0, false, true);
+        loopConfig.ctrl.lastRequestedIndex = slideIndex;
       }
 
-      var lastViewIndex = s.activeIndex + workspace.section.beatsPerView + workspace.section.beatsPerSlide;
+      var lastViewIndex = slideIndex + workspace.section.beatsPerView + workspace.section.beatsPerSlide;
 
       var length = Math.min(workspace.section.beatsPerView+workspace.section.beatsPerSlide, playbackSlidesCount);
       length = workspace.section.beatsPerView+workspace.section.beatsPerSlide;
       for (var i = 0; i < length; i++) {
-        var j = firstSlide + i + s.activeIndex;
+        var j = firstSlide + i + slideIndex;
         if (j > lastSlide) {
           // skip slides outside playback range
           j += normalSlidesCount - lastSlide - 1;
@@ -396,15 +398,45 @@
         slidesPerView: this.barSwiper.params.slidesPerView,
         slidesPerGroup: this.barSwiper.params.slidesPerGroup
       });
+      // TODO: check if activeIndex is greater than without loop slides and reset to first slide
+      this.updateSlidesVisibility();
     }
 
     SwiperControl.prototype.getBeatElem = function(bar, beat) {
-      var beatSelector = '.swiper-slide:not(.swiper-slide-duplicate) #beat_{0}_{1}'.format(bar, beat);
-      return this.barSwiper.wrapper[0].querySelector(beatSelector);
+      // var beatSelector = '.swiper-slide:not(.swiper-slide-duplicate) #beat_{0}_{1}'.format(bar, beat);
+      // return this.barSwiper.wrapper[0].querySelector(beatSelector);
+
+      var beatSelector = '.swiper-slide #beat_{0}_{1}'.format(bar, beat);
+      var elems = this.barSwiper.wrapper[0].querySelectorAll(beatSelector);
+      for (var i = 0; i < elems.length; i++) {
+        var elem = elems[i];
+        var bounds = elem.getBoundingClientRect();
+        if (bounds.left >= 0 && bounds.left < window.innerWidth) {
+          return elem;
+        }
+      }
     };
 
     SwiperControl.prototype.getBarWrapper = function() {
       return this.barSwiper.wrapper[0];
+    };
+
+    SwiperControl.prototype.reset = function() {
+      this.lastRequestedIndex = 0;
+      this.barSwiper.slideTo(0, 0, true);
+    };
+
+    SwiperControl.prototype.slideTo = function(slideIndex, speed, runCallbacks, internal) {
+      // console.log('flatIndex: '+evt.flatIndex+' slide: '+slide);
+      // console.log('active index: '+swiperControl.barSwiper.activeIndex);
+      // console.log('raw slide '+slideIndex+'  last requested: '+this.lastRequestedIndex);
+      if (slideIndex < this.lastRequestedIndex) {
+        // compute index of 'cloned' looped slide
+        slideIndex = this.lastSlide - this.firstSlide + 1 + slideIndex;
+      }
+      // console.log('slide to '+slideIndex);
+      this.lastRequestedIndex = slideIndex;
+      this.barSwiper.slideTo(slideIndex, speed, runCallbacks, internal);
     };
 
     return new SwiperControl();
