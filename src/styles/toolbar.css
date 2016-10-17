@@ -136,13 +136,6 @@
   display: none;
 }
 
-.toolbar-button[disabled],
-.playlist-mode .playback-range-menu,
-.playlist-mode .screen-playback {
-  pointer-events: none;
-  opacity: 0.45!important;
-}
-
 .mode-switch {
   border: 1px solid #777;
   position: relative;
@@ -184,7 +177,7 @@
   height: 53px;
   border-bottom: 2px solid #ccc;
   border-radius: 10px;
-  padding: 0 15px;
+  padding: 0 18px;
   position: relative;
 }
 
@@ -194,7 +187,7 @@
   height: 120%;
   content: "";
   background-color: #ccc;
-  transform: translate(-26px, -10px) rotate(-25deg);
+  transform: translate(-29px, -10px) rotate(-25deg);
 }
 
 .playback-fields::after {
@@ -299,17 +292,6 @@ md-dialog .dialog-header {
 }
 
 
-.readonly-project .md-button[aria-label="Save Section"],
-.readonly-project .md-button[aria-label="Save Playlists"],
-.readonly-project md-menu-item > .md-button[aria-label="Open Project"],
-.readonly-project md-menu-item > .md-button[aria-label="New Section"],
-.readonly-project md-menu-item > .md-button[aria-label="Save As"],
-.readonly-project md-menu-item > .md-button[aria-label="Delete Section"] {
-  opacity: 0.5!important;
-  pointer-events: none;
-}
-
-
 .control-panel md-input-container {
   height: 32px;
   padding: 0;
@@ -352,4 +334,23 @@ md-dialog .dialog-header {
 .toolbar-button {
   min-width: 32px;
   margin: 6px 2px 5px 2px;
+}
+
+.toolbar-button[disabled],
+.playlist-mode .playback-range-menu,
+.playlist-mode .screen-playback,
+.playback-active .mode-switch,
+.playback-active .project-toolbar,
+.readonly-project .md-button[aria-label="Save Section"],
+.readonly-project .md-button[aria-label="Save Playlists"],
+.readonly-project md-menu-item > .md-button[aria-label="Open Project"],
+.readonly-project md-menu-item > .md-button[aria-label="New Section"],
+.readonly-project md-menu-item > .md-button[aria-label="Save As"],
+.readonly-project md-menu-item > .md-button[aria-label="Delete Section"] {
+  opacity: 0.6!important;
+  pointer-events: none;
+}
+
+.control-panel md-select[disabled] .md-select-value {
+  color: transparent;
 }

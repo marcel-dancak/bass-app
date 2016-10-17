@@ -204,6 +204,12 @@
       projectManager.loadSection(workspace.selectedSectionId);
     };
 
+
+    $scope.newPlaylist = function() {
+      workspace.playlist = projectManager.createPlaylist();
+      workspace.selectedPlaylistId = workspace.playlist.id;
+    };
+
     $scope.savePlaylists = function() {
       if (workspace.playlist.name) {
         projectManager.savePlaylists();
@@ -211,11 +217,15 @@
       }
     };
 
-    $scope.newPlaylist = function() {
-      workspace.playlist = projectManager.createPlaylist();
-      workspace.selectedPlaylistId = workspace.playlist.id;
+    $scope.deletePlaylist = function() {
+      var deletedPlaylistName = workspace.playlist.name;
+      projectManager.deletePlaylist(workspace.playlist.id);
+      projectManager.savePlaylists();
+      showNotification('<span>Playlist <b>{0}</b> was deleted</span>'.format(deletedPlaylistName));
+      if (projectManager.project.playlists.length) {
+        projectManager.loadPlaylist(projectManager.project.playlists[0].id);
+      }
     };
-
 
     $scope.itemReorderHandler = function(event, dragItemId, dropItemId, list) {
       var dragItemIndex = list.findIndex(function(item) {
@@ -233,8 +243,9 @@
       $http.get(dataUrl+projectParam+'.json').then(function(response) {
         projectManager.store = new ReadOnlyStore(response.data);
         $scope.project = projectManager.loadProject(1);
-        workspace.selectedSectionIndex = 0;
-        projectManager.loadSection(workspace.selectedSectionIndex);
+        console.log('-----')
+        workspace.selectedSectionId = $scope.project.sections[0].id;
+        projectManager.loadSection(workspace.selectedSectionId);
       });
     } else {
       if (projectManager.store.projects.length) {
@@ -248,6 +259,17 @@
 
     $scope.initSliders = function() {
       $scope.$broadcast('rzSliderForceRender');
+    };
+
+    $scope.exportProject = function() {
+      var data = projectManager.store._projectData();
+      console.log(data);
+      var blob = new Blob(
+        // [JSON.stringify(data, null, 4)],
+        [JSON.stringify(data)],
+        {type: "application/json;charset=utf-8"}
+      );
+      saveAs(blob, projectManager.project.name+'.json');
     };
 
     $scope.exportToFile = function() {

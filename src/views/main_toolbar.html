@@ -61,7 +61,7 @@
           $mdOpenMenu($event)
         ">
         <md-icon
-          md-svg-icon="preferences">
+          md-svg-icon="options">
         </md-icon>
         <md-tooltip md-delay="1500">Instrument preferences</md-tooltip>
       </md-button>
@@ -524,6 +524,15 @@
           </md-button>
         </md-menu-item>
 
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="Export"
+            ng-click="exportProject()">
+            Export
+          </md-button>
+        </md-menu-item>
+
         <md-menu-item
           ng-if-start="player.mode === 0"
           class="menu-group-item">
@@ -551,20 +560,12 @@
             Save As...
           </md-button>
         </md-menu-item>
-        <md-menu-item>
+        <md-menu-item ng-if-end>
           <md-button
             md-no-ink
             aria-label="Delete Section"
             ng-click="deleteSection()">
             Delete
-          </md-button>
-        </md-menu-item>
-        <md-menu-item ng-if-end>
-          <md-button
-            md-no-ink
-            aria-label="Export"
-            ng-click="exportToFile()">
-            Export
           </md-button>
         </md-menu-item>
 

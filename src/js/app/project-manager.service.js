@@ -27,6 +27,7 @@
     var index = this.projectData.index.findIndex(byId(sectionId));
     var section = this.projectData.sections[index];
     section.name = this.projectData.index[index].name;
+    section.id = this.projectData.index[index].id;
     return section;
   };
 
@@ -149,7 +150,6 @@
       return;
     }
     var key = sectionKey(this.project.id, sectionId);
-    console.log(key);
     var data = localStorage.getItem(key);
     if (data) {
       data = JSON.parse(data);
@@ -168,6 +168,24 @@
     console.log('ProjectLocalStore.savePlaylists: '+key);
     localStorage.setItem(key, JSON.stringify(playlists));
   };
+
+  ProjectLocalStore.prototype._projectData = function() {
+    var projectId = this.project.id;
+    var projectConfig = JSON.parse(localStorage.getItem(projectKey(projectId)));
+    var playlists = JSON.parse(localStorage.getItem(playlistsKey(projectId))) || [];
+    var sections = projectConfig.sections.map(function(sectionIndex) {
+      var key = sectionKey(projectId, sectionIndex.id);
+      return JSON.parse(localStorage.getItem(key));
+    });
+    var data = {
+      name: projectConfig.name,
+      index: projectConfig.sections,
+      tracks: projectConfig.tracks,
+      playlists: playlists,
+      sections: sections
+    };
+    return data;
+  }
 
 
   // function generateItemId(list) {
@@ -488,14 +506,23 @@
       this.dispatchEvent('playlistLoaded', this.playlist);
     };
 
-    ProjectManager.prototype.savePlaylists = function() {
-      var data = this.project.playlists.map(function(playlist) {
+    ProjectManager.prototype.deletePlaylist = function(playlistId) {
+      var index = this.project.playlists.findIndex(byId(playlistId));
+      if (index !== -1) {
+        this.project.playlists.splice(index, 1);
+      }
+    };
+
+    ProjectManager.prototype._playlistsData = function() {
+      return this.project.playlists.map(function(playlist) {
         return {
           name: playlist.name,
           items: playlist.items
         };
       });
-      this.store.savePlaylists(data);
+    }
+    ProjectManager.prototype.savePlaylists = function() {
+      this.store.savePlaylists(this._playlistsData());
     };
 
     return new ProjectManager();
