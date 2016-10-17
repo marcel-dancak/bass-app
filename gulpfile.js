@@ -10,7 +10,7 @@ var merge = require('merge-stream');
 var path = require('path');
 
 
-var TARGET = 'dist/v13/';
+var TARGET = 'dist/v15/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -29,7 +29,10 @@ gulp.task('devserver', function() {
   connect.server({
     root: ['./', 'src/'],
     port: port,
-    livereload: true
+    // livereload: true
+    livereload: {
+      port: 33333
+    }
   });
 });
 
@@ -99,6 +102,9 @@ gulp.task('uglify', function() {
       'bower_components/angular-material/modules/js/menu/menu.min.js',
       'bower_components/angular-material/modules/js/select/select.min.js',
       'bower_components/angular-material/modules/js/tooltip/tooltip.min.js',
+      'bower_components/angular-material/modules/js/toast/toast.min.js',
+      'bower_components/angular-material/modules/js/panel/panel.min.js',
+      'bower_components/angular-material/modules/js/dialog/dialog.min.js',
       // 'bower_components/angular-material/modules/js/slider/slider.min.js',
       // 'bower_components/angular-material/modules/js/tabs/tabs.min.js',
       // 'bower_components/angular-material/modules/js/content/content.min.js',
@@ -117,8 +123,8 @@ gulp.task('uglify', function() {
       'src/js/**/*.module.js',
       'src/js/**/*.js',
     ]).pipe(ngAnnotate({ add: true })),
-    gulp.src('src/**/*.html')
-      .pipe(templateCache())
+    gulp.src('src/views/**/*.html')
+      .pipe(templateCache('templateCache.js', {root: 'views/'}))
   )
     .pipe(uglify())
     .pipe(concat('app.min.js'))

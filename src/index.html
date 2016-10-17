@@ -79,8 +79,8 @@
           $mdIconProvider
             .defaultIconSet('styles/icons.svg', 32)
         })
-        .constant('soundsUrl', '/');
-        // .constant('soundsUrl', 'https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/');
+        .constant('soundsUrl', '/') // https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/
+        .constant('dataUrl', '/');
     </script>
   </head>
 
@@ -89,7 +89,10 @@
     ng-init="player.mode = 0"
     ng-class="[
       player.mode === 0? 'section-mode' : 'playlist-mode',
-      { 'readonly-project': projectManager.store.readOnly }
+      {
+        'readonly-project': projectManager.store.readOnly,
+        'playback-active': player.playing
+      }
     ]">
     <div
       layout-fill
