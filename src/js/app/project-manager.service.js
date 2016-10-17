@@ -24,9 +24,7 @@
   }
 
   ReadOnlyStore.prototype.getSection = function(sectionId) {
-    var index = this.projectData.index.findIndex(function(item) {
-      return item.id === sectionId;
-    });
+    var index = this.projectData.index.findIndex(byId(sectionId));
     var section = this.projectData.sections[index];
     section.name = this.projectData.index[index].name;
     return section;
@@ -51,9 +49,7 @@
   }
 
   ProjectLocalStore.prototype._updateProjectsOrder = function(latestProjectId) {
-    var index = this.projects.findIndex(function(p) {
-      return p.id === latestProjectId;
-    });
+    var index = this.projects.findIndex(byId(latestProjectId));
     if (index !== -1) {
       var item = this.projects.splice(index, 1)[0];
       this.projects.splice(0, 0, item);
@@ -92,6 +88,7 @@
     var id = this.projects.reduce(function(value, projectRecord) {
       return projectRecord.id >= value? projectRecord.id+1 : value;
     }, 1);
+    var id = generateItemId(this.projects);
     this.project = {
       name: projectName,
       id: id,
@@ -105,6 +102,7 @@
 
     var data = JSON.stringify(this.projects);
     localStorage.setItem(this.PROJECTS_KEY, data);
+    return this.project;
   };
 
 
@@ -172,14 +170,28 @@
   };
 
 
+  // function generateItemId(list) {
+  //   var newId = Math.max.apply(
+  //     null,
+  //     list.map(function(item) {
+  //       return item.id;
+  //     })
+  //   ) + 1;
+  //   return Math.max(newId, 1);
+  // }
+
   function generateItemId(list) {
-    var newId = Math.max.apply(
-      null,
-      list.map(function(item) {
-        return item.id;
-      })
-    ) + 1;
-    return Math.max(newId, 1);
+    return list.reduce(
+      function(value, item) {
+        return item.id >= value? item.id+1 : value;
+      }, 1
+    );
+  }
+
+  function byId(id) {
+    return function(item) {
+      return item.id === id;
+    }
   }
 
   function projectManager($http, $timeout, $q, Observable, context,
@@ -248,6 +260,7 @@
       };
       this.createPlaylist();
       tracks.forEach(this.addTrack.bind(this));
+      this.dispatchEvent('projectLoaded', this.project);
       return this.project;
     };
 
@@ -272,6 +285,7 @@
       } else {
         this.createPlaylist();
       }
+      this.dispatchEvent('projectLoaded', this.project);
       return this.project;
     };
 
@@ -319,9 +333,7 @@
       if (this.section) {
         var sectionId = this.section.id;
         this.store.deleteSection(sectionId);
-        var index = this.project.sections.findIndex(function(s) {
-          return s.id === sectionId;
-        });
+        var index = this.project.sections.findIndex(byId(sectionId));
         this.project.sections.splice(index, 1);
       }
       this.saveProjectConfig();
@@ -397,9 +409,7 @@
       var data = this.serializeSection(this.section);
       this.store.saveSection(sectionId, this.section.name, data);
 
-      var sectionRecord = this.project.sections.find(function(s) {
-        return s.id === sectionId;
-      });
+      var sectionRecord = this.project.sections.find(byId(sectionId));
       if (sectionRecord) {
         sectionRecord.name = this.section.name;
       }
@@ -407,6 +417,17 @@
       this.saveProjectConfig();
     };
 
+    ProjectManager.prototype.saveAsNewSection = function(newName) {
+      // var index = this.project.sections.findIndex(byId(this.section.id));
+
+      this.section.id = generateItemId(this.project.sections);
+      this.section.name = newName || "New";
+      this.project.sections.push({
+        id: this.section.id,
+        name: this.section.name
+      });
+      this.saveSection();
+    };
 
     ProjectManager.prototype.loadSectionData = function(section) {
       console.log('loadSectionData');
@@ -427,9 +448,7 @@
 
     ProjectManager.prototype.getSection = function(sectionId) {
       console.log(this.project);
-      var section = this.project.sections.find(function(s) {
-        return s.id === sectionId;
-      });
+      var section = this.project.sections.find(byId(sectionId));
       if (!section) {
         console.log('invalid section id: '+sectionId);
         return;
@@ -465,9 +484,7 @@
     };
 
     ProjectManager.prototype.loadPlaylist = function(playlistId) {
-      this.playlist = this.project.playlists.find(function(playlist) {
-        return playlist.id === playlistId;
-      });
+      this.playlist = this.project.playlists.find(byId(playlistId));
       this.dispatchEvent('playlistLoaded', this.playlist);
     };
 

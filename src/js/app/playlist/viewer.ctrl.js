@@ -9,17 +9,7 @@
 
     var viewerTrackId = workspace.bassSection.track.id;
 
-    if (!workspace.selectedPlaylistId) {
-      workspace.playlist = projectManager.project.playlists[0];
-      workspace.selectedPlaylistId = workspace.playlist.id;
-    }
-
     // workspace.track = projectManager.project.tracksMap['bass_0'];
-    var projectSections = angular.copy(projectManager.project.sections);
-    $scope.sectionNames = {};
-    projectSections.forEach(function(section) {
-      $scope.sectionNames[section.id] = section.name;
-    });
 
     $scope.visibleSubbeats = {
       3: {
@@ -140,7 +130,7 @@
         initialSlide: 0,
         roundLengths: true
       });
-      window.sw = playerSwiper;
+      // window.sw = playerSwiper;
 
       playerSwiper.on('transitionEnd', function(s) {
         console.log('activeIndex: {0} slides: {1}'.format(s.activeIndex, s.slides.length));
@@ -207,12 +197,6 @@
 
     $scope.updatePlaylist = initPlaylistSlides;
 
-    if (!projectManager.project.playlists[0] || projectManager.project.playlists[0].items.length === 0) {
-      console.log('SHOW PLAYLIST EDITOR');
-      $scope.ui.playlist.showEditor = true;
-    } else {
-      initPlaylistSlides();
-    }
 
     function beatSync(evt) {
       if (!evt.playbackActive) {
@@ -300,16 +284,40 @@
       initPlaylistSlides();
     }
 
+    function projectLoaded(project) {
+      console.log('projectLoaded');
+      workspace.playlist = project.playlists[0];
+      $scope.sectionNames = {};
+      projectManager.project.sections.forEach(function(section) {
+        $scope.sectionNames[section.id] = section.name;
+      });
+
+      console.log(workspace.playlist.items.length);
+      if (workspace.playlist.items.length === 0) {
+        console.log('SHOW PLAYLIST EDITOR');
+        $scope.ui.playlist.showEditor = true;
+        playerSwiper.removeAllSlides();
+      } else {
+        workspace.selectedPlaylistId = workspace.playlist.id;
+        initPlaylistSlides();
+      }
+    }
+
+
     audioPlayer.setPlaybackSpeed($scope.player.speed/100);
     $scope.ui.playbackSpeedChanged = function(speed) {
       audioPlayer.setPlaybackSpeed(speed/100);
     };
 
     projectManager.on('playlistLoaded', playlistLoaded);
+    projectManager.on('projectLoaded', projectLoaded);
+
+    projectLoaded(projectManager.project);
 
     $scope.$on('$destroy', function() {
       audioPlayer.un('playbackStopped', playbackStopped);
       projectManager.un('playlistLoaded', playlistLoaded);
+      projectManager.un('projectLoaded', projectLoaded);
     });
 
   }

@@ -13,7 +13,7 @@
     }
   }
 
-  function ProjectController($scope, $timeout, $http, $mdToast, $mdDialog, projectManager, workspace, ReadOnlyStore) {
+  function ProjectController($scope, $timeout, $http, $mdToast, $mdDialog, projectManager, workspace, ReadOnlyStore, dataUrl) {
 
     function showNotification(htmlContent) {
       $mdToast.show({
@@ -112,11 +112,8 @@
       ]);
       var section = projectManager.createSection();
       workspace.selectedSectionId = section.id;
-      if (workspace.section) {
-        projectManager.loadSection(workspace.selectedSectionId);
-      } else {
-        workspace.section = section;
-      }
+      workspace.section = section;
+      projectManager.loadSection(workspace.selectedSectionId);
     };
 
     $scope.loadProject = function(projectId) {
@@ -190,6 +187,11 @@
       }
     }
 
+    $scope.saveAsSection = function() {
+      projectManager.saveAsNewSection();
+      workspace.selectedSectionId = workspace.section.id;
+    };
+
     $scope.deleteSection = function() {
       projectManager.deleteSection(workspace.selectedSectionId);
 
@@ -228,7 +230,7 @@
 
     var projectParam = queryStringParam("PROJECT");
     if (projectParam) {
-      $http.get(projectParam+'.json').then(function(response) {
+      $http.get(dataUrl+projectParam+'.json').then(function(response) {
         projectManager.store = new ReadOnlyStore(response.data);
         $scope.project = projectManager.loadProject(1);
         workspace.selectedSectionIndex = 0;

@@ -376,7 +376,7 @@
           <label>Section</label>
           <md-select
             md-no-ink
-            ng-show="project.sections.length > 1"
+            ng-disabled="project.sections.length < 2"
             aria-label="Section"
             class="select-editable"
             md-container-class="sections-list"
@@ -428,7 +428,7 @@
           <label>Playlist</label>
           <md-select
             md-no-ink
-            ng-show="project.playlists.length > 1"
+            ng-disabled="project.playlists.length < 2"
             aria-label="Section"
             class="select-editable"
             md-container-class="sections-list"
@@ -547,7 +547,7 @@
           <md-button
             md-no-ink
             aria-label="Save As"
-            ng-click="saveSection()">
+            ng-click="saveAsSection()">
             Save As...
           </md-button>
         </md-menu-item>
