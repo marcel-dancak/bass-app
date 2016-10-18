@@ -304,11 +304,10 @@
       nextAudio.source.playbackRate.setValueAtTime(nextAudio.slide.startRate, nextAudio.startTime);
       nextAudio.source.playbackRate.linearRampToValueAtTime(1, nextAudio.slide.crossPointTime);
 
-      nextAudio.gain.setValueAtTime(0.0001, nextAudio.startTime);
-      nextAudio.gain.linearRampToValueAtTime(nextAudio.slide.volume, nextAudio.slide.crossPointTime);
+      nextAudio.gain.setValueAtTime(0.00001, nextAudio.startTime);
+      nextAudio.gain.linearRampToValueAtTime(nextAudio.slide.volume, nextAudio.slide.crossPointTime-0.0001);
       // nextAudio.gain.setValueCurveAtTime(fadeIn(nextAudio.slide.volume), nextAudio.startTime+0.0001, nextAudio.slide.crossPointDuration-0.0002);
       // nextAudio.gain.setValueAtTime(nextAudio.slide.volume, nextAudio.startTime+nextAudio.slide.crossPointDuration);
-
       // console.log('{0} fade in: at {1} duration {2}'.format(i, nextAudio.startTime, nextAudio.slide.crossPointDuration));
       nextAudio.offset = nextBufferOffset/44100;
       nextAudio.duration = nextAudio.slide.crossPointDuration;
