@@ -5,6 +5,20 @@
     .module('bd.app')
     .controller('PlaylistViewer', PlaylistViewer);
 
+
+  var EMPTY_TRACK = {
+    beat: function(bar, beat) {
+      return {
+        bar: bar,
+        beat: beat,
+        subdivision: 4
+      };
+    },
+    beatSounds: function() {
+      return [];
+    }
+  };
+
   function PlaylistViewer($scope, $timeout, $q, audioPlayer, projectManager, workspace, $mdCompiler, HighlightTimeline) {
 
     var viewerTrackId = workspace.bassSection.track.id;
@@ -47,7 +61,7 @@
       }
       var beats = [];
 
-      var track = section.tracks[viewerTrackId];
+      var track = section.tracks[viewerTrackId] || EMPTY_TRACK;
       var counter = count;
       while (counter--) {
         var sectionFirstsBeat = position.bar === 1 && position.beat === 1;
@@ -313,6 +327,12 @@
     projectManager.on('projectLoaded', projectLoaded);
 
     projectLoaded(projectManager.project);
+
+    // ugly autoselect to bass guitar track
+    if (workspace.track && workspace.track.type !== 'bass') {
+      $scope.ui.trackId = 'bass_0';
+      $scope.ui.selectTrack($scope.ui.trackId);
+    }
 
     $scope.$on('$destroy', function() {
       audioPlayer.un('playbackStopped', playbackStopped);
