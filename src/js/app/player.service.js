@@ -6,6 +6,10 @@
     .factory('audioPlayer', audioPlayer);
 
 
+  function ResourceNotAvailable(resource) {
+    this.resource = resource;
+  }
+
   function audioPlayer($timeout, $http, $q, context, soundsUrl, Observable, AudioComposer, projectManager) {
 
     function AudioPlayer() {
@@ -216,7 +220,7 @@
           offset: 0
         }
       } else {
-        console.log('error '+resources);
+        throw new ResourceNotAvailable(resources[index || 0]);
       }
     }
 
@@ -294,7 +298,15 @@
           track.beatSounds(trackBeat).forEach(function(subbeatSound) {
             var startAt = startTime + (beatTime / trackBeat.subdivision * (subbeatSound.subbeat - 1));
             if (track.type === 'bass') {
-              this._playBassSound(track, subbeatSound.sound, startAt, noteBeatTime, timeSignature);
+              try {
+                this._playBassSound(track, subbeatSound.sound, startAt, noteBeatTime, timeSignature);
+              } catch (ex) {
+                if (ex instanceof ResourceNotAvailable) {
+                  console.log('Failed to load resource: '+ex.resource);
+                } else {
+                  throw ex;
+                }
+              }
             } else {
               this._playDrumSound(track, subbeatSound, startAt);
             }
