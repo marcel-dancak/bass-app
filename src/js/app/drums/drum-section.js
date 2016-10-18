@@ -19,6 +19,12 @@
         return beatData;
       }
     }
+    return {
+      bar: bar,
+      beat: beat,
+      subdivision: 4,
+      data: []
+    };
   };
 
   DrumTrackSection.prototype.sound = function(bar, beat, subbeat, drum) {
