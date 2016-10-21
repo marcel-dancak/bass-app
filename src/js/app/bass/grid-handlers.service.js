@@ -171,12 +171,12 @@
 
         if (!evt.ctrlKey) {
           $timeout(function() {
-            angular.element(evt.target).addClass("drag-move-element");
+            evt.target.classList.add("drag-move-element");
           }, 100);
         }
       },
       onDragEnd: function(evt) {
-        angular.element(evt.target).removeClass("drag-move-element");
+        evt.target.classList.remove("drag-move-element");
       },
       onDrop: function(evt, dragGrid, dropGrid) {
         angular.extend(dropGrid.sound, dragGrid.sound);
@@ -239,7 +239,7 @@
           // set opacity with delay, to avoid opacity in drag image
           setTimeout(function() {
             soundElements.forEach(function(elem) {
-              angular.element(elem).addClass("drag-move-element");
+              elem.classList.add("drag-move-element");
             });
           }, 100);
         }
@@ -247,7 +247,7 @@
       onDragEnd: function(evt) {
         this.dragElement.remove();
         this.sourceSoundElements.forEach(function(elem) {
-          angular.element(elem).removeClass("drag-move-element");
+          elem.classList.remove("drag-move-element");
         });
       },
       onDrop: function(evt, dragGrid, dropGrid) {

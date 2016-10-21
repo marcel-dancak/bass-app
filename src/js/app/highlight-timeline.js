@@ -12,7 +12,7 @@
   HighlightTimeline.prototype._removeActiveClass = function() {
     var activeElems = this.swiperControl.getBarWrapper().querySelectorAll('.swiper-slide .subbeat.active');
     for (var i = 0; i < activeElems.length; i++) {
-      angular.element(activeElems[i]).removeClass('active');
+      activeElems[i].classList.remove('active');
     }
   };
 
@@ -42,7 +42,7 @@
           delete this.activeTimers[key];
 
           this._removeActiveClass();
-          angular.element(subbeatElem).addClass('active');
+          subbeatElem.classList.add('active');
 
         }.bind(this), 1000*(beatDelay+subbeatDelay), subbeatElements[index], timerKey);
         this.activeTimers[timerKey] = timerId;
