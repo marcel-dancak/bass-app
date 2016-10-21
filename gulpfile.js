@@ -83,7 +83,6 @@ gulp.task('uglify', function() {
       'bower_components/angular/angular.min.js',
       'bower_components/angular-aria/angular-aria.min.js',
       'bower_components/angular-animate/angular-animate.min.js',
-      // 'bower_components/angular-sanitize/angular-sanitize.min.js',
 
       'src/lib/**/*.js',
 
@@ -98,19 +97,26 @@ gulp.task('uglify', function() {
       'bower_components/angular-material/modules/js/icon/icon.min.js',
       'bower_components/angular-material/modules/js/input/input.min.js',
       'bower_components/angular-material/modules/js/textField/textField.min.js',
-      // 'bower_components/angular-material/modules/js/list/list.min.js',
+      'bower_components/angular-material/modules/js/list/list.min.js',
       'bower_components/angular-material/modules/js/menu/menu.min.js',
+      'bower_components/angular-material/modules/js/menuBar/menuBar.min.js',
       'bower_components/angular-material/modules/js/select/select.min.js',
       'bower_components/angular-material/modules/js/tooltip/tooltip.min.js',
       'bower_components/angular-material/modules/js/toast/toast.min.js',
       'bower_components/angular-material/modules/js/panel/panel.min.js',
       'bower_components/angular-material/modules/js/dialog/dialog.min.js',
+      'bower_components/angular-material/modules/js/subheader/subheader.min.js',
+      'bower_components/angular-material/modules/js/sticky/sticky.min.js',
+
+      // 'bower_components/angular-material/modules/js/radioButton/radioButton.min.js',
+      // 'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
+      // 'bower_components/angular-material/modules/js/showHide/showHide.min.js',
+
       // 'bower_components/angular-material/modules/js/slider/slider.min.js',
       // 'bower_components/angular-material/modules/js/tabs/tabs.min.js',
-      // 'bower_components/angular-material/modules/js/content/content.min.js',
+      'bower_components/angular-material/modules/js/content/content.min.js',
       // 'bower_components/angular-material/modules/js/whiteframe/whiteframe.min.js',
       // 'bower_components/angular-material/modules/js/divider/divider.min.js',
-
 
       'bower_components/angular-resizable/src/angular-resizable.js',
       'bower_components/hamsterjs/hamster.js',

@@ -4,6 +4,7 @@
   angular
     .module('bd.app')
     .controller('BassBeatController', BassBeatController)
+    .controller('BassFormController', BassFormController)
     .factory('bassSoundForm', bassSoundForm)
     .run(function(workspace, basicHandler) {
       workspace.selected = basicHandler.selected;
@@ -35,7 +36,7 @@
     $scope.openBassSoundMenu = bassSoundForm.open;
   }
 
-  function bassFormController($scope, sound, string, bass, audioPlayer) {
+  function BassFormController($scope, sound, string, bass, audioPlayer) {
 
     $scope.nextNote = function(note) {
       var index = -1;
@@ -179,9 +180,8 @@
           .addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.BELOW)
           .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ABOVE)
           .addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.ABOVE)
-          .withOffsetY('4px')
+          .withOffsetY('4px');
           
-
         var animation = $mdPanel.newPanelAnimation()
           .withAnimation($mdPanel.animation.FADE);
 
@@ -192,7 +192,7 @@
           animation: animation,
           clickOutsideToClose: true,
           escapeToClose: true,
-          controller: bassFormController,
+          controller: 'BassFormController',
           locals: {
             sound: grid.sound,
             string: grid.string,
