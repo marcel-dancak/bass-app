@@ -134,6 +134,7 @@
       this.barSwiper.params.control = this.instrumentSwiper;
       this.barSwiper.on('transitionEnd', this.updateVisibleSlides);
       this._updateLastSlideClass();
+      this.loopMode = false;
     };
 
     SwiperControl.prototype.setBeatsPerView = function(slidesPerView) {
@@ -353,10 +354,14 @@
       this.barSwiper.on('transitionEnd', loopCallback);
       this.barSwiper.loopConfig = loopConfig;
       loopCallback(this.barSwiper);
+      this.loopMode = true;
     };
 
 
-    SwiperControl.prototype.destroyLoop = function() {
+    SwiperControl.prototype._destroyLoop = function() {
+      if (!this.barSwiper.loopConfig) {
+        return;
+      }
       var loopConfig = this.barSwiper.loopConfig;
       var normalSlidesCount = loopConfig.normalSlidesCount;
       var cloneIndexes = [];
@@ -400,6 +405,26 @@
       });
       // TODO: check if activeIndex is greater than without loop slides and reset to first slide
       this.updateSlidesVisibility();
+      delete this.barSwiper.loopConfig;
+    };
+
+    SwiperControl.prototype.destroyLoop = function() {
+      this.loopMode = false;
+      if (!this.barSwiper.loopConfig) {
+        return;
+      }
+      var loopConfig = this.barSwiper.loopConfig;
+      console.log('destroying loop at: '+this.barSwiper.snapIndex);
+      var endIndex = this.barSwiper.snapIndex+this.barSwiper.params.slidesPerView;
+      console.log('end index: {0} (max: {1})'.format(endIndex, loopConfig.normalSlidesCount));
+      if (endIndex > loopConfig.normalSlidesCount) {
+        // return to begining, then destroy loop
+        var index = this.lastSlide - this.firstSlide + 1;
+        this.barSwiper.slideTo(index, 300);
+        setTimeout(this._destroyLoop.bind(this), 400);
+      } else {
+        this._destroyLoop();
+      }
     }
 
     SwiperControl.prototype.getBeatElem = function(bar, beat) {
@@ -408,6 +433,7 @@
 
       var beatSelector = '.swiper-slide #beat_{0}_{1}'.format(bar, beat);
       var elems = this.barSwiper.wrapper[0].querySelectorAll(beatSelector);
+      // try to find element on visible screen area
       for (var i = 0; i < elems.length; i++) {
         var elem = elems[i];
         var bounds = elem.getBoundingClientRect();
@@ -415,6 +441,8 @@
           return elem;
         }
       }
+      // fallback to first element
+      return elems[0];
     };
 
     SwiperControl.prototype.getBarWrapper = function() {

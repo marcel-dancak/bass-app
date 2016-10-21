@@ -3,16 +3,45 @@
 
   angular
     .module('bd.app')
-    .controller('EditModeController', EditModeController)
+    .controller('EditModeController', EditModeController);
 
-  function EditModeController($scope, $timeout, context, workspace, audioPlayer, audioVisualiser, projectManager, Drums,
-                         BassSection, DrumSection, BassTrackSection, DrumTrackSection, HighlightTimeline, swiperControl) {
+
+  function EditModeController($scope, $timeout, $mdToast, context, workspace, audioPlayer, audioVisualiser,
+              projectManager, Drums, BassSection, DrumSection, HighlightTimeline, swiperControl) {
 
 
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
     audioPlayer.setPlaybackSpeed(1);
 
+
+    $scope.player.visiblePlaybackModeChanged = function(visibleBeatsOnly) {
+      // return;
+      if (visibleBeatsOnly) {
+        var updated = updateLockedPlayerRange();
+        if (!updated) {
+          $scope.player.visibleBeatsOnly = false;
+          $mdToast.show(
+            $mdToast.simple()
+              .toastClass('error player')
+              .textContent('Cannot lock playback on current possition!')
+              .position('top center')
+          );
+          return;
+        }
+        // TODO: swiper slide size change also affect updateLockedPlayerRange
+        swiperControl.barSwiper.on('transitionEnd', updateLockedPlayerRange);
+      } else {
+        swiperControl.barSwiper.off('transitionEnd', updateLockedPlayerRange);
+        if ($scope.player.loop) {
+          swiperControl.destroyLoop();
+        }
+        $scope.player.playbackRangeChanged();
+        if ($scope.player.loop) {
+          swiperControl.createLoop();
+        }
+      }
+    };
 
     $scope.player.playbackRangeChanged = function() {
       console.log('playbackRangeChanged');
@@ -72,9 +101,15 @@
 
     function updateLockedPlayerRange() {
       console.log('** updateLockedPlayerRange');
+      var maxIndex = workspace.section.length * workspace.section.timeSignature.top;
       // var sFlatIndex = swiperControl.barSwiper.snapIndex
       var sFlatIndex = swiperControl.firstSlide + swiperControl.barSwiper.snapIndex * workspace.section.beatsPerSlide;
       var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
+
+      if (eFlatIndex >= maxIndex) {
+        // invalid range for playback lock
+        return false;
+      }
       audioPlayer.playbackRange = {
         start: {
           bar: parseInt(sFlatIndex / workspace.section.timeSignature.top) + 1,
@@ -85,14 +120,13 @@
           beat: (eFlatIndex % workspace.section.timeSignature.top) + 1
         }
       };
+      return true;
     }
 
     var timeline;
     $scope.player.play = function() {
       if ($scope.player.visibleBeatsOnly) {
         updateLockedPlayerRange();
-        // TODO: swiper slide size change also affect updateLockedPlayerRange
-        swiperControl.barSwiper.on('transitionEnd', updateLockedPlayerRange);
       } else {
         swiperControl.reset();
 
@@ -120,23 +154,19 @@
     function playbackStopped() {
       if ($scope.player.playing && $scope.player.loop) {
         // loop mode
+        if (!swiperControl.loopMode && !$scope.player.visibleBeatsOnly) {
+          swiperControl.createLoop();
+          swiperControl.reset();
+        }
         audioPlayer.play(workspace.section, beatPrepared);
         return;
+      }
+      if (swiperControl.loopMode) {
+        swiperControl.destroyLoop();
       }
       $scope.player.playing = false;
       audioVisualiser.deactivate();
       timeline.stop();
-
-      // TODO: check if loop slides was created properly, this is not reliable
-      if ($scope.player.loop) {
-        var playbackRange = swiperControl.lastSlide-swiperControl.firstSlide + 1;
-        if (playbackRange > workspace.section.beatsPerView) {
-          swiperControl.destroyLoop();
-        }
-      }
-      if ($scope.player.visibleBeatsOnly) {
-        swiperControl.barSwiper.off('transitionEnd', updateLockedPlayerRange);
-      }
     }
     audioPlayer.on('playbackStopped', playbackStopped);
 
