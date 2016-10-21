@@ -1,6 +1,4 @@
-<div
-  class="swiper-slide"
-  layout="row">
+<div layout="row">
 
   <div
     layout="column"
@@ -29,7 +27,7 @@
     ng-repeat="beat in ::beats"
     layout="column"
     style="position:relative;"
-    ng-attr-flex="{{ beat.beat? '' : 'none' }}">
+    flex>
 
     <!-- Bar -->
     <div
@@ -84,7 +82,7 @@
 
     <!-- Instrument -->
     <div
-      class="bass-board instrument-slide beat-{{ ::beat.beat }}">
+      class="bass-board instrument-slide beat-{{ ::beat.beat }} {{ ::($last && emptyBeats.length)? 'last' : '' }}">
       <div class="string-container">
         <div
           ng-repeat="string in ::workspace.track.instrument.strings"
@@ -116,4 +114,11 @@
     </div>
 
   </div>
+
+  <section
+    ng-repeat="empty in ::emptyBeats track by $index"
+    class="empty"
+    style="position:relative;"
+    flex>
+  </section>
 </div>

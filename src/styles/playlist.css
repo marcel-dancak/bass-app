@@ -121,7 +121,7 @@
   z-index: 200;
 }*/
 
-.player .swiper-slide .section-info .instrument-slide::before{
+.player .swiper-slide .section-info .instrument-slide::before {
   display: none;
 }
 
@@ -135,7 +135,8 @@
   background-color: #aaa;
   z-index: 200;
 }
-.player .swiper-slide > div:last-child > .bass-board::after {
+.player .swiper-slide .bass-board.last::after,
+.player .swiper-slide > div > div:last-child > .bass-board::after {
   position: absolute;
   top: 0;
   bottom: 0;
