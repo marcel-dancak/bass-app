@@ -102,7 +102,8 @@
         console.log('mute microphone');
         // input.stream.removeTrack(input.stream.getAudioTracks()[0]);
         // input.source.disconnect();
-        audioVisualiser.connect(audioPlayer.bass.audio);
+        // audioVisualiser.deactivate();
+        // audioVisualiser.activate(workspace.track.audio);
       } else {
         if (!input.source) {
           var gotStream = function(stream) {
@@ -110,7 +111,7 @@
             // Create an AudioNode from the stream.
             input.source = context.createMediaStreamSource(stream);
             input.source.connect(input.audio);
-            audioVisualiser.connect(input.audio);
+            audioVisualiser.activate(input.audio);
             input.audio.connect(context.destination);
           }
 

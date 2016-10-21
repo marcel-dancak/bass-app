@@ -15,6 +15,13 @@
     audioPlayer.setPlaybackSpeed(1);
 
 
+    function isLoopNeeded() {
+      var playbackRange = swiperControl.lastSlide-swiperControl.firstSlide + 1;
+      if (playbackRange > workspace.section.beatsPerView) {
+        return true;
+      }
+    }
+
     $scope.player.visiblePlaybackModeChanged = function(visibleBeatsOnly) {
       // return;
       if (visibleBeatsOnly) {
@@ -37,7 +44,7 @@
           swiperControl.destroyLoop();
         }
         $scope.player.playbackRangeChanged();
-        if ($scope.player.loop) {
+        if ($scope.player.loop && isLoopNeeded()) {
           swiperControl.createLoop();
         }
       }
@@ -87,7 +94,9 @@
 
 
       if (!audioVisualiser.enabled && $scope.player.graphEnabled) {
-        audioVisualiser.activate(workspace.track.audio);
+        var audio = $scope.player.input.muted? workspace.track.audio : $scope.player.input.audio;
+        console.log('activating track visualization');
+        audioVisualiser.activate(audio);
       }
       if (audioVisualiser.enabled && !$scope.player.graphEnabled) {
         audioVisualiser.deactivate();
@@ -130,11 +139,8 @@
       } else {
         swiperControl.reset();
 
-        if ($scope.player.loop) {
-          var playbackRange = swiperControl.lastSlide-swiperControl.firstSlide + 1;
-          if (playbackRange > workspace.section.beatsPerView) {
-            swiperControl.createLoop();
-          }
+        if ($scope.player.loop && isLoopNeeded()) {
+          swiperControl.createLoop();
         }
       }
       $scope.player.playing = true;
@@ -154,7 +160,7 @@
     function playbackStopped() {
       if ($scope.player.playing && $scope.player.loop) {
         // loop mode
-        if (!swiperControl.loopMode && !$scope.player.visibleBeatsOnly) {
+        if (!swiperControl.loopMode && !$scope.player.visibleBeatsOnly && isLoopNeeded()) {
           swiperControl.createLoop();
           swiperControl.reset();
         }
