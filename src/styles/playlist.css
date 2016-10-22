@@ -79,7 +79,6 @@
 .viewer-container .swiper-wrapper {
   height: 100%;
   width: 100%;
-  padding-top: 30px;
   padding-left: 5px;
   padding-right: 10px;
 }
@@ -97,35 +96,30 @@
   color: #555;
 }
 
-/*.player .swiper-slide .section-info::before {
+.player .swiper-slide .chord-label {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 36px;
-  content: "";
-  width: 1px;
-  border: solid #aaa;
-  border-width: 0 2px;
-  z-index: 200;
-}*/
+  bottom: 10px;
+  left: 25px;
+  color: #777;
+}
 
+.player .swiper-slide .header {
+  height: 56px;
+  position: relative;
+}
+.player .swiper-slide .beat {
+}
 
-/*.player .swiper-slide .section-info::before {
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: "";
-  width: 3px;
-  height: 64px;
-  background-color: #aaa;
-  z-index: 200;
-}*/
+.swiper-slide .header .bar-label {
+  top: 26px;
+}
 
+.player .swiper-slide .section-info .bar-beat::before,
 .player .swiper-slide .section-info .instrument-slide::before {
   display: none;
 }
 
-.player .swiper-slide > div:last-child .beat::after {
+.player .swiper-slide > div:last-child .bar-beat::after {
   position: absolute;
   top: 0;
   right: -3px;
@@ -175,18 +169,20 @@
   text-align: center;
 }
 
-.player .swiper-slide .section-info .bpm {
+.player .swiper-slide .section-info.main .bpm {
   position: absolute;
   font-size: 16px;
-  top: -50px;
+  top: 4px;
   z-index: 200;
   text-align: left;
   left: 0;
-  transform: translate3d(52px, 0, 0);
+  transform: translate3d(8px, 0, 0);
   white-space: nowrap;
 }
-.player .swiper-slide .beat .section-info .bpm {
-  transform: translate3d(12px, 0, 0);
+
+.player .swiper-slide .section-label .bpm {
+  position: absolute;
+  left: -50px;
 }
 
 .section-info .note-symbol {
@@ -203,17 +199,19 @@
   line-height: 36px;
   height: 36px;
   text-align: center;
-  xfont-weight: bold;
   font-size: 20px;
 }
 
 .section-label {
   position: absolute;
-  top: -50px;
-  left: 64px;
+  top: 4px;
+  left: 25px;
   color: #555;
-  font-size: 15px;
   width: 200%;
+}
+.section-label .section-name {
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .playlist-editor {

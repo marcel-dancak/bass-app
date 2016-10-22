@@ -113,6 +113,7 @@
           bar: position.bar,
           beat: position.beat,
           subdivision: trackBeat.subdivision,
+          meta: trackBeat.meta,
           sounds: track.beatSounds(trackBeat),
           timeSignature: section.timeSignature,
           bpm: section.bpm,
@@ -152,10 +153,10 @@
         templateUrl: 'views/playlist_slide.html'
       }).then(function(compileData) {
         //attach controller & scope to element
-        var slideElement = compileData.link(scope)[0];
-        var slideWrapper = angular.element('<div class="swiper-slide"></div>')[0];
-        slideWrapper.appendChild(slideElement);
-        playerSwiper.appendSlide(slideWrapper);
+        var slideElement = compileData.link(scope);
+        var slideWrapper = angular.element('<div class="swiper-slide"></div>');
+        slideWrapper.append(slideElement);
+        playerSwiper.appendSlide(slideWrapper[0]);
         $timeout(function() {
           scope.$destroy();
           task.resolve();
@@ -187,7 +188,7 @@
     function initializeSwiper() {
       var swiperElem = document.querySelector('.player.swiper-container');
       playerSwiper = new Swiper(swiperElem, {
-        spaceBetween: 30,
+        spaceBetween: 0,
         direction: 'vertical',
         slidesPerView: 1.99,
         slidesPerColumn: 1,

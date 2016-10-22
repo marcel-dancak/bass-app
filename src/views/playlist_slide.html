@@ -1,19 +1,27 @@
-<div layout="row">
+<div layout="column" layout-fill>
+  <div flex style="max-height:5%;"></div>
+  <div flex="none" layout="row">
 
-  <div
-    layout="column"
-    flex="none">
+    <!-- Strings labels & First beat info -->
     <div
-      ng-init="beat = beats[0]"
-      class="section-info">
-       <div class="bpm">
-        <span class="note-symbol">𝅘𝅥</span>={{ ::beat.bpm }}
+      layout="column"
+      flex="none"
+      class="section-info main"
+      ng-init="beat = beats[0]">
+
+      <div class="header">
+        <div class="bpm">
+          <span class="note-symbol">𝅘𝅥</span>={{ ::beat.bpm }}
+        </div>
       </div>
 
-      <div class="time-signature">
-        <div>{{ ::beat.timeSignature.top }}</div>
-        <div>{{ ::beat.timeSignature.bottom }}</div>
+      <div class="bar-beat">
+        <div class="time-signature">
+          <div>{{ ::beat.timeSignature.top }}</div>
+          <div>{{ ::beat.timeSignature.bottom }}</div>
+        </div>
       </div>
+
       <div class="bass-board instrument-slide">
         <p ng-repeat="string in ::workspace.track.instrument.strings | orderBy:string.index:'-'">
           {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
@@ -21,48 +29,59 @@
       </div>
 
     </div>
-  </div>
 
-  <div
-    ng-repeat="beat in ::beats"
-    layout="column"
-    style="position:relative;"
-    flex>
-
-    <!-- Bar -->
+    <!-- Beats with bass sounds (tabs) -->
     <div
-      class="beat beat-{{ ::beat.beat }}">
+      ng-repeat="beat in ::beats"
+      layout="column"
+      class="beat beat-{{ ::beat.beat }}"
+      flex
+      ng-init="
+        showTimeSig = beat.sectionInfo && $index > 0 &&
+            ( beat.timeSignature.top !== beats[$index-1].timeSignature.top
+            || beat.timeSignature.bottom !== beats[$index-1].timeSignature.bottom );
+        showBpm = beat.sectionInfo && $index > 0 && beat.bpm !== beats[$index-1].bpm
+      ">
 
-      <div
-        ng-if="::beat.sectionInfo && $index > 0"
-        class="section-info">
-        <div class="time-signature">
-          <div>{{ ::beat.timeSignature.top }}</div>
-          <div>{{ ::beat.timeSignature.bottom }}</div>
+      <div class="header">
+        <div
+          ng-if="::beat.sectionInfo"
+          class="section-info">
+
+          <div
+            ng-if="::showTimeSig"
+            class="time-signature">
+            <div>{{ ::beat.timeSignature.top }}</div>
+            <div>{{ ::beat.timeSignature.bottom }}</div>
+          </div>
+
+          <div class="section-label">
+            <label
+              ng-if="::showBpm"
+              class="bpm">
+              𝅘𝅥 &nbsp;={{ ::beat.bpm }}
+            </label>
+            <label class="section-name">
+              {{ ::beat.sectionInfo.name }}
+            </label>
+          </div>
         </div>
 
-         <div class="bpm">
-          𝅘𝅥 &nbsp;={{ ::beat.bpm }}
-        </div>
+        <label class="bar-label">
+          {{ ::beat.bar }}
+        </label>
 
+        <span class="chord-label">{{ ::beat.meta.chord }}</span>
       </div>
 
-      <label
-        class="section-label">
-        {{ ::beat.sectionInfo.name }}
-      </label>
-
-      <label class="bar-label">
-        {{ ::beat.bar }}
-      </label>
+      <!-- Bar -->
       <div
-        id="beat_{{ ::beat.bar }}_{{ ::beat.beat }}"
         class="bar-beat"
         layout="row">
         <div
           flex
           class="subbeat">
-          <label class="subbeat-label {{ ::beat.sectionInfo? 'align-right' : '' }}">
+          <label class="subbeat-label {{ ::showTimeSig? 'align-right' : '' }}">
             {{ ::beat.beat }}
           </label>
         </div>
@@ -78,47 +97,48 @@
           </label>
         </div>
       </div>
-    </div>
 
-    <!-- Instrument -->
-    <div
-      class="bass-board instrument-slide beat-{{ ::beat.beat }} {{ ::($last && emptyBeats.length)? 'last' : '' }}">
-      <div class="string-container">
-        <div
-          ng-repeat="string in ::workspace.track.instrument.strings"
-          class="bass-string">
-        </div>
-      </div>
+      <!-- Instrument -->
       <div
-        ng-repeat="item in ::beat.sounds"
-        class="
-          bass-sound-wrapper
-          string-{{ ::{G: 4, D: 3, A: 2, E: 1, B: 0}[item.sound.string] }}
-          {{ ::item.sound.style }}
-          {{ ::item.sound.note.type }}
-          {{ ::item.sound.noteLength.staccato? 'staccato' : '' }}
-        "
-        style="
-          left: {{ ::100*(item.subbeat-1)/beat.subdivision }}%;
-          top: {{ ::{G: '0', D: '36px', A: '72px', E: '108px', B: '144px'}[item.sound.string] }};
-          width: {{ ::(100 * beat.timeSignature.bottom * item.sound.noteLength.beatLength * (beat.subdivision === 3? 2/3 : 1)) }}%;">
-        <div
-          class="top-label">
+        class="bass-board instrument-slide {{ ::($last && emptyBeats.length)? 'last' : '' }}">
+        <div class="string-container">
+          <div
+            ng-repeat="string in ::workspace.track.instrument.strings"
+            class="bass-string">
+          </div>
         </div>
         <div
-          ng-attr-octave="{{ ::item.sound.note.octave }}"
-          class="bass-sound-container">
-          <bd-sound-label sound="item.sound"></bd-sound-label>
+          ng-repeat="item in ::beat.sounds"
+          class="
+            bass-sound-wrapper
+            string-{{ ::{G: 4, D: 3, A: 2, E: 1, B: 0}[item.sound.string] }}
+            {{ ::item.sound.style }}
+            {{ ::item.sound.note.type }}
+            {{ ::item.sound.noteLength.staccato? 'staccato' : '' }}
+          "
+          style="
+            left: {{ ::100*(item.subbeat-1)/beat.subdivision }}%;
+            top: {{ ::{G: '0', D: '36px', A: '72px', E: '108px', B: '144px'}[item.sound.string] }};
+            width: {{ ::(100 * beat.timeSignature.bottom * item.sound.noteLength.beatLength * (beat.subdivision === 3? 2/3 : 1)) }}%;">
+          <div
+            class="top-label">
+          </div>
+          <div
+            ng-attr-octave="{{ ::item.sound.note.octave }}"
+            class="bass-sound-container">
+            <bd-sound-label sound="item.sound"></bd-sound-label>
+          </div>
         </div>
       </div>
+
     </div>
 
+    <div
+      ng-repeat="empty in ::emptyBeats track by $index"
+      class="empty"
+      style="position:relative;"
+      flex>
+    </div>
   </div>
-
-  <section
-    ng-repeat="empty in ::emptyBeats track by $index"
-    class="empty"
-    style="position:relative;"
-    flex>
-  </section>
+  <div flex></div>
 </div>
