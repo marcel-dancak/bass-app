@@ -35,6 +35,7 @@
       bar: bar,
       beat: beat,
       subdivision: 4,
+      meta: {},
       data: []
     };
   };
@@ -95,6 +96,7 @@
     beats.forEach(function(beat) {
       var destBeat = this.beat(beat.bar, beat.beat);
       destBeat.subdivision = beat.subdivision;
+      destBeat.meta = beat.meta;
       beat.data.forEach(function(item) {
         var subbeat = this.subbeat(beat.bar, beat.beat, item.subbeat);
         angular.extend(subbeat[item.sound.string].sound, item.sound);
@@ -124,6 +126,7 @@
         subdivision: 4,
         bar: barIndex,
         beat: beat+1,
+        meta: {},
         subbeats: []
       };
       for (subbeat = 0; subbeat < 4; subbeat++) {
@@ -271,6 +274,7 @@
       bar: beat.bar,
       beat: beat.beat,
       subdivision: beat.subdivision,
+      meta: beat.meta,
       data: this.beatSounds(this.beat(beat.bar, beat.beat))
     };
   };
@@ -282,6 +286,7 @@
         bar: beat.bar,
         beat: beat.index,
         subdivision: beat.beat.subdivision,
+        meta: beat.beat.meta,
         data: this.beatSounds(beat.beat)
       });
     }, this);
