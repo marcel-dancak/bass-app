@@ -121,7 +121,6 @@ gulp.task('uglify', function() {
       'bower_components/angular-resizable/src/angular-resizable.js',
       'bower_components/hamsterjs/hamster.js',
       'bower_components/angular-mousewheel/mousewheel.js',
-      'bower_components/angular-swiper/dist/angular-swiper.js',
       'bower_components/angularjs-slider/dist/rzslider.min.js',
       'bower_components/file-saver/FileSaver.min.js',
 
