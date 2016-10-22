@@ -44,15 +44,17 @@
   </div>
 
   <div
-    layout="row"
-    ng-disabled="!sound.note.type || sound.style === 'ring' || sound.note.type === 'ghost'">
-    <md-input-container flex>
+    layout="row">
+    <md-input-container
+      flex
+      class="selectbox-spinner">
       <label>Pitch</label>
       <md-select
         md-no-ink
         md-container-class="note-select-menu"
         ng-model="sound.note.code"
-        md-on-close="soundPitchChanged(sound.note)">
+        md-on-close="soundPitchChanged(sound.note)"
+        ng-disabled="!sound.note.type || sound.style === 'ring' || sound.note.type === 'ghost'">
         <div
           ng-repeat="note in fretsStringNotes"
           layout="row">
@@ -75,26 +77,29 @@
           </md-option>
         </div>
       </md-select>
-    </md-input-container>
-    <div
-      class="buttons-spinner"
-      layout="column">
-      <md-button
-        aria-label="Next note"
-        md-prevent-menu-close
-        ng-click="nextNote(sound.note)">
-        <md-icon md-svg-icon="arrow-up"></md-icon>
-      </md-button>
-      <md-button
-        aria-label="Previous note"
-        md-prevent-menu-close
-        ng-click="prevNote(sound.note)">
-        <md-icon md-svg-icon="arrow-down"></md-icon>
-      </md-button>
-    </div>
 
-    <md-input-container flex
-      ng-if-start="sound.note.type === 'slide'"
+      <div
+        class="buttons-spinner"
+        layout="column">
+        <md-button
+          aria-label="Next note"
+          md-prevent-menu-close
+          ng-click="nextNote(sound.note)">
+          <md-icon md-svg-icon="arrow-up"></md-icon>
+        </md-button>
+        <md-button
+          aria-label="Previous note"
+          md-prevent-menu-close
+          ng-click="prevNote(sound.note)">
+          <md-icon md-svg-icon="arrow-down"></md-icon>
+        </md-button>
+      </div>
+    </md-input-container>
+
+    <md-input-container
+      flex
+      class="selectbox-spinner"
+      ng-if="sound.note.type === 'slide'"
       ng-init="
         sound.note.slide.endNote = sound.note.slide.endNote || {
           code: sound.note.code,
@@ -130,24 +135,23 @@
           </md-option>
         </div>
       </md-select>
+      <div
+        class="buttons-spinner"
+        layout="column">
+        <md-button
+          aria-label="Next note"
+          md-prevent-menu-close
+          ng-click="nextNote(sound.note.slide.endNote)">
+          <md-icon md-svg-icon="arrow-up"></md-icon>
+        </md-button>
+        <md-button
+          aria-label="Previous note"
+          md-prevent-menu-close
+          ng-click="prevNote(sound.note.slide.endNote)">
+          <md-icon md-svg-icon="arrow-down"></md-icon>
+        </md-button>
+      </div>
     </md-input-container>
-    <div
-      ng-if-end
-      class="buttons-spinner"
-      layout="column">
-      <md-button
-        aria-label="Next note"
-        md-prevent-menu-close
-        ng-click="nextNote(sound.note.slide.endNote)">
-        <md-icon md-svg-icon="plus"></md-icon>
-      </md-button>
-      <md-button
-        aria-label="Previous note"
-        md-prevent-menu-close
-        ng-click="prevNote(sound.note.slide.endNote)">
-        <md-icon md-svg-icon="minus"></md-icon>
-      </md-button>
-    </div>
 
     <!-- <md-input-container
       flex="50"

@@ -595,3 +595,37 @@ md-tooltip md-divider {
 .new-track-dialog md-input-container {
   margin: 24px 16px 4px 16px;
 }
+
+.note-symbol {
+  font-size: 20px;
+}
+
+md-toast.error .md-toast-content {
+  background-color: #f44336;
+}
+
+md-toast.md-center {
+  left: 50%;
+  transform: translate3d(-50%, 0, 0);
+}
+md-toast.player.md-top {
+  top: 56px;
+}
+
+
+/*** Selectbox with spinner buttons ***/
+.selectbox-spinner {
+  padding-right: 26px;
+}
+.selectbox-spinner .buttons-spinner {
+  position: absolute;
+  right: 4px;
+  bottom: 0;
+  width: 20px;
+  margin: 0;
+}
+
+.selectbox-spinner md-select[disabled] + .buttons-spinner {
+  pointer-events: none;
+  opacity: 0.5;
+}

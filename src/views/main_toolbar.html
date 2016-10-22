@@ -85,7 +85,13 @@
         <md-icon
           md-svg-icon="volume-medium">
         </md-icon>
-        <md-tooltip md-delay="1500">Volume preferences</md-tooltip>
+        <md-tooltip
+          md-delay="1500"
+          class="multiline-tooltip">
+          <p><b>Volume preferences</b></p>
+          <md-divider></md-divider>
+          <p>Input channel can be used for playing and audio signal visualization</p>
+        </md-tooltip>
       </md-button>
 
       <md-menu-content
@@ -228,6 +234,32 @@
       <md-tooltip md-delay="1500">Repeat mode</md-tooltip>
     </md-button>
 
+    <md-button
+      md-no-ink
+      aria-label="Loop"
+      class="screen-playback toggle-button toolbar-separated-button icon-hover"
+      ng-class="{active: player.visibleBeatsOnly}"
+      ng-click="
+        player.visibleBeatsOnly =! player.visibleBeatsOnly;
+        player.visiblePlaybackModeChanged(player.visibleBeatsOnly)
+      ">
+      <md-icon
+        md-svg-icon="screen-playback">
+      </md-icon>
+      <md-tooltip
+        md-delay="1500"
+        class="multiline-tooltip">
+        <p><b>Visible screen playback</b></p>
+        <md-divider></md-divider>
+        <p>Play only visible area on the screen (without automatic slides transition)
+          <!-- <ul>
+            <li>Restricts playback to visible screen</li>
+            <li>Disables automatic slides transition during playback</li>
+          </ul> -->
+        </p>
+      </md-tooltip>
+    </md-button>
+
     <md-menu
       md-position-mode="target target"
       md-offset="10, 0"
@@ -242,20 +274,20 @@
           initSliders();
           $mdOpenMenu($event)
         ">
-        <md-icon md-svg-icon="playback-range"></md-icon>
+        <md-icon md-svg-icon="cut"></md-icon>
         <md-tooltip
           md-delay="1500"
           class="multiline-tooltip">
-          <p><b>Playback range</b></p>
+          <p><b>Active range</b></p>
           <md-divider></md-divider>
-          <p>Use it to specify range of the playback and visible bars within section</p>
+          <p>Restrict visible range and playback of the section (in bars)</p>
         </md-tooltip>
       </md-button>
       <md-menu-content
         class="preferences playback-range md-whiteframe-16dp">
         <md-list>
           <md-list-item class="range-slider-item playback-range">
-            <label>Playback range</label>
+            <label>Active range</label>
             <rzslider
               class="range-slider"
               ng-class="{ long: workspace.section.length > 10 }"
@@ -274,45 +306,9 @@
             </rzslider>
           </md-list-item>
 
-          <!-- <md-list-item md-no-ink class="checkbox-item">
-            <md-input-container>
-              <md-checkbox
-                ng-model="player.visibleBeatsOnly"
-                ng-change="!player.visibleBeatsOnly && player.playbackRangeChanged()">
-                Visible beats only
-              </md-checkbox>
-            </md-input-container>
-          </md-list-item> -->
-
         </md-list>
       </md-menu-content>
     </md-menu>
-
-    <md-button
-      md-no-ink
-      aria-label="Loop"
-      class="screen-playback toggle-button toolbar-separated-button icon-hover"
-      ng-class="{active: player.visibleBeatsOnly}"
-      ng-click="
-        player.visibleBeatsOnly =! player.visibleBeatsOnly;
-        !player.visibleBeatsOnly && player.playbackRangeChanged()
-      ">
-      <md-icon
-        md-svg-icon="screen-playback">
-      </md-icon>
-      <md-tooltip
-        md-delay="1500"
-        class="multiline-tooltip">
-        <p><b>Visible screen playback</b></p>
-        <md-divider></md-divider>
-        <p>
-          <ul>
-            <li>Restricts playback to visible screen</li>
-            <li>Disables automatic slides transition during playback</li>
-          </ul>
-        </p>
-      </md-tooltip>
-    </md-button>
 
   </div>
 
@@ -558,6 +554,14 @@
             aria-label="Save As"
             ng-click="saveAsSection()">
             Save As...
+          </md-button>
+        </md-menu-item>
+        <md-menu-item>
+          <md-button
+            md-no-ink
+            aria-label="Export"
+            ng-click="exportSection()">
+            Export
           </md-button>
         </md-menu-item>
         <md-menu-item ng-if-end>

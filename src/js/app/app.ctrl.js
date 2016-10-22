@@ -19,7 +19,7 @@
     });
 
   function AppController($scope, $timeout, context, workspace,
-      audioPlayer, audioVisualiser, projectManager, Drums) {
+      audioPlayer, audioVisualiser, projectManager, Drums, dataUrl) {
 
     $scope.ui = {
       selectTrack: angular.noop,
@@ -132,13 +132,19 @@
       audioVisualiser.updateSize();
     };
 
+    function drumImageUrl(drum) {
+      return '{0}styles/images/{1}.svg'.format(dataUrl, drum.name);
+    }
+
     // Load standard drums kit sounds
     var resources = Drums.Standard.map(function(drum) {
+      drum.image = drumImageUrl(drum);
       return drum.filename;
     });
     audioPlayer.bufferLoader.loadResources(resources);
     // Load bongo drums kit sounds
     resources = Drums.Bongo.map(function(drum) {
+      drum.image = drumImageUrl(drum);
       return drum.filename;
     });
     audioPlayer.bufferLoader.loadResources(resources);

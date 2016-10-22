@@ -310,7 +310,8 @@ md-dialog .dialog-header {
   top: 0;
   left: 0;
   bottom: 0;
-  right: 50px;
+  right: 40px;
+  overflow: visible;
 }
 
 .select-text-container > md-input-container:last-child:not(.md-input-focused) label {
@@ -320,7 +321,7 @@ md-dialog .dialog-header {
   border-color: transparent;
 }
 .select-text-container > md-input-container:last-child.md-input-focused input {
-  width: calc(100% + 50px);
+  width: calc(100% + 40px);
   padding-right: 30px;
 }
 .select-editable .md-select-value span:not(.md-select-icon) {
@@ -338,7 +339,6 @@ md-dialog .dialog-header {
 
 .toolbar-button[disabled],
 .playlist-mode .playback-range-menu,
-.playlist-mode .screen-playback,
 .playback-active .mode-switch,
 .playback-active .project-toolbar,
 .readonly-project .md-button[aria-label="Save Section"],

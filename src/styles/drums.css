@@ -51,7 +51,8 @@
   outline: none;
 }
 .volume-meter {
-  background-color: #ff5722;
+  xbackground-color: #ff5722;
+  background-color: rgb(255, 152, 0);
   width: 30px;
   height: 30px;
   border-radius: 15px;

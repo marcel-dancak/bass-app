@@ -72,6 +72,11 @@
   width: 290px;
 }
 
+
 .bass-sound-form .note-symbol {
   font-size: 22px;
+}
+
+.bass-sound-form .selectbox-spinner {
+  margin-right: 6px;
 }

@@ -272,7 +272,7 @@
       saveAs(blob, projectManager.project.name+'.json');
     };
 
-    $scope.exportToFile = function() {
+    $scope.exportSection = function() {
       if (workspace.section.name) {
         console.log('exportToFile');
         var blob = new Blob(

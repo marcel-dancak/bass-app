@@ -134,6 +134,11 @@
       this.barSwiper.params.control = this.instrumentSwiper;
       this.barSwiper.on('transitionEnd', this.updateVisibleSlides);
       this._updateLastSlideClass();
+
+      var inputs = this.barSwiper.$('.swiper-slide input');
+      inputs.on('mousedown mouseup mousemove', function(e) {
+        e.stopPropagation();
+      });
       this.loopMode = false;
     };
 

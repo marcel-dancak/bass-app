@@ -25,6 +25,10 @@
         slidesSizeChanged();
         $event.preventDefault()
       ">
+      <div
+        class="context-menu"
+        ng-include src="'views/bar_context_menu.html'">
+      </div>
       <div class="bar swiper-container">
         <div class="swiper-wrapper">
           <!-- Slides -->
@@ -74,14 +78,16 @@
           ng-class="{active: player.graphEnabled}"
           ng-click="player.graphEnabled = !player.graphEnabled">
           <md-icon md-svg-icon="audio-signal"></md-icon>
-          <md-tooltip md-delay="1000" md-direction="right">Toggle audio graph</md-tooltip>
+          <md-tooltip
+            md-delay="1500"
+            class="multiline-tooltip">
+            <p><b>Audio signal visualization</b></p>
+            <md-divider></md-divider>
+            <p>Display audio track/input signal visualization during playback</p>
+          </md-tooltip>
         </md-button>
       </div>
 
-      <div
-        class="context-menu"
-        ng-include src="'views/bar_context_menu.html'">
-      </div>
     </div>
     <div flex
       class="workspace"
@@ -154,7 +160,7 @@
         class="drums-labels-container">
         <img
           ng-repeat="drum in workspace.track.instrument track by drum.name"
-          ng-src="src/styles/images/{{ ::drum.name }}.svg"
+          ng-src="{{ ::drum.image }}"
           ng-click="playDrumSound(drum.name)">
       </div>
     </div>
