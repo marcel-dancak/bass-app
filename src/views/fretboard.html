@@ -50,6 +50,7 @@
           class="string-row">
 
           <td
+            ng-repeat="note in string.notes | limitTo: fretboard.size+1"
             ng-click="playBassSound({
               note: {
                 type: 'regular',
@@ -60,16 +61,15 @@
               string: string.label
             })"
             class="fret-box octave-{{ ::note.octave }}"
-            ng-repeat="note in string.notes | limitTo: fretboard.size+1"
 
             ui-draggable="true"
             drag-channel="fretboard"
             drag="{
+              label: note.label,
               sound: {
                 style: fretboard.style,
                 note: {
                   type: 'regular',
-                  label: note.label,
                   name: note.label[0],
                   octave: note.octave,
                   fret: $index

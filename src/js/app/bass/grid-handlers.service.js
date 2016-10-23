@@ -149,8 +149,8 @@
           sound.note.code = sound.note.name + sound.note.octave;
 
           // store note name depending on drag click position (use it at drop)
-          var secondName = sound.note.label.length > 1 && evt.clientX > elemBox.left+elemBox.width/2;
-          fretboardDragHandler._noteName = sound.note.label[secondName? 1 : 0];
+          var secondName = dragData.label.length > 1 && evt.clientX > elemBox.left+elemBox.width/2;
+          fretboardDragHandler._noteName = dragData.label[secondName? 1 : 0];
         }
       },
       onDragEnd: function(evt) {},
