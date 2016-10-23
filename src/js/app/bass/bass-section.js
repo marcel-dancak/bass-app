@@ -3,299 +3,175 @@
 
   angular
     .module('bd.app')
-    .value('BassSection', BassSection)
-    .value('BassTrackSection', BassTrackSection);
+    .factory('BassSection', bassSection)
+    .factory('BassTrackSection', bassTrackSection);
 
-  function BassTrackSection(data) {
-    this.data = data;
-    this.type = 'bass';
+  function bassTrackSection(TrackSection) {
+    class BassTrackSection extends TrackSection {
+      constructor(data) {
+        super(data);
+        this.type = 'bass';
 
-    this.forEachSound(function(sound, info) {
-      if (sound.prev && angular.isUndefined(sound.prev.ref)) {
-        Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
-        sound.prev.ref = this.sound(sound.prev.bar, sound.prev.beat, sound.prev.subbeat, sound.prev.string);
+        this.forEachSound(function(sound, index) {
+          if (sound.style === 'finger') {
+            // if (sound.note.fret > 0 && sound.note.type !== 'ghost')
+            // sound.style = 'pick';
+          }
+          if (sound.prev && angular.isUndefined(sound.prev.ref)) {
+            Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
+            sound.prev.ref = this.sound(sound.prev.bar, sound.prev.beat, sound.prev.subbeat, sound.prev.string);
+          }
+          if (sound.next && angular.isUndefined(sound.next.ref)) {
+            Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
+            sound.next.ref = this.sound(sound.next.bar, sound.next.beat, sound.next.subbeat, sound.next.string);
+          }
+        }, this);
       }
-      if (sound.next && angular.isUndefined(sound.next.ref)) {
-        Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
-        sound.next.ref = this.sound(sound.next.bar, sound.next.beat, sound.next.subbeat, sound.next.string);
+
+      sound(bar, beat, subbeat, string) {
+        var items = this.beat(bar, beat).data;
+        for (var i = 0; i < items.length; i++) {
+          var item = items[i];
+          if (item.subbeat === subbeat && item.sound.string === string) {
+            return item.sound;
+          }
+        }
       }
-    }, this);
+
+      forEachSound(callback, obj) {
+        if (obj) {
+          callback = callback.bind(obj);
+        }
+        for (var i = 0; i < this.data.length; i++) {
+          var beat = this.data[i];
+          for (var j = 0; j < beat.data.length; j++) {
+            var sound = beat.data[j].sound;
+            var index = {
+              bar: beat.bar,
+              beat: beat.beat,
+              subbeat: beat.data[j].subbeat
+            };
+            callback(sound, index);
+          }
+        }
+      }
+    }
+    return BassTrackSection;
   }
 
-  BassTrackSection.prototype.beat = function(bar, beat) {
-    // var flatIndex = (bar-1)*this.timeSignature.top + beat-1;
-    // return this.data[flatIndex];
-    for (var i = 0; i < this.data.length; i++) {
-      var beatData = this.data[i];
-      if (beatData.bar === bar && beatData.beat === beat) {
-        return beatData;
+
+  function bassSection(EditableTrackSection, BassTrackSection) {
+
+    class BassSection extends EditableTrackSection {
+      constructor(section) {
+        super(section, BassTrackSection);
+        this.type = 'bass';
       }
-    }
-    return {
-      bar: bar,
-      beat: beat,
-      subdivision: 4,
-      meta: {},
-      data: []
-    };
-  };
 
-  BassTrackSection.prototype.sound = function(bar, beat, subbeat, string) {
-    var items = this.beat(bar, beat).data;
-    for (var i = 0; i < items.length; i++) {
-      var item = items[i];
-      if (item.subbeat === subbeat && item.sound.string === string) {
-        return item.sound;
-      }
-    }
-  };
-
-  BassTrackSection.prototype.beatSounds = function(beat) {
-    return beat.data;
-  };
-
-  BassTrackSection.prototype.forEachSound = function(callback, obj) {
-    if (obj) {
-      callback = callback.bind(obj);
-    }
-    for (var i = 0; i < this.data.length; i++) {
-      var beat = this.data[i];
-      for (var j = 0; j < beat.data.length; j++) {
-        var sound = beat.data[j].sound;
-        var info = {
-          bar: beat.bar,
-          beat: beat.beat,
-          subbeat: beat.data[j].subbeat
-        };
-        callback(sound, info);
-      }
-    }
-  };
-
-  BassTrackSection.prototype.rawData = function() {
-    return this.data;
-  };
-
-
-  // TDOD: remove all code - use setSection, loadBeats
-  function BassSection(section) {
-    this.section = section;
-    this.type = 'bass';
-    this.bars = [];
-    this.setLength(section.length || 1);
-  }
-
-  BassSection.prototype.setSection = function(section) {
-    this.section = section;
-    this.setLength(section.length);
-  };
-
-  BassSection.prototype.loadBeats = function(beats) {
-
-    // override selected section data
-    beats.forEach(function(beat) {
-      var destBeat = this.beat(beat.bar, beat.beat);
-      destBeat.subdivision = beat.subdivision;
-      destBeat.meta = beat.meta;
-      beat.data.forEach(function(item) {
-        var subbeat = this.subbeat(beat.bar, beat.beat, item.subbeat);
-        angular.extend(subbeat[item.sound.string].sound, item.sound);
-      }, this);
-    }, this);
-
-    // update references
-    this.forEachBeat(function(beat) {
-      this.updateBassReferences(beat.beat);
-    }, this);
-  };
-
-  BassSection.prototype.setLength = function(length) {
-    console.log('bass: set length '+length);
-    while (this.bars.length < length) {
-      this._newBar();
-    }
-  };
-
-  BassSection.prototype._newBar = function() {
-    var barIndex = this.bars.length+1;
-    var beats = [];
-    var beat, subbeat;
-    for (beat = 0; beat < 12; beat++) {
-      var bassSubbeats = [];
-      var bassBeat = {
-        subdivision: 4,
-        bar: barIndex,
-        beat: beat+1,
-        meta: {},
-        subbeats: []
-      };
-      for (subbeat = 0; subbeat < 4; subbeat++) {
+      _createSubbeatData() {
         var bassSubbeatGrid = {};
         ['B', 'E', 'A', 'D', 'G'].forEach(function(string) {
           bassSubbeatGrid[string] = {
             sound: {}
           };
         });
-        bassBeat.subbeats.push(bassSubbeatGrid);
+        return bassSubbeatGrid;
       }
-      beats.push(bassBeat);
-    }
-    this.bars.push(beats);
-  };
 
+      loadBeats(beats) {
 
-  BassSection.prototype.beat = function(bar, beat) {
-    return this.bars[bar-1][beat-1];
-  };
+        // override selected section data
+        beats.forEach(function(beat) {
+          var destBeat = this.beat(beat.bar, beat.beat);
+          destBeat.subdivision = beat.subdivision;
+          destBeat.meta = beat.meta;
+          beat.data.forEach(function(item) {
+            // temporary cleaning of obsolete attribute
+            if (item.sound.note.label) {
+              // console.log(item.sound.note.label);
+              delete item.sound.note.label;
+            }
+            var subbeat = this.subbeat(beat.bar, beat.beat, item.subbeat);
+            angular.extend(subbeat[item.sound.string].sound, item.sound);
+          }, this);
+        }, this);
 
-  BassSection.prototype.subbeat = function(bar, beat, subbeat) {
-    return this.bars[bar-1][beat-1].subbeats[subbeat-1];
-  };
+        // update references
+        this.forEachBeat(this.updateBassReferences, this);
+      }
 
-  BassSection.prototype.forEachBeat = function(callback, obj) {
-    if (obj) {
-      callback = callback.bind(obj);
-    }
-    var bar, barIndex, beatIndex;
-    for (barIndex = 0; barIndex < this.section.length; barIndex++) {
-      bar = this.bars[barIndex];
-      for (beatIndex = 0; beatIndex < this.section.timeSignature.top ; beatIndex++) {
-        callback({
-          beat: bar[beatIndex],
-          bar: barIndex+1,
-          index: beatIndex+1
+      clearSound(sound) {
+        if (sound.hasOwnProperty('sound')) {
+          sound = sound.sound;
+        }
+        if (sound.prev) {
+          delete sound.prev.ref.next;
+          delete sound.prev;
+        }
+        if (sound.next) {
+          this.clearSound(sound.next.ref);
+          delete sound.next;
+        }
+        delete sound.style;
+        delete sound.note;
+        delete sound.noteLength;
+      }
+
+      updateBassReferences(beat) {
+
+        var sounds = this.beatSounds(beat);
+        for (var i = 0; i < sounds.length; i++) {
+          var sound = sounds[i].sound;
+
+          if (sound.prev && angular.isUndefined(sound.prev.ref)) {
+            // fix of invalid bar index (after copy/paste) - TODO: better solution
+            if (sound.prev.bar !== beat.bar) {
+              sound.prev.bar = sound.prev.beat > beat.beat? beat.bar - 1 : beat.bar;
+            }
+            var subbeat = this.subbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat);
+            Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
+            sound.prev.ref = subbeat[sound.prev.string].sound;
+          }
+          if (sound.next && angular.isUndefined(sound.next.ref)) {
+            // fix of invalid bar index (after copy/paste) - TODO: better solution
+            if (sound.next.bar !== beat.bar) {
+              sound.next.bar = sound.next.beat < beat.beat? beat.bar + 1 : beat.bar;
+            }
+            var subbeat = this.subbeat(sound.next.bar, sound.next.beat, sound.next.subbeat);
+            Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
+            sound.next.ref = subbeat[sound.next.string].sound;
+          }
+        }
+      }
+
+      forEachSound(callback, obj) {
+        this.forEachBeat(function(beat) {
+          this.beatSounds(beat).map(function(i) {return i.sound}).forEach(callback, obj);
+        }, this);
+      }
+
+      beatSounds(bassBeat) {
+        var sounds = [];
+        bassBeat.subbeats.forEach(function(subbeat, subbeatIndex) {
+          var string, bassSound;
+          for (string in subbeat) {
+            if (string.startsWith('$')) {
+              continue;
+            }
+            bassSound = subbeat[string].sound;
+            if (bassSound.note) {
+              sounds.push({
+                subbeat: subbeatIndex+1,
+                sound: bassSound
+              });
+            }
+          }
         });
+        return sounds;
       }
     }
-  };
 
-  BassSection.prototype.forEachSubbeat = function(callback) {
-    var bar, beat, barIndex, beatIndex;
-    for (barIndex = 0; barIndex < this.section.length; barIndex++) {
-      bar = this.bars[barIndex];
-      for (beatIndex = 0; beatIndex < this.section.timeSignature.top ; beatIndex++) {
-        beat = bar[beatIndex];
-        beat.subbeats.forEach(function(subbeat, index) {
-          callback({
-            data: subbeat,
-            bar: barIndex+1,
-            beat: beatIndex+1,
-            subbeat: index+1
-          });
-        });
-      }
-    }
-  };
-
-  BassSection.prototype.beatSounds = function(bassBeat) {
-    var sounds = [];
-    bassBeat.subbeats.forEach(function(subbeat, subbeatIndex) {
-      var string, bassSound;
-      for (string in subbeat) {
-        if (string.startsWith('$')) {
-          continue;
-        }
-        bassSound = subbeat[string].sound;
-        if (bassSound.note) {
-          sounds.push({
-            subbeat: subbeatIndex+1,
-            sound: bassSound
-          });
-        }
-      }
-    });
-    return sounds;
-  };
-
-
-  BassSection.prototype.clearBeat = function(bassBeat) {
-    bassBeat.subbeats.forEach(function(subbeat) {
-      var string, bassSound;
-      for (string in subbeat) {
-        if (!string.startsWith('$')) {
-          this.clearSound(subbeat[string].sound);
-        }
-      }
-    }, this);
-  };
-
-  BassSection.prototype.clearSound = function(sound) {
-    if (sound.prev) {
-      delete sound.prev.ref.next;
-      delete sound.prev;
-    }
-    if (sound.next) {
-      this.clearSound(sound.next.ref);
-      delete sound.next;
-    }
-    delete sound.style;
-    delete sound.note;
-    delete sound.noteLength;
-  };
-
-  // update references
-  BassSection.prototype.updateBassReferences = function(beat) {
-
-    var sounds = this.beatSounds(beat);
-    for (var i = 0; i < sounds.length; i++) {
-      var sound = sounds[i].sound;
-
-      var bass = this.instrument;
-
-      if (sound.prev && angular.isUndefined(sound.prev.ref)) {
-        // fix of invalid bar index (after copy/paste) - TODO: better solution
-        if (sound.prev.bar !== beat.bar) {
-          sound.prev.bar = sound.prev.beat > beat.beat? beat.bar - 1 : beat.bar;
-        }
-        var subbeat = this.subbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat);
-        Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
-        sound.prev.ref = subbeat[sound.prev.string].sound;
-      }
-      if (sound.next && angular.isUndefined(sound.next.ref)) {
-        // fix of invalid bar index (after copy/paste) - TODO: better solution
-        if (sound.next.bar !== beat.bar) {
-          sound.next.bar = sound.next.beat < beat.beat? beat.bar + 1 : beat.bar;
-        }
-        var subbeat = this.subbeat(sound.next.bar, sound.next.beat, sound.next.subbeat);
-        Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
-        sound.next.ref = subbeat[sound.next.string].sound;
-      }
-    }
-  };
-
-  BassSection.prototype.forEachSound = function(callback, obj) {
-    this.forEachBeat(function(beat) {
-      this.beatSounds(beat.beat).map(function(i) {return i.sound}).forEach(callback, obj);
-    }, this);
-  };
-
-  BassSection.prototype.rawBeatData = function(beat) {
-    return {
-      bar: beat.bar,
-      beat: beat.beat,
-      subdivision: beat.subdivision,
-      meta: beat.meta,
-      data: this.beatSounds(this.beat(beat.bar, beat.beat))
-    };
-  };
-
-  BassSection.prototype.rawData = function() {
-    var data = [];
-    this.forEachBeat(function(beat) {
-      data.push({
-        bar: beat.bar,
-        beat: beat.index,
-        subdivision: beat.beat.subdivision,
-        meta: beat.beat.meta,
-        data: this.beatSounds(beat.beat)
-      });
-    }, this);
-    return data;
-  };
-
-  BassSection.prototype.convertToTrackSection = function() {
-    var data = angular.copy(this.rawData());
-    return new BassTrackSection(data);
-  };
+    return BassSection;
+  }
 
 })();
