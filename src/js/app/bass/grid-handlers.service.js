@@ -109,8 +109,8 @@
   }
 
 
-  var dropArea = {
-    elem: angular.element('<div class="drop-area"><label></label></div>')[0],
+  var dragBox = {
+    elem: angular.element('<div class="drag-box"></div>')[0],
     setLabel: function(label) {
       this.elem.children[0].innerHTML = label;
     },
@@ -121,7 +121,6 @@
       }
     }
   };
-
   function dragHandler($timeout, workspace, audioPlayer, swiperControl) {
 
     var dragHandler;
@@ -227,10 +226,10 @@
         });
         this.workspaceElem.appendChild(dragElem);
         evt.dataTransfer.setDragImage(dragElem, 10, 36);
-        dropArea.width = dragElem.clientWidth;
+        dragBox.width = dragElem.clientWidth;
         console.log(dragData);
         var beat = workspace.trackSection.beat(dragData.bar, dragData.beat);
-        dropArea.subdivision = beat.subdivision;
+        dragBox.subdivision = beat.subdivision;
 
         this.dragElement = dragElem;
         this.sourceSoundElements = soundElements;
@@ -297,7 +296,7 @@
     function DragAndDrop() {
       // var dropElem = document.createElement('div');
       // dropElem.className = 'drop-area';
-      document.body.appendChild(dropArea.elem);
+      document.body.appendChild(dragBox.elem);
 
       var scope = angular.element(document.body).scope();
       scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
@@ -341,7 +340,7 @@
         if (channel === 'fretboard' || channel === 'bassboard') {
           // console.log('ANGULAR_DRAG_END');
           dragHandler.onDragEnd(e, channel);
-          dropArea.visible = false;
+          dragBox.visible = false;
         }
       });
     }
@@ -363,7 +362,7 @@
       if (sound.note && sound.note.type !== 'ghost') {
         dropGrid.sound.note.fret = workspace.track.instrument.stringFret(dropGrid.sound.string, sound.note);
       }
-      dropArea.elem.style.opacity = 0.001;
+      dragBox.elem.style.opacity = 0.001;
       // $scope.updateBassGrid(dropGrid);
     };
 
@@ -374,25 +373,37 @@
         var target = findGridContainer(evt.target);
         var box = target.getBoundingClientRect();
         var width = dragData.widths[beat.subdivision];
-        dropArea.setPxStyles({
+        dragBox.setPxStyles({
           left: box.left,
           top: box.top+1,
           width: width
         });
-        dropArea.elem.style.opacity = 1;
+        dragBox.elem.style.opacity = 1;
       });
     };
 
     DragAndDrop.prototype.onDragLeave = function() {
-      dropArea.elem.style.opacity = 0.001;
+      dragBox.elem.style.opacity = 0.001;
     };
-
 
     return new DragAndDrop();
   }
 
 
   function resizeHandler($timeout, workspace, swiperControl, basicHandler) {
+
+    var resizeBox = {
+      elem: angular.element('<div class="resize-box"><label></label></div>')[0],
+      setLabel: function(label) {
+        this.elem.children[0].innerHTML = label;
+      },
+      setPxStyles: function(styles) {
+        // Object.keys(styles).forEach(function(key))
+        for (var key in styles) {
+          this.elem.style[key] = styles[key]+'px';
+        }
+      }
+    };
 
     var noteLengthSymbols = {
       1: '𝅝',
@@ -467,7 +478,13 @@
         console.log('onResizeStart');
         basicHandler.selectGrid({target: info.element[0]}, grid);
 
-        var beatWidth = swiperControl.barSwiper.slides[0].clientWidth;
+        // var beatWidth = swiperControl.barSwiper.slides[0].clientWidth;
+        var elem = info.element;
+        while (elem && !elem.hasClass('subbeats-container')) {
+          elem = elem.parent();
+        }
+        var beatWidth = elem[0].clientWidth;
+
         if (subdivision === 3) {
           beatWidth = beatWidth*(2/3);
         }
@@ -481,24 +498,23 @@
         });
 
         // wait for grid selection (css) for better accuracy
-        if (this.$apply) { // if bound to Scope
+        if (this.$apply) { // if it's bound to Scope
           this.$apply();
         }
         $timeout(function() {
           var containerElem = info.element.parent()[0];
           // this.selected.element
-          dropArea.elem.style.opacity = '1';
+          resizeBox.elem.style.opacity = '1';
           var box = containerElem.getBoundingClientRect();
-          dropArea.setPxStyles({
-            left: box.left,
-            top: box.top,
+          resizeBox.setPxStyles({
             width: info.width
           });
+          basicHandler.selected.element.appendChild(resizeBox.elem);
         }, 10);
       },
 
       onResize: function(grid, info) {
-        var delta, closestWidth;;
+        var delta, closestWidth;
         var minDelta = notesWidths[0];
         notesWidths.forEach(function(width, index) {
           delta = Math.abs(info.width-width);
@@ -508,22 +524,23 @@
             resizeLength = noteLengths[index];
           }
         });
-        dropArea.setPxStyles({width: closestWidth});
+        resizeBox.setPxStyles({width: closestWidth});
         var label = noteLengthSymbols[resizeLength.length];
         if (resizeLength.dotted) {
           label += ' .';
         }
-        dropArea.setLabel(label);
+        resizeBox.setLabel(label);
       },
 
       onResizeEnd: function(grid, info, evt) {
         // var box = info.element[0].getBoundingClientRect();
         // console.log(box);
         var resizeElem  = info.element[0];
+        var box = resizeBox.elem.getBoundingClientRect();
         resizeElem.style.display = "none";
-        var resizeBox = dropArea.elem.getBoundingClientRect();
-        var x = resizeBox.left + resizeBox.width - 10;
-        var elem = document.elementFromPoint(x, resizeBox.top+10);
+
+        var x = box.left + box.width - 10;
+        var elem = document.elementFromPoint(x, box.top+10);
         resizeElem.style.display = "";
 
         var targetGrid = angular.element(elem.parentElement).scope().grid;
@@ -540,8 +557,10 @@
           }
         }
         info.element.css('width', '');
-        dropArea.setLabel('');
-        dropArea.elem.style.opacity = 0.001;
+        resizeBox.setLabel('');
+        resizeBox.elem.style.opacity = 0.001;
+        resizeBox.elem.remove();
+
         $timeout(function() {
           angular.extend(grid.sound.noteLength, resizeLength);
           afterGroupResize(grid);

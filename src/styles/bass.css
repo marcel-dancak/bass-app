@@ -182,8 +182,8 @@
   border: 1px solid #777;
   box-sizing: border-box;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-  max-height: 34px;
   line-height: 34px;
+  max-height: 34px;
   pointer-events: auto;
 }
 
@@ -271,6 +271,7 @@
 }
 .bass-sound-wrapper.selected {
   transition-property: width, opacity;
+  z-index: 201;
 }
 .fret-input {
   min-width: 18px;
@@ -366,7 +367,8 @@
   pointer-events: none;
 }
 
-.drop-area {
+.resize-box,
+.drag-box {
   position: fixed;
   height: 36px;
   padding: 0;
@@ -379,7 +381,12 @@
   pointer-events: none;
   box-sizing: border-box;
 }
-.drop-area label {
+.resize-box {
+  top: -2px;
+  left: -2px;
+  position: absolute;
+}
+.resize-box label {
   position: absolute;
   right: 0;
   top: -30px;
@@ -387,11 +394,12 @@
   width: 26px;
   height: 26px;
   text-align: center;
+  line-height: 28px;
   background-color: rgba(33,150,243, 0.75);
   border-radius: 5px;
   letter-spacing: 1px;
 }
-.drop-area label:empty {
+.resize-box label:empty {
   display: none;
 }
 
@@ -435,6 +443,7 @@
   opacity: 0;
 }
 
+.bass-sound-container.hover .resize-handler,
 .bass-sound-container:hover .resize-handler {
   opacity: 1;
 }
