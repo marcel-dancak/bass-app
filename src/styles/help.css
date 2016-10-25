@@ -1,0 +1,66 @@
+.help-container {
+  background-color: #fff;
+  position: absolute;
+  bottom: 10px;
+  left: 20%;
+  right: 20%;
+  height: 60%;
+  z-index: 100;
+}
+
+.help-container .index {
+  background-color: #f0f0fc;
+  min-width: 200px;
+}
+
+.help-container .index .active {
+  color: red;
+}
+.help-container .content {
+  padding: 10px;
+  background-color: #fff;
+  z-index: 1;
+  position: relative;
+  width: 100%;
+}
+
+.bass-slide {
+  width: 600px;
+  height: 180px;
+}
+
+
+.help-bass-sheet {
+  position: relative;
+  height: 164px;
+  width: 100%;
+}
+.help-bass-sheet.strings-5 {
+  height: 196px;
+}
+
+.help-bass-sheet .beats-container {
+  margin-left: 48px;
+  padding-top: 24px;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.help-bass-sheet .beat {
+  position: relative;
+  max-width: 300px;
+}
+.help-bass-sheet .beat:last-child {
+  border-right: 1px solid #ccc;
+}
+
+.help-container .instruction {
+  font-weight: bold;
+}
+.help-container li.active {
+  font-weight: bold;
+}
+
+section {
+  padding-bottom: 90px;
+}

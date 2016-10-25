@@ -14,7 +14,8 @@
 
   <div
     flex
-    class="player swiper-container strings-4"
+    class="playlist-swiper bass-sheet swiper-container"
+    ng-class="['strings-'+workspace.track.instrument.strings.length]"
     ng-init="swiperControl.swiperConfig.visibleSubbeats = visibleSubbeats">
     <!-- Additional required wrapper -->
     <div class="swiper-wrapper">

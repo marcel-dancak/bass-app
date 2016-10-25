@@ -1,0 +1,69 @@
+<div
+  layout-fill
+  layout="row"
+  ng-init="help.page='views/help/bass.html'"
+  ng-controller="HelpController">
+  <md-list
+    class="index"
+    ng-accordion>
+
+    <div ng-accordion-item>
+      <md-list-item
+        ng-click="
+          $accordion.toggle();
+          help.page='views/help/navigation.html'
+        "
+        ng-class="{expanded: $accordion.expanded}">
+        Navigation
+      </md-list-item>
+      <div
+        ng-accordion-content
+        class="subsection"
+        ng-class>
+        <md-list-item>
+          1.1
+        </md-list-item>
+        <md-list-item>
+          1.2
+        </md-list-item>
+      </div>
+    </div>
+    <div ng-accordion-item>
+      <md-list-item
+        ng-click="
+          $accordion.toggle();
+          xhelp.page='views/help/bass.html'
+        "
+        ng-class="{expanded: $accordion.expanded}">
+        Bass
+      </md-list-item>
+      <div
+        ng-accordion-content
+        du-scroll-container="container"
+        class="subsection">
+        <md-list-item href="#section-1" du-smooth-scroll du-scrollspy>
+          2.1 Slides
+        </md-list-item>
+        <md-list-item href="#section-2" du-smooth-scroll du-scrollspy>
+          2.2
+        </md-list-item>
+        <md-list-item href="#section-3" du-smooth-scroll du-scrollspy>
+          2.3
+        </md-list-item>
+        <md-list-item href="#section-4" du-smooth-scroll du-scrollspy>
+          2.4
+        </md-list-item>
+      </div>
+    </div>
+
+  </md-list>
+
+  <md-content
+    flex
+    id="container"
+    du-scroll-container
+    class="content md-padding">
+    <div ng-include="help.page"></div>
+  </md-content>
+
+</div>

@@ -75,7 +75,7 @@
   margin: 0 15px 0 0px;
 }
 
-.player.swiper-container,
+.playlist-swiper.swiper-container,
 .viewer-container .swiper-wrapper {
   height: 100%;
   width: 100%;
@@ -83,43 +83,42 @@
   padding-right: 10px;
 }
 
-.player .bar-beat {
+.playlist-swiper .bar-beat {
   max-height: 65px;
   height: 8vh;
   margin-bottom: 10px;
 }
 
 
-.player .swiper-slide .section-info {
+.bass-sheet .swiper-slide .section-info {
   min-width: 30px;
   position: relative;
   color: #555;
 }
 
-.player .swiper-slide .chord-label {
+.bass-sheet .swiper-slide .chord-label {
   position: absolute;
   bottom: 10px;
   left: 25px;
   color: #777;
 }
 
-.player .swiper-slide .header {
+.bass-sheet .swiper-slide .header {
   height: 56px;
   position: relative;
 }
-.player .swiper-slide .beat {
-}
+
 
 .swiper-slide .header .bar-label {
   top: 26px;
 }
 
-.player .swiper-slide .section-info .bar-beat::before,
-.player .swiper-slide .section-info .instrument-slide::before {
+.bass-sheet .swiper-slide .section-info .bar-beat::before,
+.bass-sheet .swiper-slide .section-info .instrument-slide::before {
   display: none;
 }
 
-.player .swiper-slide > div:last-child .bar-beat::after {
+.bass-sheet .swiper-slide > div:last-child .bar-beat::after {
   position: absolute;
   top: 0;
   right: -3px;
@@ -129,8 +128,8 @@
   background-color: #aaa;
   z-index: 200;
 }
-.player .swiper-slide .bass-board.last::after,
-.player .swiper-slide > div > div:last-child > .bass-board::after {
+.bass-sheet .swiper-slide .bass-board.last::after,
+.bass-sheet .swiper-slide .beat:last-child > .bass-board::after {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -142,15 +141,15 @@
   background-color: #ccc;
   z-index: 200;
 }
-.player .subbeat-label.align-right {
+.bass-sheet .subbeat-label.align-right {
   padding-left: 24px;
 }
-.player .swiper-slide .section-info .name {
+.bass-sheet .swiper-slide .section-info .name {
   position: absolute;
   top: 100px;
 }
 
-.player .swiper-slide .time-signature {
+.bass-sheet .swiper-slide .time-signature {
   font-size: 20px;
   xfont-weight: bold;
   right: 0;
@@ -158,7 +157,7 @@
   height: 80px;
   padding: 0 14px;
 }
-.player .swiper-slide .beat .section-info .time-signature {
+.bass-sheet .swiper-slide .beat .section-info .time-signature {
   position: absolute;
   left: 0;
   top: 0;
@@ -169,7 +168,7 @@
   text-align: center;
 }
 
-.player .swiper-slide .section-info.main .bpm {
+.bass-sheet .swiper-slide .section-info.main .bpm {
   position: absolute;
   font-size: 16px;
   top: 4px;
@@ -180,7 +179,7 @@
   white-space: nowrap;
 }
 
-.player .swiper-slide .section-label .bpm {
+.bass-sheet .swiper-slide .section-label .bpm {
   position: absolute;
   left: -50px;
 }
@@ -193,7 +192,7 @@
 }
 
 
-.player .swiper-slide .section-info .bass-board p {
+.bass-sheet .swiper-slide .section-info .bass-board p {
   padding: 0;
   margin: 0;
   line-height: 36px;
