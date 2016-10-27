@@ -1,57 +1,45 @@
 <div
   layout-fill
   layout="row"
-  ng-init="help.page='views/help/bass.html'"
-  ng-controller="HelpController">
+  ng-controller="HelpController"
+  ng-init="
+    helpPages = [
+      {
+        template: 'views/help/bass.html',
+        title: 'Bass',
+        sections: ['Creating sounds', 'Composite sounds', 'Slides', 'Fretboard']
+      }, {
+        template: 'views/help/navigation.html',
+        title: 'Drums',
+        sections: ['1.1', '1.2', '1.3']
+      }
+    ]
+  "
+  ng-class="['active-step-'+index.activeStep]">
   <md-list
     class="index"
-    ng-accordion>
+    md-no-ink>
 
-    <div ng-accordion-item>
+    <div
+      ng-repeat="item in ::helpPages"
+      class="index-item"
+      size="{{ ::item.sections.length }}"
+      ng-class="{expanded: page === item}">
       <md-list-item
-        ng-click="
-          $accordion.toggle();
-          help.page='views/help/navigation.html'
-        "
-        ng-class="{expanded: $accordion.expanded}">
-        Navigation
+        md-no-ink
+        ng-click="setHelpPage(item)">
+        {{ ::item.title }}
       </md-list-item>
       <div
-        ng-accordion-content
-        class="subsection"
-        ng-class>
-        <md-list-item>
-          1.1
-        </md-list-item>
-        <md-list-item>
-          1.2
-        </md-list-item>
-      </div>
-    </div>
-    <div ng-accordion-item>
-      <md-list-item
-        ng-click="
-          $accordion.toggle();
-          xhelp.page='views/help/bass.html'
-        "
-        ng-class="{expanded: $accordion.expanded}">
-        Bass
-      </md-list-item>
-      <div
-        ng-accordion-content
-        du-scroll-container="container"
-        class="subsection">
-        <md-list-item href="#section-1" du-smooth-scroll du-scrollspy>
-          2.1 Slides
-        </md-list-item>
-        <md-list-item href="#section-2" du-smooth-scroll du-scrollspy>
-          2.2
-        </md-list-item>
-        <md-list-item href="#section-3" du-smooth-scroll du-scrollspy>
-          2.3
-        </md-list-item>
-        <md-list-item href="#section-4" du-smooth-scroll du-scrollspy>
-          2.4
+        class="sections"
+        ng-if="page === item"
+        du-scroll-container="container-{{ ::$index }}">
+        <md-list-item
+          ng-repeat="section in ::item.sections"
+          href="#section-{{ ::$index+1 }}"
+          du-smooth-scroll
+          du-scrollspy>
+          {{ ::section }}
         </md-list-item>
       </div>
     </div>
@@ -60,10 +48,11 @@
 
   <md-content
     flex
-    id="container"
-    du-scroll-container
-    class="content md-padding">
-    <div ng-include="help.page"></div>
+    ng-repeat="item in ::helpPages"
+    id="container-{{ ::$index }}"
+    class="content md-padding"
+    ng-show="item === page">
+    <div flex ng-if="item === page" ng-include="::item.template"></div>
   </md-content>
 
 </div>

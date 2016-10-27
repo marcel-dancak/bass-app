@@ -5,10 +5,9 @@
       'bd.help', [
         'templates',
         'ngMaterial',
-        'duScroll',
-        'ngAccordion'
+        'duScroll'
     ])
     .value('duScrollBottomSpy', true)
-    .value('duScrollOffset', 120)
+    .value('duScrollOffset', 80)
     .value('duScrollGreedy', true);
 })();

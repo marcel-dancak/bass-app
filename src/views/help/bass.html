@@ -1,15 +1,16 @@
+<h4>{{ ::item.sections[0] }}</h4>
+
 <section id="section-1">
-  <h4>Slides</h4>
   <div bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
-      controller: 'SlidesSounds'
+      controller: 'SoundForm'
     }">
   </div>
 
-  <p class="instruction">
+  <p class="instructions">
     Steps:
-    <ul>
+    <ul class="instructions-list">
       <li ng-class="{active: step === 1}">1. Create first sound</li>
       <li ng-class="{active: step === 2}">2. Create second sound on the same string</li>
       <li ng-class="{active: step === 3}">
@@ -21,16 +22,16 @@
 </section>
 
 <section id="section-2">
-  <h4>Hammer-On 2</h4>
+  <h4>{{ ::item.sections[1] }}</h4>
   <div bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
       controller: 'ComposedSounds'
     }">
   </div>
-  <p class="instruction">
+  <p class="instructions">
     Steps:
-    <ul>
+    <ul class="instructions-list">
       <li ng-class="{active: step === 1}">1. Create first sound</li>
       <li ng-class="{active: step === 2}">2. Create a second sound on the same string (right after the first sound)</li>
       <li ng-class="{active: step === 3}">3. Select second sound</li>
@@ -40,7 +41,7 @@
 </section>
 
 <section id="section-3">
-  <h4>Section 3</h4>
+  <h4>{{ ::item.sections[2] }}</h4>
   <div bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
@@ -48,9 +49,9 @@
     }">
   </div>
 
-  <p class="instruction">
+  <p class="instructions">
     Steps:
-    <ul>
+    <ul class="instructions-list">
       <li>1. Create first sound</li>
       <li>2. Create second sound on the same string</li>
       <li>3. Click and hold left mouse button on the right edge of the first sound to start resize operation</li>
@@ -60,6 +61,6 @@
 </section>
 
 <section id="section-4">
-  <h4>Section 4</h4>
+  <h4>{{ ::item.sections[3] }}</h4>
   <p>Last section</p>
 </section>

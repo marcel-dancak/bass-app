@@ -399,9 +399,6 @@
   border-radius: 5px;
   letter-spacing: 1px;
 }
-.resize-box label:empty {
-  display: none;
-}
 
 .resize-container {
   position: absolute;

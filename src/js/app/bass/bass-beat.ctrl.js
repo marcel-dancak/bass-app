@@ -36,6 +36,7 @@
     $scope.openBassSoundMenu = bassSoundForm.open;
   }
 
+
   function BassFormController($scope, sound, string, bass, audioPlayer) {
 
     $scope.nextNote = function(note) {
@@ -168,7 +169,7 @@
     };
 
     var menu = {
-      open: function(evt, grid, bass) {
+      open: function(evt, grid, bass, options) {
         if (!appContextMenuHandler || window.oncontextmenu !== customContextMenuHandler) {
           appContextMenuHandler = window.oncontextmenu;
         }
@@ -185,28 +186,37 @@
         var animation = $mdPanel.newPanelAnimation()
           .withAnimation($mdPanel.animation.FADE);
 
-        panelRef = $mdPanel.create({
-          templateUrl: 'views/bass_sound_form.html',
-          targetEvent: evt,
-          position: position,
-          animation: animation,
+        var panelConfig = {
           clickOutsideToClose: true,
           escapeToClose: true,
-          controller: 'BassFormController',
-          locals: {
-            sound: grid.sound,
-            string: grid.string,
-            bass: bass
-          },
-          onRemoving: function() {
-            window.oncontextmenu = appContextMenuHandler;
-          },
-          onOpenComplete: function() {
-            window.oncontextmenu = customContextMenuHandler;
-          }
-        });
+          zIndex: 250
+        }
+        if (options) {
+          panelConfig = angular.extend(panelConfig, options);
+        }
+        panelRef = $mdPanel.create(
+          angular.extend(panelConfig, {
+            templateUrl: 'views/bass_sound_form.html',
+            targetEvent: evt,
+            position: position,
+            animation: animation,
+            controller: 'BassFormController',
+            locals: {
+              sound: grid.sound,
+              string: grid.string,
+              bass: bass
+            },
+            onRemoving: function() {
+              window.oncontextmenu = appContextMenuHandler;
+            },
+            onOpenComplete: function() {
+              window.oncontextmenu = customContextMenuHandler;
+            }
+          })
+        );
 
         panelRef.open();
+        return panelRef;
       }
     }
 

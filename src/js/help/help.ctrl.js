@@ -8,13 +8,24 @@
   function HelpController($scope, $element, $timeout, Bass, BassSection, basicHandler) {
 
     $scope.index = {
-      activeSection: 1
+      activeSection: 1,
+      activeStep: 1
     };
+    $scope.page = null;
+
+    $scope.setHelpPage = function(page) {
+      stopAnimation();
+      $scope.page = page;
+    };
+    $timeout(function() {
+      $scope.page = $scope.helpPages[0];
+    });
 
     var animatedSlides;
-    var timer;
+    var timer = null;
     function showStep(slides, step) {
       console.log('SHOW SLIDE '+step)
+      $scope.index.activeStep = step + 1;
       slides[step]();
       var nextStep = (step+1) % (slides.length);
       timer = $timeout(
@@ -23,21 +34,26 @@
       );
     }
 
-    $scope.$on('duScrollspy:becameActive', function($event, $element, $target) {
-      console.log($target);
+    function stopAnimation() {
+      console.log('stopAnimation');
       if (animatedSlides) {
-        if (timer) {
+        if (timer !== null) {
           $timeout.cancel(timer);
           timer = null;
         }
         $timeout(animatedSlides[animatedSlides.length-1]);
         animatedSlides = null;
       }
+    }
+
+    $scope.$on('duScrollspy:becameActive', function($event, $element, $target) {
+      stopAnimation();
 
       var instructionsElem = angular.element($target[0].querySelector('div[bd-help-bass-sheet] > div'));
       if (instructionsElem.length) {
         animatedSlides = instructionsElem.scope().instructions;
         $timeout(function() {
+          console.log('starting animation');
           showStep(animatedSlides, 0)
         });
       }

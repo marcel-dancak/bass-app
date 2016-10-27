@@ -6,6 +6,7 @@
   right: 20%;
   height: 60%;
   z-index: 100;
+  overflow: hidden;
 }
 
 .help-container .index {
@@ -14,7 +15,7 @@
 }
 
 .help-container .index .active {
-  color: red;
+  color: #2196F3;
 }
 .help-container .content {
   padding: 10px;
@@ -41,7 +42,7 @@
 
 .help-bass-sheet .beats-container {
   margin-left: 48px;
-  padding-top: 24px;
+  padding-top: 28px;
   height: 100%;
   position: relative;
   overflow: hidden;
@@ -54,13 +55,106 @@
   border-right: 1px solid #ccc;
 }
 
-.help-container .instruction {
+.help-container .instructions {
   font-weight: bold;
 }
 .help-container li.active {
+  xfont-weight: bold;
+}
+
+.help-container .active-step-1 .instructions-list li:first-child,
+.help-container .active-step-2 .instructions-list li:nth-child(2),
+.help-container .active-step-3 .instructions-list li:nth-child(3),
+.help-container .active-step-4 .instructions-list li:nth-child(4),
+.help-container .active-step-5 .instructions-list li:nth-child(5),
+.help-container .active-step-6 .instructions-list li:nth-child(6) {
   font-weight: bold;
 }
 
-section {
-  padding-bottom: 90px;
+.help-container .index-item {
+  overflow: hidden;
+}
+
+.help-container .index-item,
+.help-container .index-item {
+  transition: height cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
+}
+
+.help-container .index-item:not(.expanded) {
+  height: 48px;
+}
+.help-container .index-item[size="2"].expanded {
+  height: 144px;
+}
+.help-container .index-item[size="3"].expanded {
+  height: 192px;
+}
+.help-container .index-item[size="4"].expanded {
+  height: 240px;
+}
+
+.help-container .sections.ng-enter,
+.help-container .sections.ng-leave {
+  transition: opacity cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
+}
+
+.help-container .sections.ng-enter,
+.help-container .sections.ng-leave.ng-leave-active {
+  opacity:0;
+}
+
+.help-container .sections.ng-leave,
+.help-container .sections.ng-enter.ng-enter-active {
+  opacity:1;
+}
+.help-container .sections .md-list-item-inner {
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+
+
+.help-container .index-item.expanded > md-list-item {
+  background-color: rgba(33,150,243, 0.15);
+}
+.help-container .index-item.expanded > md-list-item .md-list-item-inner {
+  font-weight: bold;
+}
+
+.index md-list-item:hover {
+  background-color: rgba(33,150,243, 0.05);
+}
+.index md-list-item .md-button.md-focused,
+.index md-list-item .md-button:hover {
+  background-color: transparent;
+}
+
+
+.help-container section {
+  padding-top: 0px;
+  padding-bottom: 100px;
+  position: relative;
+}
+
+.help-container section > h4 {
+  position: absolute;
+  top: -52px;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+
+.non-interactive {
+  pointer-events: none;
+}
+.help-container .md-panel-outer-wrapper .bass-form {
+  transition-property: opacity;
+}
+
+.help-container .md-panel-outer-wrapper {
+  overflow: hidden;
+  position: absolute;
+  width: 500px;
+  height: 600px;
+  clip: rect(0, auto, auto, 0);
 }
