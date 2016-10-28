@@ -23,20 +23,6 @@
 
     var viewerTrackId = workspace.bassSection.track.id;
 
-    $scope.visibleSubbeats = {
-      3: {
-        1: true,
-        2: true,
-        3: true,
-        4: false
-      }, 4:{
-        1: true,
-        2: true,
-        3: true,
-        4: true
-      }
-    };
-
     var playlist;
     var playlistSlidePosition;
     var beatsPerSlide = 8;
@@ -186,7 +172,7 @@
     });
 
     function initializeSwiper() {
-      var swiperElem = document.querySelector('.player.swiper-container');
+      var swiperElem = document.querySelector('.playlist-swiper');
       playerSwiper = new Swiper(swiperElem, {
         spaceBetween: 0,
         direction: 'vertical',

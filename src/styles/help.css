@@ -38,7 +38,7 @@ md-dialog.help-dialog.md-transition-in {
 
 .help-bass-sheet {
   position: relative;
-  height: 164px;
+  height: 172px;
   width: 100%;
 }
 .help-bass-sheet.strings-5 {
@@ -52,11 +52,13 @@ md-dialog.help-dialog.md-transition-in {
   position: relative;
   overflow: hidden;
 }
-.help-bass-sheet .beat {
+.help-bass-sheet .beat,
+.help-drum-sheet .beat {
   position: relative;
   max-width: 300px;
 }
-.help-bass-sheet .beat:last-child {
+.help-bass-sheet .beat:last-child,
+.help-drum-sheet .beat:last-child {
   border-right: 1px solid #ccc;
 }
 
@@ -67,12 +69,13 @@ md-dialog.help-dialog.md-transition-in {
   xfont-weight: bold;
 }
 
-.help-container.active-step-1 .instructions-list li:first-child,
-.help-container.active-step-2 .instructions-list li:nth-child(2),
-.help-container.active-step-3 .instructions-list li:nth-child(3),
-.help-container.active-step-4 .instructions-list li:nth-child(4),
-.help-container.active-step-5 .instructions-list li:nth-child(5),
-.help-container.active-step-6 .instructions-list li:nth-child(6) {
+.help-container.active-step-1 .instructions-list > *:first-child,
+.help-container.active-step-2 .instructions-list > *:nth-child(2),
+.help-container.active-step-3 .instructions-list > *:nth-child(3),
+.help-container.active-step-4 .instructions-list > *:nth-child(4),
+.help-container.active-step-5 .instructions-list > *:nth-child(5),
+.help-container.active-step-6 .instructions-list > *:nth-child(6),
+.help-container.active-step-6 .instructions-list > *:nth-child(7) {
   font-weight: bold;
 }
 
@@ -185,4 +188,28 @@ md-dialog.help-dialog.md-transition-in {
   width: 500px;
   height: 600px;
   clip: rect(0, auto, auto, 0);
+}
+
+.help-container .content a {
+  color: #2196F3;
+  cursor: pointer;
+}
+
+.help-container .bass-button {
+  display: inline-block;
+  opacity: 1;
+}
+.help-container div.bass-button {
+  position: static;
+  min-width: 26px;
+  width: 26px;
+  min-height: 26px;
+  height: 26px;
+  line-height: 24px;
+}
+
+.help-drum-sheet {
+  position: relative;
+  width: 50%;
+  padding-left: 68px;
 }

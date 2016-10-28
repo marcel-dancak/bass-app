@@ -51,7 +51,7 @@
       var sectionIndex = parseInt(id.replace('section-', ''));
 
       stopAnimation();
-      var instructionsElem = angular.element($target[0].querySelector('div[bd-help-bass-sheet] > div'));
+      var instructionsElem = angular.element($target[0].querySelector('.slideshow > div'));
       if (instructionsElem.length) {
         animatedSlides = instructionsElem.scope().instructions;
         $timeout(function() {
@@ -64,6 +64,15 @@
       }
 
       $scope.index.activeSection = sectionIndex;
+    });
+
+    $scope.scrollTo = function(sectionIndex) {
+      var container = $element[0].querySelector('#'+$scope.page.containerId);
+      var section = container.querySelector('#section-'+sectionIndex);
+      angular.element(container).scrollToElementAnimated(section);
+    };
+    $scope.$on('$destroy', function() {
+      stopAnimation();
     });
   }
 

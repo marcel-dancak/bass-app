@@ -32,7 +32,13 @@
       var beatDelay = evt.startTime - evt.eventTime;
 
       var beatElem = this.swiperControl.getBeatElem(evt.bar, evt.beat);
-      var subbeatElements = beatElem.querySelectorAll('.subbeat:not(.hidden)');
+      // var subbeatElements = beatElem.querySelectorAll('.subbeat:not(.hidden)');
+      var subbeatElements = [].slice.call(beatElem.querySelectorAll('.subbeat'))
+        .filter(function(elem) {
+          return elem.offsetWidth > 0;
+        }
+      );
+
 
       for (var index = 0; index < subbeatElements.length; index++) {
         var subbeatDelay = evt.duration*index/subbeatElements.length;

@@ -88,10 +88,7 @@
         <div
           ng-repeat="label in ::barLabels[beat.subdivision] track by $index"
           flex
-          class="subbeat"
-          ng-class="{
-            hidden: !swiperControl.swiperConfig.visibleSubbeats[beat.subdivision][$index+2]
-          }">
+          class="subbeat">
           <label class="subbeat-label">
             {{ ::label }}
           </label>

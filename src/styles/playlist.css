@@ -171,7 +171,7 @@
 .bass-sheet .swiper-slide .section-info.main .bpm {
   position: absolute;
   font-size: 16px;
-  top: 4px;
+  top: 0;
   z-index: 200;
   text-align: left;
   left: 0;
@@ -203,7 +203,7 @@
 
 .section-label {
   position: absolute;
-  top: 4px;
+  top: 0;
   left: 25px;
   color: #555;
   width: 200%;

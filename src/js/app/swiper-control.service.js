@@ -7,26 +7,6 @@
 
   function swiperControl($timeout, workspace) {
 
-    var SUBBEATS_VISIBILITY = {
-      '1': {
-        1: true
-      },
-      '13': {
-        1: true,
-        3: true
-      },
-      '1234': {
-        1: true,
-        2: true,
-        3: true,
-        4: true
-      },
-      '123': {
-        1: true,
-        2: true,
-        3: true
-      }
-    };
 
     function destroySwiper(swiper) {
       swiper.detachEvents();
@@ -39,10 +19,7 @@
       this.barSwiper = null;
       this.instrumentSwiper = null;
       this.swiperConfig = {
-        visibleSubbeats: {
-          3: SUBBEATS_VISIBILITY['123'],
-          4: SUBBEATS_VISIBILITY['1234']
-        }
+        visibleSubbeats: 4
       };
       this.updateVisibleSlides = function() {
         $timeout(this.updateSlidesVisibility.bind(this));
@@ -82,11 +59,11 @@
       var slideWidth = this.barSwiper.width / this.barSwiper.params.slidesPerView;
       var visibleSubbeats;
       if (slideWidth > 220) {
-        this.swiperConfig.visibleSubbeats[4] = SUBBEATS_VISIBILITY['1234'];
+        this.swiperConfig.visibleSubbeats = 4;
       } else if (slideWidth > 110) {
-        this.swiperConfig.visibleSubbeats[4] = SUBBEATS_VISIBILITY['13'];
+        this.swiperConfig.visibleSubbeats = 2;
       } else {
-        this.swiperConfig.visibleSubbeats[4] = SUBBEATS_VISIBILITY['1'];
+        this.swiperConfig.visibleSubbeats = 2;
       }
     };
 

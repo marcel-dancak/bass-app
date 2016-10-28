@@ -23,7 +23,6 @@
           return playlistItem.section === projectSection.section;
         });
       });
-      console.log($scope.availableSections);
       $scope.updatePlaylist();
     }
     updateAvailableSection();

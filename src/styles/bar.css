@@ -461,3 +461,10 @@ md-menu-content.beat-menu-content {
   background-color: #777;
   opacity: 0.15;
 }*/
+
+
+.beat[visible-subbeats="2"] .subbeat:nth-child(2),
+.beat[visible-subbeats="2"] .subbeat:nth-child(4),
+.beat[visible-subbeats="3"] .subbeat:nth-child(4) {
+  display: none;
+}

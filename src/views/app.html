@@ -34,11 +34,15 @@
           <!-- Slides -->
           <div
             ng-repeat="slide in slides track by slide.id"
+            ng-attr-visible-subbeats="
+              {{ slide.beat.subdivision === 3? 3 : swiperControl.swiperConfig.visibleSubbeats }}
+            "
             class="swiper-slide bar-slide beat beat-{{ ::slide.beat.beat }}">
             <label class="bar-label">
               {{ ::slide.beat.bar }}
             </label>
             <input
+              spellcheck="false"
               class="chord-label"
               ng-model="slide.beat.meta.chord"
               ng-blur="slide.beat.meta.chord = slide.beat.meta.chord.replace('#', '♯').replace('b', '♭')">
@@ -93,7 +97,7 @@
       class="workspace"
       layout="column">
       <div flex="none"
-        class="instrument-grid strings-4"
+        class="instrument-grid"
         ng-class="[
           bass.settings.label,
           'strings-'+workspace.track.instrument.strings.length,
@@ -119,7 +123,9 @@
           <!-- Slides -->
           <div
             ng-repeat="slide in slides track by slide.id"
-            class="swiper-slide swiper-no-swiping instrument-slide beat-{{ ::slide.beat.beat }}">
+            ng-attr-subdivision="{{ slide.beat.subdivision }}"
+            ng-attr-visible-subbeats="{{ swiperControl.swiperConfig.visibleSubbeats }}"
+            class="swiper-slide swiper-no-swiping instrument-slide beat beat-{{ ::slide.beat.beat }}">
             <div ng-switch="slide.type" ng-class="{obsolete: slide.obsolete}">
               <div
                 ng-switch-when="bass"

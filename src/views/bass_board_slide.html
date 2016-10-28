@@ -1,7 +1,8 @@
 <div
   ng-if="slide.initialized"
   sly-show="slide.visible"
-  ng-keyup="keyPressed($event)">
+  ng-keyup="keyPressed($event)"
+  class="bass">
   <div class="string-container">
     <div
       ng-repeat="string in workspace.track.instrument.strings track by string.index"
@@ -12,13 +13,7 @@
   <div
     class="subbeats-container"
     layout="column"
-    ng-repeat="bassSubbeats in ::slide.beat.subbeats track by $index"
-    ng-class="{
-      hidden: !swiperControl.swiperConfig.visibleSubbeats[slide.beat.subdivision][$index+1]
-    }"
-    ng-style="{
-      width: ((slide.beat.subdivision === 4? 100 : 66.667))+'%'
-    }">
+    ng-repeat="bassSubbeats in ::slide.beat.subbeats track by $index">
 
     <div
       ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"

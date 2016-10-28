@@ -63,6 +63,8 @@
   border: 2px solid rgb(63,81,181);
 }
 
-.drums-column.hidden {
+
+.beat[subdivision="4"][visible-subbeats="2"] .drums > .subbeats-container:nth-child(2),
+.beat[subdivision="4"][visible-subbeats="2"] .drums > .subbeats-container:nth-child(4) {
   display: none;
 }

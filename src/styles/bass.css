@@ -98,7 +98,7 @@
   position: relative;
 }
 
-.subbeats-container:not(.hidden) .bass-grid {
+.bass > .subbeats-container:not(.hidden) .bass-grid {
   pointer-events: auto;
 }
 
@@ -153,6 +153,7 @@
   line-height: 30px;
   margin: 0;
   padding: 0 2px;
+  text-align: center;
   text-transform: none;
   color: #e2e2e2;
   background-color: #fff;
@@ -160,7 +161,7 @@
   border: 1px solid #e2e2e2;
   font-size: 20px;
   font-weight: 300;
-
+  box-sizing: border-box;
   outline-color: white;
   outline-style: solid;
   opacity: 0.001;
@@ -325,7 +326,7 @@
   vertical-align: top;
 }
 
-.subbeats-container {
+.bass > .subbeats-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -673,3 +674,26 @@ md-input-container.slide-field > span {
 .no-colors .slide .bass-sound-container .slide {
   background: #E0E0E0!important;
 }
+
+
+
+.beat .subbeats-container {
+  width: 100%;
+}
+.beat[subdivision="3"] .subbeats-container {
+  width: 66.666%;
+}
+.beat[subdivision="3"] .subbeats-container:last-child {
+  display: none;
+}
+
+/* string-container is the first child, so count subbeats-container with +1 */
+.beat[subdivision="4"][visible-subbeats="2"] .bass > .subbeats-container:nth-child(3) .bass-button,
+.beat[subdivision="4"][visible-subbeats="2"] .bass > .subbeats-container:nth-child(5) .bass-button {
+  display: none;
+}
+/* disable drop on hidden grid cells */
+/*.beat[subdivision="4"][visible-subbeats="2"] .subbeats-container:nth-child(3) .bass-grid,
+.beat[subdivision="4"][visible-subbeats="2"] .subbeats-container:nth-child(5) .bass-grid {
+  pointer-events: none;
+}*/
