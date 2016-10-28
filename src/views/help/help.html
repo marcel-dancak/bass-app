@@ -10,11 +10,16 @@
         {
           template: 'views/help/bass.html',
           title: 'Bass',
-          sections: ['Sound Properties', 'Composite Sounds', 'Slides', 'Fretboard']
+          sections: [
+            'Creating Sounds',
+            'Sound Properties',
+            'Composite Sounds',
+            'Slide Sounds'
+          ]
         }, {
-          template: 'views/help/navigation.html',
+          template: 'views/help/drums.html',
           title: 'Drums',
-          sections: ['1.1', '1.2', '1.3']
+          sections: ['Introduction', 'Creating Sounds']
         }
       ]
     "
@@ -53,7 +58,9 @@
     <md-content
       flex
       ng-repeat="item in ::helpPages"
-      id="container-{{ ::$index }}"
+      ng-init="item.containerId = 'container-'+$index"
+      xid="container-{{ ::$index }}"
+      id="{{ ::item.containerId }}"
       class="content md-padding"
       ng-show="item === page">
       <div flex ng-if="item === page" ng-include="::item.template"></div>

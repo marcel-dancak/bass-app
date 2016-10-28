@@ -1,0 +1,35 @@
+<h4>{{ ::item.sections[0] }}</h4>
+
+<section id="section-1">
+  <p>
+    Drums
+  </p>
+</section>
+
+<section id="section-2">
+  <h4>{{ ::item.sections[1] }}</h4>
+  <p>
+    Drum sounds consist of setting volume level.
+  </p>
+  <p>&nbsp;</p>
+  <div
+    class="slideshow"
+    bd-help-drum-sheet="{
+      timeSignature: '4/4',
+      controller: 'DrumSounds'
+    }">
+  </div>
+  <p class="instructions">
+    Steps:
+    <ul class="instructions-list">
+      <li>Click once for loud drum sound</li>
+      <li>Click again to lower drum sound</li>
+      <li>Click again to clear drum sound</li>
+      <li>Use mouse wheel for finest volume level:</li>
+      <ul><li>Scroll-up direction to raise volume</li></ul>
+      <ul><li>Scroll-down direction to lower volume</li></ul>
+    </ul>
+  </p>
+</section>
+
+

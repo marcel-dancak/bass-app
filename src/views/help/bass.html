@@ -2,10 +2,27 @@
 
 <section id="section-1">
   <p>
-    Bass sound properties menu.
+    There is a two different ways to create a new bass sound:
+    <ul>
+      <li>Drag particular note from the fretboard</li>
+      <li>
+        Using <a ng-click="scrollTo(2)">Sound Properties</a> menu - click on the plus button
+        <div class="bass-button">+</div> in bass editor sheet
+      </li>
+    </ul>
+    Copy with Drag & Drop
+  </p>
+</section>
+
+<section id="section-2">
+  <h4>{{ ::item.sections[1] }}</h4>
+  <p>
+    Sound Properties menu contains options for creation and adjustment of individual bass sounds, like
+    playing style, note (type, pitch, length, ...) and volume. It also contains a playback function for
+    easy check of resulting sound.
   </p>
   <div
-    class="workspace"
+  class="slideshow"
     bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
@@ -18,10 +35,10 @@
   <p>&nbsp;</p>
 </section>
 
-<section id="section-2">
-  <h4>{{ ::item.sections[1] }}</h4>
+<section id="section-3">
+  <h4>{{ ::item.sections[2] }}</h4>
   <div
-    class="bass-sheet-container"
+    class="slideshow"
     bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
@@ -48,10 +65,10 @@
   </p>
 </section>
 
-<section id="section-3">
-  <h4>{{ ::item.sections[2] }}</h4>
+<section id="section-4">
+  <h4>{{ ::item.sections[3] }}</h4>
   <div
-    class="bass-sheet-container"
+    class="slideshow"
     bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
@@ -68,9 +85,4 @@
       <li>4. Resize first sound to overlap with the second sound</li>
     </ul>
   </p>
-</section>
-
-<section id="section-4">
-  <h4>{{ ::item.sections[3] }}</h4>
-  <p>Last section</p>
 </section>
