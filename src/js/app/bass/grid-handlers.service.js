@@ -497,20 +497,9 @@
           return width;
         });
 
-        // wait for grid selection (css) for better accuracy
-        if (this.$apply) { // if it's bound to Scope
-          this.$apply();
-        }
-        $timeout(function() {
-          var containerElem = info.element.parent()[0];
-          // this.selected.element
-          resizeBox.elem.style.opacity = '1';
-          var box = containerElem.getBoundingClientRect();
-          resizeBox.setPxStyles({
-            width: info.width
-          });
-          basicHandler.selected.element.appendChild(resizeBox.elem);
-        }, 10);
+        this.onResize(grid, info);
+        resizeBox.elem.style.opacity = '1';
+        basicHandler.selected.element.appendChild(resizeBox.elem);
       },
 
       onResize: function(grid, info) {

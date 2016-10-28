@@ -58,10 +58,6 @@
           {element: editElem, width: editElem[0].offsetWidth},
           4
         );
-        resizeHandler.onResize(
-          editGrid,
-          {element: editElem, width: editElem[0].offsetWidth}
-        );
       },
       /* Resize to overlap with second sound (double size) */
       function() {
