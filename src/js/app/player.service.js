@@ -281,6 +281,7 @@
 
     AudioPlayer.prototype.playBeat = function(bar, beat, startTime, initializationBeat) {
       if (!this.playing) return;
+      // console.log('player: bar: {0} beat: {1}'.format(bar, beat));
 
       var playbackStart = bar === this.playbackRange.start.bar && beat === this.playbackRange.start.beat;
       var isPlaybackEnd = playbackStart && !initializationBeat;
@@ -297,18 +298,18 @@
           var noteBeatTime = trackBeat.subdivision === 3? beatTime*(2/3) : beatTime;
           track.beatSounds(trackBeat).forEach(function(subbeatSound) {
             var startAt = startTime + (beatTime / trackBeat.subdivision * (subbeatSound.subbeat - 1));
-            if (track.type === 'bass') {
-              try {
+            try {
+              if (track.type === 'bass') {
                 this._playBassSound(track, subbeatSound.sound, startAt, noteBeatTime, timeSignature);
-              } catch (ex) {
-                if (ex instanceof ResourceNotAvailable) {
-                  console.log('Failed to load resource: '+ex.resource);
-                } else {
-                  throw ex;
-                }
+              } else {
+                this._playDrumSound(track, subbeatSound, startAt);
               }
-            } else {
-              this._playDrumSound(track, subbeatSound, startAt);
+            } catch (ex) {
+              if (ex instanceof ResourceNotAvailable) {
+                console.log('Failed to load resource: '+ex.resource);
+              } else {
+                throw ex;
+              }
             }
           }, this);
         }
