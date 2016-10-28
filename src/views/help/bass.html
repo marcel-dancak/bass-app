@@ -1,29 +1,28 @@
 <h4>{{ ::item.sections[0] }}</h4>
 
 <section id="section-1">
-  <div bd-help-bass-sheet="{
+  <p>
+    Bass sound properties menu.
+  </p>
+  <div
+    class="workspace"
+    bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
       controller: 'SoundForm'
     }">
   </div>
-
-  <p class="instructions">
-    Steps:
-    <ul class="instructions-list">
-      <li ng-class="{active: step === 1}">1. Create first sound</li>
-      <li ng-class="{active: step === 2}">2. Create second sound on the same string</li>
-      <li ng-class="{active: step === 3}">
-        3. Click and hold left mouse button on the right edge of the first sound to start resize operation
-      </li>
-      <li ng-class="{active: step === 4}">4. Resize first sound to overlap with the second sound</li>
-    </ul>
-  </p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
 </section>
 
 <section id="section-2">
   <h4>{{ ::item.sections[1] }}</h4>
-  <div bd-help-bass-sheet="{
+  <div
+    class="bass-sheet-container"
+    bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
       controller: 'ComposedSounds'
@@ -32,17 +31,28 @@
   <p class="instructions">
     Steps:
     <ul class="instructions-list">
-      <li ng-class="{active: step === 1}">1. Create first sound</li>
-      <li ng-class="{active: step === 2}">2. Create a second sound on the same string (right after the first sound)</li>
-      <li ng-class="{active: step === 3}">3. Select second sound</li>
-      <li ng-class="{active: step === 4}">4. Press Ctrl+H</li>
+      <li>1. Create a first sound</li>
+      <li>2. Create a second sound on the same string (right after the first sound)</li>
+      <li>3. Select a second sound</li>
+      <li>4. Press keyboard shortcut for particular sound transition type</li>
+    </ul>
+  </p>
+  <p>&nbsp;</p>
+  <p>
+    Keyboard shortcuts:
+    <ul>
+      <li><b>Ctrl + H</b> - Hammer-On</li>
+      <li><b>Ctrl + P</b> - Pull-Off</li>
+      <li><b>Ctrl + R</b> - Let ring</li>
     </ul>
   </p>
 </section>
 
 <section id="section-3">
   <h4>{{ ::item.sections[2] }}</h4>
-  <div bd-help-bass-sheet="{
+  <div
+    class="bass-sheet-container"
+    bd-help-bass-sheet="{
       timeSignature: '4/4',
       strings: 'EADG',
       controller: 'SlidesSounds'

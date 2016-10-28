@@ -3,7 +3,6 @@
   angular
     .module(
       'bd.help', [
-        'templates',
         'ngMaterial',
         'duScroll'
     ])

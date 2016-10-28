@@ -1,58 +1,62 @@
-<div
-  layout-fill
-  layout="row"
-  ng-controller="HelpController"
-  ng-init="
-    helpPages = [
-      {
-        template: 'views/help/bass.html',
-        title: 'Bass',
-        sections: ['Creating sounds', 'Composite sounds', 'Slides', 'Fretboard']
-      }, {
-        template: 'views/help/navigation.html',
-        title: 'Drums',
-        sections: ['1.1', '1.2', '1.3']
-      }
-    ]
-  "
-  ng-class="['active-step-'+index.activeStep]">
-  <md-list
-    class="index"
-    md-no-ink>
+<md-dialog class="help-dialog">
+  <div class="dialog-header">Help</div>
 
-    <div
-      ng-repeat="item in ::helpPages"
-      class="index-item"
-      size="{{ ::item.sections.length }}"
-      ng-class="{expanded: page === item}">
-      <md-list-item
-        md-no-ink
-        ng-click="setHelpPage(item)">
-        {{ ::item.title }}
-      </md-list-item>
+  <md-dialog-content
+    layout="row"
+    ng-controller="HelpController"
+    ng-cloak
+    ng-init="
+      helpPages = [
+        {
+          template: 'views/help/bass.html',
+          title: 'Bass',
+          sections: ['Sound Properties', 'Composite Sounds', 'Slides', 'Fretboard']
+        }, {
+          template: 'views/help/navigation.html',
+          title: 'Drums',
+          sections: ['1.1', '1.2', '1.3']
+        }
+      ]
+    "
+    class="help-container"
+    ng-class="['active-step-'+index.activeStep]">
+    <md-list
+      class="index"
+      md-no-ink>
+
       <div
-        class="sections"
-        ng-if="page === item"
-        du-scroll-container="container-{{ ::$index }}">
+        ng-repeat="item in ::helpPages"
+        class="index-item"
+        size="{{ ::item.sections.length }}"
+        ng-class="{expanded: page === item}">
         <md-list-item
-          ng-repeat="section in ::item.sections"
-          href="#section-{{ ::$index+1 }}"
-          du-smooth-scroll
-          du-scrollspy>
-          {{ ::section }}
+          md-no-ink
+          ng-click="setHelpPage(item)">
+          {{ ::item.title }}
         </md-list-item>
+        <ul
+          class="sections"
+          ng-if="page === item"
+          du-scroll-container="container-{{ ::$index }}">
+          <li
+            ng-repeat="section in ::item.sections"
+            href="#section-{{ ::$index+1 }}"
+            du-smooth-scroll
+            du-scrollspy>
+            {{ ::section }}
+          </li>
+        </ul>
       </div>
-    </div>
 
-  </md-list>
+    </md-list>
 
-  <md-content
-    flex
-    ng-repeat="item in ::helpPages"
-    id="container-{{ ::$index }}"
-    class="content md-padding"
-    ng-show="item === page">
-    <div flex ng-if="item === page" ng-include="::item.template"></div>
-  </md-content>
-
+    <md-content
+      flex
+      ng-repeat="item in ::helpPages"
+      id="container-{{ ::$index }}"
+      class="content md-padding"
+      ng-show="item === page">
+      <div flex ng-if="item === page" ng-include="::item.template"></div>
+    </md-content>
+  </md-dialog-content>
 </div>

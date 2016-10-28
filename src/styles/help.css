@@ -1,17 +1,22 @@
+.help-dialog {
+  width: 70%;
+  height: 80%;
+}
+md-dialog.help-dialog.md-transition-in {
+  -webkit-transform: none;
+  transform: none;
+}
+
 .help-container {
   background-color: #fff;
-  position: absolute;
-  bottom: 10px;
-  left: 20%;
-  right: 20%;
-  height: 60%;
-  z-index: 100;
-  overflow: hidden;
+  height: 100%;
 }
 
 .help-container .index {
   background-color: #f0f0fc;
   min-width: 200px;
+  width: 20%;
+  padding: 0;
 }
 
 .help-container .index .active {
@@ -62,14 +67,18 @@
   xfont-weight: bold;
 }
 
-.help-container .active-step-1 .instructions-list li:first-child,
-.help-container .active-step-2 .instructions-list li:nth-child(2),
-.help-container .active-step-3 .instructions-list li:nth-child(3),
-.help-container .active-step-4 .instructions-list li:nth-child(4),
-.help-container .active-step-5 .instructions-list li:nth-child(5),
-.help-container .active-step-6 .instructions-list li:nth-child(6) {
+.help-container.active-step-1 .instructions-list li:first-child,
+.help-container.active-step-2 .instructions-list li:nth-child(2),
+.help-container.active-step-3 .instructions-list li:nth-child(3),
+.help-container.active-step-4 .instructions-list li:nth-child(4),
+.help-container.active-step-5 .instructions-list li:nth-child(5),
+.help-container.active-step-6 .instructions-list li:nth-child(6) {
   font-weight: bold;
 }
+
+
+
+/***** Index panel *****/
 
 .help-container .index-item {
   overflow: hidden;
@@ -80,54 +89,66 @@
   transition: height cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
 }
 
-.help-container .index-item:not(.expanded) {
-  height: 48px;
+.help-container .index-item .md-list-item-inner {
+  border: none;
 }
-.help-container .index-item[size="2"].expanded {
-  height: 144px;
-}
-.help-container .index-item[size="3"].expanded {
-  height: 192px;
-}
-.help-container .index-item[size="4"].expanded {
-  height: 240px;
-}
-
-.help-container .sections.ng-enter,
-.help-container .sections.ng-leave {
-  transition: opacity cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
-}
-
-.help-container .sections.ng-enter,
-.help-container .sections.ng-leave.ng-leave-active {
-  opacity:0;
-}
-
-.help-container .sections.ng-leave,
-.help-container .sections.ng-enter.ng-enter-active {
-  opacity:1;
-}
-.help-container .sections .md-list-item-inner {
-  padding-left: 12px;
-  font-size: 14px;
-}
-
-
-
+.help-container .index-item md-list-item:hover,
 .help-container .index-item.expanded > md-list-item {
   background-color: rgba(33,150,243, 0.15);
 }
 .help-container .index-item.expanded > md-list-item .md-list-item-inner {
   font-weight: bold;
+  border: none;
 }
 
-.index md-list-item:hover {
+.help-container .index-item:not(.expanded) {
+  height: 48px;
+}
+.help-container .index-item[size="2"].expanded {
+  height: 136px;
+}
+.help-container .index-item[size="3"].expanded {
+  height: 180px;
+}
+.help-container .index-item[size="4"].expanded {
+  height: 224px;
+}
+
+.help-container .index li {
+  height: 44px;
+  line-height: 44px;
+  cursor: pointer;
+}
+
+.help-container .index ul {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  list-style-position: inside;
+}
+.help-container .index li {
+  padding-left: 22px;
+}
+.help-container .index li:hover {
   background-color: rgba(33,150,243, 0.05);
 }
-.index md-list-item .md-button.md-focused,
-.index md-list-item .md-button:hover {
-  background-color: transparent;
+
+/*
+.help-container .index .sections.ng-enter,
+.help-container .index .sections.ng-leave {
+  transition: opacity cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
 }
+
+.help-container .index .sections.ng-enter,
+.help-container .index .sections.ng-leave.ng-leave-active {
+  opacity:0;
+}
+
+.help-container .index .sections.ng-leave,
+.help-container .index .sections.ng-enter.ng-enter-active {
+  opacity:1;
+}
+*/
 
 
 .help-container section {
@@ -144,8 +165,15 @@
 }
 
 
-.non-interactive {
+.help-container .non-interactive {
   pointer-events: none;
+}
+
+.help-container .bass-sound-container:not(.hover) .resize-handler {
+  opacity: 0;
+}
+.help-container .bass-sound-container:hover .rg-right {
+  pointer-events: none!important;
 }
 .help-container .md-panel-outer-wrapper .bass-form {
   transition-property: opacity;

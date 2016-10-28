@@ -47,28 +47,24 @@
     }
 
     $scope.$on('duScrollspy:becameActive', function($event, $element, $target) {
-      stopAnimation();
+      var id = $target[0].getAttribute('id');
+      var sectionIndex = parseInt(id.replace('section-', ''));
 
+      stopAnimation();
       var instructionsElem = angular.element($target[0].querySelector('div[bd-help-bass-sheet] > div'));
       if (instructionsElem.length) {
         animatedSlides = instructionsElem.scope().instructions;
         $timeout(function() {
-          console.log('starting animation');
-          showStep(animatedSlides, 0)
-        });
+          // filter to only last active 'duScrollspy:becameActive' event
+          if ($scope.index.activeSection === sectionIndex) {
+            console.log('starting animation');
+            showStep(animatedSlides, 0);
+          }
+        }, 300);
       }
-      
-      var id = $target[0].getAttribute('id');
-      $scope.index.activeSection = parseInt(id.replace('section-', ''));
+
+      $scope.index.activeSection = sectionIndex;
     });
-    /*
-    var container = angular.element(document.getElementById('container'));
-    container.on('scroll', function(evt) {
-      var active = $element[0].querySelector('.index .active');
-      console.log(active);
-      // console.log('Container scrolled to ', container.scrollLeft(), container.scrollTop());
-    });
-    */
   }
 
 })();

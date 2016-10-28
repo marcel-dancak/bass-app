@@ -129,26 +129,25 @@
       /* Create a first sound */
       function() {
         $scope.workspace.addSound(1, 1, 2, {
-          string: 'A',
-          style: 'slap',
+          string: 'G',
+          style: 'pop',
           note: {
             type: 'regular',
-            name: 'C',
+            name: 'A',
             octave: 2,
-            code: 'C2',
-            fret: 3
+            code: 'A2',
+            fret: 2
           },
           noteLength: {
             length: 1/16,
-            beatLength: 1/16,
-            xdotted: true
+            beatLength: 1/16
           }
         });
       },
       /* Create a second sound */
       function() {
         editElem = angular.element(
-          $element[0].querySelector('#bass_1_1_2_A .bass-sound-container')
+          $element[0].querySelector('#bass_1_1_2_G .bass-sound-container')
         );
         editGrid = editElem.scope().grid;
 
@@ -167,15 +166,19 @@
       },
       function() {
         formScope = angular.element(document.querySelector('.bass-sound-form')).scope();
-        editGrid.sound.noteLength.staccato = true;
         editGrid.sound.noteLength.dotted = true;
         formScope.soundLengthChanged(editGrid.sound);
       },
-      function() {},
+      function() {
+        editGrid.sound.noteLength.staccato = true;
+      },
 
       /* Clear bass sheet */
       function() {
-        form.close()
+        if (form) {
+          form.close();
+          form = null;
+        }
         basicHandler.clearSelection();
         $scope.workspace.trackSection.clearBeat($scope.workspace.trackSection.beat(1, 1));
       }

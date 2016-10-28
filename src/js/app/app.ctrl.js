@@ -18,7 +18,7 @@
       };
     });
 
-  function AppController($scope, $timeout, context, workspace,
+  function AppController($scope, $timeout, $mdDialog, context, workspace,
       audioPlayer, audioVisualiser, projectManager, Drums, dataUrl) {
 
     $scope.ui = {
@@ -131,6 +131,16 @@
     $scope.slidesSizeChanged = function() {
       audioVisualiser.updateSize();
     };
+
+    $scope.showHelp = function() {
+      $mdDialog.show({
+        templateUrl: 'views/help/help.html',
+        autoWrap: false,
+        clickOutsideToClose: true,
+        propagateContainerEvents: true
+      })
+    };
+    $scope.showHelp();
 
     function drumImageUrl(drum) {
       return '{0}styles/images/{1}.svg'.format(dataUrl, drum.name);
