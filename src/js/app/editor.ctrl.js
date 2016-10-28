@@ -191,10 +191,10 @@
 
       var slides = [];
       trackSection.forEachBeat(function(beat) {
-        var slideId = beat.bar+'_'+beat.index;
+        var slideId = beat.bar+'_'+beat.beat;
         slides.push({
           id: slideId,
-          beat: beat.beat,
+          beat: beat,
           type: workspace.track.type
         });
       });
@@ -221,17 +221,6 @@
       $scope.ui.trackId = workspace.track.id;
     };
 
-
-    function clearSectionWorkspace() {
-      audioVisualiser.clear();
-
-      workspace.bassSection.forEachBeat(function(beat) {
-        workspace.bassSection.clearBeat(beat.beat);
-      });
-      workspace.drumSection.forEachBeat(function(beat) {
-        workspace.drumSection.clearBeat(beat.beat);
-      });
-    };
 
     function sectionLoaded(section) {
       audioVisualiser.clear();
@@ -294,7 +283,6 @@
       });
     }
 
-    projectManager.on('sectionCreated', clearSectionWorkspace);
     projectManager.on('sectionLoaded', sectionLoaded);
 
 
@@ -329,9 +317,7 @@
         workspace.section.tracks[instrumentTrackId] = convertedTrack;
 
         // Clear instrument workspace
-        workspace.trackSection.forEachBeat(function(beat) {
-          workspace.trackSection.clearBeat(beat.beat);
-        });
+        workspace.trackSection.forEachBeat(workspace.trackSection.clearBeat, workspace.trackSection);
 
         // Load instrument workspace with selected track data
         assignTrack(workspace.trackSection, track);
@@ -357,7 +343,6 @@
 
 
     $scope.$on('$destroy', function() {
-      projectManager.un('sectionCreated', clearSectionWorkspace);
       projectManager.un('sectionLoaded', sectionLoaded);
       audioPlayer.un('playbackStopped', playbackStopped);
     });
