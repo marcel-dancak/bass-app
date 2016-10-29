@@ -5,7 +5,8 @@
     .module('bd.help')
     .controller('HelpController', HelpController);
 
-  function HelpController($scope, $element, $timeout, Bass, BassSection, basicHandler) {
+
+  function HelpController($scope, $element, $timeout) {
 
     $scope.index = {
       activeSection: 1,
@@ -26,11 +27,11 @@
     function showStep(slides, step) {
       console.log('SHOW SLIDE '+step)
       $scope.index.activeStep = step + 1;
-      slides[step]();
+      var delay = slides[step]() || 1500;
       var nextStep = (step+1) % (slides.length);
       timer = $timeout(
         showStep.bind(this, slides, nextStep),
-        1500
+        delay
       );
     }
 

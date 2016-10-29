@@ -1,0 +1,77 @@
+<h4>{{ ::item.sections[0] }}</h4>
+<section id="section-1">
+  <p>
+    Bar
+  </p>
+
+
+  <div
+    layout="row"
+    class="slideshow"
+    ng-controller="HelpBarController">
+
+    <div
+      class="bar-preferences"
+      ng-include src="'views/bars_form.html'">
+    </div>
+
+    <div flex class="bar swiper-container">
+      <div class="swiper-wrapper">
+        <!-- Slides -->
+        <div
+          ng-repeat="slide in slides track by slide.id"
+          ng-attr-visible-subbeats="
+            {{ slide.beat.subdivision === 3? 3 : visibleSubbeats }}
+          "
+          class="swiper-slide bar-slide beat beat-{{ ::slide.beat.beat }}">
+          <label class="bar-label">
+            {{ ::slide.beat.bar }}
+          </label>
+          <input
+            spellcheck="false"
+            class="chord-label"
+            ng-model="slide.beat.meta.chord"
+            ng-blur="slide.beat.meta.chord = slide.beat.meta.chord.replace('#', '♯').replace('b', '♭')">
+          <div
+            id="beat_{{ ::slide.beat.bar }}_{{ ::slide.beat.beat }}"
+            class="bar-beat"
+            layout="row"
+            ng-right-click="contextMenu.open($event, $index)"
+            ng-include src="'views/bar_slide.html'">
+          </div>
+        </div>
+      </div>
+      <div layout="row" class="swiper-controls">
+        <span flex></span>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-next"></div>
+        <span flex></span>
+      </div>
+    </div>
+  </div>
+
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p>&nbsp;</p>
+  <p class="instructions">
+    Steps:
+    <ul class="instructions-list">
+      <li>Use pagination buttons or mouse swipe gestures to scroll visible beats of the section</li>
+      <li>Use mouse wheel for zoom-out/zoom-in:</li>
+      <ul><li>Scroll-up direction to raise number of visible beats on screen</li></ul>
+      <ul><li>Scroll-down direction to lower number of visible beats on screen</li></ul>
+      <li>Use right mouse button to open context menu for various bar/beat operations</li>
+      <span></span>
+      <li>Click on the time signature label to open menu with preferences</li>
+    </ul>
+  </p>
+
+</section>
+
+<section id="section-2">
+  <h4>{{ ::item.sections[1] }}</h4>
+  <p>
+    Other section
+  </p>
+</section>
