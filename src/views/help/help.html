@@ -25,20 +25,18 @@
     "
     class="help-container"
     ng-class="['active-step-'+index.activeStep]">
-    <md-list
-      class="index"
-      md-no-ink>
+    <div class="help-index">
 
       <div
         ng-repeat="item in ::helpPages"
-        class="index-item"
+        class="index-item-container"
         size="{{ ::item.sections.length }}"
         ng-class="{expanded: page === item}">
-        <md-list-item
-          md-no-ink
+        <div
+          class="index-item"
           ng-click="setHelpPage(item)">
           {{ ::item.title }}
-        </md-list-item>
+        </div>
         <ul
           class="sections"
           ng-if="page === item"
@@ -53,7 +51,7 @@
         </ul>
       </div>
 
-    </md-list>
+    </div>
 
     <md-content
       flex

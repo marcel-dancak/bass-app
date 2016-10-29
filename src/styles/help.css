@@ -12,14 +12,14 @@ md-dialog.help-dialog.md-transition-in {
   height: 100%;
 }
 
-.help-container .index {
+.help-index {
   background-color: #f0f0fc;
   min-width: 200px;
   width: 20%;
   padding: 0;
 }
 
-.help-container .index .active {
+.help-index .active {
   color: #2196F3;
 }
 .help-container .content {
@@ -30,10 +30,10 @@ md-dialog.help-dialog.md-transition-in {
   width: 100%;
 }
 
-.bass-slide {
+/*.bass-slide {
   width: 600px;
   height: 180px;
-}
+}*/
 
 
 .help-bass-sheet {
@@ -65,9 +65,6 @@ md-dialog.help-dialog.md-transition-in {
 .help-container .instructions {
   font-weight: bold;
 }
-.help-container li.active {
-  xfont-weight: bold;
-}
 
 .help-container.active-step-1 .instructions-list > *:first-child,
 .help-container.active-step-2 .instructions-list > *:nth-child(2),
@@ -79,79 +76,83 @@ md-dialog.help-dialog.md-transition-in {
   font-weight: bold;
 }
 
+.help-container .instructions-list ul {
+  padding-left: 20px;
+}
 
 
 /***** Index panel *****/
 
-.help-container .index-item {
+.help-container .index-item-container {
   overflow: hidden;
 }
 
-.help-container .index-item,
-.help-container .index-item {
-  transition: height cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
+.help-index .index-item-container {
+  transition: height cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.55s;
 }
 
-.help-container .index-item .md-list-item-inner {
-  border: none;
+.index-item-container .index-item {
+  height: 48px;
+  line-height: 48px;
+  padding: 0 16px;
+  outline: none;
+  cursor: pointer;
 }
-.help-container .index-item md-list-item:hover,
-.help-container .index-item.expanded > md-list-item {
+/*
   background-color: rgba(33,150,243, 0.15);
 }
-.help-container .index-item.expanded > md-list-item .md-list-item-inner {
+*/
+.index-item-container.expanded .index-item {
+  background-color: rgba(33,150,243, 0.15);
   font-weight: bold;
   border: none;
 }
-
-.help-container .index-item:not(.expanded) {
+.help-index .index-item-container:not(.expanded) {
   height: 48px;
 }
-.help-container .index-item[size="2"].expanded {
+.help-index .index-item-container[size="2"].expanded {
   height: 136px;
 }
-.help-container .index-item[size="3"].expanded {
+.help-index .index-item-container[size="3"].expanded {
   height: 180px;
 }
-.help-container .index-item[size="4"].expanded {
+.help-index .index-item-container[size="4"].expanded {
   height: 224px;
 }
 
-.help-container .index li {
+.help-index li {
   height: 44px;
   line-height: 44px;
   cursor: pointer;
 }
 
-.help-container .index ul {
+.help-index ul {
   margin: 0;
   padding: 0;
   font-size: 14px;
   list-style-position: inside;
 }
-.help-container .index li {
+.help-index li {
   padding-left: 22px;
 }
-.help-container .index li:hover {
+.help-index li:hover {
   background-color: rgba(33,150,243, 0.05);
 }
 
-/*
-.help-container .index .sections.ng-enter,
-.help-container .index .sections.ng-leave {
-  transition: opacity cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
+.help-index .sections.ng-enter,
+.help-index .sections.ng-leave {
+  transition: opacity cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.55s;
 }
 
-.help-container .index .sections.ng-enter,
-.help-container .index .sections.ng-leave.ng-leave-active {
-  opacity:0;
+.help-index .sections.ng-enter,
+.help-index .sections.ng-leave.ng-leave-active {
+  opacity: 0.2;
 }
 
-.help-container .index .sections.ng-leave,
-.help-container .index .sections.ng-enter.ng-enter-active {
-  opacity:1;
+.help-index .sections.ng-leave,
+.help-index .sections.ng-enter.ng-enter-active {
+  opacity: 1;
 }
-*/
 
 
 .help-container section {
