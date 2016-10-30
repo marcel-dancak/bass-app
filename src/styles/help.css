@@ -72,7 +72,8 @@ md-dialog.help-dialog.md-transition-in {
 .help-container.active-step-4 .instructions-list > *:nth-child(4),
 .help-container.active-step-5 .instructions-list > *:nth-child(5),
 .help-container.active-step-6 .instructions-list > *:nth-child(6),
-.help-container.active-step-6 .instructions-list > *:nth-child(7) {
+.help-container.active-step-7 .instructions-list > *:nth-child(7),
+.help-container.active-step-8 .instructions-list > *:nth-child(8) {
   font-weight: bold;
 }
 
@@ -109,6 +110,9 @@ md-dialog.help-dialog.md-transition-in {
 }
 .help-index .index-item-container:not(.expanded) {
   height: 48px;
+}
+.help-index .index-item-container[size="1"].expanded {
+  height: 92px;
 }
 .help-index .index-item-container[size="2"].expanded {
   height: 136px;
@@ -213,4 +217,58 @@ md-dialog.help-dialog.md-transition-in {
   position: relative;
   width: 50%;
   padding-left: 68px;
+}
+
+/*.help-bar {
+  padding: 32px 10px 10px 10px;
+  overflow: visible;
+  xwidth: 80%;
+}*/
+
+.help-container .bar.swiper-container {
+  pointer-events: none;
+  padding-bottom: 80px;
+}
+.help-container .bar.swiper-container .swiper-controls::before {
+  position: absolute;
+  content: "↑";
+  left: 0;
+  right: 0;
+  text-align: center;
+  top: 24px;
+  color: #aaa;
+  font-size: 20px;
+}
+.help-container .bar.swiper-container .swiper-controls::after {
+  position: absolute;
+  content: "Pagination controls";
+  top: 48px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #aaa;
+}
+
+.help-container .bar-preferences {
+  margin-top: 30px;
+  pointer-events: none;
+  overflow: visible;
+  position: relative;
+}
+
+.help-container .bar-preferences::before {
+  position: absolute;
+  content: "↑";
+  bottom: 64px;
+  left: 14px;
+  color: #aaa;
+  white-space: nowrap;
+}
+.help-container .bar-preferences::after {
+  position: absolute;
+  content: "Bar Preferences";
+  bottom: 44px;
+  left: 0;
+  color: #aaa;
+  white-space: nowrap;
 }

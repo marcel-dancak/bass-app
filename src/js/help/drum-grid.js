@@ -20,14 +20,6 @@
       function() {
         $scope.workspace.addSound(1, 1, 2, '2', 0);
       },
-      // function() {
-      //   var volumes = [0.1, 0.2, 0.3, 0.4, 0.3, 0.2];
-      //   volumes.forEach(function(volume, index) {
-      //     $timeout(function() {
-      //       $scope.workspace.addSound(1, 1, 2, '2', volume);
-      //     }, (index+1)*150);
-      //   });
-      // },
 
       function() {},
       function() {

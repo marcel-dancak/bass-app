@@ -18,7 +18,10 @@
         top: 4,
         bottom: 4
       },
-      length: 2
+      length: 2,
+      beatsPerView: 3,
+      animationDuration: 300,
+      beatsPerSlide: 1
     };
     var trackSection = new BassSection(section);
     $scope.workspace = {
@@ -34,7 +37,12 @@
       });
     });
 
-    var beatElem;
+    function deactivateBackdrop() {
+      var backdrop = document.querySelector('.md-menu-backdrop');
+      backdrop.style.pointerEvents = 'none';
+    }
+
+    var beatElem, timeSigButton;
     $scope.instructions = [
       function() {
         setTimeout($scope.barSwiper.slideTo, 1000, 1, 400);
@@ -81,12 +89,11 @@
           }, 100);
 
           $timeout(function() {
+            deactivateBackdrop();
             subdivisionItemElem.click();
-            var backdrop = document.querySelector('.md-menu-backdrop');
-            backdrop.style.pointerEvents = 'none';
           }, 300);
         });
-        return 2500;
+        return 3000;
       },
       function() {
         if (beatElem) {
@@ -98,11 +105,18 @@
         }
       },
       function() {
-        $element[0].querySelector('.time-signature-button').click();
+        timeSigButton = $element[0].querySelector('.time-signature-button');
+        timeSigButton.classList.add('hover');
+        $timeout(timeSigButton.click.bind(timeSigButton), 500);
+        $timeout(deactivateBackdrop, 800, false);
+        return 2500;
       },
       function() {
         if (beatElem) {
           beatElem.classList.remove('hover');
+        }
+        if (timeSigButton) {
+          timeSigButton.classList.remove('hover');
         }
         var backdrop = document.querySelector('.md-menu-backdrop');
         if (backdrop) {

@@ -7,12 +7,16 @@
     ng-cloak
     ng-init="
       helpPages = [
-        {
+         {
+          template: 'views/help/bar.html',
+          title: 'Bar Navigation',
+          sections: ['Navigation']
+        }, {
           template: 'views/help/bass.html',
           title: 'Bass',
           sections: [
-            'Creating Sounds',
             'Sound Properties',
+            'Advanced edit functions',
             'Composite Sounds',
             'Slide Sounds'
           ]
