@@ -6,11 +6,11 @@ var concat = require('gulp-concat');
 var watch = require('gulp-watch');
 var connect = require('gulp-connect');
 var merge = require('merge-stream');
-
 var path = require('path');
+var babel = require('gulp-babel');
 
 
-var TARGET = 'dist/v15/';
+var TARGET = 'dist/v16/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -78,56 +78,63 @@ gulp.task('uglify', function() {
   var templateCache = require('gulp-angular-templatecache/');
 
   return series(
-    gulp.src([
-      'bower_components/swiper/dist/js/swiper.js',
-      'bower_components/angular/angular.min.js',
-      'bower_components/angular-aria/angular-aria.min.js',
-      'bower_components/angular-animate/angular-animate.min.js',
+    series(
+      gulp.src([
+        'bower_components/swiper/dist/js/swiper.js',
+        'bower_components/angular/angular.min.js',
+        'bower_components/angular-aria/angular-aria.min.js',
+        'bower_components/angular-animate/angular-animate.min.js',
 
-      'src/lib/**/*.js',
+        'src/lib/**/*.js',
 
-      // 'bower_components/angular-material/angular-material.js',
+        // 'bower_components/angular-material/angular-material.js',
 
-      'src/angular-material.module.js',
-      'bower_components/angular-material/modules/js/core/core.min.js',
-      // 'bower_components/angular-material/modules/js/core/default-theme.js',
-      'bower_components/angular-material/modules/js/backdrop/backdrop.min.js',
-      'bower_components/angular-material/modules/js/button/button.min.js',
-      'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
-      'bower_components/angular-material/modules/js/icon/icon.min.js',
-      'bower_components/angular-material/modules/js/input/input.min.js',
-      'bower_components/angular-material/modules/js/textField/textField.min.js',
-      'bower_components/angular-material/modules/js/list/list.min.js',
-      'bower_components/angular-material/modules/js/menu/menu.min.js',
-      'bower_components/angular-material/modules/js/menuBar/menuBar.min.js',
-      'bower_components/angular-material/modules/js/select/select.min.js',
-      'bower_components/angular-material/modules/js/tooltip/tooltip.min.js',
-      'bower_components/angular-material/modules/js/toast/toast.min.js',
-      'bower_components/angular-material/modules/js/panel/panel.min.js',
-      'bower_components/angular-material/modules/js/dialog/dialog.min.js',
-      'bower_components/angular-material/modules/js/subheader/subheader.min.js',
-      'bower_components/angular-material/modules/js/sticky/sticky.min.js',
+        'src/angular-material.module.js',
+        'bower_components/angular-material/modules/js/core/core.min.js',
+        // 'bower_components/angular-material/modules/js/core/default-theme.js',
+        'bower_components/angular-material/modules/js/backdrop/backdrop.min.js',
+        'bower_components/angular-material/modules/js/button/button.min.js',
+        'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
+        'bower_components/angular-material/modules/js/icon/icon.min.js',
+        'bower_components/angular-material/modules/js/input/input.min.js',
+        'bower_components/angular-material/modules/js/textField/textField.min.js',
+        'bower_components/angular-material/modules/js/list/list.min.js',
+        'bower_components/angular-material/modules/js/menu/menu.min.js',
+        'bower_components/angular-material/modules/js/menuBar/menuBar.min.js',
+        'bower_components/angular-material/modules/js/select/select.min.js',
+        'bower_components/angular-material/modules/js/tooltip/tooltip.min.js',
+        'bower_components/angular-material/modules/js/toast/toast.min.js',
+        'bower_components/angular-material/modules/js/panel/panel.min.js',
+        'bower_components/angular-material/modules/js/dialog/dialog.min.js',
+        'bower_components/angular-material/modules/js/subheader/subheader.min.js',
+        'bower_components/angular-material/modules/js/sticky/sticky.min.js',
 
-      // 'bower_components/angular-material/modules/js/radioButton/radioButton.min.js',
-      // 'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
-      // 'bower_components/angular-material/modules/js/showHide/showHide.min.js',
+        // 'bower_components/angular-material/modules/js/radioButton/radioButton.min.js',
+        // 'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
+        // 'bower_components/angular-material/modules/js/showHide/showHide.min.js',
 
-      // 'bower_components/angular-material/modules/js/slider/slider.min.js',
-      // 'bower_components/angular-material/modules/js/tabs/tabs.min.js',
-      'bower_components/angular-material/modules/js/content/content.min.js',
-      // 'bower_components/angular-material/modules/js/whiteframe/whiteframe.min.js',
-      // 'bower_components/angular-material/modules/js/divider/divider.min.js',
+        // 'bower_components/angular-material/modules/js/slider/slider.min.js',
+        // 'bower_components/angular-material/modules/js/tabs/tabs.min.js',
+        'bower_components/angular-material/modules/js/content/content.min.js',
+        // 'bower_components/angular-material/modules/js/whiteframe/whiteframe.min.js',
+        // 'bower_components/angular-material/modules/js/divider/divider.min.js',
 
-      'bower_components/angular-resizable/src/angular-resizable.js',
-      'bower_components/hamsterjs/hamster.js',
-      'bower_components/angular-mousewheel/mousewheel.js',
-      'bower_components/angularjs-slider/dist/rzslider.min.js',
-      'bower_components/file-saver/FileSaver.min.js',
+        'bower_components/angular-resizable/src/angular-resizable.js',
+        'bower_components/hamsterjs/hamster.js',
+        'bower_components/angular-mousewheel/mousewheel.js',
+        'bower_components/angularjs-slider/dist/rzslider.min.js',
+        'bower_components/file-saver/FileSaver.min.js',
+        "bower_components/angular-scroll/angular-scroll.min.js",
 
 
-      'src/js/**/*.module.js',
-      'src/js/**/*.js',
-    ]).pipe(ngAnnotate({ add: true })),
+        'src/js/**/*.module.js',
+        'src/js/**/*.js'
+      ]),
+      gulp.src('src/js/app/**/*.es6')
+        .pipe(babel({
+          presets: ['es2015']
+      }))
+    ).pipe(ngAnnotate({ add: true })),
     gulp.src('src/views/**/*.html')
       .pipe(templateCache('templateCache.js', {root: 'views/'}))
   )
