@@ -115,10 +115,6 @@
       audioPlayer.playBassSample(workspace.track, sound);
     };
 
-    if (!sound.volume) {
-      sound.volume = 0.8;
-    }
-
     var fretsStringNotes = [];
     var inlineStringNotes = [];
     string.notes.forEach(function(note, fret) {
@@ -136,6 +132,20 @@
     });
     $scope.fretsStringNotes = fretsStringNotes;
     $scope.inlineStringNotes = inlineStringNotes;
+
+    // initialize empty sound
+    if (Object.keys(sound).length === 0) {
+      sound.style = 'finger';
+      sound.volume = 0.8;
+      sound.note = angular.copy(inlineStringNotes[0]);
+      sound.note.type = 'regular';
+      sound.string = string.label;
+      sound.noteLength = {
+        length: 1/16,
+        beatLength: 1/16
+      };
+    }
+
     $scope.sound = sound;
     $scope.bass = bass;
   }
