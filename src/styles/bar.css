@@ -113,6 +113,7 @@
   top: -32px;
   border: none;
   color: #777;
+  background-color: transparent;
 }
 
 .bar-slide .chord-label:hover {
@@ -194,6 +195,7 @@
   border-bottom: 2px solid #2196F3;
 }*/
 
+.time-signature-button.md-button.hover,
 .time-signature-button.md-button:hover {
   background-color: #ffffe0;
   border-bottom: 2px solid #2196F3;
@@ -324,8 +326,8 @@ md-slider .md-focus-ring {
   width: 100%;
  }
 
-.bar-container .swiper-button-prev,
-.bar-container .swiper-button-next {
+.bar.swiper-container .swiper-button-prev,
+.bar.swiper-container .swiper-button-next {
   position: static;
   display: inline-block;
   margin: 0;
@@ -334,11 +336,11 @@ md-slider .md-focus-ring {
   opacity: 0.35;
 }
 
-.bar-container .swiper-pagination {
+.bar.swiper-container .swiper-pagination {
   position: static;
   display: inline-block;
 }
-.bar-container .swiper-pagination .swiper-pagination-bullet {
+.bar.swiper-container .swiper-pagination .swiper-pagination-bullet {
   margin: 0 4px;
   border: 2px solid white;
 }
@@ -379,6 +381,8 @@ md-menu-content.beat-menu-content {
   transition: 0s border, background-color;
   border-color: transparent;
 }
+
+.bar-slide.hover .bar-beat,
 .bar-slide .bar-beat:hover {
   transition-delay: 0.5s;
   border-color: rgba(33,150,243,0.6);

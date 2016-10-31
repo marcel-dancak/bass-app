@@ -1,9 +1,7 @@
-<h4>{{ ::item.sections[0] }}</h4>
-<section id="section-1">
+<section id="section-1" style="padding-top:44px;">
+  <h4 style="top:20px;">{{ ::item.sections[0] }}</h4>
   <p>
-    Bar
   </p>
-
 
   <div
     layout="row"
@@ -24,9 +22,9 @@
             {{ slide.beat.subdivision === 3? 3 : visibleSubbeats }}
           "
           class="swiper-slide bar-slide beat beat-{{ ::slide.beat.beat }}">
-          <label class="bar-label">
+<!--           <label class="bar-label">
             {{ ::slide.beat.bar }}
-          </label>
+          </label> -->
           <input
             spellcheck="false"
             class="chord-label"
@@ -53,25 +51,24 @@
 
   <p>&nbsp;</p>
   <p>&nbsp;</p>
-  <p>&nbsp;</p>
   <p class="instructions">
-    Steps:
-    <ul class="instructions-list">
+    Main controls:
+    <ul class="slideshow-steps">
       <li>Use pagination buttons or mouse swipe gestures to scroll visible beats of the section</li>
       <li>Use mouse wheel for zoom-out/zoom-in:</li>
       <ul><li>Scroll-up direction to raise number of visible beats on screen</li></ul>
       <ul><li>Scroll-down direction to lower number of visible beats on screen</li></ul>
       <li>Use right mouse button to open context menu for various bar/beat operations</li>
       <span></span>
-      <li>Click on the time signature label to open menu with preferences</li>
+      <li>Click on the time signature label to open menu with preferences for more options</li>
     </ul>
   </p>
 
 </section>
 
-<section id="section-2">
-  <h4>{{ ::item.sections[1] }}</h4>
+<!-- <section id="section-2">
+  <h4>Section 2</h4>
   <p>
     Other section
   </p>
-</section>
+</section> -->

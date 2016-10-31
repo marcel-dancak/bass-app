@@ -34,7 +34,6 @@
 
 <section id="section-2">
   <h4>{{ ::item.sections[1] }}</h4>
-  <h5>Drag & Drop</h5>
   <p>
     Drag & Drop operation can be used to:
     <ul>
@@ -43,7 +42,10 @@
       <li>Copy existing sound to the new position - hold <b>Ctrl</b> key during dragging</li>
     </ul>
   </p>
-  <h5>Resize</h5>
+</section>
+
+<section id="section-3">
+  <h4>{{ ::item.sections[2] }}</h4>
   <p>
     Resize operation is executed by dragging resize handler - right side of the sound element.
     It can be used to:
@@ -64,7 +66,7 @@
 
   <p class="instructions">
     Steps:
-    <ul class="instructions-list">
+    <ul class="slideshow-steps">
       <span>Resize operation:</span>
       <ul><li>1. Click and hold left mouse button on the right edge of the sound to start resize operation</li></ul>
       <ul><li>2. Resize sound to the desired note length</li></ul>
@@ -76,8 +78,13 @@
   </p>
 </section>
 
-<section id="section-3">
-  <h4>{{ ::item.sections[2] }}</h4>
+<section id="section-4">
+  <h4>{{ ::item.sections[3] }}</h4>
+  <p>
+    Some playling techniques like Hammer-On and Pull-Off require smooth transition from one note into the another one.
+    On the bass guitar it means playing two or more notes on single string pluck/stroke. Another reason to connect multiple
+    sounds is a Tie notation, where two or more notes are joined and played together with the time values summed.
+  </p>
   <div
     class="slideshow"
     bd-help-bass-sheet="{
@@ -88,7 +95,7 @@
   </div>
   <p class="instructions">
     Steps:
-    <ul class="instructions-list">
+    <ul class="slideshow-steps">
       <li>1. Create a first sound</li>
       <li>2. Create a second sound on the same string (right after the first sound)</li>
       <li>3. Select a second sound</li>
@@ -101,12 +108,7 @@
     <ul>
       <li><b>Ctrl + H</b> - Hammer-On</li>
       <li><b>Ctrl + P</b> - Pull-Off</li>
-      <li><b>Ctrl + R</b> - Let ring</li>
+      <li><b>Ctrl + R</b> - Let ring (Tie when both sounds have the same pitch, slide transition otherwise)</li>
     </ul>
   </p>
-</section>
-
-<section id="section-4">
-  <h4>{{ ::item.sections[3] }}</h4>
-
 </section>

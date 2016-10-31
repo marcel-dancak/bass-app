@@ -93,7 +93,7 @@
             subdivisionItemElem.click();
           }, 300);
         });
-        return 3000;
+        return 2500;
       },
       function() {
         if (beatElem) {
@@ -107,9 +107,9 @@
       function() {
         timeSigButton = $element[0].querySelector('.time-signature-button');
         timeSigButton.classList.add('hover');
-        $timeout(timeSigButton.click.bind(timeSigButton), 500);
+        $timeout(timeSigButton.click.bind(timeSigButton), 700);
         $timeout(deactivateBackdrop, 800, false);
-        return 2500;
+        return 3000;
       },
       function() {
         if (beatElem) {

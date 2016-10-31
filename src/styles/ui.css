@@ -629,3 +629,8 @@ md-toast.player.md-top {
   pointer-events: none;
   opacity: 0.5;
 }
+
+md-input-container:not(.md-input-invalid).md-input-focused label,
+md-input-container:not(.md-input-invalid).md-input-focused md-icon {
+  color: #2196F3;
+}

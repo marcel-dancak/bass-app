@@ -66,18 +66,18 @@ md-dialog.help-dialog.md-transition-in {
   font-weight: bold;
 }
 
-.help-container.active-step-1 .instructions-list > *:first-child,
-.help-container.active-step-2 .instructions-list > *:nth-child(2),
-.help-container.active-step-3 .instructions-list > *:nth-child(3),
-.help-container.active-step-4 .instructions-list > *:nth-child(4),
-.help-container.active-step-5 .instructions-list > *:nth-child(5),
-.help-container.active-step-6 .instructions-list > *:nth-child(6),
-.help-container.active-step-7 .instructions-list > *:nth-child(7),
-.help-container.active-step-8 .instructions-list > *:nth-child(8) {
+.help-container.active-step-1 .slideshow-steps > *:first-child,
+.help-container.active-step-2 .slideshow-steps > *:nth-child(2),
+.help-container.active-step-3 .slideshow-steps > *:nth-child(3),
+.help-container.active-step-4 .slideshow-steps > *:nth-child(4),
+.help-container.active-step-5 .slideshow-steps > *:nth-child(5),
+.help-container.active-step-6 .slideshow-steps > *:nth-child(6),
+.help-container.active-step-7 .slideshow-steps > *:nth-child(7),
+.help-container.active-step-8 .slideshow-steps > *:nth-child(8) {
   font-weight: bold;
 }
 
-.help-container .instructions-list ul {
+.help-container .slideshow-steps ul {
   padding-left: 20px;
 }
 
@@ -172,6 +172,10 @@ md-dialog.help-dialog.md-transition-in {
   margin-bottom: 16px;
 }
 
+.help-container h5 {
+  text-decoration: underline;
+  font-size: 15px;
+}
 
 .help-container .non-interactive {
   pointer-events: none;

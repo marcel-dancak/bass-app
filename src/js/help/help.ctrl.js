@@ -9,8 +9,8 @@
   function HelpController($scope, $element, $timeout) {
 
     $scope.index = {
-      activeSection: 1,
-      activeStep: 1
+      activeSection: -1,
+      activeStep: -1
     };
     $scope.page = null;
 
@@ -20,12 +20,19 @@
     };
     $timeout(function() {
       $scope.page = $scope.helpPages[0];
-    });
+      // Manually trigger section by 1px scroll when automatic selection fails
+      // (sometimes happens when scrollbar is not needed on first page)
+      $timeout(function() {
+        if ($scope.index.activeSection === -1) {
+          var container = $element[0].querySelector('#'+$scope.page.containerId);
+          angular.element(container).scrollTo(0, 1);
+        }
+      }, 500);
+    }, 200);
 
     var animatedSlides;
     var timer = null;
     function showStep(slides, step) {
-      console.log('SHOW SLIDE '+step)
       $scope.index.activeStep = step + 1;
       var delay = slides[step]() || 1500;
       var nextStep = (step+1) % (slides.length);
@@ -63,14 +70,16 @@
           }
         }, 300);
       }
-
       $scope.index.activeSection = sectionIndex;
     });
+
 
     $scope.scrollTo = function(sectionIndex) {
       var container = $element[0].querySelector('#'+$scope.page.containerId);
       var section = container.querySelector('#section-'+sectionIndex);
-      angular.element(container).scrollToElementAnimated(section);
+      if (section) {
+        angular.element(container).scrollToElementAnimated(section);
+      }
     };
     $scope.$on('$destroy', function() {
       stopAnimation();
