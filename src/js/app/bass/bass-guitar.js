@@ -146,4 +146,9 @@
     return (fret >= 0 && fret <= 24)? fret : -1;
   };
 
+  Bass.prototype.stringByName = function(name) {
+    return this.strings.find(function(string) {
+      return string.label === name;
+    });
+  }
 })();

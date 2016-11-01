@@ -8,7 +8,8 @@
   function soundLabel() {
     return {
       scope: {
-        sound: '=sound'
+        sound: '=sound',
+        string: '=string'
       },
       templateUrl: 'views/bass_sound_label.html'
     };

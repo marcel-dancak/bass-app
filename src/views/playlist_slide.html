@@ -123,7 +123,10 @@
           <div
             ng-attr-octave="{{ ::item.sound.note.octave }}"
             class="bass-sound-container">
-            <bd-sound-label sound="item.sound"></bd-sound-label>
+            <bd-sound-label
+              sound="item.sound"
+              string="workspace.track.instrument.stringByName(item.sound.string)">
+            </bd-sound-label>
           </div>
         </div>
       </div>

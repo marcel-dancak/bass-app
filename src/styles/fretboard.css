@@ -131,7 +131,7 @@
 }
 
 .fretboard md-input-container {
-  margin: 4px 10px 2px 5px;
+  margin: 4px 16px 2px 5px;
 }
 
 .fretboard-settings .style-selectbox {
@@ -141,6 +141,7 @@
   padding-top: 6px;
   height: 34px;
   text-align: right;
+  width: 80px;
 }
 
 md-input-container.input-inline-label label {
