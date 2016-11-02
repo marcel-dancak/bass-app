@@ -34,7 +34,7 @@
     "material.components.list",
     "material.components.menu",
     "material.components.menuBar",
-    // "material.components.progressCircular",
+    "material.components.progressCircular",
     // "material.components.progressLinear",
     // "material.components.checkbox",
     // "material.components.radioButton",

@@ -147,7 +147,7 @@
       audioPlayer.setBpm(workspace.section.bpm);
       timeline.start();
 
-      audioPlayer.fetchResources(workspace.section)
+      audioPlayer.fetchResourcesWithProgress(workspace.section)
         .then(audioPlayer.play.bind(audioPlayer, workspace.section, beatPrepared, $scope.player.countdown));
 
     };

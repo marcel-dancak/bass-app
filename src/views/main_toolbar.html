@@ -207,7 +207,12 @@
       <md-icon
         md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
       </md-icon>
-      {{ player.playing? 'Stop' : 'Play' }}
+      <span>{{ player.playing? 'Stop' : 'Play' }}</span>
+      <md-progress-circular
+        ng-show="player.loading"
+        md-mode="indeterminate"
+        md-diameter="31">
+      </md-progress-circular>
     </md-button>
 
     <md-button

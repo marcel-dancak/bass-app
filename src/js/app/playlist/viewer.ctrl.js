@@ -331,7 +331,7 @@
           });
 
         $scope.player.playing = true;
-        audioPlayer.fetchResources(sections).then(playFromCurrentPosition);
+        audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition);
 
       } else {
         var initSlides;
@@ -352,7 +352,7 @@
             return list;
           }, []);
           $scope.player.playing = true;
-          audioPlayer.fetchResources(sections).then(playSection);
+          audioPlayer.fetchResourcesWithProgress(sections).then(playSection);
         });
       }
     };

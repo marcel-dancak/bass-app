@@ -399,3 +399,24 @@ md-menu-content.playback-range {
 .section-range {
   padding: 0 10px;
 }
+
+.play-stop-button md-progress-circular {
+  position: absolute;
+  top: 7px;
+  left: 4px;
+}
+.play-stop-button md-progress-circular:after {
+  content: "Loading";
+  position: absolute;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  background-color: #455A64;
+  left: 36px;
+  top: 0;
+  line-height: 35px;
+}
+.play-stop-button md-progress-circular svg path {
+  stroke: #455A64;
+  stroke-width: 5px!important;
+}

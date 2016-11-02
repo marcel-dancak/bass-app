@@ -18,7 +18,7 @@
       };
     });
 
-  function AppController($scope, $timeout, $mdDialog, context, workspace,
+  function AppController($scope, $timeout, $q, $mdDialog, context, workspace,
       audioPlayer, audioVisualiser, projectManager, Drums, dataUrl) {
 
     $scope.ui = {
@@ -48,6 +48,20 @@
       // return '({0}) {1}'.format(value, label);
     };
 
+    audioPlayer.fetchResourcesWithProgress = function(resources) {
+      var task = $q.defer();
+      // var startTime = performance.now();
+      $scope.player.loading = true;
+      this.fetchResources(resources)
+        .then(function() {
+          // var elapsed = performance.now() - startTime;
+          // $timeout(function() {
+            $scope.player.loading = false;
+          // }, Math.max(100, elapsed));
+          task.resolve();
+        }, task.reject);
+      return task.promise;
+    }
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
 
