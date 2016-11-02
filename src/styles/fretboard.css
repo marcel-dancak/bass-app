@@ -134,6 +134,9 @@
   margin: 4px 16px 2px 5px;
 }
 
+.fretboard-settings {
+  height: 44px;
+}
 .fretboard-settings .style-selectbox {
   min-width: 120px;
 }

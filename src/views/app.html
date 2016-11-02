@@ -154,10 +154,7 @@
       <div flex style="max-height: 40px;"></div>
 
       <div ng-show="workspace.track.type === 'bass'">
-        <div
-          style="margin-bottom: 20px;"
-          ng-include src="'views/fretboard.html'">
-        </div>
+        <div ng-include src="'views/fretboard.html'"></div>
         <span flex></span>
       </div>
 
@@ -196,12 +193,6 @@
 
   <footer layout="row">
     <span flex></span>
-    <md-button
-      md-no-ink
-      class="icon-hover"
-      ng-click="showHelp()">
-      <md-icon md-svg-icon="help"></md-icon>
-    </md-button>
     <span>Developed by Marcel Dancak</span>
     <md-button
       md-no-ink
@@ -210,6 +201,12 @@
       href="https://github.com/marcel-dancak/drums-and-bass">
       <md-icon md-svg-icon="github"></md-icon>
     </md-button>
-    <span flex></span>
+    <md-button
+      md-no-ink
+      class="icon-hover"
+      ng-click="showHelp()">
+      <md-icon md-svg-icon="help"></md-icon>
+    </md-button>
+    <!-- <span flex></span> -->
   </footer>
 </div>

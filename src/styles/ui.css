@@ -614,6 +614,20 @@ md-tooltip md-divider {
   -webkit-justify-content: flex-start;
 }*/
 
+.dialog-close {
+  position: absolute;
+  right: 0;
+  line-height: 36px;
+  margin: 0;
+  padding: 0;
+  min-width: 48px;
+}
+.dialog-close md-icon {
+  fill: #fff;
+  width: 22px;
+  height: 22px;
+}
+
 .open-project-dialog,
 .new-track-dialog {
   max-width: 400px;
@@ -666,4 +680,27 @@ md-toast.player.md-top {
 md-input-container:not(.md-input-invalid).md-input-focused label,
 md-input-container:not(.md-input-invalid).md-input-focused md-icon {
   color: #2196F3;
+}
+
+footer {
+  opacity: 0.6;
+  position: absolute;
+  bottom: 0;
+  xleft: 0;
+  right: 12px;
+  z-index: 100;
+}
+footer span {
+  color: #777;
+  font-size: 14px;
+  line-height: 36px;
+  height: 36px;
+  padding: 4px 10px 0 10px;
+}
+footer .md-button {
+  padding: 0;
+  margin: 0;
+  min-width: 36px;
+  line-height: 36px;
+  height: 36px;
 }
