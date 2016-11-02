@@ -214,10 +214,14 @@
       var task = $q.defer();
       playlist = [];
       slidesMetadata = [];
+      var index = 1;
       workspace.playlist.items.forEach(function(item) {
         var section = projectManager.getSection(item.section);
         for (var i = 0; i < item.repeats; i++) {
-          playlist.push(section);
+          if (index >= $scope.player.playbackRange.start && index <= $scope.player.playbackRange.end) {
+            playlist.push(section);
+          }
+          index++;
         }
       });
 
@@ -330,7 +334,17 @@
         audioPlayer.fetchResources(sections).then(playFromCurrentPosition);
 
       } else {
-        initPlaylistSlides().then(function() {
+        var initSlides;
+        if (playerSwiper.snapIndex !== 0) {
+          initSlides = initPlaylistSlides();
+        } else {
+          playbackState = {
+            section: 0,
+            beatsCounter: -1
+          };
+          initSlides = $q.when();
+        }
+        initSlides.then(function() {
           var sections = playlist.reduce(function(list, section) {
             if (list.indexOf(section) === -1) {
               list.push(section);
@@ -411,8 +425,24 @@
       }
     }
 
+    function updateRangePlaylist() {
+      console.log($scope.player.playlist);
+      $scope.player.playlist.splice(0, $scope.player.playlist.length);
+      workspace.playlist.items.forEach(function(item) {
+        for (var i = 0; i < item.repeats; i++) {
+          $scope.player.playlist.push($scope.sectionNames[item.section]);
+        }
+      });
+      // $scope.player.playlist = playlist;
+      $scope.player.playbackRange.start = 1;
+      $scope.player.playbackRange.max = $scope.player.playlist.length;
+      $scope.player.playbackRange.end = $scope.player.playbackRange.max;
+
+    }
+
     function playlistLoaded(playlist) {
       workspace.playlist = playlist;
+      updateRangePlaylist();
       initPlaylistSlides();
     }
 
@@ -423,8 +453,8 @@
       projectManager.project.sections.forEach(function(section) {
         $scope.sectionNames[section.id] = section.name;
       });
+      updateRangePlaylist();
 
-      console.log(workspace.playlist.items.length);
       if (workspace.playlist.items.length === 0) {
         console.log('SHOW PLAYLIST EDITOR');
         $scope.ui.playlist.showEditor = true;
@@ -459,6 +489,10 @@
         playbackState.beatsCounter -= beatsPerSlide;
         playerSwiper.slideNext();
       }
+    };
+
+    $scope.player.playbackRangeChanged = function() {
+      initPlaylistSlides();
     };
 
     $scope.$on('$destroy', function() {

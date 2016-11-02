@@ -266,11 +266,9 @@ md-menu-item.menu-group-item .group-item-title {
   height: 6px;
 }
 
-
 .rzslider[disabled] {
   cursor: default;
 }
-
 
 .rzslider .rz-pointer[aria-valuenow="0"]:after {
   background-color: #fff!important;
@@ -287,32 +285,58 @@ md-menu-item.menu-group-item .group-item-title {
   box-sizing: border-box;
 }
 
-.rz-bar-wrapper .rz-bar {
+.rzslider .rz-ticks .rz-tick.rz-selected {
+  background-color: #2196F3;
+}
+
+.rzslider:not(.rz-vertical) .rz-bar-wrapper .rz-bar {
   height: 2px;
   top: 17px;
   margin: 0 12px;
   width: calc(100% - 24px);
   background-color: rgba(0,0,0,0.26);
 }
-.rz-bar-wrapper .rz-bar.rz-selection {
+.rzslider:not(.rz-vertical) .rz-bar-wrapper .rz-bar.rz-selection {
   background-color:  #2196F3;
   margin: 0;
   width: 100%;
 }
 
-.rzslider .rz-ticks .rz-tick {
+.rzslider:not(.rz-vertical) .rz-ticks .rz-tick {
   width: 2px;
   border-radius: 0;
 }
-.rzslider .rz-ticks .rz-tick.rz-selected {
-  background-color: #2196F3;
+
+.rzslider.rz-vertical .rz-pointer {
+  transform: translate(0, -10px);
 }
 
-.rz-tick-value {
-  font-size: 13px;
+.rzslider.rz-vertical .rz-bar-wrapper .rz-bar:not(.rz-selection) {
+  height: calc(100% - 22px);
+  margin-bottom: 22px;
+}
+.rzslider.rz-vertical .rz-ticks .rz-tick {
+  margin-top: 0px;
 }
 
-.volume-field .rzslider {
+.rzslider.rz-vertical .rz-ticks .rz-tick .rz-tick-value {
+  transform: translate(0, -38%);
+}
+
+.rzslider.rz-vertical .rz-bar-wrapper .rz-bar {
+  width: 2px;
+}
+
+.rzslider.rz-vertical .rz-ticks .rz-tick {
+  height: 2px;
+  border-radius: 0;
+  left: -1px;
+}
+.rzslider.rz-vertical .rz-pointer {
+  left: -11px !important;
+}
+
+.preferences .volume-field .rzslider {
   margin-left: 10px;
 }
 
@@ -320,42 +344,51 @@ md-menu-item.menu-group-item .group-item-title {
   Playback range slider
 */
 
-.playback-range .rzslider {
+.section-range .rz-tick-value {
+  font-size: 13px;
+}
+
+.section-range .rzslider {
   width: 280px;
   margin-top: 56px;
 }
 
-.md-open-menu-container .preferences.playback-range {
+.md-open-menu-container .preferences.section-range {
   max-width: 420px;
 }
-.playback-range .rzslider.long {
+.section-range .rzslider.long {
   width: 400px;
 }
+
+.section-range .rzslider ul > li:last-child:before {
+  content: "|"!important;
+  font-size: 13px;
+  position: absolute;
+  right: 0px;
+  top: -32px;
+}
+
+.section-range .rzslider ul > li:last-child > span {
+  display: none;
+}
+
 
 .playback-range .rzslider .rz-pointer {
   transition: left 0.15s cubic-bezier(0.35, 0, 0.25, 1);
 }
 
-.playback-range .rz-bar-wrapper {
+.playback-range .rzslider .rz-bar-wrapper {
   transition: 0.15s cubic-bezier(0.35, 0, 0.25, 1);
   transition-property: left, width;
 }
 
-.playback-range .rzslider ul > li:last-child:before {
-  content: "|"!important;
-  font-size: 13px;
-  position: absolute;
-  right: 13px;
-  top: -32px;
+.playback-range .rzslider.rz-vertical .rz-pointer {
+  transition: bottom 0.15s cubic-bezier(0.35, 0, 0.25, 1);
 }
 
-.playback-range .rzslider ul > li:last-child > span {
-  display: none;
-}
-
-md-list-item.range-slider-item {
-  height: 72px;
-  padding: 0;
+.playback-range .rzslider.rz-vertical .rz-bar-wrapper {
+  transition: 0.15s cubic-bezier(0.35, 0, 0.25, 1);
+  transition-property: bottom, height;
 }
 
 /** To make range slider in menu initialized properly */

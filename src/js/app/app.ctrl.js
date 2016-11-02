@@ -34,12 +34,20 @@
       speed: 100,
       playbackRange: {
         start: 1,
-        end: 1
+        end: 1,
+        max: 1
       },
       playbackRangeChanged: angular.noop,
       graphEnabled: false,
-      visibleBeatsOnly: false
+      visibleBeatsOnly: false,
+      playlist: []
     };
+    $scope.playlistLabel = function(value) {
+      var label = $scope.player.playlist[value-1];
+      return label;
+      // return '({0}) {1}'.format(value, label);
+    };
+
     // initial volume for input after un-mute
     audioPlayer.input._volume = 0.75;
 
@@ -140,7 +148,6 @@
         propagateContainerEvents: true
       })
     };
-    $scope.showHelp();
 
     function drumImageUrl(drum) {
       return '{0}styles/images/{1}.svg'.format(dataUrl, drum.name);

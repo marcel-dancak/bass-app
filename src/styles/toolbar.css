@@ -337,8 +337,15 @@ md-dialog .dialog-header {
   margin: 6px 2px 5px 2px;
 }
 
+.playback-range-menu md-icon {
+  transition: transform 0.4s cubic-bezier(0.35, 0, 0.25, 1);
+}
+
+.playlist-mode .playback-range-menu md-icon {
+  transform: rotate3d(0, 0, 1, 90deg);
+}
+
 .toolbar-button[disabled],
-.playlist-mode .playback-range-menu,
 .playback-active .mode-switch,
 .playback-active .project-toolbar,
 .readonly-project .md-button[aria-label="Save Section"],
@@ -353,4 +360,42 @@ md-dialog .dialog-header {
 
 .control-panel md-select[disabled] .md-select-value {
   color: transparent;
+}
+
+.playlist-range {
+  width: 150px;
+  overflow: auto;
+}
+.playlist-range .playback-range {
+  min-height: 28px;
+  height: 28px;
+}
+
+.playlist-range .rzslider {
+  margin-top: 14px;
+}
+
+.playback-range label {
+  color: #777;
+  font-size: 13px;
+  padding: 0 10px;
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  height: 26px;
+  background-color: #fff;
+  z-index: 10;
+}
+
+.playlist-range {
+  overflow: hidden;
+  padding-top: 22px;
+}
+
+md-menu-content.playback-range {
+  max-height: 100%;
+}
+.section-range {
+  padding: 0 10px;
 }

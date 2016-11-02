@@ -268,13 +268,13 @@
         md-no-ink
         class="toggle-button toolbar-separated-button icon-hover"
         ng-class="{
-          active: player.playbackRange.start > 1 || player.playbackRange.end < workspace.section.length+1
+          active: player.playbackRange.start > 1 || player.playbackRange.end < player.playbackRange.max
         }"
         ng-click="
           initSliders();
           $mdOpenMenu($event)
         ">
-        <md-icon md-svg-icon="cut"></md-icon>
+        <md-icon md-svg-icon="selection-playback"></md-icon>
         <md-tooltip
           md-delay="1500"
           class="multiline-tooltip">
@@ -285,28 +285,55 @@
       </md-button>
       <md-menu-content
         class="preferences playback-range md-whiteframe-16dp">
-        <md-list>
-          <md-list-item class="range-slider-item playback-range">
-            <label>Active range</label>
-            <rzslider
-              class="range-slider"
-              ng-class="{ long: workspace.section.length > 10 }"
-              rz-slider-model="player.playbackRange.start"
-              rz-slider-high="player.playbackRange.end"
-              rz-slider-options="{
-                floor: 1,
-                ceil: workspace.section.length+1,
-                step: 1,
-                minRange: 1,
-                pushRange: true,
-                showTicks: true,
-                onEnd: player.playbackRangeChanged,
-                showTicksValues: true
-              }">
-            </rzslider>
-          </md-list-item>
 
-        </md-list>
+        <div
+          ng-show="player.mode === 0"
+          class="section-range">
+          <label>Active range</label>
+          <rzslider
+            class="range-slider"
+            ng-class="{ long: workspace.section.length > 10 }"
+            rz-slider-model="player.playbackRange.start"
+            rz-slider-high="player.playbackRange.end"
+            rz-slider-options="{
+              floor: 1,
+              ceil: player.playbackRange.max,
+              step: 1,
+              minRange: 1,
+              pushRange: true,
+              showTicks: false,
+              onEnd: player.playbackRangeChanged,
+              showTicksValues: true
+            }">
+          </rzslider>
+        </div>
+
+        <div
+          ng-show="player.mode === 1"
+          class="playlist-range">
+          <label>Active range</label>
+          <rzslider
+            class="range-slider"
+            ng-style="{
+              height: (36*player.playlist.length)+'px'
+            }"
+            rz-slider-model="player.playbackRange.start"
+            rz-slider-high="player.playbackRange.end"
+            rz-slider-options="{
+              vertical: true,
+              rightToLeft: true,
+              floor: 1,
+              ceil: player.playbackRange.max,
+              step: 1,
+              minRange: 1,
+              pushRange: true,
+              showTicks: true,
+              onEnd: player.playbackRangeChanged,
+              showTicksValues: true,
+              translate: playlistLabel
+            }">
+          </rzslider>
+        </div>
       </md-menu-content>
     </md-menu>
 

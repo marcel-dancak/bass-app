@@ -240,7 +240,8 @@
       }
       workspace.section = section;
       $scope.player.playbackRange.start = 1;
-      $scope.player.playbackRange.end = section.length + 1;
+      $scope.player.playbackRange.max = section.length + 1;
+      $scope.player.playbackRange.end = $scope.player.playbackRange.max;
       // $scope.player.playbackRangeChanged();
 
       var bassTrack;
