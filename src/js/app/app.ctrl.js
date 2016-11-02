@@ -166,6 +166,16 @@
     });
     audioPlayer.bufferLoader.loadResources(resources);
 
+    // Stop playback when a tab is going to the background (setTimout will not work
+    // properly in background tab)
+    document.addEventListener('visibilitychange', function(evt) {
+      if ($scope.player.playing && document.visibilityState === 'hidden') {
+      $scope.player.playing = false;
+        audioPlayer.stop();
+        $scope.$apply();
+      }
+    });
+
     window.workspace = workspace;
     window.pm = projectManager;
     window.audioVisualiser = audioVisualiser;
