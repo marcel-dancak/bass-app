@@ -1,9 +1,18 @@
-<md-dialog class="help-dialog">
-  <div class="dialog-header">Help</div>
+<md-dialog
+  class="help-dialog"
+  ng-controller="HelpController">
+  <div class="dialog-header">
+    Help
+    <md-button
+      md-no-ink
+      class="dialog-close icon-hover"
+      ng-click="close()">
+      <md-icon md-svg-icon="x"></md-icon>
+    </md-button>
+  </div>
 
   <md-dialog-content
     layout="row"
-    ng-controller="HelpController"
     ng-cloak
     ng-init="
       helpPages = [
@@ -51,6 +60,8 @@
           <li
             ng-repeat="section in ::item.sections"
             href="#section-{{ ::$index+1 }}"
+            ng-click="selectSection($index + 1)"
+            ng-class="{selected: index.activeSection === $index + 1}"
             du-smooth-scroll
             du-scrollspy>
             {{ ::section }}

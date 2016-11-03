@@ -19,9 +19,10 @@ md-dialog.help-dialog.md-transition-in {
   padding: 0;
 }
 
-.help-index .active {
+.help-index .selected {
   color: #2196F3;
 }
+
 .help-container .content {
   padding: 10px;
   background-color: #fff;
@@ -128,6 +129,7 @@ md-dialog.help-dialog.md-transition-in {
   height: 44px;
   line-height: 44px;
   cursor: pointer;
+  outline: none;
 }
 
 .help-index ul {
@@ -163,6 +165,9 @@ md-dialog.help-dialog.md-transition-in {
   padding-top: 0px;
   padding-bottom: 100px;
   position: relative;
+}
+.help-container section:last-child {
+  padding-bottom: 20px;
 }
 
 .help-container section > h4 {

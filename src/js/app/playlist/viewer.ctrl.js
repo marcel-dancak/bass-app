@@ -155,12 +155,14 @@
 
     var timeline = new HighlightTimeline({
       getBeatElem: function(bar, beat) {
+        // console.log('getBeatElem: '+bar+' '+beat);
         var slideIndex = playerSwiper.snapIndex;
         var beatIndex = playbackState.beatsCounter;
         if (playbackState.beatsCounter >= beatsPerSlide) {
           slideIndex += 1;
           beatIndex -= beatsPerSlide;
         }
+        // console.log('slideIndex: '+slideIndex+' beatIndex: '+beatIndex);
         // console.log('{0} -> {1}/{2}'.format(playbackState.beatsCounter, slideIndex, beatIndex));
         var beatsElems = playerSwiper.slides[slideIndex].querySelectorAll('.beat');
         var beatElem = beatsElems[beatIndex];
