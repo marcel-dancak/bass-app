@@ -53,7 +53,7 @@
               length: config.length || 1
             },
             track: {
-              instrument: Drums.Standard.slice(4)
+              instrument: Drums.Drums.slice(4)
             }
           };
           $scope.workspace.trackSection = new DrumSection($scope.workspace.section);

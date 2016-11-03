@@ -353,6 +353,7 @@ md-dialog .dialog-header {
 .readonly-project md-menu-item > .md-button[aria-label="Open Project"],
 .readonly-project md-menu-item > .md-button[aria-label="New Section"],
 .readonly-project md-menu-item > .md-button[aria-label="Save As"],
+.readonly-project md-menu-item > .md-button[aria-label="Export"],
 .readonly-project md-menu-item > .md-button[aria-label="Delete Section"] {
   opacity: 0.6!important;
   pointer-events: none;
@@ -467,8 +468,9 @@ md-menu-content.playback-range {
   font-weight: 500;
   text-transform: none;
   background-color: #455A64;
-  left: 36px;
+  left: 32px;
   top: 0;
+  padding-left: 3px;
   line-height: 35px;
 }
 .play-stop-button md-progress-circular svg path {

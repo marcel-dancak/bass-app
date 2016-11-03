@@ -4,7 +4,8 @@
   ng-cloak>
 
   <ng-include
-    flex="none" class="md-whiteframe-3dp"
+    flex="none"
+    class="md-whiteframe-3dp"
     src="'views/main_toolbar.html'">
   </ng-include>
 
@@ -196,6 +197,7 @@
     <span>Developed by Marcel Dancak</span>
     <md-button
       md-no-ink
+      aria-label="GitHub"
       class="icon-hover"
       target="_blank"
       href="https://github.com/marcel-dancak/drums-and-bass">
@@ -203,6 +205,7 @@
     </md-button>
     <md-button
       md-no-ink
+      aria-label="Help"
       class="icon-hover"
       ng-click="showHelp()">
       <md-icon md-svg-icon="help"></md-icon>

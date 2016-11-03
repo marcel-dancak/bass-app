@@ -283,9 +283,9 @@
         <md-tooltip
           md-delay="1500"
           class="multiline-tooltip">
-          <p><b>Active range</b></p>
+          <p><b>Playback selection</b></p>
           <md-divider></md-divider>
-          <p>Restrict visible range and playback of the section (in bars)</p>
+          <p>Select visible range for playback</p>
         </md-tooltip>
       </md-button>
       <md-menu-content
@@ -294,7 +294,7 @@
         <div
           ng-show="player.mode === 0"
           class="section-range">
-          <label>Active range</label>
+          <label>Bars Selection</label>
           <rzslider
             class="range-slider"
             ng-class="{ long: workspace.section.length > 10 }"
@@ -316,7 +316,7 @@
         <div
           ng-show="player.mode === 1"
           class="playlist-range">
-          <label>Active range</label>
+          <label>Playlist Selection</label>
           <rzslider
             class="range-slider"
             ng-style="{

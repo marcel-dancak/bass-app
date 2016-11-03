@@ -194,7 +194,9 @@
         gain.gain.value = sound.volume;
         source.connect(gain);
         gain.connect(track.audio);
-        source.start(startTime, 0, sound.drum.duration);
+        // console.log(sound);
+        // console.log('startTime: {0} volume: {1} duration: {2}'.format(startTime, sound.volume, sound.duration));
+        source.start(startTime);
       }
     };
 

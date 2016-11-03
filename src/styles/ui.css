@@ -582,12 +582,14 @@ md-tooltip md-divider {
 
 .open-project-dialog,
 .new-track-dialog {
-  max-width: 400px;
+  max-width: 450px;
   max-height: 500px;
-  left: 50px;
+  width: 400px;
   transform: none;
 }
-
+.new-track-dialog {
+  width: 300px;
+}
 .new-track-dialog md-list-item md-icon {
   margin: 5px 10px 5px 0!important;
   fill: #444;
