@@ -232,6 +232,15 @@
         idCouter[track.type] = 0;
       }
       track.id = track.type+'_'+idCouter[track.type];
+      // console.log(track.kit)
+      if (track.kit === 'Standard') {
+        track.kit = 'Drums';
+        track.name = track.kit;
+      } else if (track.kit === 'Bongo') {
+        track.kit = 'Percussions';
+        track.name = track.kit;
+      }
+
       track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
 
       var compressor = compressors[track.type];

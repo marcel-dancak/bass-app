@@ -24,7 +24,7 @@
           form.track = track;
           form.name = track.name
         ">
-        <md-icon md-svg-icon="{{ ::track.type }}"></md-icon>
+        <md-icon md-svg-icon="{{ ::track.icon || track.type }}"></md-icon>
         {{ ::track.name }}
       </md-list-item>
 
@@ -40,10 +40,14 @@
   </md-dialog-content>
   <md-dialog-actions>
     <md-button
+      md-no-ink
+      aria-label="Cancel"
       ng-click="close()">
       Cancel
     </md-button>
     <md-button
+      md-no-ink
+      aria-label="Ok"
       ng-disabled="!form.track.type || !form.name"
       ng-click="
         form.track.name = form.name;

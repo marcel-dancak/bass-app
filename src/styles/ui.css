@@ -340,62 +340,11 @@ md-menu-item.menu-group-item .group-item-title {
   margin-left: 10px;
 }
 
-/**
-  Playback range slider
-*/
-
-.section-range .rz-tick-value {
-  font-size: 13px;
-}
-
-.section-range .rzslider {
-  width: 280px;
-  margin-top: 56px;
-}
-
-.md-open-menu-container .preferences.section-range {
-  max-width: 420px;
-}
-.section-range .rzslider.long {
-  width: 400px;
-}
-
-.section-range .rzslider ul > li:last-child:before {
-  content: "|"!important;
-  font-size: 13px;
-  position: absolute;
-  right: 0px;
-  top: -32px;
-}
-
-.section-range .rzslider ul > li:last-child > span {
-  display: none;
-}
-
-
-.playback-range .rzslider .rz-pointer {
-  transition: left 0.15s cubic-bezier(0.35, 0, 0.25, 1);
-}
-
-.playback-range .rzslider .rz-bar-wrapper {
-  transition: 0.15s cubic-bezier(0.35, 0, 0.25, 1);
-  transition-property: left, width;
-}
-
-.playback-range .rzslider.rz-vertical .rz-pointer {
-  transition: bottom 0.15s cubic-bezier(0.35, 0, 0.25, 1);
-}
-
-.playback-range .rzslider.rz-vertical .rz-bar-wrapper {
-  transition: 0.15s cubic-bezier(0.35, 0, 0.25, 1);
-  transition-property: bottom, height;
-}
 
 /** To make range slider in menu initialized properly */
 .md-open-menu-container {
   display: block!important;
 }
-
 
 
 /** Instrument swiper */
@@ -475,6 +424,9 @@ md-select-menu:not(.md-overflow) md-content {
   border-radius: 3px;
 }
 
+md-option md-icon {
+  fill: #777;
+}
 .toggle-button.active md-icon {
   fill: #2196F3;
 }
@@ -638,6 +590,7 @@ md-tooltip md-divider {
 
 .new-track-dialog md-list-item md-icon {
   margin: 5px 10px 5px 0!important;
+  fill: #444;
 }
 .new-track-dialog md-input-container {
   margin: 24px 16px 4px 16px;

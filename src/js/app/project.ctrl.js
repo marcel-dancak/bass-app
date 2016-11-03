@@ -37,15 +37,16 @@
         {
           name: 'Bass',
           type: 'bass',
-          strings: 'EADG'
+          strings: 'EADG',
         }, {
-          name: 'Standard',
-          kit: 'Standard',
+          name: 'Drums',
+          kit: 'Drums',
           type: 'drums'
         }, {
-          name: 'Bongo',
-          kit: 'Bongo',
-          type: 'drums'
+          name: 'Percussions',
+          kit: 'Percussions',
+          type: 'drums',
+          icon: 'percussions'
         }
       ];
       $scope.addTrack = function(trackInfo) {
@@ -102,12 +103,12 @@
           tuning: [0, 0, 0, 0]
         }, {
           type: 'drums',
-          kit: 'Standard',
-          name: 'Standard'
+          kit: 'Drums',
+          name: 'Drums'
         }, {
           type: 'drums',
-          kit: 'Bongo',
-          name: 'Bongo'
+          kit: 'Percussions',
+          name: 'Percussions'
         }
       ]);
       var section = projectManager.createSection();
@@ -148,9 +149,10 @@
     $scope.newSection = function() {
       var config = {};
       if (projectManager.section) {
-        ['timeSignature', 'beatsPerSlide', 'beatsPerView', 'animationDuration'].forEach(function(property) {
-          config[property] = projectManager.section[property];
-        });
+        ['timeSignature', 'beatsPerSlide', 'beatsPerView', 'animationDuration']
+          .forEach(function(property) {
+            config[property] = projectManager.section[property];
+          });
       }
       var section = projectManager.createSection(config);
       workspace.selectedSectionId = section.id;

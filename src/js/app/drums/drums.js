@@ -8,72 +8,93 @@
 
   function createDrums() {
     var drumsKits = {
-      Standard: [
+      Drums: [
         {
           name: 'tom1',
           label: 'Small Rack Tom',
-          filename: 'sounds/drums/acoustic2/small-rack-tom',
+          filename: 'sounds/drums/acoustic/small-rack-tom',
           duration: 0.66
         }, {
           name: 'tom2',
           label: 'Big Rack Tom',
-          filename: 'sounds/drums/acoustic2/big-rack-tom',
+          filename: 'sounds/drums/acoustic/big-rack-tom',
           duration: 0.9
         }, {
           name: 'tom3',
           label: 'Floor Tom',
-          filename: 'sounds/drums/acoustic2/floor-tom',
+          filename: 'sounds/drums/acoustic/floor-tom',
           duration: 1.09
         }, {
           name: 'crash',
           label: 'Crash',
-          filename: 'sounds/drums/acoustic2/crash',
+          filename: 'sounds/drums/acoustic/crash',
           duration: 3.85
         }, {
           name: 'hihat-open',
           label: 'Hi-Hat Open',
-          filename: 'sounds/drums/acoustic2/hi-hat-open',
+          filename: 'sounds/drums/acoustic/hi-hat-open',
           duration: 1.56
         }, {
           name: 'hihat',
           label: 'Hi-Hat Closed',
-          filename: 'sounds/drums/acoustic2/hi-hat-closed',
+          filename: 'sounds/drums/acoustic/hi-hat-closed',
           duration: 0.13
         }, {
           name: 'snare',
           label: 'Snare',
-          filename: 'sounds/drums/acoustic2/snare',
+          filename: 'sounds/drums/acoustic/snare',
           duration: 0.46
         }, {
           name: 'kick',
           label: 'Kick',
-          filename: 'sounds/drums/acoustic2/kick',
+          filename: 'sounds/drums/acoustic/kick',
           duration: 0.44
         }
       ],
-      Bongo: [
+      Percussions: [
+        // {
+        //   name: 'clap',
+        //   label: 'Clap',
+        //   filename: 'sounds/percussion/clap_015',
+        //   duration: 0.16
+        // },
         {
-          name: 'tom1',
+          name: 'clap',
+          label: 'Clap',
+          filename: 'sounds/percussion/clap_009',
+          duration: 0.175
+        }, {
+          name: 'bongo3',
+          label: 'Bongo',
+          filename: 'sounds/drums/bongo/shaker_009',
+          duration: 0.6
+        }, {
+          name: 'shaker',
+          label: 'Shaker',
+          filename: 'sounds/drums/bongo/shaker_002',
+          duration: 0.15
+        }, {
+          name: 'bongo7',
           label: 'Bongo',
           filename: 'sounds/drums/bongo/bongo_001d',
           duration: 0.5
         }, {
-          name: 'tom2',
+          name: 'bongo6',
           label: 'Bongo',
           filename: 'sounds/drums/bongo/bongo_002c',
           duration: 0.5
         }, {
-          name: 'tom3',
+          name: 'bongo5',
           label: 'Bongo',
           filename: 'sounds/drums/bongo/bongo_005d',
           duration: 0.5
         }, {
-          name: 'snare',
+          name: 'bongo4',
           label: 'Bongo',
           filename: 'sounds/drums/bongo/bongo_006r',
           duration: 0.5
         }, {
-          name: 'kick',
+          name: 'bongo2',
           label: 'Bongo',
           filename: 'sounds/drums/bongo/bongo_004c',
           duration: 0.5

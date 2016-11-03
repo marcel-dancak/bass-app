@@ -168,13 +168,15 @@
     }
 
     // Load standard drums kit sounds
-    var resources = Drums.Standard.map(function(drum) {
+    Drums.Drums.icon = 'drums';
+    Drums.Percussions.icon = 'percussions';
+    var resources = Drums.Drums.map(function(drum) {
       drum.image = drumImageUrl(drum);
       return drum.filename;
     });
     audioPlayer.bufferLoader.loadResources(resources);
     // Load bongo drums kit sounds
-    resources = Drums.Bongo.map(function(drum) {
+    resources = Drums.Percussions.map(function(drum) {
       drum.image = drumImageUrl(drum);
       return drum.filename;
     });

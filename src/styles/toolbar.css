@@ -400,6 +400,61 @@ md-menu-content.playback-range {
   padding: 0 10px;
 }
 
+/**
+  Playback range slider
+*/
+
+.playlist-range .rz-tick-value {
+  font-size: 14px;
+}
+.section-range .rz-tick-value {
+  font-size: 14px;
+}
+
+.section-range .rzslider {
+  width: 280px;
+  margin-top: 60px;
+}
+
+.md-open-menu-container .preferences.section-range {
+  max-width: 420px;
+}
+.section-range .rzslider.long {
+  width: 400px;
+}
+
+.section-range .rzslider ul > li:last-child:before {
+  content: "|"!important;
+  font-size: 14px;
+  position: absolute;
+  right: 0px;
+  top: -32px;
+}
+
+.section-range .rzslider ul > li:last-child > span {
+  display: none;
+}
+
+
+.playback-range .rzslider .rz-pointer {
+  transition: left 0.15s cubic-bezier(0.35, 0, 0.25, 1);
+}
+
+.playback-range .rzslider .rz-bar-wrapper {
+  transition: 0.15s cubic-bezier(0.35, 0, 0.25, 1);
+  transition-property: left, width;
+}
+
+.playback-range .rzslider.rz-vertical .rz-pointer {
+  transition: bottom 0.15s cubic-bezier(0.35, 0, 0.25, 1);
+}
+
+.playback-range .rzslider.rz-vertical .rz-bar-wrapper {
+  transition: 0.15s cubic-bezier(0.35, 0, 0.25, 1);
+  transition-property: bottom, height;
+}
+
+
 .play-stop-button md-progress-circular {
   position: absolute;
   top: 7px;

@@ -108,6 +108,7 @@ gulp.task('uglify', function() {
         'bower_components/angular-material/modules/js/dialog/dialog.min.js',
         'bower_components/angular-material/modules/js/subheader/subheader.min.js',
         'bower_components/angular-material/modules/js/sticky/sticky.min.js',
+        'bower_components/angular-material/modules/js/progressCircular/progressCircular.min.js',
 
         // 'bower_components/angular-material/modules/js/radioButton/radioButton.min.js',
         // 'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',

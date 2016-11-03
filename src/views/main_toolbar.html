@@ -24,7 +24,7 @@
           ng-repeat="track in project.tracks track by track.id"
           type="{{ ::track.type }}"
           ng-value="track.id">
-          <md-icon md-svg-icon="{{ ::track.type }}"></md-icon>
+          <md-icon md-svg-icon="{{ ::track.instrument.icon || track.type }}"></md-icon>
           {{ track.name }}
         </md-option>
 
