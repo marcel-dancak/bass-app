@@ -6,14 +6,8 @@
     .controller('ProjectController', ProjectController);
 
 
-  function queryStringParam(item) {
-    var svalue = location.search.match(new RegExp("[\?\&]" + item + "=([^\&]*)(\&?)","i"));
-    if (svalue !== null) {
-      return decodeURIComponent(svalue ? svalue[1] : svalue);
-    }
-  }
-
-  function ProjectController($scope, $timeout, $http, $mdToast, $mdDialog, projectManager, workspace, ReadOnlyStore, dataUrl) {
+  function ProjectController($scope, $timeout, $http, $window, $location, $mdToast, $mdDialog,
+        projectManager, workspace, ReadOnlyStore, ProjectLocalStore, dataUrl) {
 
     function showNotification(htmlContent) {
       $mdToast.show({
@@ -92,6 +86,11 @@
     }
 
     $scope.newProject = function() {
+      if (projectManager.store.readOnly) {
+        projectManager.store = new ProjectLocalStore()
+        // $window.history.pushState(null, null, '?');
+        $location.path('');
+      }
       document.title = "New Project";
       workspace.bassSection = null;
       workspace.drumSection = null;
@@ -240,12 +239,11 @@
       list.splice(dropItemIndex, 0, dragItem);
     }
 
-    var projectParam = queryStringParam("PROJECT");
+    var projectParam = $location.path().replace('/', '');
     if (projectParam) {
       $http.get(dataUrl+projectParam+'.json').then(function(response) {
         projectManager.store = new ReadOnlyStore(response.data);
         $scope.project = projectManager.loadProject(1);
-        console.log('-----')
         workspace.selectedSectionId = $scope.project.sections[0].id;
         projectManager.loadSection(workspace.selectedSectionId);
       });
