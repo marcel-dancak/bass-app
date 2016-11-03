@@ -252,6 +252,17 @@
         compressor.attack.value = 0;
         // compressor.release.value = 0.25;
         compressors[track.type] = compressor;
+
+        // avoid initial fade-in caused by compressor by playing
+        // a short inaudible audio through it
+        var oscillator = context.createOscillator();
+        oscillator.frequency.value = 30000;
+        oscillator.connect(compressor);
+        compressor.connect(context.destination);
+        oscillator.start();
+        setTimeout(function() {
+          oscillator.stop();
+        }, 50);
       }
 
       track.audio = context.createGain();
@@ -261,7 +272,6 @@
       }
       // track.audio.connect(context.destination);
       track.audio.connect(compressor);
-      compressor.connect(context.destination);
 
       var index = this.project.tracks.length;
       this.project.tracks.forEach(function(t, i) {
