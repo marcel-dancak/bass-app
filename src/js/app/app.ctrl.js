@@ -16,6 +16,20 @@
           });
         });
       };
+    })
+    .run(function($mdDialog) {
+      if (!window.chrome) {
+        var alert = $mdDialog.alert()
+        .title('Warning')
+        .textContent(
+          'It is highly recommended to use Chrome/Chromium web browser. '+
+          'Application may not work properly in other browsers.'
+        )
+        .theme(' ')
+        .ok('Close');
+
+        $mdDialog.show(alert);
+      }
     });
 
   function AppController($scope, $timeout, $q, $mdDialog, context, workspace,
