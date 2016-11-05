@@ -1,39 +1,24 @@
-
-### [Demo](https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/dist/latest/index.html)
-
-Supported browsers:
-
-* Chrome (preferred)
-* Firefox
+Application for learning playing on the bass guitar
 
 
-## Creating bass sounds
+![Section Mode - Bass Editation](docs/bass.png)
 
-You can create a bass sound with two different ways:
+![Section Mode - Drums Editation](docs/drums.png)
 
-* Move mouse pointer over the bass board area and open context menu by click (left or right) on the plus button
-
-![Context menu](docs/sound-context-menu.png)
-
-* Drag note from fretboard to bass board area
-
-After a bass sound was defined, you can:
-
-* edit it's properties in context menu by right click on it.
-* change sound's note length by resizing sound box from it's right side
-* move sound to different position by drag & drop
-* copy sound to different position by drag & drop with pressed **Ctrl** key
-
-### Special shortcuts
-
-**Slide** - you can create a slide from two already defined bass sounds (on the same string) by resizing - first sound box must overlap with the second
-
-**Hammer-On & Pull-Off** - create two following sounds on the same string, select the second one and press **H** or **P** key to create Hammer-On or Pull-Off relation
+![Playlist Mode](docs/playlist.png)
 
 
-## Audio inut/output prefferences
+It is highly recommended to use Webkit-based browser. Application may not work properly in other browsers.
 
-![Audio prefferences](docs/audio-prefferences.png)
+**List of supported browsers:**
 
-Application use two independent output channels - one for the drums, second for the bass guitar.
-You can also connect bass guitar throught input channel. By default, input channel is muted, when you enable it, audio graph visualization will use this channel instead of bass guitar playback.
+* Chrome
+* Chromium
+* Opera
+
+
+### Examples
+
+[Jamiroquai - Runaway](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
+
+[Patrice Rushen - Forget Me Nots](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#PatriceRushen-ForgetMeNots)
