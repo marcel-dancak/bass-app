@@ -124,6 +124,9 @@ md-dialog.help-dialog.md-transition-in {
 .help-index .index-item-container[size="4"].expanded {
   height: 224px;
 }
+.help-index .index-item-container[size="5"].expanded {
+  height: 268px;
+}
 
 .help-index li {
   height: 44px;
@@ -177,9 +180,18 @@ md-dialog.help-dialog.md-transition-in {
   margin-bottom: 16px;
 }
 
-.help-container h5 {
-  text-decoration: underline;
+.help-container section ul {
+  xlist-style-position: inside;
+  padding-left: 24px;
+}
+.help-container ul > h5,
+.help-container ul > h6 {
   font-size: 15px;
+  font-weight: normal;
+  margin: 12px 0 7px 0;
+}
+.help-container ul > h6 {
+  color: #888;
 }
 
 .help-container .non-interactive {
@@ -280,4 +292,27 @@ md-dialog.help-dialog.md-transition-in {
   left: 0;
   color: #aaa;
   white-space: nowrap;
+}
+
+.help-container md-icon[md-svg-icon="tip"] {
+  padding: 0 5px 6px 0;
+  fill: #5f5f5f;
+}
+.help-container p > md-icon,
+.help-container li md-icon {
+  fill: #5f5f5f;
+  padding: 0 4px 6px 4px;
+}
+
+.help-container b > md-icon {
+  fill: #222;
+}
+
+.help-container h5 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  margin-top: 36px;
+}
+.help-container .control-panel {
+  pointer-events: none;
 }

@@ -3,8 +3,48 @@
 
   angular
     .module('bd.help')
-    .controller('HelpBarController', HelpBarController);
+    .controller('HelpBarController', HelpBarController)
+    .controller('ToolbarController', ToolbarController);
 
+
+  function ToolbarController($scope, $element, $timeout, $mdCompiler, Bass, BassSection) {
+    var section = {
+      timeSignature: {
+        top: 4,
+        bottom: 4
+      },
+      length: 2,
+      bpm: 80,
+      name: 'Verse'
+    };
+    var trackSection = new BassSection(section);
+
+    $scope.project = {
+      tracks: [{
+        id: 'bass_0',
+        name: 'Bass',
+        type: 'bass',
+        strings: 'EADG',
+        instrument: new Bass('EADG')
+      }],
+      sections: [{
+        id: 1,
+        name: 'Verse'
+      }, {
+        id: 2,
+        name: 'Chorus'
+      }]
+    };
+    $scope.workspace = {
+      section: section,
+      trackSection: trackSection,
+      track: $scope.project.tracks[0],
+      selectedSectionId: 1
+    };
+    $scope.player = {
+      mode: 0
+    };
+  }
 
   function HelpBarController($scope, $element, $timeout, $mdCompiler, BassSection) {
 

@@ -1,11 +1,78 @@
-<section id="section-1" style="padding-top:44px;">
+<section
+  id="section-1"
+  style="padding-top:44px;"
+  ng-controller="ToolbarController">
   <h4 style="top:20px;">{{ ::item.sections[0] }}</h4>
   <p>
+    Toolbar controls can be divided into the tree main groups:
+  </p>
+  <h5>Track controls</h5>
+  <div class="control-panel md-whiteframe-3dp">
+    <div
+      ng-cloak
+      layout="row"
+      class="instruments-toolbar"
+      ng-include="'views/tracks_toolbar.html'">
+    </div>
+  </div>
+  <p>
+    Allows to select active, configure and manage instruments of the project. It also contains
+    a menu with volume preferences of all instruments (tracks) as well as input audio channel
+    volume when using microphone input.
+  </p>
+  <p>
+    <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
+    Use it to customize visual appearance of bass sound symbols
   </p>
 
+  <h5>Player controls</h5>
+  <div
+    layout="row"
+    class="control-panel md-whiteframe-3dp">
+    <div flex></div>
+    <div
+      ng-cloak
+      layout="row"
+      class="playback-fields"
+      ng-include="'views/playback_toolbar.html'">
+    </div>
+    <div flex></div>
+  </div>
+  <p>Allows to start, stop and configure playback (speed, range, repeating)</p>
+  <p>
+    <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
+    Use <i>Visible screen playback </i><md-icon md-svg-icon="screen-playback"></md-icon>
+    or <i>Selection playback </i><md-icon md-svg-icon="selection-playback"></md-icon>
+    in combination with <a ng-click="scrollTo(2)">Barline</a> size adjustment to avoid automatic scrolling during playback for easier learning.
+  </p>
+
+  <h5>Section/Playlist controls</h5>
+  <div
+    layout="row"
+    class="control-panel md-whiteframe-3dp">
+    <div flex></div>
+    <div
+      layout="row"
+      ng-include="'views/mode_toolbar.html'">
+    </div>
+  </div>
+  <p>Used to switch between two application's modes:</p>
+  <ul>
+    <li>
+      <b><md-icon md-svg-icon="section-mode"></md-icon>Section mode</b> - for editation or playback of single section
+    </li>
+    <li>
+      <b><md-icon md-svg-icon="playlist-mode"></md-icon>Playlist mode</b> - for creating and playback of multiple sections - playlists
+    </li>
+  </ul>
+  <p></p>
+</section>
+<section id="section-2">
+  <h4>{{ ::item.sections[1] }}</h4>
   <div
     layout="row"
     class="slideshow"
+    style="margin: 0 16px;"
     ng-controller="HelpBarController">
 
     <div

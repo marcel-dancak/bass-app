@@ -25,12 +25,11 @@
   <p>&nbsp;</p>
   <p>&nbsp;</p>
   <p>
-    Event though this menu allows to edit all sounds properties, application offers additional ways
-    to create or edit sounds more effectively. Next topics will cover this methods.
+    Event though this menu allows to edit all sounds properties, application offers keyboard
+    shortcuts and additional ways to create or edit sounds more effectively. Next topics will
+    cover this methods.
   </p>
 </section>
-
-<!-- <a ng-click="scrollTo(2)">Sound Properties</a> -->
 
 <section id="section-2">
   <h4>{{ ::item.sections[1] }}</h4>
@@ -67,11 +66,11 @@
   <p class="instructions">
     Steps:
     <ul class="slideshow-steps">
-      <span>Resize operation:</span>
+      <h5>Resize operation:</h5>
       <ul><li>1. Click and hold left mouse button on the right edge of the sound to start resize operation</li></ul>
       <ul><li>2. Resize sound to the desired note length</li></ul>
 
-      <br /><span>Create slide:</span>
+      <h5>Create slide:</h5>
       <ul><li>1. Click and hold left mouse button on the right edge of the first sound to start resize operation</li></ul>
       <ul><li>2. Resize first sound to overlap with the second sound</li></ul>
     </ul>
@@ -99,16 +98,22 @@
       <li>1. Create a first sound</li>
       <li>2. Create a second sound on the same string (right after the first sound)</li>
       <li>3. Select a second sound</li>
-      <li>4. Press keyboard shortcut for particular sound transition type</li>
+      <li>4. Press <a ng-click="scrollTo(5)">keyboard shortcut</a> for particular sound transition type</li>
     </ul>
   </p>
-  <p>&nbsp;</p>
-  <p>
-    Keyboard shortcuts:
-    <ul>
-      <li><b>Ctrl + H</b> - Hammer-On</li>
-      <li><b>Ctrl + P</b> - Pull-Off</li>
-      <li><b>Ctrl + R</b> - Let ring (Tie when both sounds have the same pitch, slide transition otherwise)</li>
-    </ul>
-  </p>
+</section>
+
+<section id="section-5">
+  <h4>{{ ::item.sections[4] }}</h4>
+  <ul>
+    <li><b>Delete</b> - delete selected sound</li>
+    <h6>Regular notes:</h6>
+    <li><b>Up</b> - raise note pitch by one semitone (fret)</li>
+    <li><b>Down</b> - lower note pitch by one semitone (fret)</li>
+    <li><b>.</b> - toggle staccato attribute</li>
+    <h6>Sounds transitions:</h6>
+    <li><b>H</b> - Hammer-On</li>
+    <li><b>P</b> - Pull-Off</li>
+    <li><b>R</b> - Let ring (Tie when both sounds have the same pitch, slide transition otherwise)</li>
+  </ul>
 </section>
