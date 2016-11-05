@@ -313,6 +313,18 @@ md-dialog.help-dialog.md-transition-in {
   margin-bottom: 12px;
   margin-top: 36px;
 }
-.help-container .control-panel {
-  pointer-events: none;
+
+/* Backdrop element to mask mouse events
+  ('pointer-events: none' cause wierd tooltips behavoiur)
+*/
+.help-container .control-panel:after {
+  position: absolute;
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100;
+  background-color: transparent;
+  pointer-events: auto;
 }

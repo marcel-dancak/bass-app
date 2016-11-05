@@ -6,23 +6,33 @@
   <p>
     Toolbar controls can be divided into the tree main groups:
   </p>
-  <h5>Track controls</h5>
-  <div class="control-panel md-whiteframe-3dp">
+
+  <h5>Project controls</h5>
+  <div
+    layout="row"
+    class="control-panel md-whiteframe-3dp">
+    <div flex></div>
     <div
-      ng-cloak
       layout="row"
-      class="instruments-toolbar"
-      ng-include="'views/tracks_toolbar.html'">
+      ng-include="'views/mode_toolbar.html'">
     </div>
   </div>
+  <p>Contains mode switch to select between two application's modes:</p>
+  <ul>
+    <li>
+      <b><md-icon md-svg-icon="section-mode"></md-icon>Section mode</b> - for editation or playback of single section
+    </li>
+    <li>
+      <b><md-icon md-svg-icon="playlist-mode"></md-icon>Playlist mode</b> - for creating and playback of multiple sections - playlists
+    </li>
+  </ul>
   <p>
-    Allows to select active, configure and manage instruments of the project. It also contains
-    a menu with volume preferences of all instruments (tracks) as well as input audio channel
-    volume when using microphone input.
+    Depending on the selected mode, it contains selectbox with project's sections/playlists, button to save actual section/all playlists, and menu with project and sections/playlists options.
   </p>
   <p>
-    <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
-    Use it to customize visual appearance of bass sound symbols
+    <md-icon md-svg-icon="tip"></md-icon><i>Note: &nbsp;</i>
+    Selectbox has integrated function for text editation. Click around the arrow icon at right side to open selectbox,
+    click on the selected item's text to start text editation.
   </p>
 
   <h5>Player controls</h5>
@@ -46,25 +56,25 @@
     in combination with <a ng-click="scrollTo(2)">Barline</a> size adjustment to avoid automatic scrolling during playback for easier learning.
   </p>
 
-  <h5>Section/Playlist controls</h5>
-  <div
-    layout="row"
-    class="control-panel md-whiteframe-3dp">
-    <div flex></div>
+  <h5>Track controls</h5>
+  <div class="control-panel md-whiteframe-3dp">
     <div
+      ng-cloak
       layout="row"
-      ng-include="'views/mode_toolbar.html'">
+      class="instruments-toolbar"
+      ng-include="'views/tracks_toolbar.html'">
     </div>
   </div>
-  <p>Used to switch between two application's modes:</p>
-  <ul>
-    <li>
-      <b><md-icon md-svg-icon="section-mode"></md-icon>Section mode</b> - for editation or playback of single section
-    </li>
-    <li>
-      <b><md-icon md-svg-icon="playlist-mode"></md-icon>Playlist mode</b> - for creating and playback of multiple sections - playlists
-    </li>
-  </ul>
+  <p>
+    Allows to select active, configure and manage instruments in the project. It also contains
+    a menu with volume preferences of all instruments (tracks) as well as input audio channel
+    volume when using microphone input.
+  </p>
+  <p>
+    <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
+    Use it to customize visual appearance of bass sound symbols
+  </p>
+
   <p></p>
 </section>
 <section id="section-2">

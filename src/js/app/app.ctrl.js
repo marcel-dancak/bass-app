@@ -22,7 +22,7 @@
         var alert = $mdDialog.alert()
         .title('Warning')
         .textContent(
-          'It is highly recommended to use Chrome/Chromium web browser. '+
+          'It is highly recommended to use Webkit-based browser (Chrome, Chromium, Opera). '+
           'Application may not work properly in other browsers.'
         )
         .theme(' ')
