@@ -1,10 +1,13 @@
 Application for learning playing on the bass guitar
 
 
+### Bass Editor
 ![Section Mode - Bass Editation](docs/bass.png)
 
+### Drums/Percussions Editor
 ![Section Mode - Drums Editation](docs/drums.png)
 
+### Viewer Mode
 ![Playlist Mode](docs/playlist.png)
 
 
