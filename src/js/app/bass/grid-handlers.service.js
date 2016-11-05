@@ -647,22 +647,46 @@
       keyPressed: function(evt) {
         console.log(evt.keyCode);
         if (this.selected.element) {
+          var sound = this.selected.grid.sound;
           switch (evt.keyCode) {
             case 46: // Del
-              workspace.trackSection.clearSound(this.selected.grid.sound);
+              workspace.trackSection.clearSound(sound);
               this.clearSelection();
               break;
             case 72: // h
-              this.selected.grid.sound.style = 'hammer';
+              sound.style = 'hammer';
               this.soundStyleChanged('hammer');
               break;
             case 80: // p
-              this.selected.grid.sound.style = 'pull';
+              sound.style = 'pull';
               this.soundStyleChanged('pull');
               break;
              case 82: // r
-              this.selected.grid.sound.style = 'ring';
+              sound.style = 'ring';
               this.soundStyleChanged('ring');
+              break;
+             case 190: // .
+              if (sound.note.type !== 'ghost' && !sound.next) {
+                sound.noteLength.staccato = !sound.noteLength.staccato;
+              }
+              break;
+             case 38: // up
+              if (sound.note.type === 'regular' && sound.note.fret < 24) {
+                sound.note.fret++;
+                var bassString = workspace.trackSection.instrument.strings[sound.string];
+                var note = bassString.notes[sound.note.fret];
+                sound.note.name = note.label[0];
+                sound.note.octave = note.octave;
+              }
+              break;
+             case 40: // down
+              if (sound.note.type === 'regular' && sound.note.fret > 1) {
+                sound.note.fret--;
+                var bassString = workspace.trackSection.instrument.strings[sound.string];
+                var note = bassString.notes[sound.note.fret];
+                sound.note.name = note.label[0];
+                sound.note.octave = note.octave;
+              }
               break;
           }
         }

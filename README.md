@@ -25,3 +25,8 @@ It is highly recommended to use Webkit-based browser. Application may not work p
 [Jamiroquai - Runaway](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
 
 [Patrice Rushen - Forget Me Nots](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#PatriceRushen-ForgetMeNots)
+
+
+### Empty Application
+
+[Empty Project](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html)
