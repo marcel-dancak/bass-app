@@ -1,0 +1,158 @@
+<md-input-container class="track">
+  <label>Track</label>
+  <md-select
+    md-no-ink
+    aria-label="Track"
+    class="tracks-list"
+    ng-init="ui.trackId = 'bass_0'"
+    ng-model="ui.trackId"
+    ng-change="ui.trackId && ui.selectTrack(ui.trackId)"
+    md-on-close="ui.trackId = workspace.track.id"
+    md-container-class="tracks-list">
+
+    <md-option
+      md-no-ink
+      ng-repeat="track in project.tracks track by track.id"
+      type="{{ ::track.type }}"
+      ng-value="track.id">
+      <md-icon md-svg-icon="{{ ::track.instrument.icon || track.type }}"></md-icon>
+      {{ track.name }}
+    </md-option>
+
+    <md-divider></md-divider>
+    <div
+      layout="row"
+      class="track-split-item">
+      <md-option
+        ng-value="false"
+        ng-click="addTrackDialog($event)">
+        <md-icon md-svg-icon="plus"></md-icon>
+        New
+      </md-option>
+      <md-option
+        ng-value="false"
+        ng-click="removeTrack(ui.trackId)">
+        <md-icon md-svg-icon="x"></md-icon>
+        Remove
+      </md-option>
+    </div>
+
+  </md-select>
+</md-input-container>
+
+<md-menu
+  md-offset="0 10">
+  <md-button
+    md-no-ink
+    aria-label="Volume"
+    class="preferences icon-hover toolbar-button"
+    ng-disabled="workspace.trackSection.type === 'drums'"
+    ng-click="$mdOpenMenu($event)">
+    <md-icon
+      md-svg-icon="options">
+    </md-icon>
+    <md-tooltip md-delay="1500">Instrument preferences</md-tooltip>
+  </md-button>
+  <md-menu-content
+    width="4"
+    class="preferences md-whiteframe-16dp">
+    <ng-include src="'views/bass_settings.html'"></ng-include>
+  </md-menu-content>
+</md-menu>
+
+<md-menu
+  md-offset="10 10">
+  <md-button
+    md-no-ink
+    aria-label="Volume"
+    class="preferences icon-hover toolbar-separated-button"
+    ng-click="
+      initSliders();
+      $mdOpenMenu($event)
+    ">
+    <md-icon
+      md-svg-icon="volume-medium">
+    </md-icon>
+    <md-tooltip
+      md-delay="1500"
+      class="multiline-tooltip">
+      <p><b>Volume preferences</b></p>
+      <md-divider></md-divider>
+      <p>Input channel can be used for playing and audio signal visualization</p>
+    </md-tooltip>
+  </md-button>
+
+  <md-menu-content
+    md-no-ink
+    width="4"
+    class="preferences md-whiteframe-16dp">
+    <md-list>
+
+      <md-list-item
+        ng-repeat="track in project.tracks track by track.id"
+        class="volume-field bottom-border">
+        <label>
+          <md-icon
+            style="padding-right: 8px;"
+            md-svg-icon="{{ track.type }}">
+          </md-icon>
+          {{ track.name }}
+        </label>
+        <rzslider
+          rz-slider-model="track.audio.gain.value"
+          rz-slider-options="{
+            floor: 0,
+            ceil: 1,
+            step: 0.01,
+            precision: 2,
+            hideLimitLabels: true,
+            hidePointerLabels: true,
+            showSelectionBar: true,
+            disabled: track.muted
+          }">
+        </rzslider>
+        <md-button
+          md-no-ink
+          aria-label="Mute"
+          class="mute-button"
+          ng-class="{active: !track.muted}"
+          md-prevent-menu-close
+          ng-click="toggleVolumeMute(track)">
+          <md-icon
+            md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
+          </md-icon>
+        </md-button>
+      </md-list-item>
+
+      <md-list-item
+        class="volume-field bottom-border">
+        <label>Input Volume</label>
+        <rzslider
+          rz-slider-model="player.input.audio.gain.value"
+          rz-slider-options="{
+            floor: 0,
+            ceil: 1,
+            step: 0.01,
+            precision: 2,
+            hideLimitLabels: true,
+            hidePointerLabels: true,
+            showSelectionBar: true,
+            disabled: player.input.muted
+          }">
+        </rzslider>
+        <md-button
+          md-no-ink
+          aria-label="Mute"
+          class="mute-button"
+          ng-class="{active: !player.input.muted}"
+          md-prevent-menu-close
+          ng-click="toggleInputMute(player.input)">
+          <md-icon
+            md-svg-icon="{{ player.input.muted? 'volume-mute' : 'volume-medium' }}">
+          </md-icon>
+        </md-button>
+      </md-list-item>
+    </md-list>
+
+  </md-menu-content>
+</md-menu>

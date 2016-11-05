@@ -149,7 +149,7 @@
 .control-panel .mode-switch label {
   margin: 0;
   position: absolute;
-  top: -8px;
+  top: -5px;
   left: 20px;
   right: 20px;
   line-height: 9px;
@@ -158,6 +158,7 @@
   text-align: center;
   color: #bbb;
   background-color: #455A64;
+  padding: 2px 5px 5px 5px;
 }
 
 .md-button.edit-playlist {
@@ -184,20 +185,20 @@
 .playback-fields::before {
   position: absolute;
   width: 1px;
-  height: 120%;
+  height: 100%;
   content: "";
   background-color: #ccc;
-  transform: translate(-29px, -10px) rotate(-25deg);
+  transform: translate(-27px, 0) rotate(-25deg);
 }
 
 .playback-fields::after {
   position: absolute;
   width: 1px;
-  height: 120%;
+  height: 100%;
   content: "";
   background-color: #ccc;
   right: 0;
-  transform: translate(11px, -10px) rotate(25deg);
+  transform: translate(10px, 0) rotate(25deg);
 }
 
 

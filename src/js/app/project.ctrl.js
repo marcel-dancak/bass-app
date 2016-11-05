@@ -306,8 +306,10 @@
       evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
     }
 
-    var projectDropElem = document.querySelector('.project-toolbar');
-    projectDropElem.addEventListener('dragover', handleDragOver, false);
-    projectDropElem.addEventListener('drop', handleFileDrop, false);
+    $timeout(function() {
+      var projectDropElem = document.querySelector('.project-toolbar');
+      projectDropElem.addEventListener('dragover', handleDragOver, false);
+      projectDropElem.addEventListener('drop', handleFileDrop, false);
+    }, 500);
   }
 })();

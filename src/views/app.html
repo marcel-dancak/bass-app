@@ -3,11 +3,25 @@
   class="main-page"
   ng-cloak>
 
-  <ng-include
-    flex="none"
-    class="md-whiteframe-3dp"
-    src="'views/main_toolbar.html'">
-  </ng-include>
+  <!-- Main Toolbar -->
+  <div
+    layout="row"
+    class="control-panel"
+    ng-controller="ProjectController">
+    <div
+      layout="row"
+      class="instruments-toolbar"
+      ng-include="'views/tracks_toolbar.html'">
+    </div>
+    <div flex></div>
+    <div
+      layout="row"
+      class="playback-fields"
+      ng-include="'views/playback_toolbar.html'">
+    </div>
+    <div flex></div>
+    <div layout="row" ng-include="'views/mode_toolbar.html'"></div>
+  </div>
 
   <div
     ng-if="player.mode === 0"

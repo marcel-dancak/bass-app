@@ -7,8 +7,10 @@
         md-no-ink
         aria-label="Strings"
         md-container-class="preferences"
-        ng-model="ui.bassLayout"
-        ng-change="workspace.trackSection.instrument.setLayout(ui.bassLayout)">
+        ng-model="workspace.track.strings"
+        ng-change="
+          workspace.trackSection.instrument.setLayout(workspace.track.strings);
+        ">
         <md-option value="BEADG">B E A D G</md-option>
         <md-option value="EADG">E A D G</md-option>
       </md-select>
