@@ -8,7 +8,7 @@ function BufferLoader(context, serverUrl) {
 }
 
 
-BufferLoader.prototype.loadResource = function(url, callback) {
+BufferLoader.prototype.loadResource = function(url, callback, errorCallback) {
   if (angular.isDefined(this.loadedResources[url])) {
     if (callback) {
       callback(this.loadedResources[url]);
@@ -52,6 +52,9 @@ BufferLoader.prototype.loadResource = function(url, callback) {
         if (index !== -1) {
           loader.loadingResources.splice(index, 1);
         }
+        if (errorCallback) {
+          errorCallback(error);
+        }
       }
     );
   }
@@ -67,7 +70,7 @@ BufferLoader.prototype.loadResource = function(url, callback) {
   request.send();
 }
 
-BufferLoader.prototype.loadResources = function(urlList, callback) {
+BufferLoader.prototype.loadResources = function(urlList, callback, errorCallback) {
   urlList = urlList || [];
   var count = 0;
   var resourceLoaded = function() {
@@ -77,6 +80,6 @@ BufferLoader.prototype.loadResources = function(urlList, callback) {
     }
   };
   for (var i = 0; i < urlList.length; ++i) {
-    this.loadResource(urlList[i], resourceLoaded);
+    this.loadResource(urlList[i], resourceLoaded, errorCallback);
   }
 }

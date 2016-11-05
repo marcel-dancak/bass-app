@@ -50,16 +50,17 @@
 
     audioPlayer.fetchResourcesWithProgress = function(resources) {
       var task = $q.defer();
-      // var startTime = performance.now();
       $scope.player.loading = true;
       this.fetchResources(resources)
-        .then(function() {
-          // var elapsed = performance.now() - startTime;
-          // $timeout(function() {
-            $scope.player.loading = false;
-          // }, Math.max(100, elapsed));
-          task.resolve();
-        }, task.reject);
+        .then(
+          function() {
+            // $scope.player.loading = false;
+            task.resolve();
+          },
+          task.reject)
+        .finally(function() {
+          $scope.player.loading = false;
+        });
       return task.promise;
     }
     // initial volume for input after un-mute

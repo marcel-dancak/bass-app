@@ -155,7 +155,6 @@
 
     var timeline = new HighlightTimeline({
       getBeatElem: function(bar, beat) {
-        // console.log('getBeatElem: '+bar+' '+beat);
         var slideIndex = playerSwiper.snapIndex;
         var beatIndex = playbackState.beatsCounter;
         if (playbackState.beatsCounter >= beatsPerSlide) {
@@ -320,6 +319,10 @@
       playSection(start);
     }
 
+    function failedToLoadResources() {
+      $scope.player.playing = false;
+    }
+
     $scope.player.play = function() {
       if ($scope.player.visibleBeatsOnly) {
         var firstSlideMeta = slidesMetadata[playerSwiper.snapIndex];
@@ -333,7 +336,7 @@
           });
 
         $scope.player.playing = true;
-        audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition);
+        audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
 
       } else {
         var initSlides;
@@ -354,7 +357,7 @@
             return list;
           }, []);
           $scope.player.playing = true;
-          audioPlayer.fetchResourcesWithProgress(sections).then(playSection);
+          audioPlayer.fetchResourcesWithProgress(sections).then(playSection, failedToLoadResources);
         });
       }
     };

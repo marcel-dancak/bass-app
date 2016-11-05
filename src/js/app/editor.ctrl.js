@@ -148,7 +148,10 @@
       timeline.start();
 
       audioPlayer.fetchResourcesWithProgress(workspace.section)
-        .then(audioPlayer.play.bind(audioPlayer, workspace.section, beatPrepared, $scope.player.countdown));
+        .then(
+          audioPlayer.play.bind(audioPlayer, workspace.section, beatPrepared, $scope.player.countdown),
+          function() {$scope.player.playing = false}
+        );
 
     };
 

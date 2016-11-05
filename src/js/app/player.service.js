@@ -440,7 +440,7 @@
       }, this);
       console.log(resources);
       if (resources.length) {
-        this.bufferLoader.loadResources(resources, resourcesFetched);
+        this.bufferLoader.loadResources(resources, resourcesFetched, task.reject);
       } else {
         if (doneCallback) {
           doneCallback.apply(callbackThis, callbackArgs);
