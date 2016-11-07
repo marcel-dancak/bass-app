@@ -281,23 +281,22 @@ md-menu-item.menu-group-item .group-item-title {
   width: 16px;
   height: 16px;
   top: -6px;
-  left: -4px!important;
   box-sizing: border-box;
 }
 
 .rzslider .rz-ticks .rz-tick.rz-selected {
   background-color: #2196F3;
 }
-
+.rzslider:not([disabled]) .rz-bar-wrapper .rz-bar.rz-selection {
+  background-color: #2196F3;
+}
 .rzslider:not(.rz-vertical) .rz-bar-wrapper .rz-bar {
   height: 2px;
   top: 17px;
   margin: 0 12px;
   width: calc(100% - 24px);
-  background-color: rgba(0,0,0,0.26);
 }
 .rzslider:not(.rz-vertical) .rz-bar-wrapper .rz-bar.rz-selection {
-  background-color:  #2196F3;
   margin: 0;
   width: 100%;
 }

@@ -119,7 +119,6 @@
             var duration = _this.noteDuration(sound, beatTime, timeSignature);
             prevAudio.duration += duration;
             prevAudio.endTime += duration;
-            prevAudio.gain.setValueAtTime(sound.volume, startTime);
           }
         },
         {
