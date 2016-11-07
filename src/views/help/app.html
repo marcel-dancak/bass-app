@@ -14,7 +14,7 @@
     <div flex></div>
     <div
       layout="row"
-      ng-include="'views/mode_toolbar.html'">
+      ng-include="'views/project_toolbar.html'">
     </div>
   </div>
   <p>Contains mode switch to select between two application's modes:</p>
@@ -29,10 +29,10 @@
   <p>
     Depending on the selected mode, it contains selectbox with project's sections/playlists, button to save actual section/all playlists, and menu with project and sections/playlists options.
   </p>
-  <p>
+  <p class="md-indent">
     <md-icon md-svg-icon="tip"></md-icon><i>Note: &nbsp;</i>
-    Selectbox has integrated function for text editation. Click around the arrow icon at right side to open selectbox,
-    click on the selected item's text to start text editation.
+    Selectbox has integrated function for text editation and items reorder. Click around the arrow icon at right side
+    to open selectbox, click on the selected item's text to start text editation. To change order of items, open selectbox and use Drag & Drop operation to move item to the new position.
   </p>
 
   <h5>Player controls</h5>
@@ -49,7 +49,7 @@
     <div flex></div>
   </div>
   <p>Allows to start, stop and configure playback (speed, range, repeating)</p>
-  <p>
+  <p class="md-indent">
     <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
     Use <i>Visible screen playback </i><md-icon md-svg-icon="screen-playback"></md-icon>
     or <i>Selection playback </i><md-icon md-svg-icon="selection-playback"></md-icon>
@@ -70,7 +70,7 @@
     a menu with volume preferences of all instruments (tracks) as well as input audio channel
     volume when using microphone input.
   </p>
-  <p>
+  <p class="md-indent">
     <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
     Use it to customize visual appearance of bass sound symbols
   </p>

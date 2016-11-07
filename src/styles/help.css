@@ -295,8 +295,29 @@ md-dialog.help-dialog.md-transition-in {
 }
 
 .help-container md-icon[md-svg-icon="tip"] {
-  padding: 0 5px 6px 0;
   fill: #5f5f5f;
+  position: absolute;
+  float: left;
+  top: 8px;
+  left: 0;
+  line-height: 16px;
+}
+.help-container p md-icon {
+  height: 16px;
+  overflow: visible;
+}
+.help-container p md-icon svg {
+  height: 24px;
+  width: 24px;
+  transform: translate3d(0, -4px, 0);
+}
+.help-container p.md-indent {
+  position: relative;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin: 5px 0;
+  padding: 6px 0;
+  padding-left: 36px;
 }
 .help-container p > md-icon,
 .help-container li md-icon {
