@@ -3,7 +3,14 @@
 
   angular
     .module('bd.app')
-    .controller('ProjectController', ProjectController);
+    .controller('ProjectController', ProjectController)
+    .config(function($locationProvider) {
+      $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false,
+        rewriteLinks: false
+      });
+    });
 
 
   function ProjectController($scope, $timeout, $http, $window, $location, $mdToast, $mdDialog,
@@ -238,8 +245,8 @@
       });
       list.splice(dropItemIndex, 0, dragItem);
     }
-
-    var projectParam = $location.path().replace('/', '');
+    window.l = $location
+    var projectParam = $location.hash();
     if (projectParam) {
       $http.get(dataUrl+projectParam+'.json').then(function(response) {
         projectManager.store = new ReadOnlyStore(response.data);
@@ -272,7 +279,7 @@
       saveAs(blob, projectManager.project.name+'.json');
     };
 
-    $scope.exportSection = function() {
+    workspace.exportSection = function() {
       if (workspace.section.name) {
         console.log('exportToFile');
         var blob = new Blob(

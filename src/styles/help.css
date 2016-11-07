@@ -349,3 +349,7 @@ md-dialog.help-dialog.md-transition-in {
   background-color: transparent;
   pointer-events: auto;
 }
+
+.help-container .playback-range-menu md-icon {
+  transform: none;
+}

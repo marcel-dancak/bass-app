@@ -31,6 +31,11 @@
   margin-top: 0px;
   font-size: 15px;
 }
+.control-panel md-input-container label.md-no-float {
+  padding: 0;
+  font-size: 11px;
+}
+
 .control-panel md-input-container input {
   height: 30px;
   padding-top: 0;
@@ -44,7 +49,8 @@
 }
 
 .playlist-mode .tracks-list md-option[type="drums"] {
-  display: none;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .control-panel md-menu {
@@ -111,9 +117,6 @@
 .playback-fields .bpm-field {
   width: 78px;
   margin: 16px 5px 0px 5px;
-}
-.playlist-mode .bpm-field {
-  display: none;
 }
 .bpm-field::after {
   content: "bpm";

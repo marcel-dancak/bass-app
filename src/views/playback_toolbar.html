@@ -1,5 +1,8 @@
-<md-input-container class="bpm-field">
-  <label>Speed</label>
+<div ng-switch="player.mode">
+<md-input-container
+  ng-switch-when="0"
+  class="bpm-field">
+  <label class="md-no-float">Speed</label>
   <input
     type="number"
     min="30"
@@ -9,8 +12,10 @@
     ng-change="ui.bpmChanged(workspace.section.bpm)">
 </md-input-container>
 
-<md-input-container class="playback-speed-field">
-  <label>Speed</label>
+<md-input-container
+  ng-switch-when="1"
+  class="playback-speed-field">
+  <label class="md-no-float">Speed</label>
   <input
     type="number"
     min="20"
@@ -19,6 +24,7 @@
     ng-model="player.speed"
     ng-change="ui.playbackSpeedChanged(player.speed)">
 </md-input-container>
+</div>
 
 <md-button
   md-no-ink
