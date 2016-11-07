@@ -123,22 +123,26 @@
         for (var i = 0; i < sounds.length; i++) {
           var sound = sounds[i].sound;
 
-          if (sound.prev && angular.isUndefined(sound.prev.ref)) {
+          if (sound.prev) {
+            if (angular.isUndefined(sound.prev.ref)) {
+              Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
+            }
             // fix of invalid bar index (after copy/paste) - TODO: better solution
             if (sound.prev.bar !== beat.bar) {
               sound.prev.bar = sound.prev.beat > beat.beat? beat.bar - 1 : beat.bar;
             }
             var subbeat = this.subbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat);
-            Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
             sound.prev.ref = subbeat[sound.prev.string].sound;
           }
-          if (sound.next && angular.isUndefined(sound.next.ref)) {
+          if (sound.next) {
+            if (angular.isUndefined(sound.next.ref)) {
+              Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
+            }
             // fix of invalid bar index (after copy/paste) - TODO: better solution
             if (sound.next.bar !== beat.bar) {
               sound.next.bar = sound.next.beat < beat.beat? beat.bar + 1 : beat.bar;
             }
             var subbeat = this.subbeat(sound.next.bar, sound.next.beat, sound.next.subbeat);
-            Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
             sound.next.ref = subbeat[sound.next.string].sound;
           }
         }
