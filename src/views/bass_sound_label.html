@@ -2,7 +2,7 @@
   class="label-wrapper"
   ng-switch="sound.note.type">
   <!-- Regular note label -->
-  <div ng-switch-when="regular">
+  <div ng-switch-when="regular|bended" ng-switch-when-separator="|">
     <div ng-if="sound.style === 'ring'">
       <label class="ring">⏝</label>
     </div>
@@ -61,6 +61,8 @@
       {{ sound.note.fret }}
     </label>
   </div>
+
+  <bd-bend height="25" ng-if="sound.note.type === 'bended'"></bd-bend>
 
   <div
     ng-if="sound.style === 'hammer' || sound.style === 'pull'"

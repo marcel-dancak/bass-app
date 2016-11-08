@@ -75,3 +75,71 @@
 .bass-sound-form .selectbox-spinner {
   margin-right: 6px;
 }
+
+
+.line-editor {
+  height: 50px;
+  position: relative;
+  margin-left: 4px;
+  margin-right: 8px;
+}
+.line-editor svg.graph {
+  position: absolute;
+  top: 6px;
+  height: calc(100% - 12px);
+  background-color: transparent;
+  overflow: visible;
+}
+.line-editor svg.graph line {
+  stroke: #2196F3;
+  stroke-width: 2px;
+}
+.line-editor svg.graph line.border {
+  stroke: #D8E0F3;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+
+
+.point-node.rzslider.rz-vertical {
+  width: 14px;
+  margin: 0 auto;
+  text-align: center;
+}
+.point-node.rzslider.rz-vertical .rz-bar-wrapper {
+  padding: 0;
+  width: 14px;
+  margin-left: 0px;
+}
+
+
+.point-node.rzslider.rz-vertical .rz-pointer {
+  width: 10px;
+  height: 10px;
+  left: 1px!important;
+  border: 2px solid #2196F3;
+  background-color: white;
+}
+.point-node.rzslider .rz-pointer:after {
+  display: none;
+}
+.point-node.rzslider.rz-vertical .rz-bar-wrapper .rz-bar:not(.rz-selection) {
+  margin-bottom: 0px;
+}
+.point-node.rzslider.rz-vertical .rz-pointer {
+  transform: translate(0, 0);
+}
+.point-node.rzslider.rz-vertical .rz-bar-wrapper .rz-bar:not(.rz-selection) {
+  height: 100%;
+}
+.line-editor > span:last-child {
+  display: none;
+}
+
+.bass-sound-form md-input-container:not(.md-input-focused) label {
+  color: #777;
+}
+
+md-input-container.line-editor-field {
+  margin-bottom: 12px;
+}

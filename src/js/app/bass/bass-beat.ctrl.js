@@ -37,7 +37,7 @@
   }
 
 
-  function BassFormController($scope, sound, string, bass, audioPlayer) {
+  function BassFormController($scope, $timeout, sound, string, bass, audioPlayer, mdPanelRef) {
 
     $scope.nextNote = function(note) {
       var index = -1;
@@ -114,6 +114,22 @@
       }
       audioPlayer.playBassSample(workspace.track, sound);
     };
+
+    $scope.updateLineEditor = function() {
+      $timeout(function() {
+        var svgElem = mdPanelRef.panelEl[0].querySelector('.line-editor svg');
+        var pointsElems = mdPanelRef.panelEl[0].querySelectorAll('.line-editor .rzslider');
+        var firstPointElem = pointsElems[0];
+        var lastPointElem = pointsElems[pointsElems.length-1];
+        var left = firstPointElem.offsetLeft;
+        var width = lastPointElem.offsetLeft - left;
+        svgElem.style.left = left + 8;
+        svgElem.style.width = width;
+      })
+    };
+    if (sound.note && sound.note.type === 'bended') {
+      $scope.updateLineEditor();
+    }
 
     var fretsStringNotes = [];
     var inlineStringNotes = [];

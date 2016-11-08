@@ -334,16 +334,6 @@
   pointer-events: none;
 }
 
-.tab-top-marker {
-  position: absolute;
-  top: -20px;
-  width: 100%;
-  text-align: center;
-  font-size: 30px;
-  color: #777;
-  line-height: 5px;
-}
-
 .octave-index {
   opacity: 0.25;
   font-size: 14px;
@@ -697,3 +687,58 @@ md-input-container.slide-field > span {
 .beat[subdivision="4"][visible-subbeats="2"] .subbeats-container:nth-child(5) .bass-grid {
   pointer-events: none;
 }*/
+
+bd-bend {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -30px;
+  pointer-events: none;
+  xbackground-color: #ddd;
+}
+
+.bend-symbol > div {
+  margin: 0 0px;
+  position: relative;
+  xbackground-color: #ddd;
+}
+
+.bend-symbol svg.curve {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: inherit;
+  width: calc(100% - 8px);
+  margin: 0 4px;
+}
+
+.bend-symbol svg.curve path {
+  fill: transparent;
+  stroke: #333;
+  stroke-width: 2px;
+}
+
+.bend-symbol md-icon {
+  display: none;
+}
+
+.bend-symbol md-icon {
+  fill: #333;
+  min-width: 8px;
+  min-height: 8px;
+  width: 8px;
+  height: 8px;
+  position: absolute;
+}
+.bend-symbol [type="up"] md-icon {
+  display: block;
+  top: -6px;
+  right: -0px;
+  z-index: 10;
+}
+
+.bend-symbol [type="down"] md-icon {
+  display: block;
+  bottom: -6px;
+  right: 0px;
+}

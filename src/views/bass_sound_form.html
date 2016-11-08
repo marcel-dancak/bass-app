@@ -36,7 +36,7 @@
         <md-option ng-value="'grace'">
           Grace
         </md-option>
-        <md-option ng-value="'bended'" ng-disabled="true">
+        <md-option ng-value="'bended'">
           Bended
         </md-option>
       </md-select>
@@ -174,6 +174,71 @@
       </span>
     </md-input-container> -->
   </div>
+
+  <md-input-container
+    ng-if="sound.note.type === 'bended'"
+    layout="row"
+    class="line-editor-field"
+    ng-init="
+      sound.note.bend = sound.note.bend.pop? sound.note.bend : [0,0,0,0];
+      updateLineEditor()
+    ">
+    <label class="md-label md-no-float">Bend graph</label>
+    <div
+      flex
+      layout="row"
+      class="line-editor">
+      <svg
+        class="graph">
+        <line class="border" x1="-4%" y1="0" x2="104%" y2="0" />
+        <line class="border" x1="-4%" y1="100%" x2="104%" y2="100%" />
+        <line
+          ng-repeat="point in sound.note.bend track by $index"
+          ng-if="!$last"
+          ng-attr-x1="{{ (100 * $index / (sound.note.bend.length-1))+ '%'}}"
+          ng-attr-y1="{{ (100 * (1 - sound.note.bend[$index])) + '%' }}"
+          ng-attr-x2="{{ (100 * ($index + 1) / (sound.note.bend.length-1))+ '%'}}"
+          ng-attr-y2="{{ (100 * (1 - sound.note.bend[$index+1])) + '%' }}" />
+      </svg>
+      <rzslider
+        ng-repeat-start="node in sound.note.bend track by $index"
+        class="point-node"
+        rz-slider-model="sound.note.bend[$index]"
+        rz-slider-options="{
+          vertical: true,
+          floor: 0,
+          ceil: 1,
+          step: 0.01,
+          precision: 2,
+          hideLimitLabels: true,
+          hidePointerLabels: true
+        }">
+      </rzslider>
+      <span ng-repeat-end flex></span>
+    </div>
+    <div
+      class="buttons-spinner"
+      layout="column">
+      <md-button
+        aria-label="More points"
+        md-prevent-menu-close
+        ng-click="
+          sound.note.bend.push(0);
+          updateLineEditor()
+        ">
+        <md-icon md-svg-icon="plus"></md-icon>
+      </md-button>
+      <md-button
+        aria-label="Less points"
+        md-prevent-menu-close
+        ng-click="
+          sound.note.bend.splice(bend.length-1, 1);
+          updateLineEditor()
+        ">
+        <md-icon md-svg-icon="minus"></md-icon>
+      </md-button>
+    </div>
+  </md-input-container>
 
   <div
     layout="row"

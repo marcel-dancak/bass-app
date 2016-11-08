@@ -178,6 +178,10 @@
       })
     };
 
+    $scope.initSliders = function() {
+      $scope.$broadcast('rzSliderForceRender');
+    };
+
     function drumImageUrl(drum) {
       return '{0}styles/images/{1}.svg'.format(dataUrl, drum.name);
     }
