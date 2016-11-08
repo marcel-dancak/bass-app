@@ -264,10 +264,6 @@
       }
     }
 
-    $scope.initSliders = function() {
-      $scope.$broadcast('rzSliderForceRender');
-    };
-
     $scope.exportProject = function() {
       var data = projectManager.store._projectData();
       console.log(data);

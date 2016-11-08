@@ -79,7 +79,7 @@
       </md-input-container>
 
       <md-input-container>
-        <label>Section</label>
+        <label class="md-no-float">Section</label>
         <input
           required
           md-no-asterisk
@@ -130,20 +130,13 @@
         </md-select>
       </md-input-container>
       <md-input-container>
-        <label>Playlist</label>
+        <label class="md-no-float">Playlist</label>
         <input
           required
           md-no-asterisk
           type="text"
           autocomplete="off"
           ng-model="workspace.playlist.name">
-        <!-- <md-button
-          md-no-ink
-          class="toolbar-button icon-hover toggle-button edit-playlist"
-          ng-class="{active: ui.playlist.showEditor}"
-          ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
-          <md-icon md-svg-icon="pen"></md-icon>
-        </md-button> -->
       </md-input-container>
     </div>
     <md-button

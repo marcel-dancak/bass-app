@@ -273,7 +273,8 @@ md-menu-item.menu-group-item .group-item-title {
 .rzslider .rz-pointer[aria-valuenow="0"]:after {
   background-color: #fff!important;
 }
-.rzslider .rz-pointer[aria-valuenow="0"],
+
+.volume-field .rzslider .rz-pointer[aria-valuenow="0"],
 .rzslider[disabled] .rz-pointer {
   cursor: default;
   background-color: #ccc;
@@ -582,7 +583,7 @@ md-tooltip md-divider {
 .open-project-dialog,
 .new-track-dialog {
   max-width: 450px;
-  max-height: 500px;
+  max-height: 80%;
   width: 400px;
   transform: none;
 }
@@ -621,7 +622,7 @@ md-toast.player.md-top {
 .selectbox-spinner .buttons-spinner {
   position: absolute;
   right: 4px;
-  bottom: 0;
+  bottom: 2px;
   width: 20px;
   margin: 0;
 }
@@ -657,4 +658,8 @@ footer .md-button {
   min-width: 36px;
   line-height: 36px;
   height: 36px;
+}
+
+md-input-container label.md-no-float {
+  font-size: 11px;
 }

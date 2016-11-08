@@ -26,14 +26,13 @@
   min-height: 29px;
   height: 29px;
 }
-.control-panel md-input-container label {
+.control-panel md-input-container label:not(.md-no-float) {
   padding: 0 0 2px 0;
   margin-top: 0px;
   font-size: 15px;
 }
 .control-panel md-input-container label.md-no-float {
   padding: 0;
-  font-size: 11px;
 }
 
 .control-panel md-input-container input {
@@ -164,16 +163,6 @@
   padding: 2px 5px 5px 5px;
 }
 
-.md-button.edit-playlist {
-  position: absolute;
-  margin: 0;
-  padding: 0;
-  right: 5px;
-  bottom: 2px;
-}
-.edit-playlist md-icon {
-  width: 18px;
-}
 
 /*Toolbar borders*/
 
