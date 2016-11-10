@@ -256,7 +256,7 @@
         // avoid initial fade-in caused by compressor by playing
         // a short inaudible audio through it
         var oscillator = context.createOscillator();
-        oscillator.frequency.value = 30000;
+        oscillator.frequency.value = 22500;
         oscillator.connect(compressor);
         compressor.connect(context.destination);
         oscillator.start();

@@ -73,8 +73,9 @@
     timeline = new HighlightTimeline(swiperControl);
 
     $scope.ui.bpmChanged = function(value) {
-      console.log('bpm changed: '+value);
-      audioPlayer.setBpm(workspace.section.bpm);
+      if (value) {
+        audioPlayer.setBpm(workspace.section.bpm);
+      }
     };
 
     function beatPrepared(evt) {

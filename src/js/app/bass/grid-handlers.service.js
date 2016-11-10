@@ -677,15 +677,17 @@
                 var note = bassString.notes[sound.note.fret];
                 sound.note.name = note.label[0];
                 sound.note.octave = note.octave;
+                sound.note.code = sound.note.name+sound.note.octave;
               }
               break;
              case 40: // down
-              if (sound.note.type === 'regular' && sound.note.fret > 1) {
+              if (sound.note.type === 'regular' && sound.note.fret > 0) {
                 sound.note.fret--;
                 var bassString = workspace.trackSection.instrument.strings[sound.string];
                 var note = bassString.notes[sound.note.fret];
                 sound.note.name = note.label[0];
                 sound.note.octave = note.octave;
+                sound.note.code = sound.note.name+sound.note.octave;
               }
               break;
           }
