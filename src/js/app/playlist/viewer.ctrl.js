@@ -252,7 +252,10 @@
       return task.promise;
     }
 
-    $scope.updatePlaylist = initPlaylistSlides;
+    $scope.updatePlaylist = function() {
+      initPlaylistSlides();
+      updateRangePlaylist();
+    }
 
 
     function beatSync(evt) {

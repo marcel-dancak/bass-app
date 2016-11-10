@@ -17,15 +17,19 @@
     });
 
     $scope.availableSections = [];
-    function updateAvailableSection() {
+    function updateAvailableSections() {
       $scope.availableSections = projectSections.filter(function(projectSection) {
         return !workspace.playlist.items.some(function(playlistItem) {
           return playlistItem.section === projectSection.section;
         });
       });
+    }
+    function updatePlaylist() {
+      updateAvailableSections();
       $scope.updatePlaylist();
     }
-    updateAvailableSection();
+    updateAvailableSections();
+
 
     $scope.dropPlaylistSection = function(evt, list, dragData, dropSectionIndex) {
 
@@ -38,7 +42,7 @@
         }
         list.splice(removeIndex, 1);
       }
-      updateAvailableSection();
+      updatePlaylist();
     };
 
     $scope.playlistKeyPressed = function(evt) {
@@ -54,14 +58,14 @@
                 nextItemElem.focus();
               });
             }
-            updateAvailableSection();
+            updatePlaylist();
           }
       }
     };
 
     $scope.clearPlaylist = function() {
       workspace.playlist.items.splice(0, workspace.playlist.items.length);
-      updateAvailableSection();
+      updatePlaylist();
     };
 
     $scope.moveAllUnused = function() {
@@ -72,6 +76,5 @@
       });
       $scope.availableSections = [];
     };
-
   }
 })();
