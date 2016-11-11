@@ -37,7 +37,15 @@
   }
 
 
-  function BassFormController($scope, $timeout, sound, string, bass, audioPlayer, mdPanelRef) {
+  function BassFormController($scope, $timeout, sound, string, bass, audioPlayer, basicHandler, mdPanelRef) {
+    $scope.keyPressed = function(evt) {
+      basicHandler.keyPressed(evt);
+      if (evt.keyCode === 46) {
+        mdPanelRef.close();
+      }
+    };
+
+    $scope.soundStyleChanged = basicHandler.soundStyleChanged.bind(basicHandler);
 
     $scope.nextNote = function(note) {
       var index = -1;
@@ -125,7 +133,7 @@
         var width = lastPointElem.offsetLeft - left;
         svgElem.style.left = left + 8;
         svgElem.style.width = width;
-      })
+      });
     };
     if (sound.note && sound.note.type === 'bended') {
       $scope.updateLineEditor();
@@ -150,7 +158,7 @@
     $scope.inlineStringNotes = inlineStringNotes;
 
     // initialize empty sound
-    if (Object.keys(sound).length === 0) {
+    if (!sound.note) {
       sound.style = 'finger';
       sound.volume = 0.8;
       sound.note = angular.copy(inlineStringNotes[0]);
@@ -166,7 +174,7 @@
     $scope.bass = bass;
   }
 
-  function bassSoundForm($mdPanel, basicHandler) {
+  function bassSoundForm($timeout, $mdPanel, basicHandler) {
 
     var panelRef;
     var appContextMenuHandler;
@@ -199,7 +207,7 @@
         if (!appContextMenuHandler || window.oncontextmenu !== customContextMenuHandler) {
           appContextMenuHandler = window.oncontextmenu;
         }
-        basicHandler.selectGrid(evt, grid);
+        $timeout(basicHandler.selectGrid.bind(basicHandler), 0, false, evt, grid);
 
         var position = $mdPanel.newPanelPosition()
           .relativeTo(evt.target)

@@ -1,6 +1,9 @@
 <div
   layout="column"
-  class="bass-sound-form md-whiteframe-16dp">
+  class="bass-sound-form md-whiteframe-16dp"
+  tabindex="0"
+  md-autofocus
+  ng-keyup="keyPressed($event)">
   <div layout="row">
     <md-input-container flex>
       <label>Style</label>

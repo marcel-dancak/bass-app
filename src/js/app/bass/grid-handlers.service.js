@@ -581,12 +581,12 @@
       },
 
       soundStyleChanged: function(style) {
-        console.log('soundStyleChanged: '+style);
         if (style === 'hammer' || style === 'pull' || style === 'ring') {
           var elemBox = this.selected.element.getBoundingClientRect();
 
           var backdropElements = Array.from(
-            document.querySelectorAll('md-backdrop.md-menu-backdrop, div.md-scroll-mask')
+            //md-backdrop.md-menu-backdrop, div.md-scroll-mask,
+            document.querySelectorAll('.md-panel-outer-wrapper')
           );
           backdropElements.forEach(function(elem) {
             elem.style.visibility = 'hidden';
@@ -594,8 +594,7 @@
 
           var elemOnLeft = document.elementFromPoint(elemBox.left-10, elemBox.top+10);
           var leftElemGrid = angular.element(elemOnLeft).scope().grid;
-
-          if (leftElemGrid) {
+          if (leftElemGrid && leftElemGrid.sound.note) {
             connectGrids(leftElemGrid, this.selected.grid);
             if (style === 'ring') {
               var ringNote = this.selected.grid.sound.note;

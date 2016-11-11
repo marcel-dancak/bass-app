@@ -34,7 +34,6 @@
           '</div>'+
         '</div>',
       controller: function($scope, $element) {
-        console.log($element)
         var sound = $scope.sound;
         $scope.transitions = [];
         function update() {

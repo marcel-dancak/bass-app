@@ -106,15 +106,13 @@
         }
         if (sound.prev) {
           delete sound.prev.ref.next;
-          delete sound.prev;
         }
         if (sound.next) {
           this.clearSound(sound.next.ref);
-          delete sound.next;
         }
-        delete sound.style;
-        delete sound.note;
-        delete sound.noteLength;
+        Object.keys(sound).forEach(function(property) {
+          delete sound[property];
+        });
       }
 
       updateBassReferences(beat) {
