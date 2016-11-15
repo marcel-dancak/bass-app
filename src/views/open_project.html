@@ -1,6 +1,13 @@
 <md-dialog class="open-project-dialog">
   <div class="dialog-header">
-    Open Project
+    Projects
+    <md-button
+      md-no-ink
+      aria-label="Close"
+      class="dialog-close icon-hover"
+      ng-click="close()">
+      <md-icon md-svg-icon="x"></md-icon>
+    </md-button>
   </div>
   <md-dialog-content>
     <!-- <md-subheader class="md-no-sticky">Instrument</md-subheader> -->
@@ -11,32 +18,57 @@
           selected: -1
         }
       ">
-
       <md-list-item
-        ng-repeat="project in ::projects"
+        ng-repeat="project in projects"
         ng-class="{
           selected: form.selected === $index
         }"
+        ng-disabled="$index === 0"
         ng-click="form.selected = $index">
         {{ ::project.name }}
       </md-list-item>
 
     </md-list>
-
   </md-dialog-content>
-  <md-dialog-actions>
+
+  <p
+    class="confirm ng-hide"
+    ng-show="showConfirmation">
+    Are you sure to delete project <b>{{ projects[form.selected].name }}</b>?
+  </p>
+
+  <md-dialog-actions ng-hide="showConfirmation">
     <md-button
       md-no-ink
-      aria-label="Close"
-      ng-click="close()">
-      Cancel
+      aria-label="Delete"
+      ng-disabled="form.selected === -1"
+      ng-click="showConfirmation = true">
+      Delete
     </md-button>
+    <span flex></span>
     <md-button
       md-no-ink
       aria-label="Open"
       ng-disabled="form.selected === -1"
-      ng-click="selectProject(projects[form.selected].id)">
+      ng-click="openProject(projects[form.selected].id)">
       Open
+    </md-button>
+  </md-dialog-actions>
+  <md-dialog-actions class="confirm-actions" ng-show="showConfirmation">
+    <md-button
+      md-no-ink
+      aria-label="No"
+      ng-click="showConfirmation = false">
+      No
+    </md-button>
+    <md-button
+      md-no-ink
+      aria-label="Yes"
+      ng-click="
+        deleteProject(projects[form.selected].id);
+        form.selected = -1;
+        showConfirmation = false">
+        Yes
     </md-button>
   </md-dialog-actions>
 </md-dialog>

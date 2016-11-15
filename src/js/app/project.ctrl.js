@@ -8,7 +8,7 @@
       $locationProvider.html5Mode({
         enabled: true,
         requireBase: false,
-        rewriteLinks: false
+        rewriteLinks: true
       });
     });
 
@@ -70,17 +70,12 @@
       console.log('remove track: '+trackId);
 
       var track = projectManager.project.tracksMap[trackId];
-      var index = projectManager.project.tracks.indexOf(track);
-
       var nextSelected = projectManager.project.tracks.find(function(t) {
         return t.type === track.type && t.id !== trackId;
       });
       if (nextSelected) {
         $scope.ui.selectTrack(nextSelected.id);
-
-        // projectManager.removeTrack(trackId);
-        projectManager.project.tracks.splice(index, 1);
-        delete projectManager.project.tracksMap[trackId];
+        projectManager.removeTrack(trackId);
       } else {
         $mdDialog.show(
           $mdDialog.alert()
@@ -96,7 +91,7 @@
       if (projectManager.store.readOnly) {
         projectManager.store = new ProjectLocalStore()
         // $window.history.pushState(null, null, '?');
-        $location.path('');
+        $location.hash('');
       }
       document.title = "New Project";
       workspace.bassSection = null;
@@ -133,8 +128,13 @@
 
     function OpenProjectController($scope, $mdDialog, projectManager) {
       $scope.projects = projectManager.store.projectsList();
+      // $scope.currentProjectId = projectManager.store.project.id;
       $scope.close = $mdDialog.hide;
-      $scope.selectProject = function(projectId) {
+      $scope.deleteProject = function(projectId) {
+        projectManager.store.deleteProject(projectId);
+        $scope.projects = projectManager.store.projectsList();
+      }
+      $scope.openProject = function(projectId) {
         $mdDialog.hide(projectId);
       }
     }
@@ -143,24 +143,17 @@
         templateUrl: 'views/open_project.html',
         controller: OpenProjectController,
         autoWrap: false,
-        clickOutsideToClose: true
+        clickOutsideToClose: false
       }).then(function(projectId) {
         if (projectId) {
-          console.log($scope);
           $scope.loadProject(projectId);
         }
       });
     };
 
     $scope.newSection = function() {
-      var config = {};
-      if (projectManager.section) {
-        ['timeSignature', 'beatsPerSlide', 'beatsPerView', 'animationDuration']
-          .forEach(function(property) {
-            config[property] = projectManager.section[property];
-          });
-      }
-      var section = projectManager.createSection(config);
+      var section = projectManager.createSection(projectManager.section);
+      section.name = 'New';
       workspace.selectedSectionId = section.id;
       projectManager.loadSection(workspace.selectedSectionId);
     };
@@ -173,7 +166,7 @@
         // Project will be saved into the browser's local storage
         var confirm = $mdDialog.prompt()
           .title('Saving Project')
-          .textContent("Please enter project name:")
+          .textContent('Please enter project name:')
           .placeholder('Name')
           .ariaLabel('Name')
           .theme(' ')
@@ -197,6 +190,7 @@
 
     $scope.saveAsSection = function() {
       projectManager.saveAsNewSection();
+      workspace.section = projectManager.section;
       workspace.selectedSectionId = workspace.section.id;
     };
 
@@ -275,9 +269,22 @@
       saveAs(blob, projectManager.project.name+'.json');
     };
 
+    workspace.importProject = function() {
+      $timeout(function() {
+        var projectName = $location.path();
+        console.log('Importing project: '+projectName)
+        var sections = projectManager.project.sections.map(function(sectionInfo) {
+          return projectManager.getSection(sectionInfo.id);
+        });
+        $scope.newProject();
+        sections.forEach(projectManager.importSection, projectManager);
+        projectManager.loadSection(sections[0].id);
+        workspace.selectedSectionId = projectManager.section.id;
+      });
+    };
+
     workspace.exportSection = function() {
       if (workspace.section.name) {
-        console.log('exportToFile');
         var blob = new Blob(
           [projectManager.serializeSection(projectManager.section)],
           {type: "application/json;charset=utf-8"}
@@ -298,6 +305,7 @@
         var section = projectManager.loadSectionData(JSON.parse(json));
         $timeout(function() {
           projectManager.importSection(section);
+          projectManager.loadSection(section.id);
         });
       };
       reader.readAsText(file)

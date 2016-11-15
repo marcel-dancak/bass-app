@@ -106,7 +106,6 @@
     return this.project;
   };
 
-
   ProjectLocalStore.prototype.saveProjectConfig = function(tracksInfo, sectionsIndex) {
     var projectId = this.project.id;
     console.log('ProjectLocalStore.saveProjectConfig: '+projectKey(projectId));
@@ -128,6 +127,32 @@
     localStorage.setItem(projectKey(projectId), data);
   };
 
+  ProjectLocalStore.prototype.deleteProject = function(projectId) {
+    if (this.project.id === projectId) {
+      console.log('!! deleting opened project !!');
+      return;
+    }
+    var projectConfig = JSON.parse(localStorage.getItem(projectKey(projectId)));
+    if (projectConfig) {
+      var keys = projectConfig.sections.map(
+        function(section) {
+          return sectionKey(projectId, section.id);
+        }
+      );
+      keys.push(playlistsKey(projectId));
+      keys.push(projectKey(projectId));
+      keys.forEach(localStorage.removeItem, localStorage);
+    }
+
+    // update index of projects
+    var projects = this.projectsList();
+    var index = projects.findIndex(byId(projectId));
+    if (index !== -1) {
+      projects.splice(index, 1);
+      localStorage.setItem(this.PROJECTS_KEY, JSON.stringify(projects));
+    }
+    this.projects = projects;
+  };
 
   ProjectLocalStore.prototype.saveSection = function(sectionId, sectionName, serializedData) {
     var key = sectionKey(this.project.id, sectionId);
@@ -188,16 +213,6 @@
   }
 
 
-  // function generateItemId(list) {
-  //   var newId = Math.max.apply(
-  //     null,
-  //     list.map(function(item) {
-  //       return item.id;
-  //     })
-  //   ) + 1;
-  //   return Math.max(newId, 1);
-  // }
-
   function generateItemId(list) {
     return list.reduce(
       function(value, item) {
@@ -256,7 +271,7 @@
         // avoid initial fade-in caused by compressor by playing
         // a short inaudible audio through it
         var oscillator = context.createOscillator();
-        oscillator.frequency.value = 22500;
+        oscillator.frequency.value = 22050;
         oscillator.connect(compressor);
         compressor.connect(context.destination);
         oscillator.start();
@@ -283,6 +298,14 @@
       this.project.tracksMap[track.id] = track;
       idCouter[track.type] += 1;
       // TODO: add track for every existing section, or do it lazy
+    };
+
+
+    ProjectManager.prototype.removeTrack = function(trackId) {
+      var index = this.project.tracks.findIndex(byId(trackId));
+      this.project.tracks.splice(index, 1);
+      delete this.section[trackId];
+      delete this.project.tracksMap[trackId];
     };
 
     ProjectManager.prototype.createProject = function(tracks) {
@@ -326,8 +349,9 @@
       return this.project;
     };
 
-    ProjectManager.prototype.createSection = function(section) {
-      var defaultConfig = {
+
+    ProjectManager.prototype.createSection = function(baseSection) {
+      var section = {
         timeSignature: {
           top: 4,
           bottom: 4
@@ -338,12 +362,15 @@
         beatsPerView: 10,
         animationDuration: 300
       };
-      section = angular.merge(defaultConfig, section);
+      if (baseSection) {
+        Object.keys(baseSection).forEach(function(property) {
+          section[property] = baseSection[property];
+        });
+      }
       section.id = generateItemId(this.project.sections);
       section.tracks = {};
       this.project.sections.push(section);
       this.section = section;
-      console.log(section);
       return section;
     };
 
@@ -362,14 +389,15 @@
       section.id = generateItemId(this.project.sections);
       console.log(section);
       this.project.sections.push(section);
-      this.loadSection(section.id);
     };
 
 
     ProjectManager.prototype.deleteSection = function() {
       if (this.section) {
         var sectionId = this.section.id;
-        this.store.deleteSection(sectionId);
+        if (this.store.project) {
+          this.store.deleteSection(sectionId);
+        }
         var index = this.project.sections.findIndex(byId(sectionId));
         this.project.sections.splice(index, 1);
       }
@@ -393,15 +421,15 @@
       this.project.tracks.forEach(function(track) {
         var trackSection = section.tracks[track.id];
         if (trackSection) {
-          // filter beats with some sounds only
+          // filter beats with some data only (sounds or metadata)
           var trackData = trackSection.rawData().filter(function(beatData) {
-            return beatData.data.length > 0;
+            return beatData.data.length > 0 ||
+              (beatData.meta && Object.keys(beatData.meta).length > 0);
           });
           data.tracks[track.id] = trackData;
           // data.tracks[track.id] = trackSection.rawData();
         }
       }, this);
-
       return JSON.stringify(data, null, 4);
     }
 
@@ -432,7 +460,6 @@
           name: section.name
         };
       });
-
       this.store.saveProjectConfig(tracks, sectionsIndex);
     };
 
@@ -455,20 +482,16 @@
     };
 
     ProjectManager.prototype.saveAsNewSection = function(newName) {
-      // var index = this.project.sections.findIndex(byId(this.section.id));
-
-      this.section.id = generateItemId(this.project.sections);
-      this.section.name = newName || "New";
-      this.project.sections.push({
-        id: this.section.id,
-        name: this.section.name
-      });
+      var tracks = this.section.tracks;
+      var newSection = this.createSection(this.section);
+      newSection.name = newName || "New";
+      newSection.tracks = tracks;
+      this.section = newSection;
       this.saveSection();
     };
 
     ProjectManager.prototype.loadSectionData = function(section) {
       console.log('loadSectionData');
-      console.log(section);
 
       for (var trackId in section.tracks) {
         var trackData = section.tracks[trackId];
@@ -482,6 +505,14 @@
       return section;
     }
 
+    ProjectManager.prototype._filterProjectTracks = function(section) {
+      Object.keys(section.tracks).forEach(function(trackId) {
+        if (!this.project.tracksMap[trackId]) {
+          console.log('!! obsolete section track: '+trackId)
+          delete section.tracks[trackId];
+        }
+      }, this);
+    };
 
     ProjectManager.prototype.getSection = function(sectionId) {
       console.log(this.project);
@@ -496,6 +527,7 @@
         if (angular.isFunction(section.tracks[this.project.tracks[0].id].beat)) {
           console.log('Already converted/loaded section');
           // already converted to Track
+          this._filterProjectTracks(section);
           return section;
         }
       }
@@ -508,6 +540,7 @@
       console.log('--- load section from store ---');
       var storedSection = this.store.getSection(section.id);
       if (storedSection) {
+        this._filterProjectTracks(storedSection);
         section = this.loadSectionData(storedSection);
       }
       return section;

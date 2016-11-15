@@ -541,7 +541,10 @@ md-tooltip md-divider {
 
 /** Dialog windows */
 
-.md-dialog-container md-list-item:hover {
+.md-dialog-container md-list-item[disabled] {
+  opacity: 0.65;
+}
+.md-dialog-container md-list-item:not([disabled]):hover {
   background-color: #ffffe0;
 }
 .md-dialog-container md-list-item .md-button.md-focused,
@@ -589,6 +592,41 @@ md-tooltip md-divider {
   width: 400px;
   transform: none;
 }
+.open-project-dialog {
+  min-height: 200px;
+  overflow: hidden;
+}
+.open-project-dialog md-dialog-content {
+  position: relative;
+}
+.open-project-dialog p.confirm {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  margin: 0;
+  text-align: center;
+  position: absolute;
+  background-color: #fff;
+  top: 36px;
+  bottom: 52px;
+  left: 0;
+  right: 0;
+  transform: translate3d(0, 0, 0);
+}
+.open-project-dialog .confirm-actions {
+  border-top: 1px solid #ccc;
+  z-index: 1;
+}
+
+.open-project-dialog p.confirm.ng-hide-add,
+.open-project-dialog p.confirm.ng-hide-remove {
+  transition: cubic-bezier(0.35, 0, 0.25, 1) 0.4s;
+  transition-property: transform, opacity;
+}
+.open-project-dialog p.confirm.ng-hide {
+  opacity: 0;
+  transform: translate3d(0, 50px, 0);
+}
+
 .new-track-dialog {
   width: 300px;
 }
@@ -664,4 +702,56 @@ footer .md-button {
 
 md-input-container label.md-no-float {
   font-size: 11px;
+}
+
+.bottom-note {
+  position: relative;
+  margin: 6px 0 0 5px;
+  padding: 0;
+  width: calc(100% - 10px);
+  overflow: visible;
+}
+.bottom-note textarea {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 0;
+
+  box-sizing: border-box;
+  border-color: transparent;
+  color: transparent;
+  /*color: rgba(0,250,0,0.8);*/
+  border-width: 0 0 1px 0;
+  font-size: 15px;
+  line-height: 19px;
+}
+.bottom-note span {
+  display: block;
+  position: relative;
+  line-height: 19px;
+  font-size: 15px;
+  margin: 0;
+  /*margin-bottom: 1px;*/
+  letter-spacing: normal;
+  word-spacing: normal;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  outline: none;
+  border-bottom: 1px solid transparent;
+  min-height: 27px;
+  color: #777;
+}
+.bottom-note:not(.md-input-focused) span:hover {
+  border-color: #ccc;
+}
+
+.bottom-note.md-input-focused textarea {
+  color: #333;
+  border-width: 0 0 1px 0;
+}
+.bottom-note.md-input-focused span {
+  color: transparent;
+  pointer-events: none;
 }
