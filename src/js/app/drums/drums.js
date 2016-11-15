@@ -49,7 +49,7 @@
           label: 'Clap',
           filename: 'sounds/percussion/clap_009'
         }, {
-          name: 'tambourine2',
+          name: 'tambourine',
           label: 'Tambourine',
           filename: 'sounds/percussion/tambourine_001'
         }, {

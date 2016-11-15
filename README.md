@@ -1,4 +1,4 @@
-Application for learning playing on the bass guitar
+Application to learn playing on the bass guitar
 
 
 ### Bass Editor
@@ -25,6 +25,12 @@ It is highly recommended to use Webkit-based browser. Application may not work p
 [Jamiroquai - Runaway](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
 
 [Patrice Rushen - Forget Me Nots](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#PatriceRushen-ForgetMeNots)
+
+[Sublime - Santeria](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Sublime-Santeria)
+
+[Knight Rider](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#KnightRider)
+
+[Various short riffs](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Riffs)
 
 
 ### Empty Application
