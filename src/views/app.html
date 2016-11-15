@@ -142,9 +142,12 @@
             ng-attr-subdivision="{{ slide.beat.subdivision }}"
             ng-attr-visible-subbeats="{{ swiperControl.swiperConfig.visibleSubbeats }}"
             class="swiper-slide swiper-no-swiping instrument-slide beat beat-{{ ::slide.beat.beat }}">
-            <div ng-switch="slide.type" ng-class="{obsolete: slide.obsolete}">
+            <div
+              ng-switch="slide.type"
+              ng-class="{obsolete: slide.obsolete}">
               <div
                 ng-switch-when="bass"
+                class="beat-container"
                 ng-controller="BassBeatController">
                   <div class="bass-board"
                     ng-include="'views/bass_board_slide.html'">
@@ -152,6 +155,7 @@
               </div>
               <div
                 ng-switch-when="drums"
+                class="beat-container"
                 ng-controller="DrumsController"
                 class="drums-beat-grid">
                 <div
@@ -160,13 +164,17 @@
                   ng-include="'views/drums_board_slide.html'">
                 </div>
               </div>
+              <md-input-container
+                class="bottom-note"
+                bd-textarea="slide.beat.meta.note">
+              </md-input-container>
             </div>
           </div>
         </div>
       </div>
 
       </div>
-      <div flex style="max-height: 40px;"></div>
+      <div flex style="max-height: 20px;"></div>
 
       <div ng-show="workspace.track.type === 'bass'">
         <div ng-include src="'views/fretboard.html'"></div>
@@ -216,6 +224,7 @@
       target="_blank"
       href="https://github.com/marcel-dancak/drums-and-bass">
       <md-icon md-svg-icon="github"></md-icon>
+      <md-tooltip md-delay="1500" md-direction="left">GitHub</md-tooltip>
     </md-button>
     <md-button
       md-no-ink
@@ -223,6 +232,7 @@
       class="icon-hover"
       ng-click="showHelp()">
       <md-icon md-svg-icon="help"></md-icon>
+      <md-tooltip md-delay="1500" md-direction="left">Help</md-tooltip>
     </md-button>
     <!-- <span flex></span> -->
   </footer>

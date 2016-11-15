@@ -261,3 +261,11 @@
   right: 26px;
   top: 1px;
 }
+
+.playlist-swiper .bottom-note {
+  position: absolute;
+  bottom: 0;
+  transform: translate3d(0, 100%, 0);
+  color: #777;
+  font-size: 15px;
+}

@@ -51,7 +51,7 @@
 
 .strings-labels {
   position: absolute;
-  bottom: 0;
+  top: 34px;
   text-align: center;
   left: 0;
   width: 42px;

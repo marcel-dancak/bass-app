@@ -98,7 +98,7 @@
       <!-- Instrument -->
       <div
         class="bass-board instrument-slide {{ ::($last && emptyBeats.length)? 'last' : '' }}">
-        <div class="string-container">
+        <div class="beat-container string-container">
           <div
             ng-repeat="string in ::workspace.track.instrument.strings"
             class="bass-string">
@@ -129,6 +129,7 @@
             </bd-sound-label>
           </div>
         </div>
+        <span class="bottom-note">{{ ::beat.meta.note }}</span>
       </div>
 
     </div>

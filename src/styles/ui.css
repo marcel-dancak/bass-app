@@ -371,8 +371,10 @@ md-menu-item.menu-group-item .group-item-title {
   padding-right: 4px;
 }
 
-
-.instrument-slide::before {
+.beat-container {
+  position: relative;
+}
+.beat-container:before {
   position: absolute;
   top: 0;
   left: 0;
@@ -384,12 +386,12 @@ md-menu-item.menu-group-item .group-item-title {
   z-index: 199;
 }
 
-.beat-1 .instrument-slide::before,
-.beat-1.instrument-slide::before {
+.beat-1 .instrument-slide .beat-container:before,
+.beat-1.instrument-slide .beat-container:before {
   width: 3px;
 }
 
-.bar-end.instrument-slide::after {
+.bar-end.instrument-slide .beat-container:after {
   position: absolute;
   top: 0;
   right: -4px;

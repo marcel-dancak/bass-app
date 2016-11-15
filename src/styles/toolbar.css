@@ -51,6 +51,9 @@
   pointer-events: none;
   opacity: 0.5;
 }
+.tracks-list md-option md-icon {
+  padding-bottom: 2px;
+}
 
 .control-panel md-menu {
   padding: 0;
