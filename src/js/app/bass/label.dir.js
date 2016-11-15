@@ -37,6 +37,7 @@
         var sound = $scope.sound;
         $scope.transitions = [];
         function update() {
+          if (!sound.note.bend) return;
 
           var transition = {};
           $scope.transitions.splice(0, $scope.transitions.length);

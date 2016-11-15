@@ -69,12 +69,10 @@
     }
 
     function generateSlide(playlist, position, count) {
-      console.log('generateSlide');
       var task = $q.defer();
 
       var section = playlist[position.section];
       if (!section) {
-        console.log('end');
         if (!playerSwiper.lastSlide) {
           console.log('** create empty slide');
           playerSwiper.appendSlide('<div class="swiper-slide"></div>');
@@ -225,7 +223,6 @@
           index++;
         }
       });
-
       playlistSlidePosition = {
         section: 0,
         bar: 1,
@@ -253,8 +250,8 @@
     }
 
     $scope.updatePlaylist = function() {
+      updatePlaylistRange();
       initPlaylistSlides();
-      updateRangePlaylist();
     }
 
 
@@ -433,8 +430,7 @@
       }
     }
 
-    function updateRangePlaylist() {
-      console.log($scope.player.playlist);
+    function updatePlaylistRange() {
       $scope.player.playlist.splice(0, $scope.player.playlist.length);
       workspace.playlist.items.forEach(function(item) {
         for (var i = 0; i < item.repeats; i++) {
@@ -450,7 +446,7 @@
 
     function playlistLoaded(playlist) {
       workspace.playlist = playlist;
-      updateRangePlaylist();
+      updatePlaylistRange();
       initPlaylistSlides();
     }
 
@@ -461,7 +457,7 @@
       projectManager.project.sections.forEach(function(section) {
         $scope.sectionNames[section.id] = section.name;
       });
-      updateRangePlaylist();
+      updatePlaylistRange();
 
       if (workspace.playlist.items.length === 0) {
         console.log('SHOW PLAYLIST EDITOR');

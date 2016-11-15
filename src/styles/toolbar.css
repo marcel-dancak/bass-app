@@ -306,7 +306,7 @@ md-dialog .dialog-header {
   top: 0;
   left: 0;
   bottom: 0;
-  right: 40px;
+  right: 0;
   overflow: visible;
 }
 
@@ -316,12 +316,14 @@ md-dialog .dialog-header {
 .select-text-container > md-input-container:last-child:not(.md-input-focused) input {
   border-color: transparent;
 }
-.select-text-container > md-input-container:last-child.md-input-focused input {
-  width: calc(100% + 40px);
+.select-text-container > md-input-container:last-child input {
   padding-right: 30px;
 }
 .select-editable .md-select-value span:not(.md-select-icon) {
   visibility: hidden;
+}
+.select-text-container .md-select-icon {
+  z-index: 10;
 }
 
 .project-toolbar {

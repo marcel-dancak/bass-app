@@ -6,6 +6,7 @@
 
   <md-button
     md-no-ink
+    aria-label="Editor"
     class="md-fab icon-hover toggle-button edit-playlist"
     ng-class="{active: ui.playlist.showEditor}"
     ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
@@ -75,6 +76,7 @@
         </md-list>
       </div>
       <md-button
+        aria-label="Clear"
         class="playlist-button"
         ng-click="clearPlaylist()">
         <md-icon md-svg-icon="x"></md-icon>
@@ -106,6 +108,7 @@
         </md-list>
       </div>
       <md-button
+        aria-label="Move all"
         class="playlist-button"
         ng-click="moveAllUnused()">
         <md-icon md-svg-icon="arrow-left"></md-icon>

@@ -198,7 +198,7 @@
             console.log(sound.note.bend)
             // var config = sound.note.bend || '';
             // var parts = config.split(',').map(function(v) {return parseFloat(v)});
-            var parts = sound.note.bend.map(function(v) {return v*2});
+            var parts = sound.note.bend//.map(function(v) {return v*2});
             for (var i = 1; i < parts.length; i++) {
               var prevBend = parts[i-1];
               var bend = parts[i];
@@ -273,7 +273,7 @@
         gain.gain.value = sound.volume;
         source.connect(gain);
         gain.connect(track.audio);
-        // console.log(sound);
+        // console.log(source.buffer.duration);
         // console.log('startTime: {0} volume: {1} duration: {2}'.format(startTime, sound.volume, sound.duration));
         source.start(startTime);
       }
@@ -560,14 +560,19 @@
       }
       var currentTime = context.currentTime;
       this.scheduledSounds.forEach(function(sound) {
-        if (currentTime < sound.startTime) {
-          sound.source.stop();
-        } else {
-          sound.gain.cancelScheduledValues(currentTime);
-          sound.gain.setValueAtTime(sound.gain.value, currentTime);
-          sound.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
+        try {
+          if (currentTime < sound.startTime) {
+            sound.source.stop();
+          } else {
+            sound.gain.cancelScheduledValues(currentTime);
+            sound.gain.setValueAtTime(sound.gain.value, currentTime);
+            sound.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
+          }
+        } catch (ex) {
+          console.log('Error');
         }
       });
+
       /*
       this.oscillator.stop();
       this.oscillator.disconnect();

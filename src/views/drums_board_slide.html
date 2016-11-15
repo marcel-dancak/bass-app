@@ -10,8 +10,7 @@
       flex
       aria-label="Drum sound"
       class="drum-sound-box no-hover"
-
-      ng-repeat="drum in workspace.track.instrument track by drum.name">
+      ng-repeat="drum in workspace.drumSection.instrument track by drum.name">
       <div
         class="drum-sound"
         msd-wheel="volumeControl(drumSubbeats[$index], $delta/10)"

@@ -65,8 +65,12 @@
           destBeat.subdivision = beat.subdivision;
           destBeat.meta = beat.meta;
           beat.data.forEach(function(sound) {
-            var subbeat = this.subbeat(beat.bar, beat.beat, sound.subbeat);
-            subbeat[nameToIndex[sound.drum]].volume = sound.volume;
+            if (nameToIndex.hasOwnProperty(sound.drum)) {
+              var subbeat = this.subbeat(beat.bar, beat.beat, sound.subbeat);
+              subbeat[nameToIndex[sound.drum]].volume = sound.volume;
+            } else {
+              console.log('Unknown drum sound: '+sound.drum);
+            }
           }, this);
         }, this);
       }

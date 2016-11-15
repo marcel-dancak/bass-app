@@ -49,7 +49,7 @@
           label: 'Clap',
           filename: 'sounds/percussion/clap_009'
         }, {
-          name: 'tambourine',
+          name: 'tambourine2',
           label: 'Tambourine',
           filename: 'sounds/percussion/tambourine_001'
         }, {
@@ -67,15 +67,15 @@
         }, {
           name: 'djembe',
           label: 'Djembe',
-          filename: 'sounds/drums/bongo/bongo_002c'
-        }, {
-          name: 'conga2',
-          label: 'Bongo',
           filename: 'sounds/drums/bongo/bongo_005d'
         }, {
           name: 'conga',
           label: 'Conga',
           filename: 'sounds/drums/bongo/bongo_006r'
+        }, {
+          name: 'cajon',
+          label: 'Cajon',
+          filename: 'sounds/drums/bongo/bongo_002c'
         }
       ]
     };
