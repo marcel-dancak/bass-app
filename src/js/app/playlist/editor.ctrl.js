@@ -76,5 +76,13 @@
       });
       $scope.availableSections = [];
     };
+
+    function playlistLoaded() {
+      updateAvailableSections();
+    }
+    projectManager.on('playlistLoaded', playlistLoaded);
+    $scope.$on('$destroy', function() {
+      projectManager.un('playlistLoaded', playlistLoaded);
+    });
   }
 })();

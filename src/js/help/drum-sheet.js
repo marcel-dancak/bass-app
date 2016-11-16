@@ -10,13 +10,13 @@
     var sheetTemplate = 
       '<div class="help-drum-sheet">'+
         '<div layout="column" class="drums-labels-container">'+
-          '<img ng-repeat="drum in workspace.track.instrument track by drum.name" ng-src="{{ ::drum.image }}">'+
+          '<img ng-repeat="drum in workspace.drumSection.instrument track by drum.name" ng-src="{{ ::drum.image }}">'+
         '</div>'+
-        '<div class="beats-container" layout="row">'+
+        '<div layout="row">'+
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
             'ng-include="\'views/drums_board_slide.html\'" '+
-            'class="beat instrument-slide">'+
+            'class="beat-container beat instrument-slide">'+
           '</div>'+
         '</div>'+
       '</div>';
@@ -46,14 +46,15 @@
             top: numbers[0],
             bottom: numbers[1]
           };
+          var drumKit = Drums.Drums.slice(4);
           $scope.workspace = {
             selected: basicHandler.selected,
             section: {
               timeSignature: timeSignature,
               length: config.length || 1
             },
-            track: {
-              instrument: Drums.Drums.slice(4)
+            drumSection: {
+              instrument: drumKit
             }
           };
           $scope.workspace.trackSection = new DrumSection($scope.workspace.section);

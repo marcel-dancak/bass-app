@@ -208,8 +208,8 @@
 
 
     $scope.newPlaylist = function() {
-      workspace.playlist = projectManager.createPlaylist();
-      workspace.selectedPlaylistId = workspace.playlist.id;
+      var playlist = projectManager.createPlaylist();
+      projectManager.loadPlaylist(playlist.id);
     };
 
     $scope.savePlaylists = function() {
@@ -222,7 +222,9 @@
     $scope.deletePlaylist = function() {
       var deletedPlaylistName = workspace.playlist.name;
       projectManager.deletePlaylist(workspace.playlist.id);
-      projectManager.savePlaylists();
+      if (!projectManager.store.readOnly) {
+        projectManager.savePlaylists();
+      }
       showNotification('<span>Playlist <b>{0}</b> was deleted</span>'.format(deletedPlaylistName));
       if (projectManager.project.playlists.length) {
         projectManager.loadPlaylist(projectManager.project.playlists[0].id);

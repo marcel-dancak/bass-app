@@ -18,7 +18,7 @@
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
             'ng-include="\'views/bass_board_slide.html\'" '+
-            'class="beat instrument-slide">'+
+            'class="beat-container beat instrument-slide">'+
           '</div>'+
         '</div>'+
       '</div>';

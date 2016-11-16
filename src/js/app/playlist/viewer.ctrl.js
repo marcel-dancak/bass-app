@@ -441,11 +441,11 @@
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.max = $scope.player.playlist.length;
       $scope.player.playbackRange.end = $scope.player.playbackRange.max;
-
     }
 
     function playlistLoaded(playlist) {
       workspace.playlist = playlist;
+      workspace.selectedPlaylistId = playlist.id;
       updatePlaylistRange();
       initPlaylistSlides();
     }
