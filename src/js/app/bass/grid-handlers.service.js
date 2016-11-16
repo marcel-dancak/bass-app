@@ -67,13 +67,13 @@
       }
       noteBeatLength-=subbeatLength;
     }
-    console.log(grid.string);
-    return getGridInfo({
+    var gridInfo = getGridInfo({
       bar: bar,
       beat: beat,
       subbeat: subbeat,
       string: grid.string.label
-    }).grid;
+    });
+    return gridInfo? gridInfo.grid : null;
   }
 
   function connectGrids(grid1, grid2) {
@@ -139,6 +139,15 @@
 
     /****************** Drag Handlers ******************/
 
+    function updateSoundFret(sound, string) {
+      if (sound.note.hasOwnProperty('fret')) {
+        sound.note.fret = workspace.track.instrument.stringFret(string, sound.note);
+      }
+      if (sound.note.slide) {
+        sound.note.slide.endNote.fret = workspace.track.instrument.stringFret(string, sound.note.slide.endNote);
+      }
+    }
+
     var fretboardDragHandler = {
 
       onDragStart: function(evt, dragData, channel) {
@@ -155,10 +164,13 @@
       onDragEnd: function(evt) {},
       onDrop: function(evt, data, dropGrid) {
         angular.extend(dropGrid.sound, data.sound);
-        dropGrid.sound.note.name = fretboardDragHandler._noteName;
-        dropGrid.sound.note.code = dropGrid.sound.note.name + dropGrid.sound.note.octave;
         dropGrid.sound.string = dropGrid.string.label;
         dropGrid.sound.noteLength.beatLength = dropGrid.sound.noteLength.length;
+        if (data.sound.note.type !== 'ghost') {
+          dropGrid.sound.note.name = fretboardDragHandler._noteName;
+          dropGrid.sound.note.code = dropGrid.sound.note.name + dropGrid.sound.note.octave;
+          dropGrid.sound.note.fret = workspace.track.instrument.stringFret(dropGrid.sound.string, dropGrid.sound.note);
+        }
         audioPlayer.fetchSoundResources(dropGrid.sound);
       }
     };
@@ -180,10 +192,8 @@
       onDrop: function(evt, dragGrid, dropGrid) {
         angular.extend(dropGrid.sound, dragGrid.sound);
         dropGrid.sound.string = dropGrid.string.label;
-
+        updateSoundFret(dropGrid.sound, dropGrid.sound.string);
         if (evt.dataTransfer.dropEffect === "move") {
-          // var sourceSound = workspaceSection.subbeat(dragGrid.bar, dragGrid.beat, dragGrid.subbeat)[dragGrid.string].sound;
-          // $scope.clearSound(sourceSound);
           workspace.trackSection.clearSound(dragData.sound);
         }
       }
@@ -227,7 +237,6 @@
         this.workspaceElem.appendChild(dragElem);
         evt.dataTransfer.setDragImage(dragElem, 10, 36);
         dragBox.width = dragElem.clientWidth;
-        console.log(dragData);
         var beat = workspace.trackSection.beat(dragData.bar, dragData.beat);
         dragBox.subdivision = beat.subdivision;
 
@@ -260,10 +269,12 @@
 
         var dragSounds = this.sourceSoundGrids.map(function(grid) {
           var copy = angular.copy(grid.sound);
+          updateSoundFret(copy, dropGrid.string.label);
           delete copy.prev;
           delete copy.next;
           return copy;
         });
+        console.log(dragSounds)
 
         if (evt.dataTransfer.dropEffect === "move") {
           // this.sourceSoundGrids.forEach(function(grid) {
@@ -358,12 +369,7 @@
 
     DragAndDrop.prototype.onDrop = function(evt, data, dropGrid) {
       dragHandler.onDrop(evt, data, dropGrid);
-      var sound = data.sound;
-      if (sound.note && sound.note.type !== 'ghost') {
-        dropGrid.sound.note.fret = workspace.track.instrument.stringFret(dropGrid.sound.string, sound.note);
-      }
       dragBox.elem.style.opacity = 0.001;
-      // $scope.updateBassGrid(dropGrid);
     };
 
     DragAndDrop.prototype.onDragEnter = function(beat, grid, evt) {
