@@ -293,4 +293,42 @@
     return sounds;
   };
 
+
+  AudioComposer.prototype.bend = function(audio, sound, duration, startTime, beatTime, timeSignature) {
+    var durationOffset = 0;
+    function bendSound(sRate, sTime, eRate, eTime) {
+      audio.source.playbackRate.setValueAtTime(sRate, startTime+sTime*duration);
+      audio.source.playbackRate.linearRampToValueAtTime(eRate, startTime+eTime*duration);
+      var avgRate = (sRate + eRate) / 2;
+      var bendDuration = (eTime - sTime) * duration;
+      var offset = (avgRate - 1) * bendDuration;
+      // console.log('{0} -> {1} ({2} to {3}) : {4}'.format(sRate, eRate, sTime, eTime, offset));
+      // console.log('avg rage: {0} duration: {1}'.format(avgRate, bendDuration));
+      durationOffset += offset;
+    }
+
+    // console.log(sound.note.bend)
+    // var config = sound.note.bend || '';
+    // var parts = config.split(',').map(function(v) {return parseFloat(v)});
+    var parts = sound.note.bend//.map(function(v) {return v*2});
+    for (var i = 1; i < parts.length; i++) {
+      var prevBend = parts[i-1];
+      var bend = parts[i];
+      if (bend !== prevBend) {
+        bendSound(
+          Math.pow(Math.pow(2, 1/12), prevBend),
+          (i - 1) / (parts.length - 1),
+          Math.pow(Math.pow(2, 1/12), bend),
+          i / (parts.length - 1)
+        );
+      } else {
+        var offset = (Math.pow(Math.pow(2, 1/12), bend) - 1) * (1/(parts.length-1)) * duration;
+        // console.log('no bending: '+offset);
+        durationOffset += offset;
+      }
+    }
+    // console.log('durationOffset: '+durationOffset);
+    audio.duration += durationOffset;
+  };
+
 })();
