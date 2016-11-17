@@ -113,13 +113,16 @@
 }
 
 
-.point-node.rzslider.rz-vertical .rz-pointer {
+.point-node.rzslider .rz-pointer {
   width: 10px;
   height: 10px;
-  left: 1px!important;
   border: 2px solid #2196F3;
   background-color: white;
 }
+.point-node.rzslider.rz-vertical .rz-pointer {
+  left: 1px!important;
+}
+
 .point-node.rzslider .rz-pointer:after {
   display: none;
 }
@@ -142,4 +145,30 @@
 
 md-input-container.line-editor-field {
   margin-bottom: 12px;
+}
+
+
+/****  Slide graph editor ****/
+
+md-input-container .slide-graph.down {
+  transform: scale(1, -1);
+}
+md-input-container .slide-graph.line-editor {
+  margin: 0;
+}
+md-input-container .slide-graph .rzslider {
+  margin: 44px 5px 0px 5px;
+  width: calc(100% - 10px);
+}
+.slide-graph svg.graph {
+  width: 100%;
+  height: 36px;
+  margin: 0 8px;
+  width: calc(100% - 16px);
+}
+.slide-graph .rzslider .rz-pointer.rz-pointer-max {
+  top: -44px;
+}
+.slide-graph .rzslider .rz-bar {
+  display: none;
 }

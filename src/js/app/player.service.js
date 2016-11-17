@@ -93,13 +93,19 @@
             return curve;
           },
           prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
-            var curve = this.slideCurve(sound, beatTime, timeSignature, 0.2, 0.2);
+            var s = sound.note.slide.start || 0.2;
+            var e = sound.note.slide.end || 0.8;
+            var curve = this.slideCurve(sound, beatTime, timeSignature, s, 1-e);
+            // console.log(curve)
             var audioStack = _this.composer.createSlide(track, null, sound, curve, startTime, beatTime, timeSignature);
             return audioStack;
           },
           transitionPlayback: function(stack, track, sound, startTime, beatTime, timeSignature) {
             var prevAudio = stack.pop();
-            var curve = this.slideCurve(sound, beatTime, timeSignature, 0.05, 0.15);
+            var s = sound.note.slide.start || 0.05;
+            var e = sound.note.slide.end || 0.15;
+            var curve = this.slideCurve(sound, beatTime, timeSignature, s, 1-e);
+            // console.log(curve)
             var audioSounds = _this.composer.createSlide(track, prevAudio, sound, curve, startTime, beatTime, timeSignature);
             Array.prototype.push.apply(stack, audioSounds);
           }

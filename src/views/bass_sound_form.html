@@ -155,28 +155,47 @@
         </md-button>
       </div>
     </md-input-container>
-
-    <!-- <md-input-container
-      flex="50"
-      class="slide-field"
-      ng-if="sound.note.type === 'slide'"
-      ng-init="menu.updateSlide()">
-      <label class="md-label">Slide semitones</label>
-      <input
-        type="number"
-        min="-24"
-        max="24"
-        xstep="1"
-        ng-model="sound.note.slide"
-        ng-change="menu.updateSlide()">
-      <span
-        ng-show="sound.note.slide">
-        ({{ sound.note.slide < 0? 'down to' : 'up to' }}
-        {{ menu.slideEndNote.label[0] }}
-        <sub>{{ menu.slideEndNote.octave }}</sub>)
-      </span>
-    </md-input-container> -->
   </div>
+
+  <md-input-container ng-if="sound.note.type === 'slide'"
+    ng-init="
+      sound.note.slide.start = sound.note.slide.start || 0.2;
+      sound.note.slide.end = sound.note.slide.end || 1
+    ">
+    <label class="md-label md-no-float">Slide graph</label>
+    <div class="slide-graph line-editor"
+      ng-class="{down: sound.note.slide.endNote.fret < sound.note.fret }">
+      <rzslider
+        class="point-node"
+        rz-slider-model="sound.note.slide.start"
+        rz-slider-high="sound.note.slide.end"
+        rz-slider-options="{
+          floor: 0.01,
+          ceil: 0.99,
+          step: 0.01,
+          precision: 2,
+          minRange: 0.2,
+          pushRange: true,
+          showTicks: false,
+          showTicksValues: false,
+          hidePointerLabels: true,
+          hideLimitLabels: true,
+          onEnd: slideChanged
+        }">
+      </rzslider>
+      <svg class="graph">
+        <line
+          x1="0" y1="100%"
+          ng-attr-x2="{{ sound.note.slide.start*100 }}%" y2="100%" />
+        <line
+          ng-attr-x1="{{ sound.note.slide.start*100 }}%" y1="100%"
+          ng-attr-x2="{{ sound.note.slide.end*100 }}%" y2="0" />
+        <line
+          ng-attr-x1="{{ sound.note.slide.end*100 }}%" y1="0"
+          x2="100%" y2="0" />
+      </svg>
+    </div>
+  </md-input-container>
 
   <md-input-container
     ng-if="sound.note.type === 'bended'"
@@ -198,10 +217,10 @@
         <line
           ng-repeat="point in sound.note.bend track by $index"
           ng-if="!$last"
-          ng-attr-x1="{{ (100 * $index / (sound.note.bend.length-1))+ '%'}}"
-          ng-attr-y1="{{ (100 * (1 - sound.note.bend[$index])) + '%' }}"
-          ng-attr-x2="{{ (100 * ($index + 1) / (sound.note.bend.length-1))+ '%'}}"
-          ng-attr-y2="{{ (100 * (1 - sound.note.bend[$index+1])) + '%' }}" />
+          ng-attr-x1="{{ 100 * $index / (sound.note.bend.length-1) }}%"
+          ng-attr-y1="{{ 100 * (1 - sound.note.bend[$index]) }}%"
+          ng-attr-x2="{{ 100 * ($index + 1) / (sound.note.bend.length-1) }}%"
+          ng-attr-y2="{{ 100 * (1 - sound.note.bend[$index+1]) }}%" />
       </svg>
       <rzslider
         ng-repeat-start="node in sound.note.bend track by $index"

@@ -500,11 +500,11 @@ md-input-container.slide-field > span {
   max-height: 32px;
   font-size: 20px;
   font-weight: 300;
-  transform: rotate3d(0, 0, 1, -55deg);
+  transform: rotate3d(0, 0, 1, 55deg);
 }
 
-.bass-sound-container .slide-slash.up {
-  transform: rotate3d(0, 0, 1, 55deg)!important;
+.bass-sound-container .slide-slash.down {
+  transform: rotate3d(0, 0, 1, -55deg)!important;
 }
 
 /* #ff5722, #ff9800, #ffc107, #ffeb3b */
