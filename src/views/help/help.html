@@ -19,12 +19,16 @@
          {
           template: 'views/help/app.html',
           title: 'Application',
-          sections: ['Toolbar', 'Barline']
+          sections: [
+            'Introduction',
+            'Toolbar',
+            'Barline'
+          ]
         }, {
           template: 'views/help/bass.html',
-          title: 'Bass',
+          title: 'Bass guitar',
           sections: [
-            'Sound Properties Menu',
+            'Sound Properties',
             'Drag & Drop',
             'Resize',
             'Sounds transitions',
@@ -32,7 +36,7 @@
           ]
         }, {
           template: 'views/help/drums.html',
-          title: 'Drums',
+          title: 'Drums/Percussions',
           sections: [
             'Creating sounds',
             'Drag & Drop'
@@ -76,11 +80,15 @@
       flex
       ng-repeat="item in ::helpPages"
       ng-init="item.containerId = 'container-'+$index"
-      xid="container-{{ ::$index }}"
       id="{{ ::item.containerId }}"
       class="content md-padding"
       ng-show="item === page">
-      <div flex ng-if="item === page" ng-include="::item.template"></div>
+      <div
+        flex
+        ng-if="item === page"
+        ng-include="::item.template"
+        class="help-content-page">
+      </div>
     </md-content>
   </md-dialog-content>
 </div>

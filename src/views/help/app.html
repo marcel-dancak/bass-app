@@ -1,8 +1,46 @@
 <section
   id="section-1"
-  style="padding-top:44px;"
-  ng-controller="ToolbarController">
+  style="padding-top:44px;">
   <h4 style="top:20px;">{{ ::item.sections[0] }}</h4>
+  <p>
+    The main purpose of this application is to help starting bass players with their learing process.
+    Application is highly focused on rhythm aspect of the music by using easy to understand timeline representation with labels for proper counting.
+    It can be used to create various rhythmic excercises, drums backing tracks, or bass covers.
+  </p>
+
+  <h5>Features:</h5>
+  <ul>
+    <li>various playback options to configure playback speed, playback selection, repeating</li>
+    <li>customizable bass sound labels (fret numbers, note names, ...)</li>
+    <li>separate volume control for every instrument (track)</li>
+    <li>easy to use user interface</li>
+  </ul>
+
+  <h5>Before you start</h5>
+
+  <p>
+    Several topics of this user manual contains slide show animations, which are running only
+    when a particular topic is active (highlighted in the index section on the left side).
+    So when you scroll over the page content, take some care and check that appropriate is highlighted.
+  </p>
+
+  <p>
+    Application use HTML 5 Audio Web API for audio playback and works best in Webkit-based browser like:
+    <ul>
+      <li><b>Chrome</b></li>
+      <li><b>Chromium</b></li>
+      <li><b>Opera</b></li>
+    </ul>
+
+  <p>
+    Web version of this application use browser's <a target="_blank" href="http://www.w3schools.com/html/html5_webstorage.asp">local storage</a> for saving projects, so be careful with clearing browser's data. It also means that project saved in one browser will not be available in another one.
+  </p>
+</section>
+
+<section
+  id="section-2"
+  ng-controller="ToolbarController">
+  <h4>{{ ::item.sections[1] }}</h4>
   <p>
     Toolbar controls can be divided into the tree main groups:
   </p>
@@ -34,7 +72,6 @@
     Selectbox has integrated function for text editation and items reorder. Click around the arrow icon at right side
     to open selectbox, click on the selected item's text to start text editation. To change order of items, open selectbox and use Drag & Drop operation to move item to the new position.
   </p>
-
   <h5>Player controls</h5>
   <div
     layout="row"
@@ -53,7 +90,7 @@
     <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
     Use <i>Visible screen playback </i><md-icon md-svg-icon="screen-playback"></md-icon>
     or <i>Selection playback </i><md-icon md-svg-icon="selection-playback"></md-icon>
-    in combination with <a ng-click="scrollTo(2)">Barline</a> size adjustment to avoid automatic scrolling during playback for easier learning.
+    in combination with <a ng-click="scrollTo(3)">Barline</a> size adjustment to avoid automatic scrolling during playback for easier learning.
   </p>
 
   <h5>Track controls</h5>
@@ -66,7 +103,7 @@
     </div>
   </div>
   <p>
-    Allows to select active, configure and manage instruments in the project. It also contains
+    Allows to select active, configure and manage all instruments in the project. It also contains
     a menu with volume preferences of all instruments (tracks) as well as input audio channel
     volume when using microphone input.
   </p>
@@ -77,8 +114,8 @@
 
   <p></p>
 </section>
-<section id="section-2">
-  <h4>{{ ::item.sections[1] }}</h4>
+<section id="section-3">
+  <h4>{{ ::item.sections[2] }}</h4>
   <div
     layout="row"
     class="slideshow"
@@ -131,21 +168,22 @@
   <p class="instructions">
     Main controls:
     <ul class="slideshow-steps">
-      <li>Use pagination buttons or mouse swipe gestures to scroll visible beats of the section</li>
+      <li>Use pagination buttons or mouse swipe gestures to scroll over visible beats of the section</li>
       <li>Use mouse wheel for zoom-out/zoom-in:</li>
       <ul><li>Scroll-up direction to raise number of visible beats on screen</li></ul>
       <ul><li>Scroll-down direction to lower number of visible beats on screen</li></ul>
-      <li>Use right mouse button to open context menu for various bar/beat operations</li>
+      <li>Use right mouse button to open context menu for various bar/beat operations line Copy, Paste ...</li>
       <span></span>
-      <li>Click on the time signature label to open menu with preferences for more options</li>
+      <li>Click on the time signature label to open menu with preferences for more options like
+      time signature, length of the section (number of bars), ...</li>
     </ul>
   </p>
 
-</section>
+<!--   <p>
+  </p> -->
 
-<!-- <section id="section-2">
-  <h4>Section 2</h4>
-  <p>
-    Other section
+  <p class="md-indent">
+    <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
+    Use <i>Bar Preferences</i> settings to adjust automatic slides transition that fits you the best during playback in <i>Section mode</i>.
   </p>
-</section> -->
+</section>

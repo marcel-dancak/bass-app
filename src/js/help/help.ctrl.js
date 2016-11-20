@@ -6,7 +6,7 @@
     .controller('HelpController', HelpController);
 
 
-  function HelpController($scope, $element, $timeout, $mdDialog) {
+  function HelpController($scope, $element, $timeout, $mdDialog, duScrollOffset) {
 
     $scope.index = {
       activeSection: -1,
@@ -14,18 +14,27 @@
     };
     $scope.page = null;
 
-    $scope.setHelpPage = function(page) {
+    $scope.setHelpPage = function(page, section) {
       stopAnimation();
       $scope.page = page;
       $scope.index.activeSection = -1;
+      // wait for DOM update (ng-include)
+      $timeout(function() {
+        if (section) {
+          $scope.scrollTo(section, true);
+        } else {
+          $scope.selectSection(1);
+        }
+      }, 25);
     };
+
     $timeout(function() {
       $scope.page = $scope.helpPages[0];
       // Manually trigger section when automatic selection fails
       // (sometimes happens when scrollbar is not needed on first page)
       $timeout(function() {
         if ($scope.index.activeSection === -1) {
-          $scope.selectSection(1);
+          // $scope.selectSection(1);
         }
       }, 500);
     }, 200);
@@ -57,7 +66,12 @@
     $scope.$on('duScrollspy:becameActive', function($event, $element, $target) {
       var id = $target[0].getAttribute('id');
       var sectionIndex = parseInt(id.replace('section-', ''));
+      // if active section is different than requested, force to requested value
+      if (requestedScrollSection !== -1 && sectionIndex !== requestedScrollSection) {
+        sectionIndex = requestedScrollSection;
+      }
       $scope.selectSection(sectionIndex);
+      requestedScrollSection = -1;
     });
 
 
@@ -79,13 +93,20 @@
         }, 300);
       }
       $scope.index.activeSection = sectionIndex;
+      console.log('activeSection: '+$scope.index.activeSection)
     };
 
-    $scope.scrollTo = function(sectionIndex) {
+    var requestedScrollSection = -1;
+    $scope.scrollTo = function(sectionIndex, skipAnimation) {
+      requestedScrollSection = sectionIndex;
       var container = $element[0].querySelector('#'+$scope.page.containerId);
       var section = container.querySelector('#section-'+sectionIndex);
       if (section) {
-        angular.element(container).scrollToElementAnimated(section);
+        if (skipAnimation) {
+          angular.element(container).scrollToElement(section, duScrollOffset, 0);
+        } else {
+          angular.element(container).scrollToElementAnimated(section);
+        }
       }
     };
 

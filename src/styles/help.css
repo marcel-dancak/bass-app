@@ -138,7 +138,7 @@ md-dialog.help-dialog.md-transition-in {
   list-style-position: inside;
 }
 .help-index li {
-  padding-left: 22px;
+  padding-left: 26px;
 }
 .help-index li:hover {
   background-color: rgba(33,150,243, 0.05);
@@ -174,6 +174,7 @@ md-dialog.help-dialog.md-transition-in {
   top: -52px;
   margin-top: 0;
   margin-bottom: 16px;
+  font-size: 17px;
 }
 
 .help-container section ul {
@@ -208,7 +209,7 @@ md-dialog.help-dialog.md-transition-in {
   overflow: hidden;
   position: absolute;
   width: 500px;
-  height: 600px;
+  height: 500px;
   clip: rect(0, auto, auto, 0);
 }
 
@@ -348,4 +349,14 @@ md-dialog.help-dialog.md-transition-in {
 
 .help-container .playback-range-menu md-icon {
   transform: none!important;
+}
+
+.help-content-page.ng-enter {
+  transition: opacity linear 0.4s;
+}
+.help-content-page.ng-enter.ng-enter-active {
+  opacity: 1;
+}
+.help-content-page.ng-enter {
+  opacity: 0.01;
 }

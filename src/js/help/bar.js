@@ -25,7 +25,7 @@
         name: 'Bass',
         type: 'bass',
         strings: 'EADG',
-        instrument: new Bass('EADG')
+        instrument: new Bass({strings: 'EADG'})
       }],
       sections: [{
         id: 1,
