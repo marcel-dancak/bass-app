@@ -44,7 +44,7 @@
           swiperControl.destroyLoop();
         }
         $scope.player.playbackRangeChanged();
-        if ($scope.player.loop && isLoopNeeded()) {
+        if ($scope.player.playing && $scope.player.loop && isLoopNeeded()) {
           swiperControl.createLoop();
         }
       }
@@ -111,7 +111,7 @@
 
     function updateLockedPlayerRange() {
       console.log('** updateLockedPlayerRange');
-      var maxIndex = workspace.section.length * workspace.section.timeSignature.top;
+      var maxIndex = swiperControl.lastSlide;
       // var sFlatIndex = swiperControl.barSwiper.snapIndex
       var sFlatIndex = swiperControl.firstSlide + swiperControl.barSwiper.snapIndex * workspace.section.beatsPerSlide;
       var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
@@ -342,7 +342,8 @@
       workspace.bassSection.setLength(workspace.section.length);
       workspace.drumSection.setLength(workspace.section.length);
       createSlides(workspace.trackSection);
-      $scope.player.playbackRange.end = workspace.section.length + 1;
+      $scope.player.playbackRange.max = workspace.section.length + 1;
+      $scope.player.playbackRange.end = $scope.player.playbackRange.max;
       updateSwiperSlides();
     };
 
