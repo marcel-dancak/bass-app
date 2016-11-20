@@ -624,6 +624,8 @@
                   name: prevNote.name,
                   octave: prevNote.octave,
                   slide: {
+                    start: 0.05,
+                    end: 0.85,
                     endNote: {
                       code: ringNote.code,
                       fret: ringNote.fret,

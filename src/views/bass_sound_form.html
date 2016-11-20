@@ -157,12 +157,13 @@
     </md-input-container>
   </div>
 
-  <md-input-container ng-if="sound.note.type === 'slide'"
+  <md-input-container
+    ng-if="sound.note.type === 'slide'"
     ng-init="
       sound.note.slide.start = sound.note.slide.start || 0.2;
-      sound.note.slide.end = sound.note.slide.end || 1
+      sound.note.slide.end = sound.note.slide.end || 0.8
     ">
-    <label class="md-label md-no-float">Slide graph</label>
+    <label class="md-label md-no-float">Slide timing</label>
     <div class="slide-graph line-editor"
       ng-class="{down: sound.note.slide.endNote.fret < sound.note.fret }">
       <rzslider

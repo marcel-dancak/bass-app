@@ -157,14 +157,14 @@ md-input-container .slide-graph.line-editor {
   margin: 0;
 }
 md-input-container .slide-graph .rzslider {
-  margin: 44px 5px 0px 5px;
-  width: calc(100% - 10px);
+  margin: 44px 4px 0px 4px;
+  left: -5px;
 }
 .slide-graph svg.graph {
   width: 100%;
   height: 36px;
-  margin: 0 8px;
-  width: calc(100% - 16px);
+  margin: 0 4px;
+  width: calc(100% - 8px);
 }
 .slide-graph .rzslider .rz-pointer.rz-pointer-max {
   top: -44px;
