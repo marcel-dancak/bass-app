@@ -138,6 +138,7 @@
         $mdDialog.hide(projectId);
       }
     }
+
     $scope.openProject = function() {
       $mdDialog.show({
         templateUrl: 'views/open_project.html',
@@ -241,7 +242,7 @@
       });
       list.splice(dropItemIndex, 0, dragItem);
     }
-    window.l = $location
+
     var projectParam = $location.hash();
     if (projectParam) {
       $http.get(dataUrl+projectParam+'.json').then(function(response) {
@@ -283,6 +284,55 @@
         projectManager.loadSection(sections[0].id);
         workspace.selectedSectionId = projectManager.section.id;
       });
+    };
+
+    workspace._import = function(section, srcBar, srcBeat, destBar, destBeat, count) {
+      var barIndex = srcBar;
+      var beatIndex = srcBeat;
+      // var tracks = projectManager.project.tracks
+      var data = {};
+      for (var trackId in section.tracks) {
+        data[trackId] = [];
+      }
+      var destBarIndex = destBar;
+      var destBeatIndex = destBeat;
+      while (count--) {
+        for (var trackId in section.tracks) {
+          var track = section.tracks[trackId];
+          var beat = angular.copy(track.beat(barIndex, beatIndex));
+          beat.bar = destBarIndex;
+          beat.beat = destBeatIndex;
+          data[trackId].push(beat);
+        }
+        beatIndex++;
+        if (beatIndex > section.timeSignature.top) {
+          beatIndex = 1;
+          barIndex++;
+        }
+        destBeatIndex++;
+        if (destBeatIndex > section.timeSignature.top) {
+          destBeatIndex = 1;
+          destBarIndex++;
+        }
+      }
+      // import part
+      for (var trackId in workspace.section.tracks) {
+        var trackSection = workspace.section.tracks[trackId];
+        if (trackSection.loadBeats) {
+          console.log('importing track beats: '+trackId);
+          trackSection.loadBeats(data[trackId]);
+        }
+      }
+    };
+
+    workspace.importBeats = function(sectionId, srcBar, srcBeat, destBar, destBeat, count) {
+      var section = projectManager.getSection(sectionId);
+      workspace._import(section, srcBar, srcBeat, destBar, destBeat, count);
+    };
+
+    workspace.importBars = function(sectionId, srcBar, destBar, count) {
+      var section = projectManager.getSection(sectionId);
+      workspace._import(section, srcBar, 1, destBar, 1, count * section.timeSignature.top);
     };
 
     workspace.exportSection = function() {
