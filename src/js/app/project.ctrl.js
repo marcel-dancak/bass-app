@@ -295,34 +295,11 @@
       }
     }
 
-    function handleFileDrop(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-
-      var files = evt.dataTransfer.files; // FileList object.
-      var file = files[0];
-      var reader = new FileReader();
-      reader.onload = function(theFile) {
-        var json = reader.result;
-        var section = projectManager.loadSectionData(JSON.parse(json));
-        $timeout(function() {
-          projectManager.importSection(section);
-          projectManager.loadSection(section.id);
-        });
-      };
-      reader.readAsText(file)
+    $scope.importSectionFromFile = function(file) {
+      var section = projectManager.loadSectionData(JSON.parse(file.content));
+      projectManager.importSection(section);
+      projectManager.loadSection(section.id);
     }
 
-    function handleDragOver(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-      evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-    }
-
-    $timeout(function() {
-      var projectDropElem = document.querySelector('.project-toolbar');
-      projectDropElem.addEventListener('dragover', handleDragOver, false);
-      projectDropElem.addEventListener('drop', handleFileDrop, false);
-    }, 500);
   }
 })();

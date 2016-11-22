@@ -5,6 +5,8 @@
     .module('bd.app')
     .directive('bdTextarea', bdTextarea)
     .directive('ngRightClick', contextMenu)
+    .directive('bdFileDrop', bdFileDrop)
+
 
   function contextMenu($parse) {
     return function(scope, element, attrs) {
@@ -38,6 +40,43 @@
           }
         }
       }
+    };
+  }
+
+  function bdFileDrop($parse) {
+    return function(scope, iElem, iAttrs) {
+      var dropCallback = $parse(iAttrs.bdFileDrop);
+
+      function handleFileDrop(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        var files = evt.dataTransfer.files;
+        var file = files[0];
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+          scope.$apply(function() {
+              var args = {
+                $file: {
+                  filename: file.name,
+                  content: reader.result
+                }
+              };
+              dropCallback(scope, args);
+          });
+        };
+        reader.readAsText(file)
+      }
+
+      function handleDragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        // Explicitly show this is a copy.
+        evt.dataTransfer.dropEffect = 'copy';
+      }
+
+      iElem.on('dragover', handleDragOver);
+      iElem.on('drop', handleFileDrop);
     };
   }
 
