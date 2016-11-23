@@ -116,7 +116,7 @@
       var sFlatIndex = swiperControl.firstSlide + swiperControl.barSwiper.snapIndex * workspace.section.beatsPerSlide;
       var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
 
-      if (eFlatIndex >= maxIndex) {
+      if (eFlatIndex > maxIndex) {
         // invalid range for playback lock
         return false;
       }
