@@ -258,8 +258,14 @@
 
       track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
 
+      track.audio = context.createGain();
+      if (track.volume) {
+        track.audio.gain.value = track.volume.muted? 0.0001 : track.volume.value;
+        track._volume = track.volume.value;
+      }
+
       var compressor = compressors[track.type];
-      if (!compressor) {
+      if (!compressor && track.type === 'bass') {
         compressor = context.createDynamicsCompressor();
         compressor.threshold.value = -35;
         compressor.knee.value = 40;
@@ -278,15 +284,10 @@
         setTimeout(function() {
           oscillator.stop();
         }, 50);
+        track.audio.connect(compressor);
+      } else {
+        track.audio.connect(context.destination);
       }
-
-      track.audio = context.createGain();
-      if (track.volume) {
-        track.audio.gain.value = track.volume.muted? 0.0001 : track.volume.value;
-        track._volume = track.volume.value;
-      }
-      // track.audio.connect(context.destination);
-      track.audio.connect(compressor);
 
       var index = this.project.tracks.length;
       this.project.tracks.forEach(function(t, i) {
@@ -357,9 +358,9 @@
           bottom: 4
         },
         bpm: 80,
-        length: 3,
+        length: 4,
         beatsPerSlide: 1,
-        beatsPerView: 10,
+        beatsPerView: 8,
         animationDuration: 300
       };
       if (baseSection) {
