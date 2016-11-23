@@ -9,7 +9,7 @@
       <md-icon md-svg-icon="x"></md-icon>
     </md-button>
   </div>
-  <md-dialog-content>
+  <md-dialog-content bd-file-drop="importProjectFile($file)">
     <!-- <md-subheader class="md-no-sticky">Instrument</md-subheader> -->
     <md-list
       md-no-ink
@@ -23,7 +23,7 @@
         ng-class="{
           selected: form.selected === $index
         }"
-        ng-disabled="$index === 0"
+        ng-disabled="$index === 0 && openedProjectId === project.id"
         ng-click="form.selected = $index">
         {{ ::project.name }}
       </md-list-item>

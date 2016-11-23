@@ -128,6 +128,9 @@
 
     function OpenProjectController($scope, $mdDialog, projectManager) {
       $scope.projects = projectManager.store.projectsList();
+      if (projectManager.store.project) {
+        $scope.openedProjectId = projectManager.store.project.id;
+      }
       // $scope.currentProjectId = projectManager.store.project.id;
       $scope.close = $mdDialog.hide;
       $scope.deleteProject = function(projectId) {
@@ -136,6 +139,34 @@
       }
       $scope.openProject = function(projectId) {
         $mdDialog.hide(projectId);
+      }
+      $scope.importProjectFile = function(file) {
+        var projectName = file.filename.replace('.json', '');
+        console.log('Importing project: '+projectName);
+        var reader = new ReadOnlyStore(JSON.parse(file.content));
+        var project = reader.getProject();
+        // assign playlists ids
+        project.playlists.forEach(function(playlist, index) {
+          playlist.id = index + 1;
+        });
+
+        var writer = new ProjectLocalStore();
+        writer.createProject(projectName);
+        project.id = writer.project.id;
+        project.name = projectName;
+        writer.project = project;
+        writer.saveProjectConfig(project.tracks, project.sections);
+        project.sections.forEach(function(sectionInfo) {
+          var section = reader.getSection(sectionInfo.id);
+          writer.saveSection(section.id, section.name, JSON.stringify(section));
+        });
+        writer.savePlaylists(project.playlists);
+
+        $scope.projects.push({
+          id: project.id,
+          name: file.filename
+        });
+        // $scope.projects = projectManager.store.projectsList();
       }
     }
 
@@ -255,7 +286,20 @@
       if (projectManager.store.projects.length) {
         // open last project
         var startupProject = projectManager.store.projects[0];
-        $scope.loadProject(startupProject.id);
+        try {
+          $scope.loadProject(startupProject.id);
+        } catch (ex) {
+          var alert = $mdDialog.alert()
+            .title('Warning')
+            .textContent(
+              'Failed to open latest project.'
+            )
+            .theme(' ')
+            .ok('Close');
+
+          $mdDialog.show(alert);
+          $scope.newProject();
+        }
       } else {
         $scope.newProject();
       }
