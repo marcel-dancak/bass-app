@@ -116,6 +116,23 @@
 </section>
 <section id="section-3">
   <h4>{{ ::item.sections[2] }}</h4>
+
+  <p>
+    In the <b>Section mode</b>, Barline has several options for navigation and configuration within selected section.
+    When a section contains more bars than can fit to the screen, you can horizontally scroll with whole editor workspace
+    by swipe gestures on Barline area (use mouse on non-touch screens). You can also use <i>Pagination Controls</i>,
+    which are useful especially for quick scrolling over large distances.
+  </p>
+  <p>
+    <b>Beats per Screen</b> is another very useful option that you can control with mouse - by scrolling with mouse wheel
+    (cursor must be inside Barline area). Alternatively, you can also set this option in <i>Section Preferences</i>.
+  </p>
+  <p>
+    Each project (composition) in this application should be composed from several smaller blocks called <b>Sections</b>.
+    Every section can have different bpm (tempo), time signature, length and few other settings. With the exception of bpm,
+    all these settings can be set in <i>Section Preferences</i> menu.
+  </p>
+  <br />
   <div
     layout="row"
     class="slideshow"
@@ -136,9 +153,9 @@
             {{ slide.beat.subdivision === 3? 3 : visibleSubbeats }}
           "
           class="swiper-slide bar-slide beat beat-{{ ::slide.beat.beat }}">
-<!--           <label class="bar-label">
+          <label class="bar-label">
             {{ ::slide.beat.bar }}
-          </label> -->
+          </label>
           <input
             spellcheck="false"
             class="chord-label"
@@ -163,27 +180,21 @@
     </div>
   </div>
 
-  <p>&nbsp;</p>
-  <p>&nbsp;</p>
+  <br />
+  <br />
+  <br />
+  <br />
+
   <p class="instructions">
-    Main controls:
+    Section mode controls:
     <ul class="slideshow-steps">
-      <li>Use pagination buttons or mouse swipe gestures to scroll over visible beats of the section</li>
+      <li>Use <i>Pagination Controls</i> or mouse swipe gestures to scroll over visible beats of the section</li>
       <li>Use mouse wheel for zoom-out/zoom-in:</li>
       <ul><li>Scroll-up direction to raise number of visible beats on screen</li></ul>
       <ul><li>Scroll-down direction to lower number of visible beats on screen</li></ul>
+      <li>Click on the time signature label to open Section preferences</li>
       <li>Use right mouse button to open context menu for various bar/beat operations line Copy, Paste ...</li>
-      <span></span>
-      <li>Click on the time signature label to open menu with preferences for more options like
-      time signature, length of the section (number of bars), ...</li>
     </ul>
   </p>
 
-<!--   <p>
-  </p> -->
-
-  <p class="md-indent">
-    <md-icon md-svg-icon="tip"></md-icon><i>Tip: &nbsp;</i>
-    Use <i>Bar Preferences</i> settings to adjust automatic slides transition that fits you the best during playback in <i>Section mode</i>.
-  </p>
 </section>

@@ -259,7 +259,7 @@ md-dialog.help-dialog.md-transition-in {
 }
 .help-container .bar.swiper-container .swiper-controls::after {
   position: absolute;
-  content: "Pagination controls";
+  content: "Pagination Controls";
   top: 48px;
   left: 0;
   right: 0;
@@ -284,7 +284,7 @@ md-dialog.help-dialog.md-transition-in {
 }
 .help-container .bar-preferences::after {
   position: absolute;
-  content: "Bar Preferences";
+  content: "Section Preferences";
   bottom: 44px;
   left: 0;
   color: #aaa;

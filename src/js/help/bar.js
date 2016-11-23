@@ -82,6 +82,20 @@
       backdrop.style.pointerEvents = 'none';
     }
 
+    function closeMenu() {
+      var backdrop = document.querySelector('.md-menu-backdrop');
+      if (backdrop) {
+        backdrop.click();
+      }
+    }
+
+    function closeSectionPreferences() {
+      if (timeSigButton) {
+        timeSigButton.classList.remove('hover');
+      }
+      closeMenu();
+    }
+
     var beatElem, timeSigButton;
     $scope.instructions = [
       function() {
@@ -107,7 +121,18 @@
           $scope.barSwiper.update();
         }, 400);
       },
+
       function() {
+        timeSigButton = $element[0].querySelector('.time-signature-button');
+        timeSigButton.classList.add('hover');
+        $timeout(timeSigButton.click.bind(timeSigButton), 700);
+        $timeout(deactivateBackdrop, 800, false);
+        return 3000;
+      },
+
+      function() {
+        closeSectionPreferences();
+
         $scope.contextMenu = {
           beat: $scope.slides[0].beat
         };
@@ -139,29 +164,14 @@
         if (beatElem) {
           beatElem.classList.remove('hover');
         }
-        var backdrop = document.querySelector('.md-menu-backdrop');
-        if (backdrop) {
-          backdrop.click();
-        }
+        closeMenu();
       },
-      function() {
-        timeSigButton = $element[0].querySelector('.time-signature-button');
-        timeSigButton.classList.add('hover');
-        $timeout(timeSigButton.click.bind(timeSigButton), 700);
-        $timeout(deactivateBackdrop, 800, false);
-        return 3000;
-      },
+
       function() {
         if (beatElem) {
           beatElem.classList.remove('hover');
         }
-        if (timeSigButton) {
-          timeSigButton.classList.remove('hover');
-        }
-        var backdrop = document.querySelector('.md-menu-backdrop');
-        if (backdrop) {
-          backdrop.click();
-        }
+        closeSectionPreferences();
         $scope.barSwiper.params.slidesPerView = 3;
         $scope.barSwiper.update();
       },

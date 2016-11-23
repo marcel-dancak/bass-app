@@ -11,7 +11,7 @@ Application to learn playing on the bass guitar
 ![Playlist Mode](docs/playlist.png)
 
 
-It is highly recommended to use Webkit-based browser. Application may not work properly in other browsers.
+It is highly recommended to use Blink/Webkit based browser. Application may not work properly in other browsers.
 
 **List of supported browsers:**
 
@@ -29,6 +29,8 @@ It is highly recommended to use Webkit-based browser. Application may not work p
 [Sublime - Santeria](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Sublime-Santeria)
 
 [Knight Rider](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#KnightRider)
+
+[Cantos de Jubilo](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Cantos_de_Jubilo)
 
 [Various short riffs](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Riffs)
 
