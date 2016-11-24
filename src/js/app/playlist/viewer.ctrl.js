@@ -324,16 +324,23 @@
     }
 
     $scope.player.play = function() {
+      var sections = playlist.reduce(function(list, section) {
+        if (list.indexOf(section) === -1) {
+          list.push(section);
+        }
+        return list;
+      }, []);
+
       if ($scope.player.visibleBeatsOnly) {
-        var firstSlideMeta = slidesMetadata[playerSwiper.snapIndex];
-        var visibleBeatsMeta = firstSlideMeta.beats.concat(slidesMetadata[playerSwiper.snapIndex+1].beats);
+        // var firstSlideMeta = slidesMetadata[playerSwiper.snapIndex];
+        // var visibleBeatsMeta = firstSlideMeta.beats.concat(slidesMetadata[playerSwiper.snapIndex+1].beats);
 
         // build a list of used sections
-        var sections = [];
-        new Set(visibleBeatsMeta.map(function(betaMeta) {return betaMeta.section}))
-          .forEach(function(sectionid) {
-            sections.push(projectManager.getSection(sectionid));
-          });
+        // var sections = [];
+        // new Set(visibleBeatsMeta.map(function(betaMeta) {return betaMeta.section}))
+        //   .forEach(function(sectionid) {
+        //     sections.push(projectManager.getSection(sectionid));
+        //   });
 
         $scope.player.playing = true;
         audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
@@ -350,12 +357,6 @@
           initSlides = $q.when();
         }
         initSlides.then(function() {
-          var sections = playlist.reduce(function(list, section) {
-            if (list.indexOf(section) === -1) {
-              list.push(section);
-            }
-            return list;
-          }, []);
           $scope.player.playing = true;
           audioPlayer.fetchResourcesWithProgress(sections).then(playSection, failedToLoadResources);
         });
