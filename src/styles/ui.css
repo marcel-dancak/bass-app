@@ -87,10 +87,6 @@ md-backdrop.md-select-backdrop {
 }
 
 
-.md-open-menu-container .preferences {
-  max-width: 300px;
-}
-
 .preferences md-list {
   padding: 2px 10px;
 }

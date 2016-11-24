@@ -15,6 +15,9 @@
   height: 44px;
   position: relative;
 }
+.control-panel ::selection {
+  background: #ffb7b7;
+}
 
 .instruments-toolbar {
   margin-left: 10px;
@@ -128,6 +131,7 @@
   font-size: 12px;
   pointer-events: none;
 }
+.bpm-field::-webkit-validation-bubble-message { display: none; }
 
 .playback-speed-field::after {
   content: "%";
@@ -362,7 +366,7 @@ md-dialog .dialog-header {
 }
 
 .playlist-range {
-  width: 150px;
+  width: 210px;
   overflow: auto;
 }
 .playlist-range .playback-range {

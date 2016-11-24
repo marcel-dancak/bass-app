@@ -20,6 +20,19 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 * Opera
 
 
+**Future plans:**
+
+* Channel on Patreon to fund this project
+* Vibrato playing style for bass
+* Configurable bass strings tunning
+* Improve percussions (more configurability, sound samples, ...)
+* Spanish translation
+* Undo/Redo function for editor
+* Build desktop application (Electron)
+* Migrate code from Angular to Vue 2
+* Musical score view
+
+
 ### Examples
 
 [Jamiroquai - Runaway](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
