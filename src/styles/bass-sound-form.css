@@ -34,11 +34,22 @@
   bottom: 0;
 }
 
-.bass-sound-form .volume-field md-input-container {
+.bass-sound-form md-input-container.volume-field {
   width: 65px;
-  height: 35px;
+  height: 36px;
   margin-top: 20px;
   margin-bottom: 1px;
+}
+.bass-sound-form .play-field {
+  height: 34px;
+}
+.bass-sound-form md-input-container.volume-field .md-errors-spacer {
+  display: none;
+}
+
+.bass-sound-form .volume-slider {
+  margin-left: 4px;
+  margin-right: 4px;
 }
 
 .bass-sound-form .horizontal-space {
@@ -46,10 +57,14 @@
 }
 
 .bass-sound-form .play-button {
-  margin: 2px;
+  margin: 0;
   padding: 0px;
-  min-width: 40px;
+  min-width: 36px;
+  min-height: 32px;
+  line-height: 32px;
+  text-align: left;
 }
+
 .bass-sound-form .clear-button.md-focused,
 .bass-sound-form .clear-button:hover:not([disabled]) {
   background-color: transparent;

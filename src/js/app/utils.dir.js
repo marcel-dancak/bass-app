@@ -6,12 +6,24 @@
     .directive('bdTextarea', bdTextarea)
     .directive('ngRightClick', contextMenu)
     .directive('bdFileDrop', bdFileDrop)
+    .directive('bdDisableStepValidator', bdDisableStepValidator)
 
+
+  function bdDisableStepValidator($parse) {
+    return {
+      require: 'ngModel',
+      link: function(scope, iElem, iAttrs, ngModel) {
+        if (ngModel.$validators.step) {
+          delete ngModel.$validators.step;
+        }
+      }
+    }
+  }
 
   function contextMenu($parse) {
-    return function(scope, element, attrs) {
-      var fn = $parse(attrs.ngRightClick);
-      element.bind('contextmenu', function(event) {
+    return function(scope, iElem, iAttrs) {
+      var fn = $parse(iAttrs.ngRightClick);
+      iElem.bind('contextmenu', function(event) {
         scope.$apply(function() {
           event.preventDefault();
           fn(scope, {$event:event});

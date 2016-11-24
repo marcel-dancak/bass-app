@@ -301,42 +301,45 @@
     </md-checkbox>
   </div>
 
-  <div
-    layout="row"
-    class="volume-field">
+  <div layout="row">
     <md-input-container
-      flex="none">
-      <label>Volume</label>
+      flex="none"
+      class="volume-field">
+      <label class="md-label md-no-float">Volume</label>
       <input
         type="number"
-        min="0.01"
+        min="0"
         max="1"
         step="0.01"
         ng-model="sound.volume"
+        bd-disable-step-validator
         ng-disabled="sound.style === 'ring'">
     </md-input-container>
+
     <rzslider
+      class="volume-slider"
       rz-slider-model="sound.volume"
       rz-slider-options="{
         floor: 0,
         ceil: 1,
         step: 0.01,
         precision: 2,
-        minLimit: 0.01,
+        enforceStep: false,
         hideLimitLabels: true,
         hidePointerLabels: true,
-        showSelectionBar: true,
         disabled: sound.style === 'ring'
       }">
     </rzslider>
-
-    <md-button
-      md-no-ink
-      aria-label="Play"
-      class="play-button icon-hover"
-      md-prevent-menu-close
-      ng-click="playSound()">
-      <md-icon md-svg-icon="play"></md-icon>
-    </md-button>
+    <md-input-container class="play-field">
+      <label class="md-label md-no-float">Play</label>
+      <md-button
+        md-no-ink
+        aria-label="Play"
+        class="play-button icon-hover"
+        md-prevent-menu-close
+        ng-click="playSound()">
+        <md-icon md-svg-icon="play"></md-icon>
+      </md-button>
+    </md-input-container>
   </div>
 </div>
