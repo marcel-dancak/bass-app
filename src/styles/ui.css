@@ -588,7 +588,7 @@ md-tooltip md-divider {
   transform: none;
 }
 .open-project-dialog {
-  overflow: hidden;
+  overflow: visible;
 }
 .open-project-dialog md-dialog-content {
   position: relative;
@@ -611,6 +611,13 @@ md-tooltip md-divider {
 .open-project-dialog .confirm-actions {
   border-top: 1px solid #ccc;
   z-index: 1;
+}
+.open-project-dialog .info-note {
+  color: #444;
+  left: 0;
+  right: 0;
+  position: absolute;
+  top: -22px;
 }
 
 .open-project-dialog p.confirm.ng-hide-add,
@@ -750,4 +757,11 @@ md-input-container label.md-no-float {
 .bottom-note.md-input-focused span {
   color: transparent;
   pointer-events: none;
+}
+
+.info-note {
+  padding: 4px 0;
+  text-align: center;
+  font-size: 13px;
+  color: #777;
 }

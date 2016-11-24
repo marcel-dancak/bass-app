@@ -1,5 +1,15 @@
-Application to learn playing on the bass guitar
+The main purpose of this application is to help starting bass players with their learing process.
+Application is highly focused on rhythm aspect of the music by using easy to understand timeline
+representation with labels for proper counting. It can be used to create various rhythmic excercises,
+drums backing tracks, or bass covers.
 
+**Main features:**
+
+* various playback options to adjust playback speed, playback selection, repeating
+* multiple tracks (instruments) support with separate volume control
+* customizable bass sound labels (fret numbers, note names, ...)
+* easy to use user interface
+* pure HTML 5 application, can be served online or run locally
 
 ### Bass Editor
 ![Section Mode - Bass Editation](docs/bass.png)

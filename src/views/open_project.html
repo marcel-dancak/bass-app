@@ -1,4 +1,5 @@
 <md-dialog class="open-project-dialog">
+  <div class="info-note">Drag project file to import project</div>
   <div class="dialog-header">
     Projects
     <md-button
@@ -9,8 +10,8 @@
       <md-icon md-svg-icon="x"></md-icon>
     </md-button>
   </div>
+
   <md-dialog-content bd-file-drop="importProjectFile($file)">
-    <!-- <md-subheader class="md-no-sticky">Instrument</md-subheader> -->
     <md-list
       md-no-ink
       ng-init="

@@ -223,14 +223,12 @@
   background-color: #fff;
   z-index: 2;
 }
+
 .playlist-editor .info-note {
   position: absolute;
   top: -3px;
   left: 0;
   right: 0;
-  text-align: center;
-  font-size: 13px;
-  color: #777;
 }
 
 .playlist-editor.ng-enter, .playlist-editor.ng-leave {

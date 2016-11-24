@@ -4,16 +4,18 @@
   <h4 style="top:20px;">{{ ::item.sections[0] }}</h4>
   <p>
     The main purpose of this application is to help starting bass players with their learing process.
-    Application is highly focused on rhythm aspect of the music by using easy to understand timeline representation with labels for proper counting.
-    It can be used to create various rhythmic excercises, drums backing tracks, or bass covers.
+    Application is highly focused on rhythm aspect of the music by using easy to understand timeline
+    representation with labels for proper counting. It can be used to create various rhythmic excercises,
+    drums backing tracks, or bass covers.
   </p>
 
   <h5>Features:</h5>
   <ul>
-    <li>various playback options to configure playback speed, playback selection, repeating</li>
+    <li>various playback options to adjust playback speed, playback selection, repeating</li>
+    <li>multiple tracks (instruments) support with separate volume control</li>
     <li>customizable bass sound labels (fret numbers, note names, ...)</li>
-    <li>separate volume control for every instrument (track)</li>
     <li>easy to use user interface</li>
+    <li>pure HTML 5 application, can be served online or run locally</li>
   </ul>
 
   <h5>Before you start</h5>
@@ -21,11 +23,11 @@
   <p>
     Several topics of this user manual contains slide show animations, which are running only
     when a particular topic is active (highlighted in the index section on the left side).
-    So when you scroll over the page content, take some care and check that appropriate is highlighted.
+    So when you scroll over the page content, take some care and check that appropriate topic is highlighted.
   </p>
 
   <p>
-    Application use HTML 5 Audio Web API for audio playback and works best in Webkit-based browser like:
+    Application use HTML 5 Audio Web API for audio playback and works best in Blink/Webkit based browser like:
     <ul>
       <li><b>Chrome</b></li>
       <li><b>Chromium</b></li>
@@ -33,7 +35,10 @@
     </ul>
 
   <p>
-    Web version of this application use browser's <a target="_blank" href="http://www.w3schools.com/html/html5_webstorage.asp">local storage</a> for saving projects, so be careful with clearing browser's data. It also means that project saved in one browser will not be available in another one.
+    Web version of this application use browser's <a target="_blank" href="http://www.w3schools.com/html/html5_webstorage.asp">
+    local storage</a> for saving projects, so be careful with clearing browser's data. It also means that each browser has
+    independent workspace for storing data, and this workspace also depends on url used to serve this application. To move
+    projects between different workspaces, use Export/Import functions to write/read project files.
   </p>
 </section>
 
