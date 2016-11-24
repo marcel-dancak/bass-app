@@ -55,27 +55,27 @@
         }, {
           name: 'maracas',
           label: 'Maracas',
-          filename: 'sounds/drums/bongo/shaker_009'
+          filename: 'sounds/percussion/shaker_009'
         }, {
           name: 'cabasa',
           label: 'Cabasa',
-          filename: 'sounds/drums/bongo/shaker_002'
+          filename: 'sounds/percussion/shaker_002'
         }, {
           name: 'bongo',
           label: 'Bongo',
-          filename: 'sounds/drums/bongo/bongo_001d'
+          filename: 'sounds/percussion/bongo_001d'
         }, {
           name: 'djembe',
           label: 'Djembe',
-          filename: 'sounds/drums/bongo/bongo_005d'
+          filename: 'sounds/percussion/bongo_005d'
         }, {
           name: 'conga',
           label: 'Conga',
-          filename: 'sounds/drums/bongo/bongo_006r'
+          filename: 'sounds/percussion/bongo_006r'
         }, {
           name: 'cajon',
           label: 'Cajon',
-          filename: 'sounds/drums/bongo/bongo_002c'
+          filename: 'sounds/percussion/bongo_002c'
         }
       ]
     };
