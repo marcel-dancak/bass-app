@@ -111,9 +111,6 @@
 
   var dragBox = {
     elem: angular.element('<div class="drag-box"></div>')[0],
-    setLabel: function(label) {
-      this.elem.children[0].innerHTML = label;
-    },
     setPxStyles: function(styles) {
       // Object.keys(styles).forEach(function(key))
       for (var key in styles) {
@@ -396,12 +393,14 @@
   }
 
 
-  function resizeHandler($timeout, workspace, swiperControl, basicHandler) {
+  function resizeHandler($timeout, workspace, swiperControl, basicHandler, Note) {
 
     var resizeBox = {
-      elem: angular.element('<div class="resize-box"><label></label></div>')[0],
-      setLabel: function(label) {
-        this.elem.children[0].innerHTML = label;
+      elem: angular.element('<div class="resize-box"><i></i></div>')[0],
+      setSymbol: function(symbol, dotted) {
+        var labelElem = this.elem.children[0];
+        labelElem.className = symbol;
+        labelElem.innerHTML = dotted? '.' : '';
       },
       setPxStyles: function(styles) {
         // Object.keys(styles).forEach(function(key))
@@ -411,13 +410,11 @@
       }
     };
 
-    var noteLengthSymbols = {
-      1: '𝅝',
-      0.5: '𝅗𝅥',
-      0.25: '𝅘𝅥',
-      0.125: '𝅘𝅥𝅮',
-      0.0625: '𝅘𝅥𝅯'
-    };
+    var noteLengthSymbols = {};
+    for (name in Note) {
+      var note = Note[name];
+      noteLengthSymbols[note.value] = note.symbol;
+    }
 
     var noteLengths = [
       {
@@ -520,11 +517,8 @@
           }
         });
         resizeBox.setPxStyles({width: closestWidth});
-        var label = noteLengthSymbols[resizeLength.length];
-        if (resizeLength.dotted) {
-          label += ' .';
-        }
-        resizeBox.setLabel(label);
+        var symbol = noteLengthSymbols[resizeLength.length];
+        resizeBox.setSymbol(symbol, resizeLength.dotted);
       },
 
       onResizeEnd: function(grid, info, evt) {
@@ -552,7 +546,7 @@
           }
         }
         info.element.css('width', '');
-        resizeBox.setLabel('');
+        resizeBox.setSymbol('');
         resizeBox.elem.style.opacity = 0.001;
         resizeBox.elem.remove();
 

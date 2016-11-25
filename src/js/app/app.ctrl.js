@@ -6,12 +6,39 @@
     .controller('AppController', AppController)
     .value('context', new AudioContext())
     .value('workspace', {})
+    .constant('Note', {
+      Whole: {
+        name: 'Whole',
+        symbol: 'whole-note',
+        value: 1
+      },
+      Half: {
+        name: 'Half',
+        symbol: 'half-note',
+        value: 0.5
+      },
+      Quarter: {
+        name: 'Quarter',
+        symbol: 'quarter-note',
+        value: 0.25
+      },
+      Eighth: {
+        name: 'Eighth',
+        symbol: 'eighth-note',
+        value: 0.125
+      },
+      Sixteenth: {
+        name: 'Half',
+        symbol: 'sixteenth-note',
+        value: 0.0625
+      }
+    })
     .run(function($mdDialog) {
       if (!window.chrome) {
         var alert = $mdDialog.alert()
         .title('Warning')
         .textContent(
-          'It is highly recommended to use Webkit-based browser (Chrome, Chromium, Opera). '+
+          'It is highly recommended to use Blink/Webkit based browser (Chrome, Chromium, Opera). '+
           'Application may not work properly in other browsers.'
         )
         .theme(' ')
@@ -22,7 +49,8 @@
     });
 
   function AppController($scope, $timeout, $q, $mdDialog, context, workspace,
-      audioPlayer, audioVisualiser, projectManager, Drums, dataUrl) {
+      audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
+    $scope.Note = Note;
 
     $scope.ui = {
       selectTrack: angular.noop,

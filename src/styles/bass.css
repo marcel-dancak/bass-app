@@ -377,18 +377,21 @@
   left: -2px;
   position: absolute;
 }
-.resize-box label {
+.resize-box i {
   position: absolute;
   right: 0;
   top: -30px;
-  font-size: 20px;
+  font-size: 19px;
   width: 26px;
   height: 26px;
-  text-align: center;
+  text-align: left;
   line-height: 28px;
   background-color: rgba(33,150,243, 0.75);
   border-radius: 5px;
-  letter-spacing: 1px;
+  xletter-spacing: -2px;
+}
+.resize-box i:empty {
+  text-align: center;
 }
 
 .resize-container {

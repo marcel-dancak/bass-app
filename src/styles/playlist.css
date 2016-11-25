@@ -184,10 +184,9 @@
   left: -50px;
 }
 
-.section-info .note-symbol {
-  font-size: 20px;
-  line-height: 16px;
-  width: 7px;
+.section-info i {
+  font-size: 18px;
+  width: 14px;
   display: inline-block;
 }
 

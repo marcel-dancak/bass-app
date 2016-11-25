@@ -10,7 +10,7 @@ var path = require('path');
 var babel = require('gulp-babel');
 
 
-var TARGET = 'dist/v16/';
+var TARGET = 'dist/v17/';
 
 var DEV_JS = 'src/js/**/*.js';
 var DEV_HTML = 'src/views/**/*.html';
@@ -175,7 +175,7 @@ gulp.task('csss', function() {
       'bower_components/swiper/dist/css/swiper.min.css',
       'bower_components/angularjs-slider/dist/rzslider.css',
       'src/styles/**/*.css',
-      '!src/styles/fonts.css'
+      // '!src/styles/fonts.css'
     ])
       .pipe(minifyCss())
       .pipe(concat('styles.min.css'))
@@ -184,11 +184,14 @@ gulp.task('csss', function() {
     gulp.src('src/styles/icons.svg')
       .pipe(gulp.dest(TARGET + 'styles')),
 
-    gulp.src('src/favicon-16x16.png')
-      .pipe(gulp.dest(TARGET))
+    gulp.src('src/styles/images/*.svg')
+      .pipe(gulp.dest(TARGET + 'styles/images')),
 
-    // gulp.src('src/styles/fonts/*')
-    //   .pipe(gulp.dest(TARGET + 'styles/fonts'))
+    gulp.src('src/favicon-16x16.png')
+      .pipe(gulp.dest(TARGET)),
+
+    gulp.src('src/styles/fonts/*')
+      .pipe(gulp.dest(TARGET + 'styles/fonts'))
   );
 });
 
