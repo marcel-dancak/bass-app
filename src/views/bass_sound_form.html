@@ -273,16 +273,16 @@
         ng-model="sound.noteLength.length"
         md-on-close="soundLengthChanged(sound)">
         <md-option
-          ng-repeat="value in [
-            ['𝅝', 'Whole', 1],
-            ['𝅗𝅥', 'Half', 0.5],
-            ['𝅘𝅥', 'Quarter', 0.25],
-            ['𝅘𝅥𝅮', 'Eighth', 0.125],
-            ['𝅘𝅥𝅯', 'Sixteenth', 0.0625]
+          ng-repeat="note in ::[
+            Note.Whole,
+            Note.Half,
+            Note.Quarter,
+            Note.Eighth,
+            Note.Sixteenth
           ]"
-          ng-value="{{ value[2] }}">
-          <span class="note-symbol">{{ ::value[0] }}</span>
-          <span class="note-length-title"> {{ ::value[1] }}</span>
+          ng-value="{{ ::note.value }}">
+          <i class="{{ ::note.symbol }}"></i>
+          <span class="note-length-title"> {{ ::note.name }}</span>
         </md-option>
       </md-select>
     </md-input-container>
