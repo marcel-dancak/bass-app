@@ -14,7 +14,7 @@
 
 .fretboard-scroller {
   overflow-x: auto;
-  padding-left: 55px;
+  padding-left: 51px;
 }
 .fretboard-table {
   width: calc(100% - 2px);
@@ -154,7 +154,7 @@ md-input-container.input-inline-label label {
 }
 
 .ghost-notes-container {
-  width: 54px;
+  width: 50px;
   position: absolute;
   left: 8px;
   top: 22px;

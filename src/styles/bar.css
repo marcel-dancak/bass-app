@@ -131,7 +131,7 @@
 
 .bar-container {
   position: relative;
-  margin: 0 22px 1vh 57px;
+  margin: 0 18px 1vh 48px;
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 

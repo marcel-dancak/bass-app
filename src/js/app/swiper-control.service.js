@@ -58,9 +58,9 @@
     SwiperControl.prototype.updateSubbeatsVisibility = function() {
       var slideWidth = this.barSwiper.width / this.barSwiper.params.slidesPerView;
       var visibleSubbeats;
-      if (slideWidth > 220) {
+      if (slideWidth >= 200) {
         this.swiperConfig.visibleSubbeats = 4;
-      } else if (slideWidth > 110) {
+      } else if (slideWidth >= 100) {
         this.swiperConfig.visibleSubbeats = 2;
       } else {
         this.swiperConfig.visibleSubbeats = 2;

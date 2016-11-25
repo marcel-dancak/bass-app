@@ -357,7 +357,7 @@ md-menu-item.menu-group-item .group-item-title {
 }
 
 .workspace .instrument-grid {
-  margin: 0 22px 0 57px;
+  margin: 0 18px 0 48px;
   position: relative;
   xoverflow: hidden;
 }
@@ -406,7 +406,7 @@ md-menu-item.menu-group-item .group-item-title {
 .instrument-left-panel {
   position: absolute;
   top: 0;
-  left: -44px;
+  left: -42px;
   bottom: 0;
 }
 
