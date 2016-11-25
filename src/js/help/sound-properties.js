@@ -57,7 +57,8 @@
           noteLength: {
             length: 1/16,
             beatLength: 1/16
-          }
+          },
+          volume: 0.75
         });
       },
       /* Create a second sound */

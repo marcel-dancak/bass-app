@@ -74,7 +74,7 @@
         item.repeats = 1;
         workspace.playlist.items.push(item)
       });
-      $scope.availableSections = [];
+      updatePlaylist();
     };
 
     function playlistLoaded() {
