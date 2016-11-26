@@ -32,7 +32,6 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 
 **Future plans:**
 
-* Channel on Patreon to fund this project
 * Vibrato playing style for bass
 * Configurable bass strings tunning
 * Improve percussions (more configurability, sound samples, ...)
@@ -43,7 +42,13 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 * Musical score view
 
 
+### [Open Application](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html)
+
 ### Examples
+
+Here are some examples of projects. Please note, that you cannot save changes
+in these online (remote) projects. Click on the link above to open application
+for creating your own projects.
 
 [Jamiroquai - Runaway](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
 
@@ -58,6 +63,11 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 [Various short riffs](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Riffs)
 
 
-### Empty Application
+### Project support
 
-[Empty Project](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html)
+This application is free to use with all its features. There is a plan for the future to provide
+some extra services oriented more toward content (lessons, covers) and support, that will hopefully
+ensure sufficient financial resources to keep this project alive - implementation of new features,
+bug-fixing, dedicated version for mobile devices, ...
+
+If you would like to support this project directly, you can use [PayPal](https://www.paypal.me/MarcelDancak).
