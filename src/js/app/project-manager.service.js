@@ -484,6 +484,7 @@
 
     ProjectManager.prototype.saveAsNewSection = function(newName) {
       var tracks = this.section.tracks;
+      delete this.section.tracks;
       var newSection = this.createSection(this.section);
       newSection.name = newName || "New";
       newSection.tracks = tracks;
