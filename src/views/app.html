@@ -94,6 +94,7 @@
 
         <md-button
           md-no-ink
+          aria-label="Signal Graph"
           class="md-fab toggle-button icon-hover audio-graph-toggle"
           ng-class="{active: player.graphEnabled}"
           ng-click="player.graphEnabled = !player.graphEnabled">
@@ -101,9 +102,9 @@
           <md-tooltip
             md-delay="1500"
             class="multiline-tooltip">
-            <p><b>Audio signal visualization</b></p>
+            <p><b translate="SIGNAL_VISUALIZATION"></b></p>
             <md-divider></md-divider>
-            <p>Display audio track/input signal visualization during playback</p>
+            <p translate="SIGNAL_VISUALIZATION_DESC"></p>
           </md-tooltip>
         </md-button>
       </div>
@@ -212,9 +213,20 @@
     style="visibility:hidden;">
   </div> -->
 
-  <!-- <div flex></div> -->
-
   <footer layout="row">
+    <a
+      class="button"
+      ng-click="setLanguage('en')"
+      ng-class="{active: language === 'en'}">
+      en
+    </a>
+    <span class="separator">|</span>
+    <a
+      class="button"
+      ng-click="setLanguage('es')"
+      ng-class="{active: language === 'es'}">
+      es
+    </a>
     <span flex></span>
     <span>Developed by Marcel Dancak</span>
     <md-button
@@ -224,7 +236,9 @@
       target="_blank"
       href="https://github.com/marcel-dancak/drums-and-bass">
       <md-icon md-svg-icon="github"></md-icon>
-      <md-tooltip md-delay="1500" md-direction="left">GitHub</md-tooltip>
+      <md-tooltip md-delay="1500" md-direction="left">
+        <span translate="PROJECT_WEB"></span>
+      </md-tooltip>
     </md-button>
     <md-button
       md-no-ink
@@ -232,8 +246,9 @@
       class="icon-hover"
       ng-click="showHelp()">
       <md-icon md-svg-icon="help"></md-icon>
-      <md-tooltip md-delay="1500" md-direction="left">Help</md-tooltip>
+      <md-tooltip md-delay="1500" md-direction="left">
+        <span translate="HELP"></span>
+      </md-tooltip>
     </md-button>
-    <!-- <span flex></span> -->
   </footer>
 </div>

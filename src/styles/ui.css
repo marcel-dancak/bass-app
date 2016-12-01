@@ -639,6 +639,7 @@ md-tooltip md-divider {
 }
 .new-track-dialog md-input-container {
   margin: 24px 16px 4px 16px;
+  display: block;
 }
 
 .note-symbol {
@@ -684,16 +685,16 @@ footer {
   opacity: 0.6;
   position: absolute;
   bottom: 0;
-  xleft: 0;
   right: 12px;
   z-index: 100;
 }
-footer span {
+footer span, a.button {
   color: #777;
   font-size: 14px;
   line-height: 36px;
   height: 36px;
   padding: 4px 10px 0 10px;
+  cursor: default;
 }
 footer .md-button {
   padding: 0;
@@ -701,6 +702,16 @@ footer .md-button {
   min-width: 36px;
   line-height: 36px;
   height: 36px;
+}
+footer a.button {
+  cursor: pointer;
+}
+footer a.button.active {
+  color: #2196F3;
+}
+footer .separator {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 md-input-container label.md-no-float {

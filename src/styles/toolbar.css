@@ -314,12 +314,14 @@ md-dialog .dialog-header {
   overflow: visible;
 }
 
-.select-text-container > md-input-container:last-child:not(.md-input-focused) label {
-  display: none;
+.select-text-container md-input-container.md-input-focused + md-input-container label {
+  color: #2196F3!important;
 }
-.select-text-container > md-input-container:last-child:not(.md-input-focused) input {
+
+.select-text-container md-input-container.md-input-focused + md-input-container input {
   border-color: transparent;
 }
+
 .select-text-container > md-input-container:last-child input {
   padding-right: 30px;
 }
@@ -362,7 +364,7 @@ md-dialog .dialog-header {
 }
 
 .control-panel md-select[disabled] .md-select-value {
-  color: transparent;
+  display: none;
 }
 
 .playlist-range {
