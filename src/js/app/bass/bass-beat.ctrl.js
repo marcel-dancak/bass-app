@@ -37,7 +37,8 @@
   }
 
 
-  function BassFormController($scope, $timeout, sound, string, bass, audioPlayer, basicHandler, mdPanelRef) {
+  function BassFormController($scope, $timeout, Note, sound, string, bass, audioPlayer, basicHandler, mdPanelRef) {
+    $scope.Note = Note;
     $scope.keyPressed = function(evt) {
       basicHandler.keyPressed(evt);
       if (evt.keyCode === 46) {
@@ -135,7 +136,7 @@
         svgElem.style.width = width;
       });
     };
-    if (sound.note && sound.note.type === 'bended') {
+    if (sound.note && sound.note.type === 'bend') {
       $scope.updateLineEditor();
     }
 

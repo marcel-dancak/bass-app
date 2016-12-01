@@ -2,7 +2,7 @@
   <md-input-container
     ng-switch-when="0"
     class="bpm-field">
-    <label class="md-no-float">Speed</label>
+    <label class="md-no-float" translate="SPEED"></label>
     <input
       type="number"
       min="30"
@@ -16,7 +16,7 @@
   <md-input-container
     ng-switch-when="1"
     class="playback-speed-field">
-    <label class="md-no-float">Speed</label>
+    <label class="md-no-float" translate="SPEED"></label>
     <input
       type="number"
       min="20"
@@ -53,7 +53,7 @@
   <md-icon
     md-svg-icon="countdown">
   </md-icon>
-  <md-tooltip md-delay="1500">Countdown</md-tooltip>
+  <md-tooltip md-delay="1500"><span translate="COUNTDOWN"></span></md-tooltip>
 </md-button>
 
 <md-button
@@ -65,7 +65,7 @@
   <md-icon
     md-svg-icon="loop">
   </md-icon>
-  <md-tooltip md-delay="1500">Repeat mode</md-tooltip>
+  <md-tooltip md-delay="1500"><span translate="REPEAT"></span></md-tooltip>
 </md-button>
 
 <md-button
@@ -83,14 +83,9 @@
   <md-tooltip
     md-delay="1500"
     class="multiline-tooltip">
-    <p><b>Visible screen playback</b></p>
+    <p><b translate="SCREEN_PLAYBACK"></b></p>
     <md-divider></md-divider>
-    <p>Play only visible area on the screen (without automatic slides transition)
-      <!-- <ul>
-        <li>Restricts playback to visible screen</li>
-        <li>Disables automatic slides transition during playback</li>
-      </ul> -->
-    </p>
+    <p translate="SCREEN_PLAYBACK_DESC"></p>
   </md-tooltip>
 </md-button>
 
@@ -100,6 +95,7 @@
   class="playback-range-menu">
   <md-button
     md-no-ink
+    aria-label="Selection playback"
     class="toggle-button toolbar-separated-button icon-hover"
     ng-class="{
       active: player.playbackRange.start > 1 || player.playbackRange.end < player.playbackRange.max
@@ -112,9 +108,9 @@
     <md-tooltip
       md-delay="1500"
       class="multiline-tooltip">
-      <p><b>Selection playback</b></p>
+      <p><b translate="SELECTION_PLAYBACK"></b></p>
       <md-divider></md-divider>
-      <p>Select visible range for playback</p>
+      <p translate="SELECTION_PLAYBACK_DESC"></p>
     </md-tooltip>
   </md-button>
   <md-menu-content
@@ -123,7 +119,7 @@
     <div
       ng-show="player.mode === 0"
       class="section-range">
-      <label>Bars Selection</label>
+      <label translate="ACTIVE_BARS"></label>
       <rzslider
         class="range-slider"
         ng-class="{ long: workspace.section.length > 10 }"
@@ -145,7 +141,7 @@
     <div
       ng-show="player.mode === 1"
       class="playlist-range">
-      <label>Playlist Selection</label>
+      <label translate="ACTIVE_SECTIONS"></label>
       <rzslider
         class="range-slider"
         ng-style="{

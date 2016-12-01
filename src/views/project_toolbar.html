@@ -1,5 +1,5 @@
 <div class="mode-switch">
-  <label>Mode</label>
+  <label translate="MODE"></label>
   <md-button
     md-no-ink
     aria-label="Loop"
@@ -12,12 +12,12 @@
     <md-tooltip
       md-delay="1500"
       class="multiline-tooltip">
-      <p><b>Section mode</b></p>
+      <p><b translate="SECTION_MODE"></b></p>
       <md-divider></md-divider>
       <p>
         <ul>
-          <li>Creating and editation of sections</li>
-          <li>Horizontal sliding</li>
+          <li translate="SECTION_MODE_DESC1"></li>
+          <li translate="SECTION_MODE_DESC2"></li>
         </ul>
       </p>
     </md-tooltip>
@@ -34,7 +34,7 @@
     <md-tooltip
       md-delay="1500"
       class="multiline-tooltip">
-      <p><b>Playlist mode</b></p>
+      <p><b translate="PLAYLIST_MODE"></b></p>
       <md-divider></md-divider>
       <p>
         <ul>
@@ -54,7 +54,6 @@
 
     <div class="select-text-container">
       <md-input-container>
-        <label class="md-no-float">Section</label>
         <md-select
           md-no-ink
           ng-disabled="project.sections.length < 2"
@@ -80,7 +79,7 @@
       </md-input-container>
 
       <md-input-container>
-        <label class="md-no-float">Section</label>
+        <label class="md-no-float" translate="SECTION"></label>
         <input
           required
           md-no-asterisk
@@ -99,14 +98,13 @@
       <md-icon
         md-svg-icon="save">
       </md-icon>
-      <md-tooltip md-delay="1500">Save</md-tooltip>
+      <md-tooltip md-delay="1500"><span translate="SAVE"></span></md-tooltip>
     </md-button>
   </form>
 
   <form ng-if="player.mode === 1">
     <div class="select-text-container">
-      <md-input-container>
-        <label class="md-no-float">Playlist</label>
+      <md-input-container class="md-input-has-value">
         <md-select
           md-no-ink
           ng-disabled="project.playlists.length < 2"
@@ -131,7 +129,7 @@
         </md-select>
       </md-input-container>
       <md-input-container>
-        <label class="md-no-float">Playlist</label>
+        <label class="md-no-float" translate="PLAYLIST"></label>
         <input
           required
           md-no-asterisk
@@ -149,7 +147,7 @@
       <md-icon
         md-svg-icon="save">
       </md-icon>
-      <md-tooltip md-delay="1500">Save</md-tooltip>
+      <md-tooltip md-delay="1500"><span translate="SAVE"></span></md-tooltip>
     </md-button>
   </form>
 
@@ -163,7 +161,7 @@
       <md-icon
         md-svg-icon="menu-dots">
       </md-icon>
-      <md-tooltip md-delay="1500">Options</md-tooltip>
+      <md-tooltip md-delay="1500"><span translate="MAIN_MENU"></span></md-tooltip>
     </md-button>
     <md-menu-content
       md-no-ink
@@ -175,7 +173,11 @@
         <md-divider></md-divider>
         <div layout="row">
           <span flex></span>
-          <span flex="none" class="group-item-title">Project</span>
+          <span
+            flex="none"
+            class="group-item-title"
+            translate="PROJECT">
+          </span>
           <span flex="5"></span>
         </div>
       </md-menu-item>
@@ -184,8 +186,8 @@
         <md-button
           md-no-ink
           aria-label="New Project"
-          ng-click="newProject()">
-          New
+          ng-click="newProject()"
+          translate="NEW">
         </md-button>
       </md-menu-item>
 
@@ -193,8 +195,8 @@
         <md-button
           md-no-ink
           aria-label="Open Project"
-          ng-click="openProject()">
-          Open
+          ng-click="openProject()"
+          translate="OPEN">
         </md-button>
       </md-menu-item>
 
@@ -202,8 +204,8 @@
         <md-button
           md-no-ink
           aria-label="Export"
-          ng-click="exportProject()">
-          Export
+          ng-click="exportProject()"
+          translate="EXPORT">
         </md-button>
       </md-menu-item>
 
@@ -213,7 +215,11 @@
         <md-divider></md-divider>
         <div layout="row">
           <span flex></span>
-          <span flex="none" class="group-item-title">Section</span>
+          <span
+            flex="none"
+            class="group-item-title"
+            translate="SECTION">
+          </span>
           <span flex="5"></span>
         </div>
       </md-menu-item>
@@ -222,24 +228,24 @@
         <md-button
           md-no-ink
           aria-label="New Section"
-          ng-click="newSection()">
-          New
+          ng-click="newSection()"
+          translate="NEW">
         </md-button>
       </md-menu-item>
       <md-menu-item>
         <md-button
           md-no-ink
           aria-label="Save As"
-          ng-click="saveAsSection()">
-          Save As...
+          ng-click="saveAsSection()"
+          translate="SAVE_AS">
         </md-button>
       </md-menu-item>
       <md-menu-item ng-if-end>
         <md-button
           md-no-ink
           aria-label="Delete Section"
-          ng-click="deleteSection()">
-          Delete
+          ng-click="deleteSection()"
+          translate="DELETE">
         </md-button>
       </md-menu-item>
 
@@ -249,7 +255,11 @@
         <md-divider></md-divider>
         <div layout="row">
           <span flex></span>
-          <span flex="none" class="group-item-title">Playlist</span>
+          <span
+            flex="none"
+            class="group-item-title"
+            translate="PLAYLIST">
+          </span>
           <span flex="5"></span>
         </div>
       </md-menu-item>
@@ -258,16 +268,16 @@
         <md-button
           md-no-ink
           aria-label="New"
-          ng-click="newPlaylist()">
-          New
+          ng-click="newPlaylist()"
+          translate="NEW">
         </md-button>
       </md-menu-item>
       <md-menu-item ng-if-end>
         <md-button
           md-no-ink
           aria-label="Delete"
-          ng-click="deletePlaylist()">
-          Delete
+          ng-click="deletePlaylist()"
+          translate="DELETE">
         </md-button>
       </md-menu-item>
 

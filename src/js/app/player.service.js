@@ -125,7 +125,7 @@
             var duration = _this.noteDuration(sound, beatTime, timeSignature);
             prevAudio.duration += duration;
             prevAudio.endTime += duration;
-            if (sound.note.type === 'bended') {
+            if (sound.note.type === 'bend') {
               _this.composer.bend(prevAudio, sound, duration, startTime, beatTime, timeSignature);
             }
           }
@@ -152,7 +152,7 @@
         },
         {
           accepts: function(sound) {
-            return sound.note.type === 'bended';
+            return sound.note.type === 'bend';
           },
           getResources: function(sound) {
             return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];

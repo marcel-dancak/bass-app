@@ -97,7 +97,10 @@
     <md-input-container
       layout="row"
       class="input-inline-label">
-      <label class="md-label md-no-float">Style</label>
+      <label
+        class="md-label md-no-float"
+        translate="PLAYING_STYLE">
+      </label>
       <md-select
         md-no-ink
         aria-label="Style"
@@ -105,8 +108,8 @@
         ng-model="fretboard.style">
         <md-option
           ng-repeat="style in ::playingStyles"
-          ng-value="::style.name">
-          {{ ::style.label }}
+          ng-value="::style.name"
+          ng-attr-translate="{{ ::style.label }}">
         </md-option>
       </md-select>
     </md-input-container>
@@ -114,7 +117,10 @@
     <md-input-container
       layout="row"
       class="input-inline-label">
-      <label class="md-label md-no-float">Length</label>
+      <label
+        class="md-label md-no-float"
+        translate="NOTE_LENGTH">
+      </label>
       <md-select
         md-no-ink
         ng-model="fretboard.noteLength.length">
@@ -136,7 +142,10 @@
     <md-input-container
       layout="row"
       class="input-inline-label">
-      <label class="md-label md-no-float">Frets</label>
+      <label
+        class="md-label md-no-float"
+        translate="FRETS">
+      </label>
       <input
         type="number"
         min="19"

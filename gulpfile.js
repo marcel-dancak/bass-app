@@ -84,6 +84,7 @@ gulp.task('uglify', function() {
         'bower_components/angular/angular.min.js',
         'bower_components/angular-aria/angular-aria.min.js',
         'bower_components/angular-animate/angular-animate.min.js',
+        'bower_components/angular-translate/angular-translate.min.js',
 
         'src/lib/**/*.js',
 
@@ -174,8 +175,8 @@ gulp.task('csss', function() {
       'bower_components/angular-resizable/src/angular-resizable.css',
       'bower_components/swiper/dist/css/swiper.min.css',
       'bower_components/angularjs-slider/dist/rzslider.css',
-      'src/styles/**/*.css',
-      // '!src/styles/fonts.css'
+      'src/styles/ui.css',
+      'src/styles/**/*.css'
     ])
       .pipe(minifyCss())
       .pipe(concat('styles.min.css'))

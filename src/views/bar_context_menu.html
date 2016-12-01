@@ -20,7 +20,11 @@
       <md-divider></md-divider>
       <div layout="row">
         <span flex></span>
-        <span flex="none" class="group-item-title">Beat</span>
+        <span
+          flex="none"
+          class="group-item-title"
+          translate="BEAT">
+        </span>
         <span flex="5"></span>
       </div>
     </md-menu-item>
@@ -29,9 +33,10 @@
       <md-menu>
         <md-menu-item>
           <md-button
+            aria-label="Subdivision"
             class="submenu-trigger-button"
-            ng-click="$mdOpenMenu()">
-            Subdivision
+            ng-click="$mdOpenMenu()"
+            translate="SUBDIVISION">
           </md-button>
           <!-- <md-icon class="expand-icon" md-svg-icon="arrow-right-fill"></md-icon> -->
           <span class="expand-arrow">▶</span>
@@ -43,7 +48,10 @@
             ng-model="contextMenu.beat.subdivision"
             ng-value="4">
             <md-icon md-svg-icon="check"></md-icon>
-            <md-button>Standard</md-button>
+            <md-button
+              aria-label="Standard"
+              translate="SUBDIVISION_STANDARD">
+            </md-button>
           </md-menu-item>
 
           <md-menu-item
@@ -52,7 +60,10 @@
             ng-model="contextMenu.beat.subdivision"
             ng-value="3">
             <md-icon md-svg-icon="check"></md-icon>
-            <md-button>Triplet</md-button>
+            <md-button
+              aria-label="Triplet"
+              translate="SUBDIVISION_TRIPLET">
+            </md-button>
           </md-menu-item>
 
         </md-menu-content>
@@ -63,30 +74,37 @@
       <md-divider></md-divider>
       <div layout="row">
         <span flex></span>
-        <span flex="none" class="group-item-title">Bar</span>
+        <span
+          flex="none"
+          class="group-item-title"
+          translate="BAR">
+        </span>
         <span flex="5"></span>
       </div>
     </md-menu-item>
 
     <md-menu-item>
       <md-button
-        ng-click="copyBar()">
-        Copy
+        aria-label="Copy"
+        ng-click="copyBar()"
+        translate="COPY">
       </md-button>
     </md-menu-item>
 
     <md-menu-item>
       <md-button
+        aria-label="Paste"
         ng-disabled="workspace.clipboard.length === 0 || workspace.clipboard.type !== workspace.trackSection.type"
-        ng-click="pasteBar()">
-        Paste
+        ng-click="pasteBar()"
+        translate="PASTE">
       </md-button>
     </md-menu-item>
 
     <md-menu-item>
       <md-button
-        ng-click="clearBar()">
-        Clear
+        aria-label="Clear"
+        ng-click="clearBar()"
+        translate="CLEAR">
       </md-button>
     </md-menu-item>
   </md-menu-content>

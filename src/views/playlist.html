@@ -38,7 +38,7 @@
         layout="column"
         class="playlist-panel md-whiteframe-6dp">
         <div class="toolbar">
-          <label>Playlist</label>
+          <label translate="PLAYLIST"></label>
         </div>
         <md-list
           flex
@@ -76,11 +76,12 @@
         </md-list>
       </div>
       <md-button
+        md-no-ink
         aria-label="Clear"
         class="playlist-button"
         ng-click="clearPlaylist()">
         <md-icon md-svg-icon="x"></md-icon>
-        Clear
+        <span translate="CLEAR_ALL"></span>
       </md-button>
     </div>
 
@@ -90,7 +91,7 @@
         layout="column"
         class="playlist-panel md-whiteframe-6dp">
         <div class="toolbar">
-          <label>Sections</label>
+          <label translate="SECTIONS"></label>
         </div>
         <md-list
           flex
@@ -108,17 +109,19 @@
         </md-list>
       </div>
       <md-button
+        md-no-ink
         aria-label="Move all"
         class="playlist-button"
         ng-click="moveAllUnused()">
         <md-icon md-svg-icon="arrow-left"></md-icon>
-        Move all
+        <span translate="MOVE_ALL"></span>
       </md-button>
     </div>
 
     <!-- <div flex></div> -->
-    <p class="info-note">
-      Drag items from <b>Sections</b> list into the <b>Playlist</b>.
+    <p
+      class="info-note"
+      translate="PLAYLIST_INSTRUCTIONS">
     </p>
   </div>
 </div>

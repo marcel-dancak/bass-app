@@ -6,7 +6,7 @@
   ng-keyup="keyPressed($event)">
   <div layout="row">
     <md-input-container flex>
-      <label>Style</label>
+      <label translate="PLAYING_STYLE"></label>
       <md-select
         flex
         md-no-ink
@@ -14,33 +14,23 @@
         md-on-close="soundStyleChanged(sound.style)">
         <md-option
           ng-repeat="style in ::bass.playingStyles"
-          ng-value="::style.name">
-          {{ ::style.label }}
+          ng-value="::style.name"
+          ng-attr-translate="{{ ::style.label }}">
         </md-option>
       </md-select>
     </md-input-container>
 
     <md-input-container flex>
-      <label>Note</label>
+      <label translate="MUSIC_NOTE"></label>
       <md-select
         flex
         md-no-ink
         ng-model="sound.note.type"
         md-on-close="">
-        <md-option ng-value="'regular'">
-          Regular
-        </md-option>
-        <md-option ng-value="'ghost'">
-          Ghost
-        </md-option>
-        <md-option ng-value="'slide'">
-          Slide
-        </md-option>
-        <md-option ng-value="'grace'">
-          Grace
-        </md-option>
-        <md-option ng-value="'bended'">
-          Bended
+        <md-option
+          ng-repeat="item in ::['regular', 'ghost', 'slide', 'grace', 'bend']"
+          ng-value="item"
+          ng-attr-translate="{{ ::item | uppercase }}">
         </md-option>
       </md-select>
     </md-input-container>
@@ -51,7 +41,7 @@
     <md-input-container
       flex
       class="selectbox-spinner">
-      <label>Pitch</label>
+      <label translate="NOTE_PITCH"></label>
       <md-select
         md-no-ink
         md-container-class="note-select-menu"
@@ -110,7 +100,7 @@
           octave: sound.note.octave,
           fret: sound.note.fret
         }">
-      <label class="md-label">Slide To</label>
+      <label class="md-label" translate="SLIDE_TO"></label>
       <md-select
         md-container-class="note-select-menu"
         ng-model="sound.note.slide.endNote.code"
@@ -163,7 +153,7 @@
       sound.note.slide.start = sound.note.slide.start || 0.2;
       sound.note.slide.end = sound.note.slide.end || 0.8
     ">
-    <label class="md-label md-no-float">Slide timing</label>
+    <label class="md-no-float" translate="SLIDE_TIMING"></label>
     <div class="slide-graph line-editor"
       ng-class="{down: sound.note.slide.endNote.fret < sound.note.fret }">
       <rzslider
@@ -199,14 +189,14 @@
   </md-input-container>
 
   <md-input-container
-    ng-if="sound.note.type === 'bended'"
+    ng-if="sound.note.type === 'bend'"
     layout="row"
     class="line-editor-field"
     ng-init="
       sound.note.bend = sound.note.bend.pop? sound.note.bend : [0,0,0,0];
       updateLineEditor()
     ">
-    <label class="md-label md-no-float">Bend graph</label>
+    <label class="md-no-float" translate="BEND_GRAPH"></label>
     <div
       flex
       layout="row"
@@ -267,7 +257,10 @@
     layout="row"
     ng-disabled="!sound.note.type || sound.note.type === 'ghost'">
     <md-input-container flex="35">
-      <label class="md-label">Length</label>
+      <label
+        class="md-label"
+        translate="NOTE_LENGTH">
+      </label>
       <md-select
         md-no-ink
         ng-model="sound.noteLength.length"
@@ -282,7 +275,10 @@
           ]"
           ng-value="{{ ::note.value }}">
           <i class="{{ ::note.symbol }}"></i>
-          <span class="note-length-title"> {{ ::note.name }}</span>
+          <span
+            class="note-length-title"
+            ng-attr-translate="{{ ::note.label }}">
+          </span>
         </md-option>
       </md-select>
     </md-input-container>
@@ -291,13 +287,13 @@
       aria-label="Staccato"
       ng-model="sound.noteLength.dotted"
       ng-change="soundLengthChanged(sound)">
-      Dotted
+      <span translate="DOTTED_NOTE"></span>
     </md-checkbox>
     <md-checkbox
       flex="40"
       aria-label="Staccato"
       ng-model="sound.noteLength.staccato">
-      Staccato
+      <span translate="STACCATO_NOTE"></span>
     </md-checkbox>
   </div>
 
@@ -305,7 +301,7 @@
     <md-input-container
       flex="none"
       class="volume-field">
-      <label class="md-label md-no-float">Volume</label>
+      <label class="md-no-float" translate="VOLUME"></label>
       <input
         type="number"
         min="0"
@@ -331,7 +327,7 @@
       }">
     </rzslider>
     <md-input-container class="play-field">
-      <label class="md-label md-no-float">Play</label>
+      <label class="md-no-float" translate="PLAY"></label>
       <md-button
         md-no-ink
         aria-label="Play"

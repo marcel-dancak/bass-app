@@ -10,19 +10,19 @@
     $scope.playingStyles = [
       {
         name: 'finger',
-        label: 'Finger'
+        label: 'FINGER'
       }, {
         name: 'slap',
-        label: 'Slap'
+        label: 'SLAP'
       }, {
         name: 'pop',
-        label: 'Pop'
+        label: 'POP'
       }, {
         name: 'pick',
-        label: 'Pick'
+        label: 'PICK'
       }, {
         name: 'tap',
-        label: 'Tap'
+        label: 'TAP'
       }
     ];
 

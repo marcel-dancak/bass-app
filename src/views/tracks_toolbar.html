@@ -1,5 +1,5 @@
 <md-input-container class="track">
-  <label>Track</label>
+  <label translate="TRACK"></label>
   <md-select
     md-no-ink
     aria-label="Track"
@@ -27,13 +27,13 @@
         ng-value="false"
         ng-click="addTrackDialog($event)">
         <md-icon md-svg-icon="plus"></md-icon>
-        New
+        <span translate="NEW"></span>
       </md-option>
       <md-option
         ng-value="false"
         ng-click="removeTrack(ui.trackId)">
         <md-icon md-svg-icon="x"></md-icon>
-        Remove
+        <span translate="REMOVE"></span>
       </md-option>
     </div>
 
@@ -51,7 +51,9 @@
     <md-icon
       md-svg-icon="options">
     </md-icon>
-    <md-tooltip md-delay="1500">Instrument preferences</md-tooltip>
+    <md-tooltip md-delay="1500">
+      <span translate="INSTRUMENT_PREFERENCES"></span>
+    </md-tooltip>
   </md-button>
   <md-menu-content
     width="4"
@@ -76,9 +78,9 @@
     <md-tooltip
       md-delay="1500"
       class="multiline-tooltip">
-      <p><b>Volume preferences</b></p>
+      <p><b translate="VOLUME_PREFERENCES"></b></p>
       <md-divider></md-divider>
-      <p>Input channel can be used for playing and audio signal visualization</p>
+      <p translate="VOLUME_PREFERENCES_DESC"></p>
     </md-tooltip>
   </md-button>
 
@@ -126,7 +128,7 @@
 
       <md-list-item
         class="volume-field bottom-border">
-        <label>Input Volume</label>
+        <label translate="INPUT_VOLUME"></label>
         <rzslider
           rz-slider-model="player.input.audio.gain.value"
           rz-slider-options="{

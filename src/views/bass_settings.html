@@ -1,7 +1,7 @@
 <md-list>
 
   <md-list-item>
-    <label>Strings</label>
+    <label translate="STRINGS"></label>
     <md-input-container>
       <md-select
         md-no-ink
@@ -11,33 +11,35 @@
         ng-change="
           workspace.trackSection.instrument.setLayout(workspace.track.strings);
         ">
-        <md-option value="BEADG">B E A D G</md-option>
         <md-option value="EADG">E A D G</md-option>
+        <md-option value="BEADG">B E A D G</md-option>
+        <!-- <md-option value="EADGC">E A D G C</md-option> -->
       </md-select>
     </md-input-container>
   </md-list-item>
 
   <md-list-item>
-    <label>Labels</label>
+    <label translate="NOTE_LABELS"></label>
     <md-input-container>
       <md-select
         md-no-ink
         aria-label="Labels"
         md-container-class="preferences"
         ng-model="bass.settings.label">
-        <md-option value="name-and-fret">Name + Fret</md-option>
-        <md-option value="name">Name</md-option>
-        <md-option value="fret">Fret</md-option>
+        <md-option value="name-and-fret" translate="NAME_AND_FRET"></md-option>
+        <md-option value="name" translate="NOTE_NAME"></md-option>
+        <md-option value="fret" translate="FRET"></md-option>
       </md-select>
     </md-input-container>
   </md-list-item>
 
   <md-list-item md-no-ink class="checkbox-item">
-    <label>Colors</label>
+    <label translate="COLORS"></label>
     <md-input-container>
       <md-checkbox
+        aria-label="Colors"
         ng-model="bass.settings.colors">
-        Enabled
+        <span translate="ENABLED"></span>
       </md-checkbox>
     </md-input-container>
   </md-list-item>

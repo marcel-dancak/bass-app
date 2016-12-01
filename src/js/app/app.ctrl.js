@@ -8,27 +8,27 @@
     .value('workspace', {})
     .constant('Note', {
       Whole: {
-        name: 'Whole',
+        label: 'WHOLE',
         symbol: 'whole-note',
         value: 1
       },
       Half: {
-        name: 'Half',
+        label: 'HALF',
         symbol: 'half-note',
         value: 0.5
       },
       Quarter: {
-        name: 'Quarter',
+        label: 'QUARTER',
         symbol: 'quarter-note',
         value: 0.25
       },
       Eighth: {
-        name: 'Eighth',
+        label: 'EIGHTH',
         symbol: 'eighth-note',
         value: 0.125
       },
       Sixteenth: {
-        name: 'Half',
+        label: 'SIXTEENTH',
         symbol: 'sixteenth-note',
         value: 0.0625
       }
@@ -48,9 +48,20 @@
       }
     });
 
-  function AppController($scope, $timeout, $q, $mdDialog, context, workspace,
-      audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
+  function AppController($scope, $timeout, $q, $translate, $mdDialog, context,
+      workspace, audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
     $scope.Note = Note;
+
+    $scope.language = 'en';
+    $scope.setLanguage = function(code) {
+      $scope.language = code;
+      $translate.use(code);
+      localStorage.setItem('preferences.lang', code);
+    };
+    var lang = localStorage.getItem('preferences.lang');
+    if (lang) {
+      $scope.setLanguage(lang);
+    }
 
     $scope.ui = {
       selectTrack: angular.noop,
@@ -101,28 +112,28 @@
       playingStyles: [
         {
           name: 'finger',
-          label: 'Finger'
+          label: 'FINGER'
         }, {
           name: 'slap',
-          label: 'Slap'
+          label: 'SLAP'
         }, {
           name: 'pop',
-          label: 'Pop'
+          label: 'POP'
         }, {
           name: 'pick',
-          label: 'Pick'
+          label: 'PICK'
         }, {
           name: 'tap',
-          label: 'Tap'
+          label: 'TAP'
         }, {
           name: 'hammer',
-          label: 'Hammer-On'
+          label: 'HAMMER_ON'
         }, {
           name: 'pull',
-          label: 'Pull-Off'
+          label: 'PULL_OFF'
         }, {
           name: 'ring',
-          label: 'Let ring'
+          label: 'LET_RING'
         }
       ],
       settings: {

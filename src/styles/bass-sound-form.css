@@ -29,9 +29,13 @@
 .bass-sound-form md-checkbox {
   margin: 24px 5px 0px 10px;
   vertical-align: bottom;
-  line-height: 30px;
+  line-height: 19px;
   height: 30px;
   bottom: 0;
+}
+.bass-sound-form md-checkbox .md-label {
+  position: absolute;
+  bottom: 3px;
 }
 
 .bass-sound-form md-input-container.volume-field {

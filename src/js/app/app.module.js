@@ -12,6 +12,7 @@
         'monospaced.mousewheel',
         'rzModule',
         'sly',
-        'bd.help'
+        'bd.help',
+        'bd.lang'
     ]);
 })();
