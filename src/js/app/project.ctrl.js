@@ -58,7 +58,7 @@
     $scope.addTrackDialog = function(evt) {
 
       $mdDialog.show({
-        templateUrl: 'views/new_track.html',
+        templateUrl: 'views/editor/new_track.html',
         controller: AddTrackController,
         autoWrap: false,
         clickOutsideToClose: true

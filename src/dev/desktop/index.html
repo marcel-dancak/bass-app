@@ -26,6 +26,7 @@
     <link rel="stylesheet" type="text/css" href="styles/help.css">
 
     <script type="text/javascript" src="bower_components/swiper/dist/js/swiper.js"></script>
+    <!-- <script type="text/javascript" src="bower_components/swiper/dist/js/swiper_3.4.min.js"></script> -->
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
     <script type="text/javascript" src="bower_components/angular-animate/angular-animate.js"></script>
     <script type="text/javascript" src="bower_components/angular-material/angular-material.js"></script>
@@ -47,6 +48,45 @@
     <script src="lib/buffer-loader.js"></script>
     <script src="lib/audiobuffer-to-wav.js"></script>
 
+    <script src="js/app/app.module.js"></script>
+    <script src="js/app/observable.js"></script>
+    <script src="js/app/utils.dir.js"></script>
+    <script src="js/app/app.ctrl.js"></script>
+    <script src="js/app/project.ctrl.js"></script>
+    <script src="js/app/section.es6"></script>
+
+    <script src="js/app/audio-composer.js"></script>
+    <script src="js/app/project-manager.service.js"></script>
+    <script src="js/app/player.service.js"></script>
+    <script src="js/app/timeline.js"></script>
+    <script src="js/app/highlight-timeline.js"></script>
+
+    <script src="js/app/bass/bass-guitar.js"></script>
+    <script src="js/app/bass/bass-section.es6"></script>
+    <script src="js/app/bass/label.dir.js"></script>
+    <script src="js/app/drums/drums.js"></script>
+    <script src="js/app/drums/drum-section.es6"></script>
+
+    <!-- Section/Editor Mode -->
+    <script src="js/app/editor/editor.ctrl.js"></script>
+    <script src="js/app/editor/bar.ctrl.js"></script>
+    <script src="js/app/editor/swiper-control.service.js"></script>
+    <script src="js/app/editor/audio-visualiser.service.js"></script>
+    <script src="js/app/editor/bass-beat.ctrl.js"></script>
+    <script src="js/app/editor/bass-editor.service.js"></script>
+    <script src="js/app/editor/drums.ctrl.js"></script>
+    <script src="js/app/editor/fretboard.ctrl.js"></script>
+
+    <!-- Playlist Mode -->
+    <script src="js/app/playlist/viewer.ctrl.js"></script>
+    <script src="js/app/playlist/editor.ctrl.js"></script>
+
+    <!-- Languages -->
+    <script src="js/lang/lang.module.js"></script>
+    <script src="js/lang/en.js"></script>
+    <script src="js/lang/es.js"></script>
+
+    <!-- Help -->
     <script src="js/help/help.module.js"></script>
     <script src="js/help/help.ctrl.js"></script>
     <script src="js/help/bass-sheet.js"></script>
@@ -55,42 +95,8 @@
     <script src="js/help/resize.js"></script>
     <script src="js/help/sound-properties.js"></script>
     <script src="js/help/drum-grid.js"></script>
-    <script src="js/help/bar.js"></script>
+    <script src="js/help/barline.js"></script>
 
-    <script src="js/app/app.module.js"></script>
-    <script src="js/app/observable.js"></script>
-    <script src="js/app/utils.dir.js"></script>
-    <script src="js/app/app.ctrl.js"></script>
-    <script src="js/app/editor.ctrl.js"></script>
-    <script src="js/app/project.ctrl.js"></script>
-    <script src="js/app/bar.ctrl.js"></script>
-    <script src="js/app/section.es6"></script>
-
-    <script src="js/app/audio-composer.js"></script>
-    <script src="js/app/project-manager.service.js"></script>
-    <script src="js/app/player.service.js"></script>
-    <script src="js/app/audio-visualiser.service.js"></script>
-    <script src="js/app/timeline.js"></script>
-    <script src="js/app/highlight-timeline.js"></script>
-    <script src="js/app/swiper-control.service.js"></script>
-
-    <script src="js/app/bass/bass-guitar.js"></script>
-    <script src="js/app/bass/bass-section.es6"></script>
-    <script src="js/app/bass/bass-beat.ctrl.js"></script>
-    <script src="js/app/bass/grid-handlers.service.js"></script>
-    <script src="js/app/bass/label.dir.js"></script>
-    <script src="js/app/bass/fretboard.ctrl.js"></script>
-
-    <script src="js/app/drums/drums.js"></script>
-    <script src="js/app/drums/drums.ctrl.js"></script>
-    <script src="js/app/drums/drum-section.es6"></script>
-
-    <script src="js/app/playlist/viewer.ctrl.js"></script>
-    <script src="js/app/playlist/editor.ctrl.js"></script>
-
-    <script src="js/lang/lang.module.js"></script>
-    <script src="js/lang/en.js"></script>
-    <script src="js/lang/es.js"></script>
     <script type="text/javascript">
       angular.module('bd.app')
         .config(function($mdIconProvider) {

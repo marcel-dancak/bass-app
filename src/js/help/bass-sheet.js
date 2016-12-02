@@ -17,7 +17,7 @@
         '<div class="beats-container" layout="row">'+
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
-            'ng-include="\'views/bass_board_slide.html\'" '+
+            'ng-include="\'views/editor/bass_beat.html\'" '+
             'class="beat-container beat instrument-slide">'+
           '</div>'+
         '</div>'+

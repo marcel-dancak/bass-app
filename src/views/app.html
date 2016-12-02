@@ -43,7 +43,7 @@
       ">
       <div
         class="context-menu"
-        ng-include src="'views/bar_context_menu.html'">
+        ng-include src="'views/editor/bar_context_menu.html'">
       </div>
       <div class="bar swiper-container">
         <div class="swiper-wrapper">
@@ -67,7 +67,7 @@
               class="bar-beat"
               layout="row"
               ng-right-click="contextMenu.open($event, $index)"
-              ng-include src="'views/bar_slide.html'">
+              ng-include src="'views/editor/bar_beat.html'">
             </div>
 
             <div class="audio-graph-container">
@@ -88,8 +88,8 @@
       <div
         class="bar-toolbar">
         <div
-          class="bar-preferences"
-          ng-include src="'views/bars_form.html'">
+          class="section-preferences"
+          ng-include src="'views/editor/section_preferences.html'">
         </div>
 
         <md-button
@@ -151,7 +151,7 @@
                 class="beat-container"
                 ng-controller="BassBeatController">
                   <div class="bass-board"
-                    ng-include="'views/bass_board_slide.html'">
+                    ng-include="'views/editor/bass_beat.html'">
                   </div>
               </div>
               <div
@@ -162,7 +162,7 @@
                 <div
                   class="drums-beat-container"
                   ng-if="slide.visible"
-                  ng-include="'views/drums_board_slide.html'">
+                  ng-include="'views/editor/drums_beat.html'">
                 </div>
               </div>
               <md-input-container
@@ -178,7 +178,7 @@
       <div flex style="max-height: 20px;"></div>
 
       <div ng-show="workspace.track.type === 'bass'">
-        <div ng-include src="'views/fretboard.html'"></div>
+        <div ng-include src="'views/editor/fretboard.html'"></div>
         <span flex></span>
       </div>
 
@@ -198,13 +198,41 @@
     ng-if="player.mode === 1"
     flex
     layout="column"
-    ng-include="'views/playlist.html'"
+    ng-controller="PlaylistViewer"
+    class="viewer-container"
     ng-class="[
       bass.settings.label,
       {
         'no-colors': !bass.settings.colors
       }
     ]">
+
+    <md-button
+      md-no-ink
+      aria-label="Editor"
+      class="md-fab icon-hover toggle-button edit-playlist"
+      ng-class="{active: ui.playlist.showEditor}"
+      ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
+      <md-icon md-svg-icon="pen"></md-icon>
+    </md-button>
+
+    <div
+      flex
+      class="playlist-swiper bass-sheet swiper-container"
+      ng-class="['strings-'+workspace.track.instrument.strings.length]"
+      ng-init="swiperControl.swiperConfig.visibleSubbeats = 4">
+      <!-- Additional required wrapper -->
+      <div class="swiper-wrapper">
+          <!-- Slides (generated dynamically) -->
+      </div>
+      <!-- If we need pagination -->
+      <div class="swiper-pagination"></div>
+    </div>
+    <div
+      ng-if="ui.playlist.showEditor"
+      ng-include="'views/playlist/editor.html'"
+      class="playlist-editor">
+    </div>
   </div>
 
 <!--   <div

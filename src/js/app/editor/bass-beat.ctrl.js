@@ -231,7 +231,7 @@
         }
         panelRef = $mdPanel.create(
           angular.extend(panelConfig, {
-            templateUrl: 'views/bass_sound_form.html',
+            templateUrl: 'views/editor/bass_sound_form.html',
             targetEvent: evt,
             position: position,
             animation: animation,

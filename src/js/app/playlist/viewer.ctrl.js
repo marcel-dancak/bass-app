@@ -57,7 +57,7 @@
       scope.beats = slideMeta.beats;
       scope.emptyBeats = slideMeta.emptyBeats;
       $mdCompiler.compile({
-        templateUrl: 'views/playlist_slide.html'
+        templateUrl: 'views/playlist/slide.html'
       }).then(function(compileData) {
         //attach controller & scope to element
         var slideElement = compileData.link(scope)[0];
@@ -134,7 +134,7 @@
       scope.emptyBeats = emptyBeats;
 
       $mdCompiler.compile({
-        templateUrl: 'views/playlist_slide.html'
+        templateUrl: 'views/playlist/slide.html'
       }).then(function(compileData) {
         //attach controller & scope to element
         var slideElement = compileData.link(scope);

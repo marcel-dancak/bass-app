@@ -63,19 +63,22 @@
   <p>Contains mode switch to select between two application's modes:</p>
   <ul>
     <li>
-      <b><md-icon md-svg-icon="section-mode"></md-icon>Section mode</b> - for editation or playback of single section
+      <b><md-icon md-svg-icon="section-mode"></md-icon>Section mode</b> - for editing or playback of single section
     </li>
     <li>
       <b><md-icon md-svg-icon="playlist-mode"></md-icon>Playlist mode</b> - for creating and playback of multiple sections - playlists
     </li>
   </ul>
   <p>
-    Depending on the selected mode, it contains selectbox with project's sections/playlists, button to save actual section/all playlists, and menu with project and sections/playlists options.
+    Depending on the selected mode, it contains selectbox with project's sections/playlists,
+    button to save actual section/all playlists, and menu with project and sections/playlists options.
   </p>
   <p class="md-indent">
     <md-icon md-svg-icon="tip"></md-icon><i>Note: &nbsp;</i>
-    Selectbox has integrated function for text editation and items reorder. Click around the arrow icon at right side
-    to open selectbox, click on the selected item's text to start text editation. To change order of items, open selectbox and use Drag & Drop operation to move item to the new position.
+    Selectbox has integrated function for text editing and items reorder. Click around
+    the arrow icon at right side to open selectbox, click on the selected item's text
+    to start text editing. To change order of items, open selectbox and use Drag & Drop
+    operation to move item to the new position.
   </p>
   <h5>Player controls</h5>
   <div
@@ -145,8 +148,8 @@
     ng-controller="HelpBarController">
 
     <div
-      class="bar-preferences"
-      ng-include src="'views/bars_form.html'">
+      class="section-preferences"
+      ng-include src="'views/editor/section_preferences.html'">
     </div>
 
     <div flex class="bar swiper-container">
@@ -171,7 +174,7 @@
             class="bar-beat"
             layout="row"
             ng-right-click="contextMenu.open($event, $index)"
-            ng-include src="'views/bar_slide.html'">
+            ng-include src="'views/editor/bar_beat.html'">
           </div>
         </div>
       </div>

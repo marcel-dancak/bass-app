@@ -137,7 +137,7 @@
           beat: $scope.slides[0].beat
         };
         $mdCompiler.compile({
-          templateUrl: 'views/bar_context_menu.html'
+          templateUrl: 'views/editor/bar_context_menu.html'
         }).then(function(compileData) {
           beatElem = $scope.barSwiper.slides[0];
           beatElem.classList.add('hover');
