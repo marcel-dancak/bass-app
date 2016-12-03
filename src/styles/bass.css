@@ -162,8 +162,7 @@
   font-size: 20px;
   font-weight: 300;
   box-sizing: border-box;
-  outline-color: white;
-  outline-style: solid;
+  outline: 3px solid white;
   opacity: 0.001;
   z-index: -1;
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
