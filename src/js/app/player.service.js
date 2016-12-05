@@ -63,6 +63,13 @@
             audio.duration = duration;
             audio.endTime = startTime + duration;
             _this.composer.join(prevAudio, audio);
+            audio.meta = {
+              type: 'single',
+              string: sound.string,
+              note: sound.note,
+              startTime: startTime,
+              duration: duration
+            };
             stack.push(audio);
           }
         }, {
@@ -92,12 +99,42 @@
             curve.fill(stepDuration, 1, 1+steps);
             return curve;
           },
+          metaNotes: function(sound, startTime, curve) {
+            var notes = [];
+            notes.push({
+              note: sound.note,
+              startTime: startTime,
+              duration: curve[0]
+            });
+            var direction = sound.note.slide.endNote.fret > sound.note.fret? 1 : -1;
+            for (var i = 1; i < curve.length-2; i++) {
+              var prevNote = notes[notes.length-1];
+              notes.push({
+                note: {fret: sound.note.fret + i*direction},
+                startTime: prevNote.startTime + prevNote.duration,
+                duration: curve[i]
+              });
+            }
+            notes.push({
+              note: sound.note.slide.endNote,
+              startTime: notes[notes.length-1].startTime + notes[notes.length-1].duration,
+              duration: curve[curve.length-1]
+            });
+            return notes;
+          },
           prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
             var s = sound.note.slide.start || 0.2;
             var e = sound.note.slide.end || 0.8;
             var curve = this.slideCurve(sound, beatTime, timeSignature, s, 1-e);
             // console.log(curve)
             var audioStack = _this.composer.createSlide(track, null, sound, curve, startTime, beatTime, timeSignature);
+
+            // sound metadata
+            audioStack[0].meta = {
+              type: 'sequence',
+              string: sound.string,
+              notes: this.metaNotes(sound, startTime, curve)
+            };
             return audioStack;
           },
           transitionPlayback: function(stack, track, sound, startTime, beatTime, timeSignature) {
@@ -107,6 +144,24 @@
             var curve = this.slideCurve(sound, beatTime, timeSignature, s, 1-e);
             // console.log(curve)
             var audioSounds = _this.composer.createSlide(track, prevAudio, sound, curve, startTime, beatTime, timeSignature);
+
+            // sound metadata
+            var notes = this.metaNotes(sound, startTime, curve);
+            if (prevAudio.meta.notes) {
+              Array.prototype.push.apply(prevAudio.meta.notes, notes);
+            } else {
+              // convert to sequence
+              notes.splice(0, 0, {
+                note: prevAudio.meta.note,
+                startTime: prevAudio.meta.startTime,
+                duration: prevAudio.meta.duration
+              });
+              prevAudio.meta = {
+                type: 'sequence',
+                string: sound.string,
+                notes: notes
+              };
+            }
             Array.prototype.push.apply(stack, audioSounds);
           }
         }, {
@@ -128,6 +183,11 @@
             if (sound.note.type === 'bend') {
               _this.composer.bend(prevAudio, sound, duration, startTime, beatTime, timeSignature);
             }
+            if (prevAudio.meta) {
+              prevAudio.meta.duration += duration;
+            } else if (stack[0].meta) {
+              stack[0].meta.notes[stack[0].meta.notes.length-1].duration += duration;
+            }
           }
         },
         {
@@ -147,6 +207,23 @@
 
             audio.duration = duration;
             audio.endTime = startTime+duration;
+
+            // sound metadata
+            audio.meta = {
+              type: 'sequence',
+              string: sound.string,
+              notes: [
+                {
+                  note: { fret: sound.note.fret - 2 },
+                  startTime: startTime,
+                  duration: 0.075
+                }, {
+                  note: sound.note,
+                  startTime: startTime + 0.075,
+                  duration: duration - 0.075
+                }
+              ]
+            };
             return [audio];
           }
         },
@@ -163,6 +240,13 @@
             audio.duration = duration;
             audio.endTime = startTime + duration;
             _this.composer.bend(audio, sound, duration, startTime, beatTime, timeSignature);
+            audio.meta = {
+              type: 'single',
+              string: sound.string,
+              note: sound.note,
+              startTime: startTime,
+              duration: duration
+            };
             return [audio];
           }
         },
@@ -177,6 +261,12 @@
             var audio = _this.createSoundAudio(track, sound, startTime);
             audio.duration = 0.25;
             audio.endTime = startTime + audio.duration;
+            audio.meta = {
+              type: 'ghost',
+              string: sound.string,
+              startTime: startTime,
+              duration: audio.source.buffer.duration
+            };
             return [audio];
           }
         },
@@ -192,6 +282,13 @@
             var duration = _this.noteDuration(sound, beatTime, timeSignature);
             audio.duration = duration;
             audio.endTime = startTime+duration;
+            audio.meta = {
+              type: 'single',
+              string: sound.string,
+              note: sound.note,
+              startTime: startTime,
+              duration: duration
+            };
             return [audio];
           }
         }
@@ -273,7 +370,9 @@
       }
     };
 
-    AudioPlayer.prototype._playBassSound = function(track, sound, startTime, beatTime, timeSignature) {
+    AudioPlayer.prototype._bassSoundScheduled = function(trackId, sound) {};
+
+    AudioPlayer.prototype._playBassSound = function(trackId, track, sound, startTime, beatTime, timeSignature) {
       if (sound.prev) {
         return;
       }
@@ -301,6 +400,9 @@
         var a = stack[i];
         a.source.start(a.startTime, a.offset, a.duration);
         this.scheduledSounds.push(a);
+        if (a.meta) {
+          this._bassSoundScheduled(trackId, a.meta);
+        }
       }
       return audio;
     }
@@ -326,7 +428,7 @@
             var startAt = startTime + (beatTime / trackBeat.subdivision * (subbeatSound.subbeat - 1));
             try {
               if (track.type === 'bass') {
-                this._playBassSound(track, subbeatSound.sound, startAt, noteBeatTime, timeSignature);
+                this._playBassSound(trackId, track, subbeatSound.sound, startAt, noteBeatTime, timeSignature);
               } else {
                 this._playDrumSound(track, subbeatSound, startAt);
               }
@@ -553,6 +655,7 @@
       function afterLoad(audioBuffer) {
         setTimeout(function() {
           player.playingBassSample = player._playBassSound(
+            null,
             track,
             bassSound,
             context.currentTime,

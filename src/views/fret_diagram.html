@@ -1,0 +1,38 @@
+<div
+  class="fret-diagram">
+  <div class="frets-labels">
+    <label
+      ng-repeat="fret in ::frets"
+      fret="{{::fret}}">
+      {{ ::fret }}
+    </label>
+  </div>
+  <div class="strings">
+    <div
+      ng-repeat="string in ::instrument.strings | orderBy:string.index:'-'"
+      class="string {{ ::string.label }}">
+      <label>{{ string.label }}</label>
+      <div
+        ng-repeat="fret in ::frets"
+        class="fret fret-{{ ::fret }}"
+        ng-init="note = string.notes[fret]">
+        <!-- <span>&nbsp;</span> -->
+        <!-- <label>{{ string.notes[fret].label[0] }}</label> -->
+        <label
+          ng-repeat="label in ::note.label"
+          ng-init="
+            id = string.label+':'+label+note.octave;
+            fretNote = noteById[id]
+          "
+          ng-attr-id="{{ ::id.replace(':', '_') }}"
+          ng-class="{
+            active: config.notes.indexOf(id) !== -1,
+            root: fretNote.id === rootNote.id
+          }">
+          <span class="note">{{ ::label }}</span>
+          <!-- <span class="interval">{{ ::fretNote.interval }}</span> -->
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
