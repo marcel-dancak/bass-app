@@ -127,7 +127,7 @@
             }
             // fix of invalid bar index (after copy/paste) - TODO: better solution
             if (sound.prev.bar !== beat.bar) {
-              sound.prev.bar = sound.prev.beat >= beat.beat? beat.bar - 1 : beat.bar;
+              sound.prev.bar = beat.beat === 1 || sound.prev.beat >= beat.beat? beat.bar - 1 : beat.bar;
             }
             var subbeat = this.subbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat);
             sound.prev.ref = subbeat[sound.prev.string].sound;
@@ -138,7 +138,7 @@
             }
             // fix of invalid bar index (after copy/paste) - TODO: better solution
             if (sound.next.bar !== beat.bar) {
-              sound.next.bar = sound.next.beat <= beat.beat? beat.bar + 1 : beat.bar;
+              sound.next.bar = sound.next.beat === 1 || sound.next.beat < beat.beat? beat.bar + 1 : beat.bar;
             }
             var subbeat = this.subbeat(sound.next.bar, sound.next.beat, sound.next.subbeat);
             sound.next.ref = subbeat[sound.next.string].sound;
