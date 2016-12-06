@@ -138,7 +138,10 @@
       }
     }
 
-    FretboardViewer.prototype.setChord = function(root, start, end) {
+    FretboardViewer.prototype.setChord = function(section, root, start, end) {
+      if (!diagramElem) {
+        diagramElem = document.querySelector('.diagram-container');
+      }
       this.clearDiagram();
       var rootElem = diagramElem.querySelector('#'+root.replace(":", "_"));
       rootElem.classList.add('root');
@@ -150,29 +153,30 @@
       var eBeat = end[1];
       var eSubbeat = end[2] || 4;
 
-      var beat = workspace.trackSection.beat(sBar, sBeat);
+      var track = section.tracks[workspace.track.id];
+      var beat = track.beat(sBar, sBeat);
       var sounds;
       if (sBar === eBar && sBeat === eBeat) {
-        sounds = workspace.trackSection.beatSounds(beat)
+        sounds = track.beatSounds(beat)
           .filter(function(sound) {
             return sound.subbeat >= sSubbeat && sound.subbeat <= eSubbeat;
           });
       } else {
-        sounds = workspace.trackSection.beatSounds(beat)
+        sounds = track.beatSounds(beat)
           .filter(function(sound) {
             return sound.subbeat >= sSubbeat;
           });
 
         while (true) {
-          beat = workspace.trackSection.nextBeat(beat);
-          if (beat.bar === eBar && beat.beat == eBeat) {
+          beat = track.nextBeat(beat);
+          if (beat.bar === eBar && beat.beat === eBeat) {
             break;
           }
-          Array.prototype.push.apply(sounds, workspace.trackSection.beatSounds(beat));
+          Array.prototype.push.apply(sounds, track.beatSounds(beat));
         }
         Array.prototype.push.apply(
           sounds,
-          workspace.trackSection.beatSounds(beat)
+          track.beatSounds(beat)
             .filter(function(sound) {
               return sound.subbeat <= eSubbeat;
             })
@@ -198,19 +202,18 @@
     };
 
     FretboardViewer.prototype.beatSync = function(evt) {
-      if (!workspace.section.meta || !workspace.section.meta.chords) {
+      if (!evt.section.meta || !evt.section.meta.chords) {
         return;
       }
-      var chord = workspace.section.meta.chords.find(function(chord) {
+      var chord = evt.section.meta.chords.find(function(chord) {
         return chord.start[0] === evt.bar && chord.start[1] === evt.beat;
       });
       if (chord) {
         var subbeat = chord.start[2] || 1;
-        // console.log(evt);
         // TODO: get beat subdivision properly
         var time = (evt.startTime - evt.eventTime) + (subbeat-1)*evt.duration/4;
         setTimeout(function() {
-          this.setChord(chord.root, chord.start, chord.end);
+          this.setChord(evt.section, chord.root, chord.start, chord.end);
         }.bind(this), parseInt(time*1000)-10);
       }
     };
