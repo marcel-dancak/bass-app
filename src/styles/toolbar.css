@@ -276,12 +276,14 @@ md-select-menu md-content {
 }
 
 
-md-dialog .dialog-header {
+.dialog-header {
   text-align: center;
   height: 36px;
   line-height: 36px;
   background-color: #455A64;
   color: #fff;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
 }
 
 .md-subheader {

@@ -9,8 +9,8 @@
 
   function drumTrackSection(TrackSection) {
     class DrumTrackSection extends TrackSection {
-      constructor(data) {
-        super(data);
+      constructor(section, data) {
+        super(section, data);
         this.type = 'drums';
       }
       /*

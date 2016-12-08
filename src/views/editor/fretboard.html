@@ -1,99 +1,99 @@
 <div
-  class="fretboard"
+  ng-class="[fretboard.chordMode? 'fret-diagram' : 'fretboard']"
   ng-controller="FretboardController">
 
-  <div class="ghost-notes-container">
-    <div
-      ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
-      class="ghost-note"
-      ng-click="playBassSound({
-        note: {
-          type: 'ghost'
-        },
-        string: string.label
-      })"
-      ui-draggable="true"
-      drag-channel="fretboard"
-      drag="{
-        sound: {
-          style: fretboard.style,
-          note: {
-            type: 'ghost'
-          },
-          noteLength: {
-            length: 1/16,
-            beatLength: 1/16
-          },
-          volume: 0.75,
-          string: string.label
-        }
-      }">x
-    </div>
-  </div>
-
   <div class="fretboard-scroller">
-    <table class="fretboard-table">
+    <!-- Fret Labels -->
+    <div
+      layout="row"
+      class="frets-labels">
+      <label
+        ng-repeat="fret in [].constructor(25) | limitTo: fretboard.size+1 track by $index"
+        fret="{{ ::$index }}"
+        flex>
+        {{ ::$index }}
+      </label>
+    </div>
 
-      <thead>
-        <!-- <span flex class="fret-index"></span> -->
-        <tr>
-          <th class="fret-index"
-            ng-repeat="fret in [].constructor(25) | limitTo: fretboard.size+1 track by $index">
-            {{ ::$index }}
-          </th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr
-          ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
-          class="string-row">
-
-          <td
-            ng-repeat="note in string.notes | limitTo: fretboard.size+1"
+    <!-- Strings -->
+    <div class="strings">
+      <div
+        ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-'"
+        class="string {{ ::string.label }}"
+        layout="row">
+        <div
+          class="fret-box ghost-note">
+          <label
             ng-click="playBassSound({
               note: {
-                type: 'regular',
-                name: note.label[0],
-                octave: note.octave,
-                fret: $index
+                type: 'ghost'
               },
               string: string.label
             })"
-            class="fret-box octave-{{ ::note.octave }}"
-
             ui-draggable="true"
             drag-channel="fretboard"
             drag="{
-              label: note.label,
+              sound: {
+                style: fretboard.style,
+                note: {
+                  type: 'ghost'
+                },
+                noteLength: {
+                  length: 1/16,
+                  beatLength: 1/16
+                },
+                volume: 0.75,
+                string: string.label
+              }
+            }">x
+          </label>
+        </div>
+        <div
+          ng-repeat="note in string.notes | limitTo: fretboard.size+1"
+          class="fret-box fret-{{ ::$index }}"
+          ng-class="::['octave-'+note.octave, {'dual-label': note.label.length > 1}]"
+          ng-click="playBassSound({
+            note: {
+              type: 'regular',
+              name: note.label[0],
+              octave: note.octave,
+              fret: $index
+            },
+            string: string.label
+          })"
+          flex>
+          <label
+            ng-repeat="label in ::note.label"
+            id="{{ ::string.label }}_{{ ::label }}{{ ::note.octave }}"
+            ui-draggable="true"
+            drag-channel="fretboard"
+            drag="{
               sound: {
                 style: fretboard.style,
                 note: {
                   type: 'regular',
-                  name: note.label[0],
+                  name: label,
                   octave: note.octave,
+                  code: label+note.octave,
                   fret: $index
                 },
                 noteLength: fretboard.noteLength,
                 volume: 0.75,
                 string: string.label
               }
-            }"
-            >
-            <div layout="row">
-              <span flex>{{ ::note.label[0] }}</span>
-              <span flex class="second-label">{{ ::note.label[1] }}</span>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            }">
+            <span class="note">{{ ::label }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div
     layout="row"
     class="fretboard-settings">
 
+    <!-- <md-switch ng-model="fretboard.chordMode"></md-switch> -->
     <md-input-container
       layout="row"
       class="input-inline-label">
@@ -155,6 +155,12 @@
         max="24"
         step="1"
         ng-model="fretboard.size">
+    </md-input-container>
+
+    <md-input-container>
+      <md-checkbox ng-model="fretboard.chordMode">
+        Highlight mode
+      </md-checkbox>
     </md-input-container>
   </div>
 

@@ -146,17 +146,18 @@
             var audioSounds = _this.composer.createSlide(track, prevAudio, sound, curve, startTime, beatTime, timeSignature);
 
             // sound metadata
+            var lastMetaAudio = prevAudio.meta? prevAudio : stack[0];
             var notes = this.metaNotes(sound, startTime, curve);
-            if (prevAudio.meta.notes) {
-              Array.prototype.push.apply(prevAudio.meta.notes, notes);
+            if (lastMetaAudio.meta.notes) {
+              Array.prototype.push.apply(lastMetaAudio.meta.notes, notes);
             } else {
               // convert to sequence
               notes.splice(0, 0, {
-                note: prevAudio.meta.note,
-                startTime: prevAudio.meta.startTime,
-                duration: prevAudio.meta.duration
+                note: lastMetaAudio.meta.note,
+                startTime: lastMetaAudio.meta.startTime,
+                duration: lastMetaAudio.meta.duration
               });
-              prevAudio.meta = {
+              lastMetaAudio.meta = {
                 type: 'sequence',
                 string: sound.string,
                 notes: notes
@@ -443,6 +444,7 @@
         }
         var flatIndex = (bar-1)*this.section.timeSignature.top+beat-1;
         this.beatPreparedCallback({
+          section: this.section,
           bar: bar,
           beat: beat,
           eventTime: currentTime,

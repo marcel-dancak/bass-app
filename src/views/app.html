@@ -57,11 +57,11 @@
             <label class="bar-label">
               {{ ::slide.beat.bar }}
             </label>
-            <input
+            <!-- <input
               spellcheck="false"
               class="chord-label"
               ng-model="slide.beat.meta.chord"
-              ng-blur="slide.beat.meta.chord = slide.beat.meta.chord.replace('#', '♯').replace('b', '♭')">
+              ng-blur="slide.beat.meta.chord = slide.beat.meta.chord.replace('#', '♯').replace('b', '♭')"> -->
             <div
               id="beat_{{ ::slide.beat.bar }}_{{ ::slide.beat.beat }}"
               class="bar-beat"
@@ -177,8 +177,12 @@
       </div>
       <div flex style="max-height: 20px;"></div>
 
-      <div ng-show="workspace.track.type === 'bass'">
-        <div ng-include src="'views/editor/fretboard.html'"></div>
+      <div ng-show="workspace.track.type === 'bass'" style="position: relative;">
+        <div
+          ng-include="'views/editor/fretboard.html'"
+          class="diagram-container"></div>
+      </div>
+
         <span flex></span>
       </div>
 

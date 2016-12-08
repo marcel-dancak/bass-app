@@ -9,6 +9,23 @@
   background-color: rgb(255, 250, 190);
 }
 
+.bar-beat .subbeat .chord:hover {
+  color: #2196F3;
+}
+.bar-beat .subbeat .chord {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  pointer-events: auto;
+  cursor: pointer;
+}
+.beat-1 .bar-beat .subbeat .chord {
+  left: 14px;
+  right: 14px;
+}
+
 .audio-graph-container::before,
 .bar-beat::before {
   position: absolute;
@@ -41,7 +58,7 @@
   height: 65%;
 }
 
-.bar-beat .subbeat:first-child {
+.bar-beat .subbeat:first-child label {
   font-weight: bold;
   font-size: 20px;
   color: #333;
@@ -105,7 +122,7 @@
   border-radius: 10px;
 }
 
-.bar-slide .chord-label {
+/*.bar-slide .chord-label {
   position: absolute;
   left: 25px;
   right: 25px;
@@ -122,7 +139,7 @@
 .bar-slide .chord-label:focus {
   border-bottom: 1px solid #2196F3;
   outline: none;
-}
+}*/
 
 .bar.swiper-container {
   padding-right: 4px;

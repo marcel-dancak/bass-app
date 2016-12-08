@@ -417,6 +417,7 @@
         beatsPerSlide: section.beatsPerSlide,
         animationDuration: section.animationDuration,
         bpm: section.bpm,
+        meta: section.meta,
         tracks: {}
       }
       this.project.tracks.forEach(function(track) {
@@ -498,7 +499,9 @@
       for (var trackId in section.tracks) {
         var trackData = section.tracks[trackId];
         if (!trackData.audio) {
-          var track = trackId.startsWith('bass')? new BassTrackSection(trackData) : new DrumTrackSection(trackData);
+          var track = trackId.startsWith('bass')?
+            new BassTrackSection(section, trackData) :
+            new DrumTrackSection(section, trackData);
           track.audio = this.project.tracksMap[trackId].audio;
           track.instrument = this.project.tracksMap[trackId].instrument;
           section.tracks[trackId] = track;

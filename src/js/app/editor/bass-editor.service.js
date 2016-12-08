@@ -146,26 +146,30 @@
     }
 
     var fretboardDragHandler = {
-
+      dragContainer: null,
       onDragStart: function(evt, dragData, channel) {
-        var sound = dragData.sound;
-        if (sound.note.type !== 'ghost') {
-          var elemBox = evt.target.getBoundingClientRect();
-          sound.note.code = sound.note.name + sound.note.octave;
-
-          // store note name depending on drag click position (use it at drop)
-          var secondName = dragData.label.length > 1 && evt.clientX > elemBox.left+elemBox.width/2;
-          fretboardDragHandler._noteName = dragData.label[secondName? 1 : 0];
+        if (!this.dragContainer) {
+          this.dragContainer = angular.element('<div></div>')[0];
+          this.dragContainer.style.position = 'fixed';
+          this.dragContainer.style.top = '-100px';
+          document.body.appendChild(this.dragContainer);
+        }
+        var dragElem = evt.target.parentElement.cloneNode(true);
+        dragElem.classList.add('drag');
+        dragElem.style.width = evt.target.parentElement.offsetWidth+'px';
+        this.dragContainer.appendChild(dragElem);
+        evt.dataTransfer.setDragImage(dragElem, 3, 6);
+      },
+      onDragEnd: function(evt) {
+        while (this.dragContainer.lastChild) {
+          this.dragContainer.lastChild.remove();
         }
       },
-      onDragEnd: function(evt) {},
       onDrop: function(evt, data, dropGrid) {
         angular.extend(dropGrid.sound, data.sound);
         dropGrid.sound.string = dropGrid.string.label;
         dropGrid.sound.noteLength.beatLength = dropGrid.sound.noteLength.length;
         if (data.sound.note.type !== 'ghost') {
-          dropGrid.sound.note.name = fretboardDragHandler._noteName;
-          dropGrid.sound.note.code = dropGrid.sound.note.name + dropGrid.sound.note.octave;
           dropGrid.sound.note.fret = workspace.track.instrument.stringFret(dropGrid.sound.string, dropGrid.sound.note);
         }
         audioPlayer.fetchSoundResources(dropGrid.sound);
@@ -309,7 +313,7 @@
       var scope = angular.element(document.body).scope();
       scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
         console.log('ANGULAR_DRAG_START: '+channel);
-        console.log(data);
+        // console.log(data);
         dragData = data.data;
 
         dragHandler = null;

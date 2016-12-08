@@ -113,15 +113,16 @@
                 elem.classList.remove('highlight');
               });
             }, delayTime(lastNote.startTime+lastNote.duration)-5);
-          } /*else if (sound.type === 'ghost') {
-            var stringElem = diagramElem.querySelector('.string.'+sound.string);
+          } else if (sound.type === 'ghost') {
+            var ghostElem = diagramElem.querySelector('.string.{0} .ghost-note label'.format(sound.string));
+            console.log(ghostElem);
             setTimeout(function() {
-              stringElem.classList.add('ghost');
+              ghostElem.classList.add('highlight');
             }, delayTime(sound.startTime));
             setTimeout(function() {
-              stringElem.classList.remove('ghost');
+              ghostElem.classList.remove('highlight');
             }, delayTime(sound.startTime+sound.duration));
-          }*/
+          }
         }
       }
     }
@@ -138,20 +139,22 @@
       }
     }
 
-    FretboardViewer.prototype.setChord = function(section, root, start, end) {
+    FretboardViewer.prototype.setChord = function(section, chord) {
       if (!diagramElem) {
         diagramElem = document.querySelector('.diagram-container');
       }
       this.clearDiagram();
-      var rootElem = diagramElem.querySelector('#'+root.replace(":", "_"));
+      var qs = '#{0}_{1}{2}'.format(chord.string, chord.root, chord.octave);
+      var rootElem = diagramElem.querySelector(qs);
+      console.log(rootElem)
       rootElem.classList.add('root');
 
-      var sBar = start[0];
-      var sBeat = start[1];
-      var sSubbeat = start[2] || 1;
-      var eBar = end[0];
-      var eBeat = end[1];
-      var eSubbeat = end[2] || 4;
+      var sBar = chord.start[0];
+      var sBeat = chord.start[1];
+      var sSubbeat = chord.start[2] || 1;
+      var eBar = chord.end[0];
+      var eBeat = chord.end[1];
+      var eSubbeat = chord.end[2] || 4;
 
       var track = section.tracks[workspace.track.id];
       var beat = track.beat(sBar, sBeat);
@@ -205,15 +208,19 @@
       if (!evt.section.meta || !evt.section.meta.chords) {
         return;
       }
-      var chord = evt.section.meta.chords.find(function(chord) {
+      var newChord = evt.section.meta.chords.find(function(chord, index) {
+        // if (chord.end[0] === evt.bar && chord.end[1] === evt.beat) {
+
+        // }
         return chord.start[0] === evt.bar && chord.start[1] === evt.beat;
       });
-      if (chord) {
-        var subbeat = chord.start[2] || 1;
+
+      if (newChord) {
+        var subbeat = newChord.start[2] || 1;
         // TODO: get beat subdivision properly
         var time = (evt.startTime - evt.eventTime) + (subbeat-1)*evt.duration/4;
         setTimeout(function() {
-          this.setChord(evt.section, chord.root, chord.start, chord.end);
+          this.setChord(evt.section, newChord);
         }.bind(this), parseInt(time*1000)-10);
       }
     };

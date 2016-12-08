@@ -1,142 +1,12 @@
-.fretboard-menu {
-  height: 52px;
-}
-.md-button.fretboard-menu {
-  min-width: 32px;
-  padding: 0;
-  margin: 12px 4px 0 14px;
-}
-
-.fretboard {
-  padding: 0 10px 0 10px;
-  position: relative;
-}
-
-.fretboard-scroller {
-  overflow-x: auto;
-  padding-left: 51px;
-}
-.fretboard-table {
-  width: calc(100% - 2px);
-  border-collapse: collapse;
-}
-
-.fretboard .md-button {
-  min-width: 32px;
-  padding: 0;
-  margin: 0;
-}
-
-.fretboard-table tbody td {
-  border: 1px solid #fff;
-}
-
-.fretboard-table tbody {
-  border: solid #777;
-  border-width: 2px 2px 2px 0;
-}
-
-.fretboard .fret-box {
-  height: 30px;
-  max-height: 30px;
-  line-height: 30px;
-  text-align: center;
-  color: #333;
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-  outline: none;
-  font-size: 14px;
-}
-
-
-.fret-box .md-button {
-  font-size: 13px;
-}
-
-.fret-box.octave-0 {
-  background-color: #f44336;
-}
-.fret-box.octave-1 {
-  background-color: #ff5722;
-}
-.fret-box.octave-2 {
-  background-color: #ff9800;
-}
-.fret-box.octave-3 {
-  background-color: #ffc107;
-}
-.fret-box.octave-4 {
-  background-color: #ffeb3b;
-}
-
-.fretboard-table thead th {
-  position: relative;
-  font-weight: normal;
-  text-align: center;
-  font-size: 12px;
-  line-height: 22px;
-  min-width: 46px;
-  padding: 0 7px;
-  color: #ccc;
-}
-
-.fretboard .fret-index::before {
-  position: absolute;
-  font-size: 44px;
-  font-weight: bold;
-  color: #555;
-  transform: translate3d(-15px, 0, 0);
-}
-.fretboard .fret-index:nth-child(4),
-.fretboard .fret-index:nth-child(6),
-.fretboard .fret-index:nth-child(8),
-.fretboard .fret-index:nth-child(10),
-.fretboard .fret-index:nth-child(13),
-.fretboard .fret-index:nth-child(16),
-.fretboard .fret-index:nth-child(18),
-.fretboard .fret-index:nth-child(20),
-.fretboard .fret-index:nth-child(22),
-.fretboard .fret-index:nth-child(25) {
-  padding: 0 0 0 14px;
-}
-
-.fretboard .fret-index:nth-child(4)::before,
-.fretboard .fret-index:nth-child(6)::before,
-.fretboard .fret-index:nth-child(8)::before,
-.fretboard .fret-index:nth-child(10)::before,
-.fretboard .fret-index:nth-child(16)::before,
-.fretboard .fret-index:nth-child(18)::before,
-.fretboard .fret-index:nth-child(20)::before,
-.fretboard .fret-index:nth-child(22)::before {
-  bottom: 12px;
-  content: ".";
-}
-
-.fretboard .fret-index:nth-child(13)::before,
-.fretboard .fret-index:nth-child(25)::before {
-  bottom: -4px;
-  content: "..";
-  letter-spacing: -4px;
-  padding: 16px 0px 0 4px;
-  transform: rotate(90deg);
-}
-
-
-.second-button::before {
-  content: "/";
-  position: absolute;
-  left: -2px;
-}
-
-.fretboard md-input-container {
-  margin: 4px 16px 2px 5px;
-}
+/** Fretboard Settings (Panel) **/
 
 .fretboard-settings {
   height: 44px;
 }
+.fretboard-settings md-input-container {
+  margin: 4px 16px 2px 5px;
+}
+
 .fretboard-settings .style-selectbox {
   min-width: 120px;
 }
@@ -147,57 +17,54 @@
   width: 80px;
 }
 
+.fretboard-settings md-checkbox {
+  margin-top: 8px;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
 md-input-container.input-inline-label label {
   bottom: 3px;
   left: 0;
   position: relative;
 }
 
-.ghost-notes-container {
-  width: 50px;
-  position: absolute;
-  left: 8px;
-  top: 22px;
-  border: solid #777;
-  border-width: 2px 2px 2px 2px;
-}
-.ghost-notes-container .ghost-note:last-child {
-  border-bottom: none;
-}
-.fretboard .ghost-note {
-  height: 32px;
-  line-height: 32px;
-  background-color: #ddd;
-  text-align: center;
-  border-bottom: 1px solid #fff;
-  outline: none;
-}
 
-.fret-box div {
+/* ********************
+***** Fretboard *******
+******************** */
+
+.fret-diagram,
+.fretboard {
+  padding: 0 10px 0 10px;
   position: relative;
-  xborder: 2px solid;
-  xborder-radius: 2px;
-  border-color: transparent;
-  box-sizing: content-box;
-}
-/*.fret-box:hover div {
-  border-color: #333;
-}*/
-
-.ghost-note:hover {
-  opacity: 0.8;
-  font-weight: bold;
-  color: #111;
-}
-.fret-box:hover {
-  opacity: 0.92;
-}
-.fret-box span:hover {
-  color: #222;
-  font-weight: bold;
 }
 
-.fret-box .second-label:not(.empty)::before {
+.fretboard-scroller {
+  overflow-x: auto;
+}
+
+.fret-box {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  outline: none;
+  line-height: 33px;
+  text-align: center;
+  color: #333;
+  font-size: 14px;
+}
+.fret-box.flex {
+  min-width: 64px;
+}
+
+.fretboard .fret-box {
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  position: relative;
+}
+
+.fretboard .fret-box label:nth-child(2):before {
   content: "/";
   color: #333;
   font-weight: normal;
@@ -205,6 +72,208 @@ md-input-container.input-inline-label label {
   top: 0;
   left: calc(50% - 2px);
 }
-.fret-box .second-label:empty {
-  display: none;
+
+.fretboard .fret-box label {
+  display: inline-block;
+  width: 100%;
+}
+.fretboard .fret-box.dual-label label {
+  width: 50%;
+}
+
+.fret-diagram .fret-box label {
+  background-color: #cccccc;
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  display: inline-block;
+  border-radius: 50%;
+  margin: 2px 1px;
+}
+
+.fretboard .fret-box.octave-0,
+.drag.fret-box.octave-0 {
+  background-color: #f44336;
+}
+.fretboard .fret-box.octave-1,
+.drag.fret-box.octave-1 {
+  background-color: #ff5722;
+}
+.fretboard .fret-box.octave-2,
+.drag.fret-box.octave-2 {
+  background-color: #ff9800;
+}
+.fretboard .fret-box.octave-3,
+.drag.fret-box.octave-3 {
+  background-color: #ffc107;
+}
+.fretboard .fret-box.octave-4,
+.drag.fret-box.octave-4 {
+  background-color: #ffeb3b;
+}
+
+/** Ghost note **/
+
+.fret-diagram .fret-box {
+  text-align: center;
+  border-right: 3px solid #ccc;
+}
+
+.fret-box.ghost-note {
+  min-width: 48px;
+  max-width: 48px;
+  background-color: #ccc;
+  text-align: center;
+  border-bottom: 1px solid #fff;
+  border-left: 2px solid #999;
+  font-size: 16px;
+}
+.fret-box.ghost-note label {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  display: block;
+  line-height: 32px;
+  border-radius: 0;
+  outline: none;
+}
+
+.fret-diagram .fret-box.ghost-note {
+  border-right: 1px solid #999;
+  border-bottom: none;
+  height: 33px;
+  color: #fff;
+}
+
+/** Highlights/Hovers **/
+
+.fretboard .ghost-note:hover {
+  background-color: #d3d3d3;
+  font-weight: 500;
+}
+.fretboard .fret-box:hover {
+  opacity: 0.92;
+  color: #222;
+}
+.fret-box label:hover {
+  font-weight: bold;
+}
+
+.fret-diagram .fret-box label.active {
+  background-color: #444;
+  xbackground-color: #e53935;
+}
+.fret-diagram .fret-box label.root {
+  xbackground-color: #800;
+  xfont-weight: bold;
+  xborder: 1px solid #f44336;
+  border-radius: 3px;
+}
+.fret-diagram .fret-box label.highlight {
+  /*background-color: #2196F3;*/
+  background-color: #e53935;
+}
+
+/** Borders **/
+
+.drag.fret-box {
+  border: 2px solid #555!important;
+  border-radius: 3px;
+}
+
+.fret-box:last-child {
+  border-right: 2px solid #999;
+}
+
+.fret-diagram .fretboard-scroller .string:before {
+  position: fixed;
+  left: 10px;
+  right: 10px;
+}
+
+.fretboard .strings:before,
+.fret-diagram .strings:before {
+  content: "";
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background-color: #999;
+  transform: translate3d(0, -2px, 0);
+}
+.fretboard .strings:after,
+.fret-diagram .strings:after {
+  content: "";
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background-color: #999;
+  transform: translate3d(0, -1px, 0);
+}
+
+.fret-diagram .string {
+  height: 34px;
+  position: relative;
+  line-height: 32px;
+  z-index: 1;
+}
+.fret-diagram .string:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  transform: translate3d(0, 15px, 0);
+  background-color: #ccc;
+  height: 1px;
+  z-index: -1;
+}
+
+/** Fretboard labels **/
+
+.fretboard .frets-labels,
+.fret-diagram .frets-labels {
+  padding-left: 50px;
+  line-height: 20px;
+  height: 23px;
+}
+
+.fretboard .frets-labels label,
+.fret-diagram .frets-labels label {
+  display: inline-block;
+  font-size: 12px;
+  color: #999;
+  position: relative;
+  min-width: 64px;
+  text-align: center;
+}
+.frets-labels label[fret="3"]:before,
+.frets-labels label[fret="5"]:before,
+.frets-labels label[fret="7"]:before,
+.frets-labels label[fret="9"]:before,
+.frets-labels label[fret="15"]:before,
+.frets-labels label[fret="17"]:before,
+.frets-labels label[fret="19"]:before,
+.frets-labels label[fret="21"]:before {
+  content: "\e905";
+  font-size: 20px;
+  line-height: 12px;
+  transform: translate3d(-2px, 4px, 0);
+  width: 12px;
+  display: inline-block;
+  font-family: 'Musica' !important;
+  -webkit-font-smoothing: antialiased;
+}
+.frets-labels label[fret="12"]:before,
+.frets-labels label[fret="24"]:before {
+  content: "\e906";
+  font-size: 20px;
+  position: relative;
+  line-height: 12px;
+  transform: translate3d(-2px, 4px, 0);
+  width: 12px;
+  display: inline-block;
+  font-family: 'Musica' !important;
+  -webkit-font-smoothing: antialiased;
 }

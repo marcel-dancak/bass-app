@@ -240,12 +240,20 @@
           translate="SAVE_AS">
         </md-button>
       </md-menu-item>
-      <md-menu-item ng-if-end>
+      <md-menu-item>
         <md-button
           md-no-ink
           aria-label="Delete Section"
           ng-click="deleteSection()"
           translate="DELETE">
+        </md-button>
+      </md-menu-item>
+      <md-menu-item ng-if-end>
+        <md-button
+          md-no-ink
+          aria-label="Section Metadata"
+          ng-click="workspace.metadataEditor()"
+          translate="METADATA">
         </md-button>
       </md-menu-item>
 

@@ -6,8 +6,8 @@
     .controller('EditModeController', EditModeController);
 
 
-  function EditModeController($scope, $timeout, $mdToast, context, workspace, audioPlayer, audioVisualiser,
-              projectManager, Drums, BassSection, DrumSection, HighlightTimeline, swiperControl) {
+  function EditModeController($scope, $timeout, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
+              projectManager, Drums, BassSection, DrumSection, HighlightTimeline, swiperControl, fretboardViewer) {
 
 
     $scope.swiperControl = swiperControl;
@@ -93,7 +93,6 @@
         }, parseInt(timeToBeat*1000));
       }
 
-
       if (!audioVisualiser.enabled && $scope.player.graphEnabled) {
         var audio = $scope.player.input.muted? workspace.track.audio : $scope.player.input.audio;
         console.log('activating track visualization');
@@ -107,6 +106,7 @@
       }
 
       timeline.beatSync(evt);
+      fretboardViewer.beatSync(evt);
     }
 
     function updateLockedPlayerRange() {
@@ -226,7 +226,28 @@
     };
 
 
+    function updateChordLabels() {
+      var barlineElem = swiperControl.barSwiper.wrapper[0];
+      barlineElem.querySelectorAll('.chord').forEach(function(elem) {
+        elem.remove();
+      });
+      if (workspace.section.meta) {
+        workspace.section.meta.chords.forEach(function(chordInfo) {
+          var iBar = chordInfo.start[0];
+          var iBeat = chordInfo.start[1];
+          var iSubbeat = chordInfo.start[2] || 1;
+          var beatElem = swiperControl.getBeatElem(iBar, iBeat);
+          var elem = angular.element('<span class="chord">{0}{1}</span>'.format(chordInfo.root, chordInfo.type));
+          angular.element(elem).on('click', function(evt) {
+            fretboardViewer.setChord(workspace.section, chordInfo);
+          });
+          beatElem.children[iSubbeat-1].appendChild(elem[0]);
+        });
+      }
+    }
+
     function sectionLoaded(section) {
+      fretboardViewer.clearDiagram();
       audioVisualiser.clear();
       audioVisualiser.reinitialize();
       console.log('sectionLoaded');
@@ -285,6 +306,9 @@
           slidesPerGroup: workspace.section.beatsPerSlide
         });
         $scope.player.playbackRangeChanged();
+        $timeout(function() {
+          updateChordLabels();
+        });
       });
     }
 
@@ -345,6 +369,96 @@
       $scope.player.playbackRange.max = workspace.section.length + 1;
       $scope.player.playbackRange.end = $scope.player.playbackRange.max;
       updateSwiperSlides();
+    };
+
+
+    function MetadataController($scope, workspace, mdPanelRef) {
+      $scope.close = function() {
+        mdPanelRef.close();
+      };
+      $scope.track = workspace.track;
+      $scope.section = workspace.section;
+
+      if (!workspace.section.meta) {
+        workspace.section.meta = {
+          chords: []
+        };
+      }
+      $scope.data = {
+        chord: null
+      };
+      $scope.selectChord = function(chord) {
+        if (!chord.string) {
+          chord.string = 'E';
+        }
+        $scope.data.chord = chord;
+      };
+      function selectFirst() {
+        if ($scope.section.meta.chords.length) {
+          $scope.selectChord($scope.section.meta.chords[0]);
+        }
+      }
+
+      $scope.updatePosition = function() {
+        updateChordLabels();
+      };
+      $scope.updateChord = function() {
+        var value = $scope.data.chord.root;
+        value = value.replace('#', '♯').replace('b', '♭');
+        var octave = parseInt(value[value.length-1]);
+        if (Number.isInteger(octave)) {
+          $scope.data.chord.root = $scope.data.chord.root.substring(0, value.length-1);
+          $scope.data.chord.octave = octave;
+        }
+        updateChordLabels();
+      };
+
+      $scope.newChord = function() {
+        var newChord = {start: [1,1,1]};
+        $scope.section.meta.chords.push(newChord);
+        $scope.selectChord(newChord);
+      };
+
+      $scope.keyPressed = function(evt) {
+        if (evt.keyCode === 46) {
+          var index = $scope.section.meta.chords.indexOf($scope.data.chord);
+          if (index !== -1) {
+            $scope.data.chord = null;
+            $scope.section.meta.chords.splice(index, 1);
+            selectFirst();
+            updateChordLabels();
+          }
+        }
+      };
+      selectFirst();
+    }
+
+    workspace.metadataEditor = function() {
+      var position = $mdPanel.newPanelPosition()
+        .absolute()
+        .centerHorizontally()
+        .bottom('10%')
+
+      var animation = $mdPanel.newPanelAnimation()
+        // .withAnimation($mdPanel.animation.FADE);
+        .openFrom({top: window.innerHeight/2, left: window.innerWidth/2-400})
+        .closeTo({top: window.innerHeight/2, left: window.innerWidth/2-400})
+        .withAnimation($mdPanel.animation.SCALE)
+
+      var dialog = $mdPanel.open({
+        templateUrl: 'views/editor/section_metadata.html',
+        controller: MetadataController,
+        autoWrap: false,
+        hasBackdrop: false,
+        disableParentScroll: false,
+        clickOutsideToClose: false,
+        position: position,
+        animation: animation,
+        onOpenComplete: function(args) {
+          var containerEl = args[0].panelEl.parent();
+          containerEl.css('pointerEvents', 'none');
+        }
+      });
     };
 
 

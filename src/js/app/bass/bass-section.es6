@@ -8,8 +8,8 @@
 
   function bassTrackSection(TrackSection) {
     class BassTrackSection extends TrackSection {
-      constructor(data) {
-        super(data);
+      constructor(section, data) {
+        super(section, data);
         this.type = 'bass';
 
         this.forEachSound(function(sound, index) {

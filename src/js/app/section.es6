@@ -3,8 +3,12 @@
 
 
   class TrackSection {
-    constructor(data) {
+    constructor(section, data) {
+      this.section = section;
       this.data = data;
+      if (!data) {
+        throw new Exception();
+      }
     }
 
     beat(bar, beat) {
@@ -23,6 +27,20 @@
         meta: {},
         data: []
       };
+    }
+
+    nextBeat(beat) {
+      var barIndex = beat.bar;
+      var beatIndex = beat.beat + 1;
+
+      if (beatIndex > this.section.timeSignature.top) {
+        beatIndex = 1;
+        barIndex++;
+      }
+      if (barIndex > this.section.length) {
+        return null;
+      }
+      return this.beat(barIndex, beatIndex);
     }
 
     beatSounds(beat) {
@@ -78,6 +96,19 @@
       return this.bars[bar-1][beat-1].subbeats[subbeat-1];
     }
 
+    nextBeat(beat) {
+      var barIndex = beat.bar;
+      var beatIndex = beat.beat + 1;
+      if (beatIndex > this.section.timeSignature.top) {
+        beatIndex = 1;
+        barIndex++;
+      }
+      if (barIndex > this.section.length) {
+        return null;
+      }
+      return this.beat(barIndex, beatIndex);
+    }
+
     forEachBeat(callback, obj) {
       if (obj) {
         callback = callback.bind(obj);
@@ -121,7 +152,7 @@
 
     convertToTrackSection() {
       var data = angular.copy(this.rawData());
-      return new this.TrackSectionClass(data);
+      return new this.TrackSectionClass(this.section, data);
     }
   }
 
