@@ -21,7 +21,7 @@
   pointer-events: auto;
   cursor: pointer;
 }
-.beat-1 .bar-beat .subbeat .chord {
+.bar-beat .subbeat .chord.bar {
   left: 14px;
   right: 14px;
 }

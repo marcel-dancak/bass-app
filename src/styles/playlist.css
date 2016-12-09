@@ -99,8 +99,13 @@
 .bass-sheet .swiper-slide .chord-label {
   position: absolute;
   bottom: 10px;
-  left: 25px;
   color: #777;
+  text-align: center;
+}
+
+.bass-sheet .chord-label.bar {
+  left: 14px!important;
+  width: calc(25% - 28px)!important;
 }
 
 .bass-sheet .swiper-slide .header {

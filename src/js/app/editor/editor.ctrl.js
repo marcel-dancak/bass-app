@@ -238,6 +238,9 @@
           var iSubbeat = chordInfo.start[2] || 1;
           var beatElem = swiperControl.getBeatElem(iBar, iBeat);
           var elem = angular.element('<span class="chord">{0}{1}</span>'.format(chordInfo.root, chordInfo.type));
+          if (iBeat === 1 && iSubbeat === 1) {
+            elem.addClass('bar');
+          }
           angular.element(elem).on('click', function(evt) {
             fretboardViewer.setChord(workspace.section, chordInfo);
           });

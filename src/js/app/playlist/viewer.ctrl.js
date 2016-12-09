@@ -92,11 +92,26 @@
         var sectionFirstsBeat = position.bar === 1 && position.beat === 1;
 
         var trackBeat = track.beat(position.bar, position.beat);
+
+        var chordLabels = [];
+        if (section.meta && section.meta.chords) {
+          chordLabels = section.meta.chords
+            .filter(function(chord) {
+              return chord.start[0] === trackBeat.bar && chord.start[1] === trackBeat.beat;
+            })
+            .map(function(chord) {
+              return {
+                label: (chord.root || '')+(chord.type || ''),
+                subbeat: chord.start[2]
+              };
+            });
+        }
         beats.push({
           section: section.id,
           bar: position.bar,
           beat: position.beat,
           subdivision: trackBeat.subdivision,
+          chordLabels: chordLabels,
           meta: trackBeat.meta,
           sounds: track.beatSounds(trackBeat),
           timeSignature: section.timeSignature,

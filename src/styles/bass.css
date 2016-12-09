@@ -304,6 +304,9 @@
   border-bottom: 1px solid #ddd;
 }
 
+.workspace {
+  min-height: 410px!important;
+}
 .workspace:hover .bass-button {
   opacity: 0.99;
   transition-delay: 0.1s;

@@ -71,7 +71,16 @@
           {{ ::beat.bar }}
         </label>
 
-        <span class="chord-label">{{ ::beat.meta.chord }}</span>
+        <span
+          ng-repeat="chord in ::beat.chordLabels"
+          class="chord-label"
+          ng-class="{bar: beat.beat === 1 && chord.subbeat === 1}"
+          style="
+            left: {{ ::100*(chord.subbeat-1)/beat.subdivision }}%;
+            width: {{ ::100/beat.subdivision }}%;
+          ">
+          {{ ::chord.label }}
+        </span>
       </div>
 
       <!-- Bar -->
