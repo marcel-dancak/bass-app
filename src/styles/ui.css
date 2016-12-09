@@ -810,9 +810,27 @@ md-input-container label.md-no-float {
   height: 16px;
   margin-right: 10px;
 }
+.section-dialog .left-panel .md-button {
+  text-transform: none;
+  text-align: left;
+}
+.section-dialog .select-list md-list-item {
+  padding-left: 16px;
+}
 .section-dialog .left-panel {
   background-color: #f9f9f9;
 }
+
 .section-dialog .preferences {
   padding-left: 8px;
+}
+.section-dialog md-input-container .octave {
+  position: absolute;
+  bottom: 2px;
+  right: 16px;
+  color: #999;
+  pointer-events: none;
+}
+.section-dialog md-input-container.md-input-focused .octave {
+  visibility: hidden;
 }

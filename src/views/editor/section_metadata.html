@@ -28,7 +28,7 @@
           md-no-ink
           ng-repeat="chord in section.meta.chords"
           ng-click="selectChord(chord)"
-          ng-class="{ selected: data.chord === chord }">
+          ng-class="{ selected: form.chord === chord }">
           {{ chord.root }}{{ chord.type }}
         </md-list-item>
         <!-- <md-list-item
@@ -40,6 +40,7 @@
       </md-list>
       <md-button
         md-no-ink
+        aria-label="New"
         class="icon-hover"
         ng-click="newChord()">
         <md-icon md-svg-icon="plus"></md-icon>
@@ -49,18 +50,14 @@
 
     <md-list
       flex="70"
-      ng-if="data.chord"
+      ng-if="form.chord"
       class="preferences">
       <md-list-item layput="row">
         <label translate="CHORD"></label>
         <md-input-container>
           <label class="md-no-float" translate="STRING"></label>
-          <!-- <input
-            aria-label="String"
-            type="text"
-            ng-model="data.chord.string"> -->
           <md-select
-            ng-model="data.chord.string"
+            ng-model="form.chord.string"
             ng-change="">
             <md-option
               md-no-ink
@@ -76,8 +73,10 @@
           <input
             aria-label="Root note"
             type="text"
-            ng-model="data.chord.root"
+            ng-model="form.root"
+            ng-focus="form.root = form.chord.root + form.chord.octave"
             ng-blur="updateChord()">
+          <sub class="octave">{{ form.chord.octave }}</sub>
         </md-input-container>
 
         <md-input-container>
@@ -85,13 +84,13 @@
           <input
             aria-label="Type"
             type="text"
-            ng-model="data.chord.type"
+            ng-model="form.chord.type"
             ng-blur="updateChord()">
         </md-input-container>
       </md-list-item>
 
       <md-list-item layout="row">
-        <label>Starts At:</label>
+        <label>Position:</label>
         <md-input-container flex>
           <label class="md-no-float" translate="BAR"></label>
           <input
@@ -99,7 +98,7 @@
             type="number"
             min="1"
             max="{{ ::section.length }}"
-            ng-model="data.chord.start[0]"
+            ng-model="form.chord.start[0]"
             ng-change="updatePosition()">
         </md-input-container>
         <md-input-container flex>
@@ -109,7 +108,7 @@
             type="number"
             min="1"
             max="{{ ::section.timeSignature.top }}"
-            ng-model="data.chord.start[1]"
+            ng-model="form.chord.start[1]"
             ng-change="updatePosition()">
         </md-input-container>
         <md-input-container flex>
@@ -119,44 +118,11 @@
             type="number"
             min="1"
             max="4"
-            ng-model="data.chord.start[2]"
+            ng-model="form.chord.start[2]"
             ng-change="updatePosition()">
         </md-input-container>
       </md-list-item>
 
-      <md-list-item layout="row">
-        <label>Ends At:</label>
-        <md-input-container flex>
-          <label class="md-no-float" translate="BAR"></label>
-          <input
-            aria-label="Bar"
-            type="number"
-            min="1"
-            max="{{ ::section.length }}"
-            ng-model="data.chord.end[0]"
-            xng-change="updateSlides()">
-        </md-input-container>
-        <md-input-container flex>
-          <label class="md-no-float" translate="BEAT"></label>
-          <input
-            aria-label="Beat"
-            type="number"
-            min="1"
-            max="{{ ::section.timeSignature.top }}"
-            ng-model="data.chord.end[1]"
-            xng-change="updateSlides()">
-        </md-input-container>
-        <md-input-container flex>
-          <label class="md-no-float" translate="SUBBEAT"></label>
-          <input
-            aria-label="Subeat"
-            type="number"
-            min="1"
-            max="4"
-            ng-model="data.chord.end[2]"
-            xng-change="updateSlides()">
-        </md-input-container>
-      </md-list-item>
     </md-list>
   </div>
 </div>

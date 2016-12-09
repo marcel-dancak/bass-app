@@ -373,7 +373,17 @@
 
 
     function MetadataController($scope, workspace, mdPanelRef) {
+      function reorderChords() {
+        // ensure correct chords order
+        workspace.section.meta.chords.sort(function(a, b) {
+          var aValue = a.start[0]*1000 + a.start[1]*10 + a.start[2];
+          var bValue = b.start[0]*1000 + b.start[1]*10 + b.start[2];
+          return aValue - bValue;
+        });
+      }
+
       $scope.close = function() {
+        reorderChords()
         mdPanelRef.close();
       };
       $scope.track = workspace.track;
@@ -384,14 +394,16 @@
           chords: []
         };
       }
-      $scope.data = {
-        chord: null
+      $scope.form = {
+        chord: null, // selected chord item
+        root: ''
       };
       $scope.selectChord = function(chord) {
         if (!chord.string) {
           chord.string = 'E';
         }
-        $scope.data.chord = chord;
+        $scope.form.chord = chord;
+        $scope.form.root = chord.root;
       };
       function selectFirst() {
         if ($scope.section.meta.chords.length) {
@@ -401,14 +413,19 @@
 
       $scope.updatePosition = function() {
         updateChordLabels();
+        reorderChords();
       };
       $scope.updateChord = function() {
-        var value = $scope.data.chord.root;
-        value = value.replace('#', '♯').replace('b', '♭');
-        var octave = parseInt(value[value.length-1]);
-        if (Number.isInteger(octave)) {
-          $scope.data.chord.root = $scope.data.chord.root.substring(0, value.length-1);
-          $scope.data.chord.octave = octave;
+        var chord = $scope.form.chord;
+        if ($scope.form.root) {
+          var label = $scope.form.root.replace('#', '♯').replace('b', '♭');
+          chord.root = label;
+          var octave = parseInt(label[label.length-1]);
+          if (Number.isInteger(octave)) {
+            chord.root = label.substring(0, label.length-1);
+            chord.octave = octave;
+          }
+          $scope.form.root = chord.root;
         }
         updateChordLabels();
       };
@@ -421,9 +438,9 @@
 
       $scope.keyPressed = function(evt) {
         if (evt.keyCode === 46) {
-          var index = $scope.section.meta.chords.indexOf($scope.data.chord);
+          var index = $scope.section.meta.chords.indexOf($scope.form.chord);
           if (index !== -1) {
-            $scope.data.chord = null;
+            $scope.form.chord = null;
             $scope.section.meta.chords.splice(index, 1);
             selectFirst();
             updateChordLabels();
