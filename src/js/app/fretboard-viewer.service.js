@@ -144,48 +144,45 @@
         diagramElem = document.querySelector('.diagram-container');
       }
       this.clearDiagram();
+      if (!chord.root) {
+        return;
+      }
+
       var qs = '#{0}_{1}{2}'.format(chord.string, chord.root, chord.octave);
       var rootElem = diagramElem.querySelector(qs);
-      console.log(rootElem)
       rootElem.classList.add('root');
 
       var sBar = chord.start[0];
       var sBeat = chord.start[1];
       var sSubbeat = chord.start[2] || 1;
-      var eBar = chord.end[0];
-      var eBeat = chord.end[1];
-      var eSubbeat = chord.end[2] || 4;
 
+      var nextChordIndex = section.meta.chords.indexOf(chord);
+      var nextChord = section.meta.chords[nextChordIndex+1];
+
+      var end = nextChord? nextChord.start : [section.length+1, 1, 1];
+      var eBar = end[0];
+      var eBeat = end[1];
+      var eSubbeat = end[2];
+
+      var startRange = sBar*1000 + sBeat*10 + sSubbeat;
+      var endRange = eBar*1000 + eBeat*10 + eSubbeat;
+
+      // collect sounds in chord range
       var track = section.tracks[workspace.track.id];
+      var sounds = [];
       var beat = track.beat(sBar, sBeat);
-      var sounds;
-      if (sBar === eBar && sBeat === eBeat) {
-        sounds = track.beatSounds(beat)
-          .filter(function(sound) {
-            return sound.subbeat >= sSubbeat && sound.subbeat <= eSubbeat;
-          });
-      } else {
-        sounds = track.beatSounds(beat)
-          .filter(function(sound) {
-            return sound.subbeat >= sSubbeat;
-          });
-
-        while (true) {
-          beat = track.nextBeat(beat);
-          if (beat.bar === eBar && beat.beat === eBeat) {
-            break;
-          }
-          Array.prototype.push.apply(sounds, track.beatSounds(beat));
-        }
+      while (beat && (beat.bar*1000 + beat.beat*10) < endRange) {
         Array.prototype.push.apply(
           sounds,
           track.beatSounds(beat)
             .filter(function(sound) {
-              return sound.subbeat <= eSubbeat;
+              var soundPosition = beat.bar*1000 + beat.beat*10 + sound.subbeat;
+              return soundPosition >= startRange && soundPosition < endRange;
             })
         );
+        beat = track.nextBeat(beat);
       }
-      // console.log(sounds);
+
       var ids = new Set();
       sounds.forEach(function(beatSound) {
         var sound = beatSound.sound;
@@ -199,9 +196,11 @@
         }
       });
       var query = Array.from(ids).join(',');
-      diagramElem.querySelectorAll(query).forEach(function(elem) {
-        elem.classList.add('active');
-      });
+      if (query) {
+        diagramElem.querySelectorAll(query).forEach(function(elem) {
+          elem.classList.add('active');
+        });
+      }
     };
 
     FretboardViewer.prototype.beatSync = function(evt) {
@@ -209,9 +208,6 @@
         return;
       }
       var newChord = evt.section.meta.chords.find(function(chord, index) {
-        // if (chord.end[0] === evt.bar && chord.end[1] === evt.beat) {
-
-        // }
         return chord.start[0] === evt.bar && chord.start[1] === evt.beat;
       });
 
