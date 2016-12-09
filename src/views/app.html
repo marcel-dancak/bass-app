@@ -123,56 +123,56 @@
           }
         ]">
 
-      <div
-        ng-show="workspace.track.type === 'bass'"
-        class="instrument-left-panel">
+        <div
+          ng-show="workspace.track.type === 'bass'"
+          class="instrument-left-panel">
 
-        <div class="strings-labels">
-          <p ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index">
-            {{ ::string.label }}<sub class="octave-index">{{ ::string.octave }}</sub><br>
-          </p>
+          <div class="strings-labels">
+            <p ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index">
+              {{ ::string.label }}<sub class="octave-index">{{ ::string.octave }}</sub><br>
+            </p>
+          </div>
+
         </div>
 
-      </div>
-
-      <div class="instrument swiper-container">
-        <div class="swiper-wrapper">
-          <!-- Slides -->
-          <div
-            ng-repeat="slide in slides track by slide.id"
-            ng-attr-subdivision="{{ slide.beat.subdivision }}"
-            ng-attr-visible-subbeats="{{ swiperControl.swiperConfig.visibleSubbeats }}"
-            class="swiper-slide swiper-no-swiping instrument-slide beat beat-{{ ::slide.beat.beat }}">
+        <div class="instrument swiper-container">
+          <div class="swiper-wrapper">
+            <!-- Slides -->
             <div
-              ng-switch="slide.type"
-              ng-class="{obsolete: slide.obsolete}">
+              ng-repeat="slide in slides track by slide.id"
+              ng-attr-subdivision="{{ slide.beat.subdivision }}"
+              ng-attr-visible-subbeats="{{ swiperControl.swiperConfig.visibleSubbeats }}"
+              class="swiper-slide swiper-no-swiping instrument-slide beat beat-{{ ::slide.beat.beat }}">
               <div
-                ng-switch-when="bass"
-                class="beat-container"
-                ng-controller="BassBeatController">
-                  <div class="bass-board"
-                    ng-include="'views/editor/bass_beat.html'">
-                  </div>
-              </div>
-              <div
-                ng-switch-when="drums"
-                class="beat-container"
-                ng-controller="DrumsController"
-                class="drums-beat-grid">
+                ng-switch="slide.type"
+                ng-class="{obsolete: slide.obsolete}">
                 <div
-                  class="drums-beat-container"
-                  ng-if="slide.visible"
-                  ng-include="'views/editor/drums_beat.html'">
+                  ng-switch-when="bass"
+                  class="beat-container"
+                  ng-controller="BassBeatController">
+                    <div class="bass-board"
+                      ng-include="'views/editor/bass_beat.html'">
+                    </div>
                 </div>
+                <div
+                  ng-switch-when="drums"
+                  class="beat-container"
+                  ng-controller="DrumsController"
+                  class="drums-beat-grid">
+                  <div
+                    class="drums-beat-container"
+                    ng-if="slide.visible"
+                    ng-include="'views/editor/drums_beat.html'">
+                  </div>
+                </div>
+                <md-input-container
+                  class="bottom-note"
+                  bd-textarea="slide.beat.meta.note">
+                </md-input-container>
               </div>
-              <md-input-container
-                class="bottom-note"
-                bd-textarea="slide.beat.meta.note">
-              </md-input-container>
             </div>
           </div>
         </div>
-      </div>
 
       </div>
       <div flex style="max-height: 20px;"></div>
@@ -180,21 +180,21 @@
       <div ng-show="workspace.track.type === 'bass'" style="position: relative;">
         <div
           ng-include="'views/editor/fretboard.html'"
-          class="diagram-container"></div>
+          class="diagram-container">
+        </div>
       </div>
 
-        <span flex></span>
-      </div>
+      <span flex></span>
+    </div>
 
-      <div
-        ng-if="workspace.track.type === 'drums'"
-        layout="column"
-        class="drums-labels-container">
-        <img
-          ng-repeat="drum in workspace.track.instrument track by drum.name"
-          ng-src="{{ ::drum.image }}"
-          ng-click="playDrumSound(drum.name)">
-      </div>
+    <div
+      ng-if="workspace.track.type === 'drums'"
+      layout="column"
+      class="drums-labels-container">
+      <img
+        ng-repeat="drum in workspace.track.instrument track by drum.name"
+        ng-src="{{ ::drum.image }}"
+        ng-click="playDrumSound(drum.name)">
     </div>
   </div>
 
