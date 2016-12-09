@@ -184,17 +184,17 @@
         </div>
       </div>
 
-      <span flex></span>
-    </div>
+      <div
+        ng-if="workspace.track.type === 'drums'"
+        layout="column"
+        class="drums-labels-container">
+        <img
+          ng-repeat="drum in workspace.track.instrument track by drum.name"
+          ng-src="{{ ::drum.image }}"
+          ng-click="playDrumSound(drum.name)">
+      </div>
 
-    <div
-      ng-if="workspace.track.type === 'drums'"
-      layout="column"
-      class="drums-labels-container">
-      <img
-        ng-repeat="drum in workspace.track.instrument track by drum.name"
-        ng-src="{{ ::drum.image }}"
-        ng-click="playDrumSound(drum.name)">
+      <span flex></span>
     </div>
   </div>
 
