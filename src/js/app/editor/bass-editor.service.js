@@ -490,17 +490,12 @@
         while (elem && !elem.hasClass('subbeats-container')) {
           elem = elem.parent();
         }
-        var beatWidth = elem[0].clientWidth;
-
-        if (subdivision === 3) {
-          beatWidth = beatWidth*(2/3);
-        }
-        beatWidth = parseInt(beatWidth);
+        var beatWidth = parseInt(elem[0].clientWidth);
 
         notesWidths = noteLengths.map(function(noteLength) {
-          var length = noteLength.dotted? noteLength.length*1.5 : noteLength.length;
+          var length = noteLength.dotted? noteLength.length * 1.5 : noteLength.length;
           noteLength.beatLength = length;
-          var width = length * workspace.section.timeSignature.bottom*beatWidth;
+          var width = length * workspace.section.timeSignature.bottom * beatWidth;
           return width;
         });
 
