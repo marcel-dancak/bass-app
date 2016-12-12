@@ -5,7 +5,7 @@
     .module('bd.app')
     .controller('FretboardController', FretboardController);
 
-  function FretboardController($scope, audioPlayer, workspace) {
+  function FretboardController($scope, audioPlayer, workspace, fretboardViewer, $element) {
 
     $scope.playingStyles = [
       {
@@ -45,6 +45,9 @@
       audioPlayer.playBassSample(workspace.track, sound);
     };
 
+    $scope.modeChanged = function() {
+      fretboardViewer.activate($scope.fretboard.chordMode? $element[0] : null);
+    };
   }
 
 })();

@@ -19,7 +19,8 @@
     }
   };
 
-  function PlaylistViewer($scope, $timeout, $q, audioPlayer, projectManager, workspace, $mdCompiler, HighlightTimeline) {
+  function PlaylistViewer($scope, $timeout, $q, $mdCompiler,
+    audioPlayer, projectManager, workspace, HighlightTimeline, fretboardViewer) {
 
     var viewerTrackId = workspace.bassSection.track.id;
 
@@ -299,6 +300,7 @@
         }
       }
       timeline.beatSync(evt);
+      fretboardViewer.beatSync(evt);
     }
 
     function playSection(start) {
@@ -315,7 +317,7 @@
       // audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
       var countdown = $scope.player.countdown && (start || playbackState.section === 0);
-      audioPlayer.play(section, beatSync, countdown);
+      audioPlayer.play(section, beatSync, playbackStopped, countdown);
     }
 
     function playFromCurrentPosition() {
@@ -410,7 +412,7 @@
       }
     }
 
-    audioPlayer.on('playbackStopped', playbackStopped);
+    // audioPlayer.on('playbackStopped', playbackStopped);
 
     $scope.ui.selectTrack = function(trackId) {
       workspace.track = projectManager.project.tracksMap[trackId];
@@ -516,7 +518,7 @@
     };
 
     $scope.$on('$destroy', function() {
-      audioPlayer.un('playbackStopped', playbackStopped);
+      // audioPlayer.un('playbackStopped', playbackStopped);
       projectManager.un('playlistLoaded', playlistLoaded);
       projectManager.un('projectLoaded', projectLoaded);
     });

@@ -9,21 +9,15 @@
   background-color: rgb(255, 250, 190);
 }
 
-.bar-beat .subbeat .chord:hover {
+.bar-slide .chord:hover {
   color: #2196F3;
 }
-.bar-beat .subbeat .chord {
+.bar-slide .chord {
   position: absolute;
   top: -30px;
-  left: 0;
-  right: 0;
   text-align: center;
-  pointer-events: auto;
   cursor: pointer;
-}
-.bar-beat .subbeat .chord.bar {
-  left: 14px;
-  right: 14px;
+  color: #777;
 }
 
 .audio-graph-container::before,
@@ -36,7 +30,6 @@
   width: 2px;
   background-color: #bbb;
   z-index: 199;
-  pointer-events: none;
 }
 .bar-slide .bar-beat::before {
   bottom: 5px;

@@ -14,7 +14,7 @@
       },
       controller: function($scope) {
         var config = $scope.config;
-        var instrument = workspace.section.tracks[config.track].instrument;
+        var instrument = workspace.track.instrument;
         console.log(config)
 
         function labelToNote(noteCode) {
@@ -64,13 +64,10 @@
     function FretboardViewer() {
       
       audioPlayer._bassSoundScheduled = function(trackId, sound) {
-        var currentTime = context.currentTime;
-        function delayTime(time) {
-          return parseInt((time - currentTime) * 1000);
-        }
-        if (trackId === workspace.track.id) {
-          if (!diagramElem) {
-            diagramElem = document.querySelector('.diagram-container');
+        if (diagramElem && trackId === workspace.track.id) {
+          var currentTime = context.currentTime;
+          function delayTime(time) {
+            return parseInt((time - currentTime) * 1000);
           }
           if (sound.type === 'single') {
             // console.log('HIGHLIGHT NOTE');
@@ -115,7 +112,6 @@
             }, delayTime(lastNote.startTime+lastNote.duration)-5);
           } else if (sound.type === 'ghost') {
             var ghostElem = diagramElem.querySelector('.string.{0} .ghost-note label'.format(sound.string));
-            console.log(ghostElem);
             setTimeout(function() {
               ghostElem.classList.add('highlight');
             }, delayTime(sound.startTime));
@@ -126,6 +122,10 @@
         }
       }
     }
+
+    FretboardViewer.prototype.activate = function(containerElem) {
+      diagramElem = containerElem;
+    };
 
     FretboardViewer.prototype.clearDiagram = function() {
       if (!diagramElem) return;
@@ -140,11 +140,8 @@
     }
 
     FretboardViewer.prototype.setChord = function(section, chord) {
-      if (!diagramElem) {
-        diagramElem = document.querySelector('.diagram-container');
-      }
       this.clearDiagram();
-      if (!chord.root) {
+      if (!diagramElem || !chord.root) {
         return;
       }
 

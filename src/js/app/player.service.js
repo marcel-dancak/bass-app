@@ -578,14 +578,15 @@
       return task.promise;
     };
 
-    AudioPlayer.prototype.play = function(section, beatPreparedCallback, countdown) {
+    AudioPlayer.prototype.play = function(section, beatPrepared, playbackStopped, countdown) {
       console.log('PLAY');
       this.section = section;
       this.playing = true;
       this.lastSyncTimerId = 0;
 
       var player = this;
-      this.beatPreparedCallback = angular.isFunction(beatPreparedCallback)? beatPreparedCallback : angular.noop;
+      this.beatPreparedCallback = angular.isFunction(beatPrepared)? beatPrepared : angular.noop;
+      this.playbackStoppedCallback = angular.isFunction(playbackStopped)? playbackStopped : angular.noop;
 
       var count = countdown? 3 : 0;
       function countDownTick() {
@@ -627,7 +628,8 @@
       this.oscillator.disconnect();
       this.oscillator.output.disconnect();
       */
-      this.dispatchEvent('playbackStopped');
+      // this.dispatchEvent('playbackStopped');
+      this.playbackStoppedCallback();
     };
 
     AudioPlayer.prototype.playBassSample = function(track, bassSound) {

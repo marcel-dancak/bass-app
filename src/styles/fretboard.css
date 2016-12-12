@@ -36,7 +36,7 @@ md-input-container.input-inline-label label {
 
 .fret-diagram,
 .fretboard {
-  padding: 0 10px 0 10px;
+  padding: 0 10px 0 6px;
   position: relative;
 }
 
@@ -113,6 +113,9 @@ md-input-container.input-inline-label label {
   background-color: #ffeb3b;
 }
 
+.drag.fret-box.ghost-note {
+  background-color: #ddd;
+}
 /** Ghost note **/
 
 .fret-diagram .fret-box {
@@ -126,7 +129,7 @@ md-input-container.input-inline-label label {
   background-color: #ccc;
   text-align: center;
   border-bottom: 1px solid #fff;
-  border-left: 2px solid #999;
+  border-left: 1px solid #fff;
   font-size: 16px;
 }
 .fret-box.ghost-note label {
@@ -140,7 +143,6 @@ md-input-container.input-inline-label label {
 }
 
 .fret-diagram .fret-box.ghost-note {
-  border-right: 1px solid #999;
   border-bottom: none;
   height: 33px;
   color: #fff;
@@ -182,21 +184,28 @@ md-input-container.input-inline-label label {
   border-radius: 3px;
 }
 
+.fret-box:first-child {
+  border-left: 2px solid #999;
+  max-width: 54px;
+  min-width: 54px;
+  background-color: rgba(230,230,230,0.33);
+  font-weight: bold;
+}
 .fret-box:last-child {
   border-right: 2px solid #999;
 }
 
 .fret-diagram .fretboard-scroller .string:before {
   position: fixed;
-  left: 10px;
+  left: 6px;
   right: 10px;
 }
 
 .fretboard .strings:before,
 .fret-diagram .strings:before {
   content: "";
-  position: fixed;
-  left: 10px;
+  position: absolute;
+  left: 6px;
   right: 10px;
   height: 2px;
   background-color: #999;
@@ -205,12 +214,13 @@ md-input-container.input-inline-label label {
 .fretboard .strings:after,
 .fret-diagram .strings:after {
   content: "";
-  position: fixed;
-  left: 10px;
+  position: absolute;
+  left: 6px;
   right: 10px;
   height: 2px;
   background-color: #999;
-  transform: translate3d(0, -1px, 0);
+  transform: translate3d(0, -2px, 0);
+  z-index: 10;
 }
 
 .fret-diagram .string {
@@ -234,7 +244,7 @@ md-input-container.input-inline-label label {
 
 .fretboard .frets-labels,
 .fret-diagram .frets-labels {
-  padding-left: 50px;
+  padding-right: 50px;
   line-height: 20px;
   height: 23px;
 }
@@ -247,6 +257,11 @@ md-input-container.input-inline-label label {
   position: relative;
   min-width: 64px;
   text-align: center;
+}
+.frets-labels label[fret="0"] {
+  min-width: 50px;
+  max-width: 50px;
+  color: #fff;
 }
 .frets-labels label[fret="3"]:before,
 .frets-labels label[fret="5"]:before,

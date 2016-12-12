@@ -814,6 +814,10 @@ md-input-container label.md-no-float {
   text-transform: none;
   text-align: left;
 }
+.section-dialog .select-list {
+  max-height: 500px;
+  overflow: auto;
+}
 .section-dialog .select-list md-list-item {
   padding-left: 16px;
 }

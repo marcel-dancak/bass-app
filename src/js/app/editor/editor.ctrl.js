@@ -3,12 +3,91 @@
 
   angular
     .module('bd.app')
+    .controller('MetadataController', MetadataController)
     .controller('EditModeController', EditModeController);
+
+
+    function MetadataController($scope, workspace, mdPanelRef, updateChordLabels) {
+      function reorderChords() {
+        // ensure correct chords order
+        workspace.section.meta.chords.sort(function(a, b) {
+          var aValue = a.start[0]*1000 + a.start[1]*10 + a.start[2];
+          var bValue = b.start[0]*1000 + b.start[1]*10 + b.start[2];
+          return aValue - bValue;
+        });
+      }
+
+      $scope.close = function() {
+        reorderChords()
+        mdPanelRef.close();
+      };
+      $scope.track = workspace.track;
+      $scope.section = workspace.section;
+
+      if (!workspace.section.meta) {
+        workspace.section.meta = {
+          chords: []
+        };
+      }
+      $scope.form = {
+        chord: null, // selected chord item
+        root: ''
+      };
+      $scope.selectChord = function(chord) {
+        if (!chord.string) {
+          chord.string = 'E';
+        }
+        $scope.form.chord = chord;
+        $scope.form.root = chord.root;
+      };
+      function selectFirst() {
+        if ($scope.section.meta.chords.length) {
+          $scope.selectChord($scope.section.meta.chords[0]);
+        }
+      }
+
+      $scope.updatePosition = function() {
+        updateChordLabels();
+        reorderChords();
+      };
+      $scope.updateChord = function() {
+        var chord = $scope.form.chord;
+        if ($scope.form.root) {
+          var label = $scope.form.root.replace('#', '♯').replace('b', '♭');
+          chord.root = label;
+          var octave = parseInt(label[label.length-1]);
+          if (Number.isInteger(octave)) {
+            chord.root = label.substring(0, label.length-1);
+            chord.octave = octave;
+          }
+          $scope.form.root = chord.root;
+        }
+        updateChordLabels();
+      };
+
+      $scope.newChord = function() {
+        var newChord = {start: [1,1,1]};
+        $scope.section.meta.chords.push(newChord);
+        $scope.selectChord(newChord);
+      };
+
+      $scope.keyPressed = function(evt) {
+        if (evt.keyCode === 46) {
+          var index = $scope.section.meta.chords.indexOf($scope.form.chord);
+          if (index !== -1) {
+            $scope.form.chord = null;
+            $scope.section.meta.chords.splice(index, 1);
+            selectFirst();
+            updateChordLabels();
+          }
+        }
+      };
+      selectFirst();
+    }
 
 
   function EditModeController($scope, $timeout, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
               projectManager, Drums, BassSection, DrumSection, HighlightTimeline, swiperControl, fretboardViewer) {
-
 
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
@@ -150,7 +229,13 @@
 
       audioPlayer.fetchResourcesWithProgress(workspace.section)
         .then(
-          audioPlayer.play.bind(audioPlayer, workspace.section, beatPrepared, $scope.player.countdown),
+          audioPlayer.play.bind(
+            audioPlayer,
+            workspace.section,
+            beatPrepared,
+            playbackStopped,
+            $scope.player.countdown
+          ),
           function() {$scope.player.playing = false}
         );
 
@@ -168,7 +253,7 @@
           swiperControl.createLoop();
           swiperControl.reset();
         }
-        audioPlayer.play(workspace.section, beatPrepared);
+        audioPlayer.play(workspace.section, beatPrepared, playbackStopped);
         return;
       }
       if (swiperControl.loopMode) {
@@ -178,7 +263,7 @@
       audioVisualiser.deactivate();
       timeline.stop();
     }
-    audioPlayer.on('playbackStopped', playbackStopped);
+    // audioPlayer.on('playbackStopped', playbackStopped);
 
 
     $scope.playDrumSound = function(drumName) {
@@ -237,16 +322,77 @@
           var iBeat = chordInfo.start[1];
           var iSubbeat = chordInfo.start[2] || 1;
           var beatElem = swiperControl.getBeatElem(iBar, iBeat);
-          var elem = angular.element('<span class="chord">{0}{1}</span>'.format(chordInfo.root, chordInfo.type));
+          var elem = angular.element('<span class="chord">{0}{1}</span>'.format(chordInfo.root, chordInfo.type))[0];
+          var subbeatPercWidth = parseInt(100/beatElem.childElementCount);
           if (iBeat === 1 && iSubbeat === 1) {
-            elem.addClass('bar');
+            elem.style.left = '14px';
+            elem.style.width = 'calc({0}% - 28px)'.format(subbeatPercWidth);
+          } else {
+            elem.style.left = ((iSubbeat-1)*subbeatPercWidth)+'%';
+            elem.style.width = subbeatPercWidth+'%';
           }
+
           angular.element(elem).on('click', function(evt) {
             fretboardViewer.setChord(workspace.section, chordInfo);
           });
-          beatElem.children[iSubbeat-1].appendChild(elem[0]);
+          angular.element(elem).on('dblclick', function(evt) {
+            playChord(chordInfo);
+          });
+          // beatElem.children[iSubbeat-1].appendChild(elem[0]);
+
+          beatElem.parentNode.appendChild(elem);
         });
       }
+    }
+
+    function playChord(chord) {
+      var index = workspace.section.meta.chords.indexOf(chord);
+      var nextChord = workspace.section.meta.chords[index+1];
+      var end = nextChord? angular.copy(nextChord.start) : [workspace.section.length+1, 1, 1];
+      end[2]--;
+      if (end[2] === 0) {
+        end[1]--;
+        end[2] = 4;
+      }
+      if (end[1] === 0) {
+        end[0]--;
+        end[1] = workspace.section.timeSignature.top;
+      }
+
+      var currentRange = audioPlayer.playbackRange;
+      audioPlayer.playbackRange = {
+        start: {
+          bar: chord.start[0],
+          beat: chord.start[1]
+        },
+        end: {
+          bar: end[0],
+          beat: end[1],
+        }
+      };
+      function beatSync(evt) {
+        timeline.beatSync(evt);
+        fretboardViewer.beatSync(evt);
+      }
+      function chordPalybackStopped() {
+        audioPlayer.playbackRange = currentRange;
+        $scope.player.playing = false;
+        timeline.stop();
+      }
+      $scope.player.playing = true;
+      audioPlayer.setBpm(workspace.section.bpm);
+      timeline.start();
+
+      audioPlayer.fetchResourcesWithProgress(workspace.section)
+        .then(
+          audioPlayer.play.bind(
+            audioPlayer,
+            workspace.section,
+            beatSync,
+            chordPalybackStopped
+          ),
+          function() {$scope.player.playing = false}
+        );
     }
 
     function sectionLoaded(section) {
@@ -375,84 +521,6 @@
     };
 
 
-    function MetadataController($scope, workspace, mdPanelRef) {
-      function reorderChords() {
-        // ensure correct chords order
-        workspace.section.meta.chords.sort(function(a, b) {
-          var aValue = a.start[0]*1000 + a.start[1]*10 + a.start[2];
-          var bValue = b.start[0]*1000 + b.start[1]*10 + b.start[2];
-          return aValue - bValue;
-        });
-      }
-
-      $scope.close = function() {
-        reorderChords()
-        mdPanelRef.close();
-      };
-      $scope.track = workspace.track;
-      $scope.section = workspace.section;
-
-      if (!workspace.section.meta) {
-        workspace.section.meta = {
-          chords: []
-        };
-      }
-      $scope.form = {
-        chord: null, // selected chord item
-        root: ''
-      };
-      $scope.selectChord = function(chord) {
-        if (!chord.string) {
-          chord.string = 'E';
-        }
-        $scope.form.chord = chord;
-        $scope.form.root = chord.root;
-      };
-      function selectFirst() {
-        if ($scope.section.meta.chords.length) {
-          $scope.selectChord($scope.section.meta.chords[0]);
-        }
-      }
-
-      $scope.updatePosition = function() {
-        updateChordLabels();
-        reorderChords();
-      };
-      $scope.updateChord = function() {
-        var chord = $scope.form.chord;
-        if ($scope.form.root) {
-          var label = $scope.form.root.replace('#', '♯').replace('b', '♭');
-          chord.root = label;
-          var octave = parseInt(label[label.length-1]);
-          if (Number.isInteger(octave)) {
-            chord.root = label.substring(0, label.length-1);
-            chord.octave = octave;
-          }
-          $scope.form.root = chord.root;
-        }
-        updateChordLabels();
-      };
-
-      $scope.newChord = function() {
-        var newChord = {start: [1,1,1]};
-        $scope.section.meta.chords.push(newChord);
-        $scope.selectChord(newChord);
-      };
-
-      $scope.keyPressed = function(evt) {
-        if (evt.keyCode === 46) {
-          var index = $scope.section.meta.chords.indexOf($scope.form.chord);
-          if (index !== -1) {
-            $scope.form.chord = null;
-            $scope.section.meta.chords.splice(index, 1);
-            selectFirst();
-            updateChordLabels();
-          }
-        }
-      };
-      selectFirst();
-    }
-
     workspace.metadataEditor = function() {
       var position = $mdPanel.newPanelPosition()
         .absolute()
@@ -467,13 +535,17 @@
 
       var dialog = $mdPanel.open({
         templateUrl: 'views/editor/section_metadata.html',
-        controller: MetadataController,
+        controller: 'MetadataController',
+        locals: {
+          updateChordLabels: updateChordLabels
+        },
         autoWrap: false,
         hasBackdrop: false,
         disableParentScroll: false,
         clickOutsideToClose: false,
         position: position,
         animation: animation,
+        panelClass: 'metadata',
         onOpenComplete: function(args) {
           var containerEl = args[0].panelEl.parent();
           containerEl.css('pointerEvents', 'none');
@@ -484,7 +556,7 @@
 
     $scope.$on('$destroy', function() {
       projectManager.un('sectionLoaded', sectionLoaded);
-      audioPlayer.un('playbackStopped', playbackStopped);
+      // audioPlayer.un('playbackStopped', playbackStopped);
     });
     window.sw = swiperControl;
 

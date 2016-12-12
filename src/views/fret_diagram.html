@@ -1,20 +1,26 @@
 <div
   class="fret-diagram">
-  <div class="frets-labels">
+  <div
+    layout="row"
+    class="frets-labels">
     <label
       ng-repeat="fret in ::frets"
-      fret="{{::fret}}">
+      fret="{{::fret}}"
+      flex>
       {{ ::fret }}
     </label>
   </div>
   <div class="strings">
     <div
       ng-repeat="string in ::instrument.strings | orderBy:string.index:'-'"
-      class="string {{ ::string.label }}">
-      <label>{{ string.label }}</label>
+      class="string {{ ::string.label }}"
+      layout="row">
+      <!-- <label>{{ string.label }}</label> -->
       <div
         ng-repeat="fret in ::frets"
-        class="fret fret-{{ ::fret }}"
+        flex
+        class="fret-box fret-{{ ::fret }}"
+        ng-class="['octave-'+note.octave]"
         ng-init="note = string.notes[fret]">
         <!-- <span>&nbsp;</span> -->
         <!-- <label>{{ string.notes[fret].label[0] }}</label> -->
@@ -33,6 +39,11 @@
           <!-- <span class="interval">{{ ::fretNote.interval }}</span> -->
         </label>
       </div>
+
+      <div class="fret-box ghost-note">
+        <label>x</label>
+      </div>
+
     </div>
   </div>
 </div>
