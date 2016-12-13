@@ -116,32 +116,50 @@
       }
 
       updateBassReferences(beat) {
-
         var sounds = this.beatSounds(beat);
         for (var i = 0; i < sounds.length; i++) {
           var sound = sounds[i].sound;
+          var iSubbeat = sounds[i].subbeat;
 
-          if (sound.prev) {
-            if (angular.isUndefined(sound.prev.ref)) {
-              Object.defineProperty(sound.prev, 'ref', {value: 'static', writable: true});
-            }
-            // fix of invalid bar index (after copy/paste) - TODO: better solution
-            if (sound.prev.bar !== beat.bar) {
-              sound.prev.bar = beat.beat === 1 || sound.prev.beat >= beat.beat? beat.bar - 1 : beat.bar;
-            }
+          // fix connections with sounds from previous bar
+          if (sound.prev && beat.beat === 1 && iSubbeat === 1) {
+            sound.prev.bar = beat.bar - 1;
             var subbeat = this.subbeat(sound.prev.bar, sound.prev.beat, sound.prev.subbeat);
-            sound.prev.ref = subbeat[sound.prev.string].sound;
+            var prevSound = subbeat[sound.prev.string].sound;
+            if (!prevSound.next) {
+              prevSound.next = {
+                bar: beat.bar,
+                beat: beat.beat,
+                subbeat: iSubbeat,
+                string: sound.string
+              }
+              Object.defineProperty(prevSound.next, 'ref', {value: 'static', writable: true});
+              prevSound.next.ref = sound;
+              sound.prev.ref = prevSound;
+            }
           }
           if (sound.next) {
             if (angular.isUndefined(sound.next.ref)) {
               Object.defineProperty(sound.next, 'ref', {value: 'static', writable: true});
             }
             // fix of invalid bar index (after copy/paste) - TODO: better solution
-            if (sound.next.bar !== beat.bar) {
-              sound.next.bar = sound.next.beat === 1 || sound.next.beat < beat.beat? beat.bar + 1 : beat.bar;
-            }
+            sound.next.bar = (sound.next.beat === 1 && sound.next.subbeat === 1) ||
+              sound.next.beat*10+sound.next.subbeat < beat.beat*10+iSubbeat? beat.bar + 1 : beat.bar;
+
             var subbeat = this.subbeat(sound.next.bar, sound.next.beat, sound.next.subbeat);
-            sound.next.ref = subbeat[sound.next.string].sound;
+            var nextSound = subbeat[sound.next.string].sound;
+            sound.next.ref = nextSound
+
+            if (nextSound.prev) {
+              if (angular.isUndefined(nextSound.prev.ref)) {
+                Object.defineProperty(nextSound.prev, 'ref', {value: 'static', writable: true});
+              }
+              nextSound.prev.bar = beat.bar;
+              nextSound.prev.ref = sound;
+            } else {
+              // break sound connections at the end of bar
+              delete sound.next;
+            }
           }
         }
       }
