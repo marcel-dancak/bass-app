@@ -273,6 +273,28 @@
         },
         {
           accepts: function(sound) {
+            return sound.note.type === 'harmonics';
+          },
+          getResources: function(sound) {
+            return ['sounds/bass/{0}/{1}{2}_H'.format(sound.style, sound.string, sound.note.fret)];
+          },
+          prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
+            var audio = _this.createSoundAudio(track, sound, startTime);
+            var duration = _this.noteDuration(sound, beatTime, timeSignature);
+            audio.duration = duration;
+            audio.endTime = startTime + duration;
+            audio.meta = {
+              type: 'single',
+              string: sound.string,
+              note: sound.note,
+              startTime: startTime,
+              duration: duration
+            };
+            return [audio];
+          }
+        },
+        {
+          accepts: function(sound) {
             return sound.note.type === 'regular';
           },
           getResources: function(sound) {

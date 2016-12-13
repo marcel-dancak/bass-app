@@ -625,7 +625,7 @@ md-input-container.slide-field > span {
   line-height: 36px;
 }
 
-.bass-sound-wrapper.staccato .top-label::before {
+.bass-sound-wrapper.staccato .top-label:before {
   content: "•";
   position: absolute;
   top: 0;
@@ -633,16 +633,20 @@ md-input-container.slide-field > span {
   line-height: 12px;
 }
 
-.bass-sound-wrapper.slap .top-label::after {
+.bass-sound-wrapper.slap .top-label:after {
   content: "S";
 }
 
-.bass-sound-wrapper.pop .top-label::after {
+.bass-sound-wrapper.pop .top-label:after {
   content: "P";
 }
 
-.bass-sound-wrapper.tap .top-label::after {
+.bass-sound-wrapper.tap .top-label:after {
   content: "T";
+}
+
+.bass-sound-wrapper.harmonics .top-label:after {
+  content: "N.H.";
 }
 
 .string-0 .top-label {
