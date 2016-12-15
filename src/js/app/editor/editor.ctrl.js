@@ -59,6 +59,15 @@
           if (Number.isInteger(octave)) {
             chord.root = label.substring(0, label.length-1);
             chord.octave = octave;
+          } else if (!Number.isInteger(chord.octave)) {
+            // select first octave
+            var string = $scope.track.instrument.strings[$scope.form.chord.string];
+            var note = string.notes.find(function(note) {
+              return note.label[0] === label || note.label[1] === label;
+            });
+            if (note) {
+              chord.octave = note.octave;
+            }
           }
           $scope.form.root = chord.root;
         }
@@ -284,7 +293,8 @@
         slides.push({
           id: slideId,
           beat: beat,
-          type: workspace.track.type
+          type: workspace.track.type,
+          beatLabel: workspace.section.beatLabels? workspace.section.beatLabels[beat.beat] : beat.beat
         });
       });
       $scope.slides = slides;
@@ -313,10 +323,11 @@
 
     function updateChordLabels() {
       var barlineElem = swiperControl.barSwiper.wrapper[0];
-      barlineElem.querySelectorAll('.chord').forEach(function(elem) {
+      console.log(barlineElem.querySelectorAll('.chord'))
+      Array.from(barlineElem.querySelectorAll('.chord')).forEach(function(elem) {
         elem.remove();
       });
-      if (workspace.section.meta) {
+      if (workspace.section.meta && workspace.section.meta.chords) {
         workspace.section.meta.chords.forEach(function(chordInfo) {
           var iBar = chordInfo.start[0];
           var iBeat = chordInfo.start[1];

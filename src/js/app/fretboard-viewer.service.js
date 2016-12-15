@@ -90,7 +90,7 @@
               } else {
                 query = '.string.{0} .fret-{1} label'.format(sound.string, subsound.note.fret);
               }
-              var elems = diagramElem.querySelectorAll(query);
+              var elems = Array.from(diagramElem.querySelectorAll(query));
               setTimeout(function(elems, prevElems) {
                 prevElems.forEach(function(elem) {
                   elem.classList.remove('highlight');
@@ -129,7 +129,7 @@
 
     FretboardViewer.prototype.clearDiagram = function() {
       if (!diagramElem) return;
-      var elems = diagramElem.querySelectorAll('.active');
+      var elems = Array.from(diagramElem.querySelectorAll('.active'));
       elems.forEach(function(elem) {
         elem.classList.remove('active');
       });
@@ -194,7 +194,7 @@
       });
       var query = Array.from(ids).join(',');
       if (query) {
-        diagramElem.querySelectorAll(query).forEach(function(elem) {
+        Array.from(diagramElem.querySelectorAll(query)).forEach(function(elem) {
           elem.classList.add('active');
         });
       }
