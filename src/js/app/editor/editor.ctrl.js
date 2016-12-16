@@ -7,32 +7,44 @@
     .controller('EditModeController', EditModeController);
 
 
-    function MetadataController($scope, workspace, mdPanelRef, updateChordLabels) {
+    function MetadataController($scope, workspace, mdPanelRef, projectManager, updateChordLabels) {
       function reorderChords() {
         // ensure correct chords order
-        workspace.section.meta.chords.sort(function(a, b) {
+        $scope.section.meta.chords.sort(function(a, b) {
           var aValue = a.start[0]*1000 + a.start[1]*10 + a.start[2];
           var bValue = b.start[0]*1000 + b.start[1]*10 + b.start[2];
           return aValue - bValue;
         });
       }
 
-      $scope.close = function() {
-        reorderChords()
-        mdPanelRef.close();
-      };
-      $scope.track = workspace.track;
-      $scope.section = workspace.section;
-
-      if (!workspace.section.meta) {
-        workspace.section.meta = {
-          chords: []
-        };
+      function selectFirst() {
+        if ($scope.section.meta.chords.length) {
+          $scope.selectChord($scope.section.meta.chords[0]);
+        }
       }
-      $scope.form = {
-        chord: null, // selected chord item
-        root: ''
+
+      function setSection(section) {
+        if (!section.meta) {
+          section.meta = {
+            chords: []
+          };
+        }
+        $scope.section = section;
+        $scope.form = {
+          chord: null, // selected chord item
+          root: ''
+        };
+        selectFirst();
+      }
+
+      $scope.track = workspace.track;
+
+      $scope.close = function() {
+        reorderChords();
+        mdPanelRef.close();
+        projectManager.un('sectionLoaded', setSection);
       };
+
       $scope.selectChord = function(chord) {
         if (!chord.string) {
           chord.string = 'E';
@@ -40,11 +52,7 @@
         $scope.form.chord = chord;
         $scope.form.root = chord.root;
       };
-      function selectFirst() {
-        if ($scope.section.meta.chords.length) {
-          $scope.selectChord($scope.section.meta.chords[0]);
-        }
-      }
+
 
       $scope.updatePosition = function() {
         updateChordLabels();
@@ -91,7 +99,9 @@
           }
         }
       };
-      selectFirst();
+
+      setSection(workspace.section);
+      projectManager.on('sectionLoaded', setSection);
     }
 
 
@@ -323,7 +333,6 @@
 
     function updateChordLabels() {
       var barlineElem = swiperControl.barSwiper.wrapper[0];
-      console.log(barlineElem.querySelectorAll('.chord'))
       Array.from(barlineElem.querySelectorAll('.chord')).forEach(function(elem) {
         elem.remove();
       });
@@ -536,7 +545,7 @@
       var position = $mdPanel.newPanelPosition()
         .absolute()
         .centerHorizontally()
-        .bottom('10%')
+        .bottom('7%')
 
       var animation = $mdPanel.newPanelAnimation()
         // .withAnimation($mdPanel.animation.FADE);
