@@ -11,6 +11,9 @@ drums backing tracks, or bass covers.
 * easy to use user interface
 * pure HTML 5 application, can be served online or run locally
 
+### Fretboard Highlight view (NEW)
+![Section Mode - Highlight view](docs/fretboard.png)
+
 ### Bass Editor
 ![Section Mode - Bass Editation](docs/bass.png)
 
@@ -35,7 +38,6 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 * Vibrato playing style for bass
 * Configurable bass strings tunning
 * Improve percussions (more configurability, sound samples, ...)
-* Spanish translation
 * Undo/Redo function for editor
 * Build desktop application (Electron)
 * Migrate code from Angular to Vue 2
@@ -50,6 +52,10 @@ Here are some examples of projects. Please note, that you cannot save changes
 in these online (remote) projects. Click on the link above to open application
 for creating your own projects.
 
+[Slap Funk (by Mannybass)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#SlapFunk)
+
+[Cantos de Jubilo (by Mannybass)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Cantos_de_Jubilo)
+
 [Jamiroquai - Runaway](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
 
 [Patrice Rushen - Forget Me Nots](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#PatriceRushen-ForgetMeNots)
@@ -57,8 +63,6 @@ for creating your own projects.
 [Sublime - Santeria](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Sublime-Santeria)
 
 [Knight Rider](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#KnightRider)
-
-[Cantos de Jubilo](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Cantos_de_Jubilo)
 
 [Various short riffs](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Riffs)
 
