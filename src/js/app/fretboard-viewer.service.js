@@ -147,7 +147,9 @@
 
       var qs = '#{0}_{1}{2}'.format(chord.string, chord.root, chord.octave);
       var rootElem = diagramElem.querySelector(qs);
-      rootElem.classList.add('root');
+      if (rootElem) {
+        rootElem.classList.add('root');
+      }
 
       var sBar = chord.start[0];
       var sBeat = chord.start[1];

@@ -1,49 +1,43 @@
 <div
   class="fret-diagram">
-  <div
-    layout="row"
-    class="frets-labels">
-    <label
-      ng-repeat="fret in ::frets"
-      fret="{{::fret}}"
-      flex>
-      {{ ::fret }}
-    </label>
-  </div>
-  <div class="strings">
+
+  <div class="fretboard-scroller">
+    <!-- Fret Labels -->
     <div
-      ng-repeat="string in ::instrument.strings | orderBy:string.index:'-'"
-      class="string {{ ::string.label }}"
-      layout="row">
-      <!-- <label>{{ string.label }}</label> -->
+      layout="row"
+      class="frets-labels">
+      <label
+        ng-repeat="fret in [].constructor(25) | limitTo: fretboard.size+1 track by $index"
+        fret="{{ ::$index }}"
+        flex>
+        {{ ::$index }}
+      </label>
+    </div>
+
+    <!-- Strings -->
+    <div class="strings">
       <div
-        ng-repeat="fret in ::frets"
-        flex
-        class="fret-box fret-{{ ::fret }}"
-        ng-class="['octave-'+note.octave]"
-        ng-init="note = string.notes[fret]">
-        <!-- <span>&nbsp;</span> -->
-        <!-- <label>{{ string.notes[fret].label[0] }}</label> -->
-        <label
-          ng-repeat="label in ::note.label"
-          ng-init="
-            id = string.label+':'+label+note.octave;
-            fretNote = noteById[id]
-          "
-          ng-attr-id="{{ ::id.replace(':', '_') }}"
-          ng-class="{
-            active: config.notes.indexOf(id) !== -1,
-            root: fretNote.id === rootNote.id
-          }">
-          <span class="note">{{ ::label }}</span>
-          <!-- <span class="interval">{{ ::fretNote.interval }}</span> -->
-        </label>
-      </div>
+        ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-'"
+        class="string {{ ::string.label }}"
+        layout="row">
 
-      <div class="fret-box ghost-note">
-        <label>x</label>
-      </div>
+        <div
+          ng-repeat="note in string.notes | limitTo: fretboard.size+1"
+          class="fret-box fret-{{ ::$index }}"
+          ng-class="::['octave-'+note.octave, {'dual-label': note.label.length > 1}]"
+          flex>
+          <label
+            ng-repeat="label in ::note.label"
+            id="{{ ::string.label }}_{{ ::label }}{{ ::note.octave }}">
+            <span class="note">{{ ::label }}</span>
+          </label>
+        </div>
 
+        <div class="fret-box ghost-note">
+          <label>x</label>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

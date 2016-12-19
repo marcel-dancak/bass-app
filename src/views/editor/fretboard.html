@@ -160,11 +160,14 @@
         ng-model="fretboard.size">
     </md-input-container>
 
+    <span flex></span>
+
     <md-input-container>
       <md-checkbox
+        md-no-ink
         ng-model="fretboard.chordMode"
         ng-change="modeChanged()">
-        Highlight mode
+        Highlight view
       </md-checkbox>
     </md-input-container>
   </div>
