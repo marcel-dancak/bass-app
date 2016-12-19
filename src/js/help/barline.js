@@ -73,7 +73,8 @@
     trackSection.forEachBeat(function(beat) {
       $scope.slides.push({
         id: beat.bar+'_'+beat.beat,
-        beat: beat
+        beat: beat,
+        beatLabel: beat.beat
       });
     });
 

@@ -6,29 +6,31 @@
     .controller('PlaylistViewer', PlaylistViewer);
 
 
-  var EMPTY_TRACK = {
-    beat: function(bar, beat) {
-      return {
-        bar: bar,
-        beat: beat,
-        subdivision: 4
-      };
-    },
-    beatSounds: function() {
-      return [];
+  function PlaylistViewer($scope, $timeout, audioPlayer, projectManager,
+        workspace, HighlightTimeline, slidesCompiler, fretboardViewer) {
+
+    var viewerTrackId = workspace.bassSection? workspace.bassSection.track.id : 'bass_0';
+
+    var viewer = {
+      beatsPerSlide: 8,
+      // swiper config
+      direction: 'vertical',
+      slidesPerView: 1.99,
+      slidesPerColumn: 1,
+      animation: 300,
+      render: {
+        initialHeaderOn: 'all'
+      },
+      emptyLastSlide: true,
+      update: angular.noop
     }
-  };
-
-  function PlaylistViewer($scope, $timeout, $q, $mdCompiler,
-    audioPlayer, projectManager, workspace, HighlightTimeline, fretboardViewer) {
-
-    var viewerTrackId = workspace.bassSection.track.id;
+    $scope.viewer = viewer;
 
     var playlist;
     var playlistSlidePosition;
-    var beatsPerSlide = 8;
     var playbackState;
     var slidesMetadata;
+    var playerSwiper;
 
 
     function updateSlide(slideIndex, position, count) {
@@ -38,142 +40,33 @@
       if (!slideMeta || !slideWrapper || !slideWrapper.firstChild) {
         return;
       }
-
-      slideWrapper.firstChild.remove();
-
-      var section = {id: -1};
-      var track;
-      slideMeta.beats.forEach(function(beat) {
-        if (beat.section !== section.id) {
-          section = projectManager.getSection(beat.section);// || {tracks: {}};
-          track = section.tracks[viewerTrackId] || EMPTY_TRACK;
-        }
-        var trackBeat = track.beat(beat.bar, beat.beat)
-        beat.sounds = track.beatSounds(trackBeat);
-        beat.subdivision = trackBeat.subdivision;
-      });
-      slideMeta.track = viewerTrackId;
-
-      var scope = $scope.$new(false);
-      scope.beats = slideMeta.beats;
-      scope.emptyBeats = slideMeta.emptyBeats;
-      $mdCompiler.compile({
-        templateUrl: 'views/playlist/slide.html'
-      }).then(function(compileData) {
-        //attach controller & scope to element
-        var slideElement = compileData.link(scope)[0];
-        slideWrapper.appendChild(slideElement);
-        $timeout(function() {
-          scope.$destroy();
-        });
-      });
+      slidesCompiler.updateSlide($scope, slideWrapper, slideMeta, viewerTrackId);
     }
 
-    function generateSlide(playlist, position, count) {
-      var task = $q.defer();
-
-      var section = playlist[position.section];
-      if (!section) {
-        if (!playerSwiper.lastSlide) {
-          console.log('** create empty slide');
-          playerSwiper.appendSlide('<div class="swiper-slide"></div>');
-          playerSwiper.lastSlide = true;
-        }
-        return $q.when();
+    function generateSlide() {
+      console.log('generate NEXT slide');
+      console.log(playlistSlidePosition)
+      var slide = slidesCompiler.generateSlide(
+        $scope,
+        playlist,
+        playlistSlidePosition,
+        viewer.beatsPerSlide,
+        viewerTrackId,
+        viewer.render
+      );
+      if (slide.data.beats.length > 0) {
+        playerSwiper.appendSlide(slide.elem);
+        slidesMetadata[playerSwiper.slides.length-1] = slide.data;
       }
-
-      var metadata = {
-        playlistSectionIndex: position.section,
-        track: viewerTrackId
-      };
-      var beats = [];
-      var track = section.tracks[viewerTrackId] || EMPTY_TRACK;
-      var counter = count;
-      while (counter--) {
-        var sectionFirstsBeat = position.bar === 1 && position.beat === 1;
-
-        var trackBeat = track.beat(position.bar, position.beat);
-
-        var chordLabels = [];
-        if (section.meta && section.meta.chords) {
-          chordLabels = section.meta.chords
-            .filter(function(chord) {
-              return chord.start[0] === trackBeat.bar && chord.start[1] === trackBeat.beat;
-            })
-            .map(function(chord) {
-              return {
-                label: (chord.root || '')+(chord.type || ''),
-                subbeat: chord.start[2]
-              };
-            });
-        }
-        beats.push({
-          section: section.id,
-          bar: position.bar,
-          beat: position.beat,
-          subdivision: trackBeat.subdivision,
-          chordLabels: chordLabels,
-          meta: trackBeat.meta,
-          sounds: track.beatSounds(trackBeat),
-          timeSignature: section.timeSignature,
-          bpm: section.bpm,
-          subbeats: [1, 2, 3, 4]
-        });
-        if (sectionFirstsBeat) {
-          beats[beats.length-1].sectionInfo = {
-            name: section.name,
-          };
-
-        }
-        position.beat++;
-        if (position.beat > section.timeSignature.top) {
-          position.beat = 1;
-          position.bar++;
-          if (position.bar > section.length) {
-            position.bar = 1;
-            position.section++;
-            section = playlist[position.section];
-            if (!section) break;
-            track = section.tracks[viewerTrackId];
-          }
-        }
-      }
-
-      // generate empty beats to fill slide (when needed)
-      var emptyBeats = new Array(count-beats.length);
-      metadata.beats = beats;
-      metadata.emptyBeats = emptyBeats;
-      slidesMetadata.push(metadata);
-
-      var scope = $scope.$new(false);
-      scope.beats = beats;
-      scope.emptyBeats = emptyBeats;
-
-      $mdCompiler.compile({
-        templateUrl: 'views/playlist/slide.html'
-      }).then(function(compileData) {
-        //attach controller & scope to element
-        var slideElement = compileData.link(scope);
-        var slideWrapper = angular.element('<div class="swiper-slide"></div>');
-        slideWrapper.append(slideElement);
-        playerSwiper.appendSlide(slideWrapper[0]);
-        $timeout(function() {
-          scope.$destroy();
-          task.resolve();
-        });
-      });
-      return task.promise;
     }
-
-    var playerSwiper;
 
     var timeline = new HighlightTimeline({
       getBeatElem: function(bar, beat) {
         var slideIndex = playerSwiper.snapIndex;
         var beatIndex = playbackState.beatsCounter;
-        if (playbackState.beatsCounter >= beatsPerSlide) {
+        if (playbackState.beatsCounter >= viewer.beatsPerSlide) {
           slideIndex += 1;
-          beatIndex -= beatsPerSlide;
+          beatIndex -= viewer.beatsPerSlide;
         }
         // console.log('slideIndex: '+slideIndex+' beatIndex: '+beatIndex);
         // console.log('{0} -> {1}/{2}'.format(playbackState.beatsCounter, slideIndex, beatIndex));
@@ -187,12 +80,13 @@
     });
 
     function initializeSwiper() {
+      console.log('initializeSwiper')
       var swiperElem = document.querySelector('.playlist-swiper');
       playerSwiper = new Swiper(swiperElem, {
         spaceBetween: 0,
-        direction: 'vertical',
-        slidesPerView: 1.99,
-        slidesPerColumn: 1,
+        direction: viewer.direction,
+        slidesPerView: viewer.slidesPerView,
+        slidesPerColumn: viewer.slidesPerColumn,
         initialSlide: 0,
         roundLengths: true
       });
@@ -212,8 +106,7 @@
         // }
         console.log('activeIndex: {0} slides: {1}'.format(s.activeIndex, s.slides.length));
         if (s.slides.length - s.activeIndex <=  2 ) {
-          console.log('generate NEXT slide');
-          generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
+          generateSlide();
         }
         if (s.activeIndex > 1) {
           // angular.element(s.slides[0]).scope().$destroy();
@@ -223,10 +116,9 @@
       });
     }
 
-    initializeSwiper();
-
     function initPlaylistSlides() {
-      var task = $q.defer();
+      console.log('initPlaylistSlides')
+      if (!playerSwiper) return;
       playlist = [];
       slidesMetadata = [];
       var index = 1;
@@ -253,16 +145,9 @@
       playerSwiper.lastSlide = false;
 
       var iterations = 3;
-      var generate = function() {
-        var promise = generateSlide(playlist, playlistSlidePosition, beatsPerSlide);
-        if (--iterations > 0) {
-          promise.then(generate);
-        } else {
-          promise.then(task.resolve);
-        }
+      while (iterations--) {
+        generateSlide();
       }
-      generate();
-      return task.promise;
     }
 
     $scope.updatePlaylist = function() {
@@ -276,13 +161,13 @@
         return;
       }
       playbackState.beatsCounter++;
-      if (playbackState.beatsCounter >= beatsPerSlide) {
+      if (playbackState.beatsCounter >= viewer.beatsPerSlide) {
 
         if (!$scope.player.visibleBeatsOnly) {
           playbackState.beatsCounter = 0;
-          playerSwiper.slideNext();
+          playerSwiper.slideNext(true, viewer.animation);
         } else {
-          if (playbackState.beatsCounter+2 === beatsPerSlide * 2) {
+          if (playbackState.beatsCounter+2 === viewer.beatsPerSlide * 2) {
             // setup end of visible screen playback
             playbackState.section = playlist.length;
             if (evt.beat < evt.timeSignature.top) {
@@ -365,18 +250,15 @@
       } else {
         var initSlides;
         if (playerSwiper.snapIndex !== 0) {
-          initSlides = initPlaylistSlides();
+          initPlaylistSlides();
         } else {
           playbackState = {
             section: 0,
             beatsCounter: -1
           };
-          initSlides = $q.when();
         }
-        initSlides.then(function() {
-          $scope.player.playing = true;
-          audioPlayer.fetchResourcesWithProgress(sections).then(playSection, failedToLoadResources);
-        });
+        $scope.player.playing = true;
+        audioPlayer.fetchResourcesWithProgress(sections).then(playSection, failedToLoadResources);
       }
     };
 
@@ -412,7 +294,6 @@
       }
     }
 
-    // audioPlayer.on('playbackStopped', playbackStopped);
 
     $scope.ui.selectTrack = function(trackId) {
       workspace.track = projectManager.project.tracksMap[trackId];
@@ -472,6 +353,7 @@
       console.log('projectLoaded');
       workspace.playlist = project.playlists[0];
       $scope.sectionNames = {};
+      slidesMetadata = null;
       projectManager.project.sections.forEach(function(section) {
         $scope.sectionNames[section.id] = section.name;
       });
@@ -483,7 +365,6 @@
         playerSwiper.removeAllSlides();
       } else {
         workspace.selectedPlaylistId = workspace.playlist.id;
-        initPlaylistSlides();
       }
       $scope.ui.trackId = 'bass_0';
       $scope.ui.selectTrack($scope.ui.trackId);
@@ -498,7 +379,6 @@
     projectManager.on('playlistLoaded', playlistLoaded);
     projectManager.on('projectLoaded', projectLoaded);
 
-    projectLoaded(projectManager.project);
 
     // ugly autoselect to bass guitar track
     if (workspace.track && workspace.track.type !== 'bass') {
@@ -506,10 +386,11 @@
       $scope.ui.selectTrack($scope.ui.trackId);
     }
 
+
     $scope.player.visiblePlaybackModeChanged = function(visibleBeatsOnly) {
-      if (!visibleBeatsOnly && playbackState.beatsCounter >= beatsPerSlide) {
-        playbackState.beatsCounter -= beatsPerSlide;
-        playerSwiper.slideNext();
+      if (!visibleBeatsOnly && playbackState.beatsCounter >= viewer.beatsPerSlide) {
+        playbackState.beatsCounter -= viewer.beatsPerSlide;
+        playerSwiper.slideNext(true, viewer.animation);
       }
     };
 
@@ -517,8 +398,13 @@
       initPlaylistSlides();
     };
 
+
+    slidesCompiler.setTemplate('views/playlist/slide.html').then(function() {
+      initializeSwiper();
+      $timeout(projectLoaded.bind(this, projectManager.project));
+    });
+
     $scope.$on('$destroy', function() {
-      // audioPlayer.un('playbackStopped', playbackStopped);
       projectManager.un('playlistLoaded', playlistLoaded);
       projectManager.un('projectLoaded', projectLoaded);
     });

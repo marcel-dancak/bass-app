@@ -2,69 +2,42 @@
   <div flex style="max-height:5%;"></div>
   <div flex="none" layout="row">
 
-    <!-- Strings labels & First beat info -->
-    <div
-      layout="column"
-      flex="none"
-      class="section-info main"
-      ng-init="beat = beats[0]">
-
-      <div class="header">
-        <div class="bpm">
-          <i class="quarter-note"></i>={{ ::beat.bpm }}
-        </div>
-      </div>
-
-      <div class="bar-beat">
-        <div class="time-signature">
-          <div>{{ ::beat.timeSignature.top }}</div>
-          <div>{{ ::beat.timeSignature.bottom }}</div>
-        </div>
-      </div>
-
-      <div class="bass-board instrument-slide">
-        <p ng-repeat="string in ::workspace.track.instrument.strings | orderBy:string.index:'-'">
-          {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
-        </p>
-      </div>
-
-    </div>
-
     <!-- Beats with bass sounds (tabs) -->
     <div
       ng-repeat="beat in ::beats"
       layout="column"
-      class="beat beat-{{ ::beat.beat }}"
-      flex
-      ng-init="
-        showTimeSig = beat.sectionInfo && $index > 0 &&
-            ( beat.timeSignature.top !== beats[$index-1].timeSignature.top
-            || beat.timeSignature.bottom !== beats[$index-1].timeSignature.bottom );
-        showBpm = beat.sectionInfo && $index > 0 && beat.bpm !== beats[$index-1].bpm
-      ">
+      class="beat"
+      ng-class="::{
+        first: beat.beat === 1,
+        last: beat.beat === beat.timeSignature.top,
+        'with-header': beat.sectionInfo.timeSignature.top
+      }"
+      flex>
+
+      <div
+        ng-if="::beat.sectionInfo.timeSignature"
+        class="section-header">
+        <div class="time-signature">
+          <div>{{ ::beat.timeSignature.top }}</div>
+          <div>{{ ::beat.timeSignature.bottom }}</div>
+        </div>
+        <div class="strings-labels instrument-slide">
+          <p ng-repeat="string in ::track.instrument.strings | orderBy:string.index:'-'">
+            {{ string.label }}<sub class="octave-index">{{ string.octave }}</sub><br>
+          </p>
+        </div>
+      </div>
 
       <div class="header">
-        <div
-          ng-if="::beat.sectionInfo"
-          class="section-info">
-
-          <div
-            ng-if="::showTimeSig"
-            class="time-signature">
-            <div>{{ ::beat.timeSignature.top }}</div>
-            <div>{{ ::beat.timeSignature.bottom }}</div>
-          </div>
-
-          <div class="section-label">
-            <label
-              ng-if="::showBpm"
-              class="bpm">
-              <i class="quarter-note"></i>={{ ::beat.bpm }}
-            </label>
-            <label class="section-name">
-              {{ ::beat.sectionInfo.name }}
-            </label>
-          </div>
+        <div class="section-label">
+          <label
+            ng-if="::beat.sectionInfo.bpm"
+            class="bpm">
+            <i class="quarter-note"></i>={{ ::beat.sectionInfo.bpm }}
+          </label>
+          <label class="section-name">
+            {{ ::beat.sectionInfo.name }}
+          </label>
         </div>
 
         <label class="bar-label">
@@ -91,7 +64,7 @@
           flex
           class="subbeat">
           <label class="subbeat-label {{ ::showTimeSig? 'align-right' : '' }}">
-            {{ ::beat.beat }}
+            {{ ::beat.beatLabel }}
           </label>
         </div>
         <div
@@ -109,7 +82,7 @@
         class="beat-container bass-board instrument-slide {{ ::($last && emptyBeats.length)? 'last' : '' }}">
         <div class="string-container">
           <div
-            ng-repeat="string in ::workspace.track.instrument.strings"
+            ng-repeat="string in ::track.instrument.strings"
             class="bass-string">
           </div>
         </div>
@@ -134,7 +107,7 @@
             class="bass-sound-container">
             <bd-sound-label
               sound="item.sound"
-              string="workspace.track.instrument.stringByName(item.sound.string)">
+              string="track.instrument.stringByName(item.sound.string)">
             </bd-sound-label>
           </div>
         </div>

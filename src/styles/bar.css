@@ -36,8 +36,8 @@
 }
 
 
-.beat-1 .audio-graph-container::before,
-.beat-1 .bar-beat::before {
+.beat.first .audio-graph-container::before,
+.beat.first .bar-beat::before {
   width: 3px;
 }
 
@@ -88,7 +88,7 @@
 .bar-label {
   visibility: hidden;
 }
-.beat-1 .bar-label {
+.beat.first .bar-label {
   visibility: visible;
 }
 

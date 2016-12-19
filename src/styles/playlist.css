@@ -90,12 +90,6 @@
 }
 
 
-.bass-sheet .swiper-slide .section-info {
-  min-width: 30px;
-  position: relative;
-  color: #555;
-}
-
 .bass-sheet .swiper-slide .chord-label {
   position: absolute;
   bottom: 10px;
@@ -123,6 +117,7 @@
   display: none;
 }
 
+.bass-sheet .beat.first .bar-beat > div:first-child::before,
 .bass-sheet .swiper-slide > div:last-child .bar-beat::after {
   position: absolute;
   top: 0;
@@ -133,8 +128,28 @@
   background-color: #aaa;
   z-index: 200;
 }
-.bass-sheet .swiper-slide .bass-board.last::after,
-.bass-sheet .swiper-slide .beat:last-child > .bass-board::after {
+
+.bass-sheet .beat.first .bass-board:before {
+  width: 3px;
+  opacity: 1;
+  background-color: #bbb;
+}
+.bass-sheet .beat.last .bass-board:after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  height: auto;
+  left: auto;
+  right: -3px;
+  content: "";
+  width: 3px;
+  background-color: #bbb;
+  z-index: 200;
+}
+
+x.bass-sheet .beat.first .bass-board:before,
+x.bass-sheet .swiper-slide .bass-board.last::after,
+x.bass-sheet .swiper-slide .beat:last-child > .bass-board::after {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -149,66 +164,55 @@
 .bass-sheet .subbeat-label.align-right {
   padding-left: 24px;
 }
-.bass-sheet .swiper-slide .section-info .name {
+
+.bass-sheet .beat.with-header {
+  padding-left: 36px;
+  position: relative;
+}
+.bass-sheet .section-header {
   position: absolute;
-  top: 100px;
+  bottom: 0;
+  top: 56px;
+  left: 0px;
+  width: 36px;
+  text-align: center;
+}
+.bass-sheet .section-header .strings-labels {
+  position: absolute;
+  bottom: 0;
+  top: auto;
+  font-weight: 400;
 }
 
 .bass-sheet .swiper-slide .time-signature {
   font-size: 20px;
-  xfont-weight: bold;
-  right: 0;
-  top: 5px;
-  height: 80px;
+  xright: 0;
+  top: 0;
   padding: 0 14px;
 }
-.bass-sheet .swiper-slide .beat .section-info .time-signature {
+
+
+.bass-sheet .swiper-slide .beat.with-header .section-label .bpm {
   position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 1;
-  width: 34px;
-  height: 50px;
-  padding: 0;
-  text-align: center;
+  left: -60px;
+  top: -2px;
+}
+.bass-sheet .swiper-slide .beat:not(.with-header) .section-label {
+  left: -7px;
 }
 
-.bass-sheet .swiper-slide .section-info.main .bpm {
-  position: absolute;
-  font-size: 16px;
-  top: 0;
-  z-index: 200;
-  text-align: left;
-  left: 0;
-  transform: translate3d(8px, 0, 0);
-  white-space: nowrap;
-}
 
-.bass-sheet .swiper-slide .section-label .bpm {
-  position: absolute;
-  left: -50px;
-}
-
-.section-info i {
+.section-label i {
   font-size: 18px;
-  width: 14px;
+  width: 15px;
   display: inline-block;
 }
 
 
-.bass-sheet .swiper-slide .section-info .bass-board p {
-  padding: 0;
-  margin: 0;
-  line-height: 36px;
-  height: 36px;
-  text-align: center;
-  font-size: 20px;
-}
-
 .section-label {
   position: absolute;
   top: 0;
-  left: 25px;
+  left: 14px;
   color: #555;
   width: 200%;
 }

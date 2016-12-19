@@ -388,7 +388,7 @@ md-menu-item.right md-icon {
   z-index: 199;
 }
 
-.beat-1 .beat-container:before {
+.beat.first .beat-container:before {
   width: 3px;
 }
 
