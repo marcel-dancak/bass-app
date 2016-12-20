@@ -6,37 +6,66 @@
     .controller('PlaylistViewer', PlaylistViewer);
 
 
-  function PlaylistViewer($scope, $timeout, audioPlayer, projectManager,
+  function PlaylistViewer($scope, $timeout, $element, audioPlayer, projectManager,
         workspace, HighlightTimeline, slidesCompiler, fretboardViewer) {
 
     var viewerTrackId = workspace.bassSection? workspace.bassSection.track.id : 'bass_0';
 
+    var layouts = [
+      {
+        name: 'vertical',
+        // swiper config
+        direction: 'vertical',
+        slidesPerView: 1.99,
+        slidesPerColumn: 1,
+        animation: 300,
+        render: {
+          initialHeaderOn: 'all'
+        },
+        emptyLastSlide: true
+      }, {
+        name: 'horizontal',
+        // swiper config
+        direction: 'horizontal',
+        slidesPerView: 1.0,
+        slidesPerColumn: 1,
+        animation: 0,
+        render: {
+        },
+        emptyLastSlide: false
+      }
+    ];
     var viewer = {
       beatsPerSlide: 8,
-      // swiper config
-      direction: 'vertical',
-      slidesPerView: 1.99,
-      slidesPerColumn: 1,
-      animation: 300,
-      render: {
-        initialHeaderOn: 'all'
-      },
-      emptyLastSlide: true,
-      update: angular.noop
-    }
+      layouts: layouts,
+      layout: layouts[0],
+      swiper: null,
+      setLayout: function(layout) {
+        viewer.layout = layout;
+        // viewer.swiper.onTransitionEnd = angular.noop;
+        var slideIndex = viewer.swiper.snapIndex;
+        viewer.swiper.removeAllSlides();
+        viewer.swiper.container.removeClass('swiper-container-' + viewer.swiper.params.direction);
+        viewer.swiper.destroy();
+        initializeSwiper();
+        initPlaylistSlides();
+        // if (slideIndex > 0) {
+        //   viewer.swiper.slideTo(slideIndex, true, 0);
+        // }
+      }
+    };
     $scope.viewer = viewer;
 
     var playlist;
     var playlistSlidePosition;
     var playbackState;
     var slidesMetadata;
-    var playerSwiper;
 
 
     function updateSlide(slideIndex, position, count) {
       console.log('updating slide');
       var slideMeta = slidesMetadata[slideIndex];
-      var slideWrapper = playerSwiper.slides[slideIndex];
+      var slideWrapper = viewer.swiper.slides[slideIndex];
       if (!slideMeta || !slideWrapper || !slideWrapper.firstChild) {
         return;
       }
@@ -44,25 +73,25 @@
     }
 
     function generateSlide() {
-      console.log('generate NEXT slide');
-      console.log(playlistSlidePosition)
+      // console.log('generate NEXT slide');
+      // console.log(playlistSlidePosition)
       var slide = slidesCompiler.generateSlide(
         $scope,
         playlist,
         playlistSlidePosition,
         viewer.beatsPerSlide,
         viewerTrackId,
-        viewer.render
+        viewer.layout.render
       );
       if (slide.data.beats.length > 0) {
-        playerSwiper.appendSlide(slide.elem);
-        slidesMetadata[playerSwiper.slides.length-1] = slide.data;
+        viewer.swiper.appendSlide(slide.elem);
+        slidesMetadata[viewer.swiper.slides.length-1] = slide.data;
       }
     }
 
     var timeline = new HighlightTimeline({
       getBeatElem: function(bar, beat) {
-        var slideIndex = playerSwiper.snapIndex;
+        var slideIndex = viewer.swiper.snapIndex;
         var beatIndex = playbackState.beatsCounter;
         if (playbackState.beatsCounter >= viewer.beatsPerSlide) {
           slideIndex += 1;
@@ -70,28 +99,30 @@
         }
         // console.log('slideIndex: '+slideIndex+' beatIndex: '+beatIndex);
         // console.log('{0} -> {1}/{2}'.format(playbackState.beatsCounter, slideIndex, beatIndex));
-        var beatsElems = playerSwiper.slides[slideIndex].querySelectorAll('.beat');
+        var beatsElems = viewer.swiper.slides[slideIndex].querySelectorAll('.beat');
         var beatElem = beatsElems[beatIndex];
         return beatElem;
       },
       getBarWrapper: function() {
-        return playerSwiper.wrapper[0];
+        return viewer.swiper.wrapper[0];
       }
     });
 
-    function initializeSwiper() {
-      console.log('initializeSwiper')
+    function initializeSwiper(options) {
       var swiperElem = document.querySelector('.playlist-swiper');
-      playerSwiper = new Swiper(swiperElem, {
+      swiperElem.classList
+
+      var params = angular.extend({
         spaceBetween: 0,
-        direction: viewer.direction,
-        slidesPerView: viewer.slidesPerView,
-        slidesPerColumn: viewer.slidesPerColumn,
+        direction: viewer.layout.direction,
+        slidesPerView: viewer.layout.slidesPerView,
+        slidesPerColumn: viewer.layout.slidesPerColumn,
         initialSlide: 0,
         roundLengths: true
-      });
+      }, options);
+      viewer.swiper = new Swiper(swiperElem, params);
 
-      playerSwiper.on('transitionEnd', function(s) {
+      viewer.swiper.on('transitionEnd', function(s) {
         var sIndex = Math.max(s.snapIndex-1, 0);
         var eIndex = Math.min(s.snapIndex+2, s.slides.length);
         for (var index = sIndex; index <= eIndex; index++) {
@@ -118,7 +149,6 @@
 
     function initPlaylistSlides() {
       console.log('initPlaylistSlides')
-      if (!playerSwiper) return;
       playlist = [];
       slidesMetadata = [];
       var index = 1;
@@ -140,10 +170,11 @@
         section: 0,
         beatsCounter: -1
       };
-      playerSwiper.slideTo(0, 0, false);
-      playerSwiper.removeAllSlides();
-      playerSwiper.lastSlide = false;
-
+      if (viewer.swiper) {
+        viewer.swiper.slideTo(0, 0, false);
+        viewer.swiper.removeAllSlides();
+        viewer.swiper.lastSlide = false;
+      }
       var iterations = 3;
       while (iterations--) {
         generateSlide();
@@ -161,13 +192,11 @@
         return;
       }
       playbackState.beatsCounter++;
-      if (playbackState.beatsCounter >= viewer.beatsPerSlide) {
+      if (playbackState.beatsCounter+2 >= viewer.beatsPerSlide) {
 
-        if (!$scope.player.visibleBeatsOnly) {
-          playbackState.beatsCounter = 0;
-          playerSwiper.slideNext(true, viewer.animation);
-        } else {
-          if (playbackState.beatsCounter+2 === viewer.beatsPerSlide * 2) {
+        if ($scope.player.visibleBeatsOnly) {
+          var visibleBeats = viewer.beatsPerSlide * Math.round(viewer.layout.slidesPerView);
+          if (playbackState.beatsCounter+2 === visibleBeats) {
             // setup end of visible screen playback
             playbackState.section = playlist.length;
             if (evt.beat < evt.timeSignature.top) {
@@ -182,6 +211,9 @@
               };
             }
           }
+        } else if (playbackState.beatsCounter >= viewer.beatsPerSlide) {
+          playbackState.beatsCounter = 0;
+          viewer.swiper.slideNext(true, viewer.layout.animation);
         }
       }
       timeline.beatSync(evt);
@@ -207,8 +239,8 @@
 
     function playFromCurrentPosition() {
       console.log('playFromCurrentPosition');
-      var firstSlideMeta = slidesMetadata[playerSwiper.snapIndex];
-      var visibleBeatsMeta = firstSlideMeta.beats.concat(slidesMetadata[playerSwiper.snapIndex+1].beats);
+      var firstSlideMeta = slidesMetadata[viewer.swiper.snapIndex];
+      var visibleBeatsMeta = firstSlideMeta.beats.concat(slidesMetadata[viewer.swiper.snapIndex+1].beats);
 
       playbackState.section = firstSlideMeta.playlistSectionIndex;
       playbackState.bar = firstSlideMeta.beats[0].bar;
@@ -226,6 +258,9 @@
     }
 
     $scope.player.play = function() {
+      fretboardViewer.activate(
+        $element[0].querySelector('.fret-diagram')
+      );
       var sections = playlist.reduce(function(list, section) {
         if (list.indexOf(section) === -1) {
           list.push(section);
@@ -234,8 +269,8 @@
       }, []);
 
       if ($scope.player.visibleBeatsOnly) {
-        // var firstSlideMeta = slidesMetadata[playerSwiper.snapIndex];
-        // var visibleBeatsMeta = firstSlideMeta.beats.concat(slidesMetadata[playerSwiper.snapIndex+1].beats);
+        // var firstSlideMeta = slidesMetadata[viewer.swiper.snapIndex];
+        // var visibleBeatsMeta = firstSlideMeta.beats.concat(slidesMetadata[viewer.swiper.snapIndex+1].beats);
 
         // build a list of used sections
         // var sections = [];
@@ -249,7 +284,7 @@
 
       } else {
         var initSlides;
-        if (playerSwiper.snapIndex !== 0) {
+        if (viewer.swiper.snapIndex !== 0) {
           initPlaylistSlides();
         } else {
           playbackState = {
@@ -282,7 +317,7 @@
             // repeat playlist playback
             playbackState.section = 0;
             playbackState.beatsCounter = -1;
-            playerSwiper.slideTo(0, 0);
+            viewer.swiper.slideTo(0, 0);
             playSection();
           }
         } else {
@@ -300,28 +335,28 @@
       viewerTrackId = trackId;
 
       if (slidesMetadata) {
-        updateSlide(playerSwiper.snapIndex);
-        updateSlide(playerSwiper.snapIndex+1);
-        if (playerSwiper.snapIndex > 0) {
-          updateSlide(playerSwiper.snapIndex-1);
+        updateSlide(viewer.swiper.snapIndex);
+        updateSlide(viewer.swiper.snapIndex+1);
+        if (viewer.swiper.snapIndex > 0) {
+          updateSlide(viewer.swiper.snapIndex-1);
         }
-        updateSlide(playerSwiper.snapIndex+2);
+        updateSlide(viewer.swiper.snapIndex+2);
 
         /*
         // delete generated slides after
-        var slideMeta = slidesMetadata[playerSwiper.snapIndex+3];
+        var slideMeta = slidesMetadata[viewer.swiper.snapIndex+3];
         if (slideMeta) {
           var slidesToDelete = [];
           playlistSlidePosition.section = slideMeta.playlistSectionIndex;
           playlistSlidePosition.bar = slideMeta.beats[0].bar;
           playlistSlidePosition.beat = slideMeta.beats[0].beat;
-          var slide = playerSwiper.snapIndex+3;
-          while (slide < playerSwiper.slides.length) {
+          var slide = viewer.swiper.snapIndex+3;
+          while (slide < viewer.swiper.slides.length) {
             slidesToDelete.push(slide);
             slide++;
           }
           console.log('delete slides: '+slidesToDelete);
-          playerSwiper.removeSlide(slidesToDelete);
+          viewer.swiper.removeSlide(slidesToDelete);
         }
         */
       } else {
@@ -362,7 +397,7 @@
       if (workspace.playlist.items.length === 0) {
         console.log('SHOW PLAYLIST EDITOR');
         $scope.ui.playlist.showEditor = true;
-        playerSwiper.removeAllSlides();
+        viewer.swiper.removeAllSlides();
       } else {
         workspace.selectedPlaylistId = workspace.playlist.id;
       }
@@ -390,7 +425,7 @@
     $scope.player.visiblePlaybackModeChanged = function(visibleBeatsOnly) {
       if (!visibleBeatsOnly && playbackState.beatsCounter >= viewer.beatsPerSlide) {
         playbackState.beatsCounter -= viewer.beatsPerSlide;
-        playerSwiper.slideNext(true, viewer.animation);
+        viewer.swiper.slideNext(true, viewer.layout.animation);
       }
     };
 
@@ -409,6 +444,6 @@
       projectManager.un('projectLoaded', projectLoaded);
     });
 
-    // window.sw = playerSwiper;
+    // window.v = viewer;
   }
 })();

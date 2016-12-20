@@ -81,14 +81,19 @@
   width: 100%;
   padding-left: 5px;
   padding-right: 10px;
+  padding-top: 12px;
 }
 
 .playlist-swiper .bar-beat {
-  max-height: 65px;
-  height: 8vh;
+  height: 44px;
   margin-bottom: 10px;
 }
-
+/*.playlist-swiper .bar-beat {
+  min-height: 44px;
+  max-height: 44px;
+  height: 8vh;
+  margin-bottom: 10px;
+}*/
 
 .bass-sheet .swiper-slide .chord-label {
   position: absolute;
@@ -124,7 +129,7 @@
   right: -3px;
   content: "";
   width: 3px;
-  height: 64px;
+  height: 100%;
   background-color: #aaa;
   z-index: 200;
 }
@@ -268,6 +273,9 @@ x.bass-sheet .swiper-slide .beat:last-child > .bass-board::after {
   position: absolute;
   right: 26px;
   top: 1px;
+}
+.playback-active .md-button.edit-playlist {
+  display: none;
 }
 
 .playlist-swiper .bottom-note {

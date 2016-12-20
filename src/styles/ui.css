@@ -5,12 +5,34 @@ body {
 }
 .main-page {
   padding: 0;
+  padding-bottom: 38px;
   overflow-x: hidden;
   overflow-y: auto;
   height: 100%;
 }
 
-.time-marker {
+.bottom-toolbar {
+  position: absolute;
+  top: auto;
+  bottom: -36px;
+  left: 5px;
+  height: 36px;
+}
+.bottom-toolbar md-input-container.input-inline-label {
+  margin-top: 2px;
+}
+
+md-input-container input[type="number"] {
+  text-align: right;
+}
+
+.bottom-toolbar .md-button {
+  height: 36px;
+  min-height: 36px;
+  margin: 0 4px;
+  min-width: 36px;
+}
+/*.time-marker {
   width: 3px;
   height: 370px;
   opacity: 0.5;
@@ -18,8 +40,11 @@ body {
   position: fixed;
   top: 100px;
   z-index: 200;
-}
+}*/
 
+.md-label {
+  white-space: nowrap;
+}
 md-icon {
   min-width: 16px;
   min-height: 16px;

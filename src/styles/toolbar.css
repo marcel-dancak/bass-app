@@ -103,9 +103,29 @@
 /*  Playback tools  */
 
 .playback-fields {
-  margin: 0 10px;
-  border-radius: 5px;
+  height: 53px;
+  padding: 0 12px 0 18px;
+  position: relative;
 }
+
+.playback-fields .player-bg {
+  position: absolute;
+  content: "";
+  background-color: #3b4d55;
+  border: 1px solid #aaa;
+  border-width: 0 1px 1px 1px;
+  transform: perspective(120px) rotateX(-16deg) ;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: -5px;
+  border-radius: 8px;
+  box-shadow:
+    2px 3px 5px 0px rgba(0, 0, 0, 0.21),
+    -5px 5px 5px 0px rgba(0, 0, 0, 0.06);
+}
+
+
 .play-stop-button {
   margin: 2px;
   padding: 0 10px 0 0;
@@ -122,6 +142,9 @@
 .playback-fields .bpm-field {
   width: 78px;
   margin: 16px 5px 0px 5px;
+}
+.playback-fields md-input-container input[type="number"] {
+  text-align: left;
 }
 .bpm-field::after {
   content: "bpm";
@@ -169,37 +192,6 @@
   background-color: #455A64;
   padding: 2px 5px 5px 5px;
 }
-
-
-/*Toolbar borders*/
-
-.playback-fields {
-  height: 53px;
-  border-bottom: 2px solid #ccc;
-  border-radius: 10px;
-  padding: 0 18px;
-  position: relative;
-}
-
-.playback-fields::before {
-  position: absolute;
-  width: 1px;
-  height: 100%;
-  content: "";
-  background-color: #ccc;
-  transform: translate(-27px, 0) rotate(-25deg);
-}
-
-.playback-fields::after {
-  position: absolute;
-  width: 1px;
-  height: 100%;
-  content: "";
-  background-color: #ccc;
-  right: 0;
-  transform: translate(10px, 0) rotate(25deg);
-}
-
 
 .control-panel .md-button.icon-hover:not([disabled]):not(.active) {
   opacity: 0.85;
@@ -473,13 +465,13 @@ md-menu-content.playback-range {
   font-size: 12px;
   font-weight: 500;
   text-transform: none;
-  background-color: #455A64;
+  background-color: #3b4d55;
   left: 32px;
   top: 0;
   padding-left: 3px;
   line-height: 35px;
 }
 .play-stop-button md-progress-circular svg path {
-  stroke: #455A64;
+  stroke: #3b4d55;
   stroke-width: 5px!important;
 }

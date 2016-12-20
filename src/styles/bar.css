@@ -80,8 +80,9 @@
 }
 
 .bar-beat {
-  height: 8vh;
-  min-height: 45px;
+  height: 7vh;
+  max-height: 60px;
+  min-height: 46px;
   position: relative;
 }
 
