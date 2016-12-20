@@ -8,7 +8,7 @@
       layout="row"
       class="frets-labels">
       <label
-        ng-repeat="fret in [].constructor(25) | limitTo: fretboard.size+1 track by $index"
+        ng-repeat="fret in [].constructor(25) | limitTo: settings.fretboard.size+1 track by $index"
         fret="{{ ::$index }}"
         flex>
         {{ ::$index }}
@@ -23,7 +23,7 @@
         layout="row">
 
         <div
-          ng-repeat="note in string.notes | limitTo: fretboard.size+1"
+          ng-repeat="note in string.notes | limitTo: settings.fretboard.size+1"
           class="fret-box fret-{{ ::$index }}"
           ng-class="::['octave-'+note.octave, {'dual-label': note.label.length > 1}]"
           ng-click="playBassSound({
@@ -157,7 +157,7 @@
         min="19"
         max="24"
         step="1"
-        ng-model="fretboard.size">
+        ng-model="settings.fretboard.size">
     </md-input-container>
 
     <span flex></span>

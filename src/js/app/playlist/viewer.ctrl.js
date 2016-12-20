@@ -6,7 +6,7 @@
     .controller('PlaylistViewer', PlaylistViewer);
 
 
-  function PlaylistViewer($scope, $timeout, $element, audioPlayer, projectManager,
+  function PlaylistViewer($scope, $timeout, $element, $mdUtil, audioPlayer, projectManager,
         workspace, HighlightTimeline, slidesCompiler, fretboardViewer) {
 
     var viewerTrackId = workspace.bassSection? workspace.bassSection.track.id : 'bass_0';
@@ -52,6 +52,13 @@
         // if (slideIndex > 0) {
         //   viewer.swiper.slideTo(slideIndex, true, 0);
         // }
+      },
+      setFretboardVisible: function(visible) {
+        viewer.fretboardVisible = visible;
+        $mdUtil.nextTick(function() {
+          viewer.swiper.onResize();
+          fretboardViewer.activate(visible? $element[0].querySelector('.fret-diagram') : null);
+        });
       }
     };
     $scope.viewer = viewer;
@@ -258,9 +265,6 @@
     }
 
     $scope.player.play = function() {
-      fretboardViewer.activate(
-        $element[0].querySelector('.fret-diagram')
-      );
       var sections = playlist.reduce(function(list, section) {
         if (list.indexOf(section) === -1) {
           list.push(section);

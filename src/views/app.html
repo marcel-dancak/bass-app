@@ -239,11 +239,12 @@
       <div class="swiper-pagination"></div>
     </div>
 
-<!--     <div
+    <div
+      ng-if="viewer.fretboardVisible"
       flex="none"
       class="fretboard-container"
       ng-include="'views/fret_diagram.html'">
-    </div> -->
+    </div>
 
     <div
       ng-if="ui.playlist.showEditor"
@@ -255,6 +256,22 @@
       layout="row">
 
       <md-button
+        md-no-ink
+        aria-label="Layout"
+        class="toggle-button icon-hover"
+        ng-class="{ active: viewer.fretboardVisible }"
+        ng-click="viewer.setFretboardVisible(!viewer.fretboardVisible)">
+        <md-icon md-svg-icon="fretboard"></md-icon>
+        <md-tooltip
+          md-delay="1500"
+          md-direction="top">
+          <span translate="FRETBOARD"></span>
+        </md-tooltip>
+      </md-button>
+
+      <md-divider></md-divider>
+
+      <md-button
         ng-repeat="layout in ::viewer.layouts"
         md-no-ink
         aria-label="Layout"
@@ -264,8 +281,7 @@
         <md-icon md-svg-icon="{{ ::layout.name }}"></md-icon>
         <md-tooltip
           md-delay="1500"
-          md-direction="top"
-          class="multiline-tooltip">
+          md-direction="top">
           <span ng-attr-translate="{{ ::layout.name | uppercase }}_LAYOUT"></span>
         </md-tooltip>
       </md-button>

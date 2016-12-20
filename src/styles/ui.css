@@ -21,6 +21,9 @@ body {
 .bottom-toolbar md-input-container.input-inline-label {
   margin-top: 2px;
 }
+.bottom-toolbar md-divider {
+  margin: 5px 0;
+}
 
 md-input-container input[type="number"] {
   text-align: right;

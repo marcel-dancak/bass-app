@@ -105,7 +105,7 @@
     }
 
 
-  function EditModeController($scope, $timeout, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
+  function EditModeController($scope, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
               projectManager, Drums, BassSection, DrumSection, HighlightTimeline, swiperControl, fretboardViewer) {
 
     $scope.swiperControl = swiperControl;
@@ -311,7 +311,7 @@
     }
 
     function updateSwiperSlides() {
-      $timeout(function() {
+      $mdUtil.nextTick(function() {
         swiperControl.setSlides($scope.slides, {
           slidesPerView: workspace.section.beatsPerView,
           slidesPerGroup: workspace.section.beatsPerSlide
@@ -469,13 +469,13 @@
       section.tracks[drumsTrack.id] = workspace.drumSection;
 
       createSlides(workspace.trackSection);
-      $timeout(function() {
+      $mdUtil.nextTick(function() {
         swiperControl.setSlides($scope.slides, {
           slidesPerView: workspace.section.beatsPerView,
           slidesPerGroup: workspace.section.beatsPerSlide
         });
         $scope.player.playbackRangeChanged();
-        $timeout(function() {
+        $mdUtil.nextTick(function() {
           updateChordLabels();
         });
       });

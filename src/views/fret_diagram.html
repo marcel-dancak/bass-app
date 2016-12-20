@@ -7,7 +7,7 @@
       layout="row"
       class="frets-labels">
       <label
-        ng-repeat="fret in [].constructor(25) | limitTo: fretboard.size+1 track by $index"
+        ng-repeat="fret in [].constructor(25) | limitTo: settings.fretboard.size+1 track by $index"
         fret="{{ ::$index }}"
         flex>
         {{ ::$index }}
@@ -22,7 +22,7 @@
         layout="row">
 
         <div
-          ng-repeat="note in string.notes | limitTo: fretboard.size+1"
+          ng-repeat="note in string.notes | limitTo: settings.fretboard.size+1"
           class="fret-box fret-{{ ::$index }}"
           ng-class="::['octave-'+note.octave, {'dual-label': note.label.length > 1}]"
           flex>

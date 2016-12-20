@@ -6,6 +6,11 @@
     .controller('AppController', AppController)
     .value('context', new AudioContext())
     .value('workspace', {})
+    .value('settings', {
+      fretboard: {
+        size: 19
+      }
+    })
     .constant('Note', {
       Whole: {
         label: 'WHOLE',
@@ -48,9 +53,10 @@
       }
     });
 
-  function AppController($scope, $timeout, $q, $translate, $mdDialog, context,
-      workspace, audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
+  function AppController($scope, $q, $translate, $mdDialog, context,
+      settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
     $scope.Note = Note;
+    $scope.settings = settings;
 
     $scope.language = 'en';
     $scope.setLanguage = function(code) {
@@ -241,7 +247,7 @@
 
     window.workspace = workspace;
     window.pm = projectManager;
-    window.audioVisualiser = audioVisualiser;
+    window.av = audioVisualiser;
 
     // Prevent default context menu
     window.oncontextmenu = function() {
