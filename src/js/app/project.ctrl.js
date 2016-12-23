@@ -369,12 +369,18 @@
       }
     };
 
-    workspace.importBeats = function(sectionId, srcBar, srcBeat, destBar, destBeat, count) {
+    workspace.importBeats = function(sectionName, srcBar, srcBeat, destBar, destBeat, count) {
+      var sectionId = projectManager.project.sections.find(function(s) {
+        return s.name === sectionName;
+      }).id;
       var section = projectManager.getSection(sectionId);
       workspace._import(section, srcBar, srcBeat, destBar, destBeat, count);
     };
 
-    workspace.importBars = function(sectionId, srcBar, destBar, count) {
+    workspace.importBars = function(sectionName, srcBar, destBar, count) {
+      var sectionId = projectManager.project.sections.find(function(s) {
+        return s.name === sectionName;
+      }).id;
       var section = projectManager.getSection(sectionId);
       workspace._import(section, srcBar, 1, destBar, 1, count * section.timeSignature.top);
     };
@@ -390,7 +396,20 @@
     }
 
     $scope.importSectionFromFile = function(file) {
-      var section = projectManager.loadSectionData(JSON.parse(file.content));
+      var section_data = JSON.parse(file.content);
+      for (var trackId in section_data.tracks) {
+        if (!projectManager.project.tracksMap[trackId]) {
+          console.log('NEW TRACK');
+          console.log(trackId.split('_'))
+          var type = trackId.split('_')[0];
+          projectManager.addTrack({
+            name: type[0].toUpperCase()+type.substr(1),
+            type: type,
+          });
+        }
+      }
+
+      var section = projectManager.loadSectionData(section_data);
       projectManager.importSection(section);
       projectManager.loadSection(section.id);
     }

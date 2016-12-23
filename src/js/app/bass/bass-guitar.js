@@ -4,6 +4,8 @@
   angular
     .module('bd.app')
     .value('Bass', Bass)
+    .value('Notes', Notes)
+    .value('Piano', Piano)
 
 
   function Notes(firstNote, lastNote) {
@@ -87,7 +89,7 @@
     this.list = notes;
   }
 
-  var bassNotes = new Notes('B0', 'G4');
+  var bassNotes = new Notes('B0', 'C5');
   var bassStrings = [
     {
       label: 'B',
@@ -114,6 +116,11 @@
       octave: 2,
       index: 4,
       noteIndex: bassNotes.list.indexOf(bassNotes.map['G2'])
+    }, {
+      label: 'C',
+      octave: 3,
+      index: 5,
+      noteIndex: bassNotes.list.indexOf(bassNotes.map['C3'])
     }
   ];
   bassStrings.forEach(function(string) {
@@ -123,14 +130,15 @@
   });
 
   function Bass(config) {
+    this.notes = bassNotes;
     this.setLayout(config.strings);
   }
 
   Bass.prototype.setLayout = function(layout) {
     console.log('setLayout');
     this.layout = layout;
-    var first = this.layout === 'BEADG'? 0 : 1;
-    this.strings = bassStrings.slice(first);
+    var first = 'BEADGC'.indexOf(this.layout[0]);
+    this.strings = bassStrings.slice(first, first+this.layout.length);
     this.strings.forEach(function(string) {
       if (!string.notes) {
         string.notes = bassNotes.list.slice(string.noteIndex, string.noteIndex+25);
@@ -151,4 +159,13 @@
       return string.label === name;
     });
   }
+
+  function Piano() {
+    this.notes = new Notes('C2', 'B5');
+  }
+  Piano.prototype.stringIndex = function(name) {
+    return this.notes.list.indexOf(this.notes.map[name]);
+  }
+
+
 })();

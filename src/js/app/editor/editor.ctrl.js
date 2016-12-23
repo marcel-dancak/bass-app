@@ -325,7 +325,7 @@
       workspace.drumSection = new DrumSection(workspace.section);
       assignTrack(workspace.bassSection, bassTrack);
       assignTrack(workspace.drumSection, drumsTrack);
-      workspace.trackSection = (!workspace.trackSection || workspace.trackSection.type === 'bass')? workspace.bassSection : workspace.drumSection;
+      workspace.trackSection = (workspace.trackSection && workspace.trackSection.type === 'drums')? workspace.drumSection : workspace.bassSection;
       workspace.track = workspace.trackSection.track;
       $scope.ui.trackId = workspace.track.id;
     };
@@ -498,7 +498,16 @@
         return;
       }
       if (workspace.track.type !== track.type) {
-        workspace.trackSection = track.type === 'bass'? workspace.bassSection : workspace.drumSection;
+        if (track.type === 'drums') {
+          workspace.trackSection = workspace.drumSection
+        } else if (track.type === 'bass') {
+          workspace.trackSection = workspace.bassSection;
+        } else {
+          // workspace.trackSection = new TrackSection(workspace.section.tracks[trackId]);
+          workspace.trackSection = workspace.section.tracks[trackId];
+          workspace.trackSection.track = track;
+          console.log(workspace.trackSection)
+        }
         swiperControl.switchInstrument(track.type);
       }
 

@@ -171,6 +171,13 @@
                     ng-include="'views/editor/drums_beat.html'">
                   </div>
                 </div>
+                <div
+                  ng-switch-when="piano"
+                  class="beat-container piano">
+                    <div
+                      ng-include="'views/editor/piano_beat.html'">
+                    </div>
+                </div>
                 <md-input-container
                   class="bottom-note"
                   bd-textarea="slide.beat.meta.note">
@@ -200,6 +207,19 @@
           ng-click="playDrumSound(drum.name)">
       </div>
 
+      <div
+        ng-if="workspace.track.type === 'piano'"
+        layout="column"
+        class="piano-keys-container">
+        <div
+          ng-repeat="note in ::workspace.track.instrument.notes.list | orderBy:$index:'-'"
+          ng-attr-key="{{ ::note.label[0] }}"
+          class="piano-key"
+          ng-class="::{ black: note.label.length > 1 }"
+          xng-click="playPianoSound(note)">
+        </div>
+      </div>
+
       <span flex></span>
     </div>
   </div>
@@ -227,7 +247,6 @@
     </md-button>
 
     <div
-      flex
       class="playlist-swiper bass-sheet swiper-container"
       ng-class="['strings-'+workspace.track.instrument.strings.length]"
       ng-init="swiperControl.swiperConfig.visibleSubbeats = 4">
@@ -239,9 +258,10 @@
       <div class="swiper-pagination"></div>
     </div>
 
+    <div flex style="max-height: 30px;"></div>
+
     <div
       ng-if="viewer.fretboardVisible"
-      flex="none"
       class="fretboard-container"
       ng-include="'views/fret_diagram.html'">
     </div>

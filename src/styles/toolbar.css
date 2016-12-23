@@ -50,7 +50,8 @@
   min-width: 100px;
 }
 
-.playlist-mode .tracks-list md-option[type="drums"] {
+.playlist-mode .tracks-list md-option[type="drums"],
+.playlist-mode .tracks-list md-option[type="piano"] {
   pointer-events: none;
   opacity: 0.5;
 }

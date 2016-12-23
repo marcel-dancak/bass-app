@@ -228,7 +228,7 @@
   }
 
   function projectManager($http, $timeout, $q, Observable, context,
-      BassSection, DrumSection, Bass, Drums, BassTrackSection, DrumTrackSection) {
+      Bass, Drums, BassTrackSection, DrumTrackSection, Piano, TrackSection) {
 
     var idCouter = {};
     var compressors = {};
@@ -256,7 +256,11 @@
         track.name = track.kit;
       }
 
-      track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
+      if (track.type === 'piano') {
+        track.instrument = new Piano();
+      } else {
+        track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
+      }
 
       track.audio = context.createGain();
       if (track.volume) {
@@ -418,6 +422,7 @@
         animationDuration: section.animationDuration,
         bpm: section.bpm,
         meta: section.meta,
+        barSubdivision: section.barSubdivision,
         tracks: {}
       }
       this.project.tracks.forEach(function(track) {
@@ -432,7 +437,8 @@
           // data.tracks[track.id] = trackSection.rawData();
         }
       }, this);
-      return JSON.stringify(data, null, 4);
+      return JSON.stringify(data);
+      // return JSON.stringify(data, null, 4);
     }
 
 
@@ -499,9 +505,17 @@
       for (var trackId in section.tracks) {
         var trackData = section.tracks[trackId];
         if (!trackData.audio) {
-          var track = trackId.startsWith('bass')?
-            new BassTrackSection(section, trackData) :
-            new DrumTrackSection(section, trackData);
+          var type = trackId.split('_')[0];
+          var trackClass;
+          if (type === 'bass') {
+            trackClass = BassTrackSection;
+          } else if (type === 'drums') {
+            trackClass = DrumTrackSection;
+          } else {
+            trackClass = TrackSection;
+          }
+          var track = new trackClass(section, trackData);
+          track.type = type;
           track.audio = this.project.tracksMap[trackId].audio;
           track.instrument = this.project.tracksMap[trackId].instrument;
           section.tracks[trackId] = track;
@@ -520,7 +534,6 @@
     };
 
     ProjectManager.prototype.getSection = function(sectionId) {
-      console.log(this.project);
       var section = this.project.sections.find(byId(sectionId));
       if (!section) {
         console.log('invalid section id: '+sectionId);
@@ -547,6 +560,20 @@
       if (storedSection) {
         this._filterProjectTracks(storedSection);
         section = this.loadSectionData(storedSection);
+      }
+      // beat labels
+      if (section.barSubdivision) {
+        var parts = section.barSubdivision.split('+').map(Number);
+        var labels = new Array(13);
+        var index = 1;
+        for (var i = 0; i < parts.length; i++) {
+          var iBeat = 1;
+          var count = parts[i];
+          while (count--) {
+            labels[index++] = iBeat++;
+          }
+        }
+        section.beatLabels = labels;
       }
       return section;
     }

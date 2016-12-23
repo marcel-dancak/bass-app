@@ -70,6 +70,7 @@
 
       _createSubbeatData() {
         var bassSubbeatGrid = {};
+        // ['B', 'E', 'A', 'D', 'G', 'C'].forEach(function(string) {
         ['B', 'E', 'A', 'D', 'G'].forEach(function(string) {
           bassSubbeatGrid[string] = {
             sound: {}

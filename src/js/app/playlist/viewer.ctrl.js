@@ -18,7 +18,7 @@
         direction: 'vertical',
         slidesPerView: 1.99,
         slidesPerColumn: 1,
-        animation: 300,
+        animation: 250,
         render: {
           initialHeaderOn: 'all'
         },
@@ -419,13 +419,6 @@
     projectManager.on('projectLoaded', projectLoaded);
 
 
-    // ugly autoselect to bass guitar track
-    if (workspace.track && workspace.track.type !== 'bass') {
-      $scope.ui.trackId = 'bass_0';
-      $scope.ui.selectTrack($scope.ui.trackId);
-    }
-
-
     $scope.player.visiblePlaybackModeChanged = function(visibleBeatsOnly) {
       if (!visibleBeatsOnly && playbackState.beatsCounter >= viewer.beatsPerSlide) {
         playbackState.beatsCounter -= viewer.beatsPerSlide;
@@ -440,7 +433,12 @@
 
     slidesCompiler.setTemplate('views/playlist/slide.html').then(function() {
       initializeSwiper();
-      $timeout(projectLoaded.bind(this, projectManager.project));
+      // ugly autoselect to bass guitar track
+      // if (workspace.track && workspace.track.type !== 'bass') {
+      //   $scope.ui.trackId = 'bass_0';
+      //   $scope.ui.selectTrack($scope.ui.trackId);
+      // }
+      $mdUtil.nextTick(projectLoaded.bind(this, projectManager.project));
     });
 
     $scope.$on('$destroy', function() {

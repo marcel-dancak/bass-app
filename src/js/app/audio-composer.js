@@ -157,6 +157,7 @@
     var crossPointIndex = parseInt((audio.duration+curve[0])*44100);
     var info = analyzeSignal(buffer, crossPointIndex, searchMaxSize);
     var diff = info.crossIndex - crossPointIndex;
+
     // console.log(crossPointIndex+' vs '+info.crossIndex);
     crossPointIndex = info.crossIndex;
     audio.slide = {
@@ -165,7 +166,7 @@
       nextStepDurationCorrection: -diff/44100,
       crossPointTime: audio.startTime+crossPointIndex/44100,
       // amplitude: info.absoluteValue*sound.volume,
-      volume: prevAudio && prevAudio.slide? prevAudio.slide.volume : sound.volume
+      volume: prevAudio? prevAudio.slide? prevAudio.slide.volume : prevAudio.sound.volume : sound.volume
     };
     audio.slide.amplitude = info.absoluteValue*audio.slide.volume;
 

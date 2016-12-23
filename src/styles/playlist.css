@@ -75,11 +75,15 @@
   margin: 0 15px 0 0px;
 }
 
+.playlist-swiper {
+  box-sizing: border-box;
+}
 .playlist-swiper.swiper-container,
 .viewer-container .swiper-wrapper {
   height: 100%;
+  /*width: calc(100% - 8px);*/
   width: 100%;
-  padding-left: 5px;
+  padding-left: 7px;
   padding-right: 10px;
   padding-top: 12px;
 }
@@ -149,7 +153,6 @@
   content: "";
   width: 3px;
   background-color: #bbb;
-  z-index: 200;
 }
 
 .bass-sheet .subbeat-label.align-right {
@@ -193,7 +196,7 @@
   left: -48px;
   top: -1px;
 }
-.bass-sheet .swiper-slide .beat:not(.with-header) .section-label {
+.bass-sheet .swiper-slide .beat:not(.with-header) .section-label.with-tempo {
   left: 22px;
 }
 
@@ -275,4 +278,11 @@
   transform: translate3d(0, 100%, 0);
   color: #777;
   font-size: 15px;
+}
+
+.playlist-swiper.swiper-container-horizontal {
+  height: auto;
+}
+.playlist-swiper.swiper-container-horizontal.strings-4 {
+  min-height: 304px;
 }

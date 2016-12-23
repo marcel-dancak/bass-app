@@ -540,6 +540,11 @@
               grid.sound.note.slide = {
                 endNote: angular.copy(targetSound.note)
               };
+
+              if (targetGrid.sound.next) {
+                connectGrids(grid, getGridInfo(targetGrid.sound.next).grid);
+                delete targetGrid.sound.next;
+              }
               workspace.trackSection.clearSound(targetSound);
             }
           }

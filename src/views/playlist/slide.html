@@ -1,4 +1,4 @@
-<div layout="column" layout-fill ng-cloak>
+<div ng-cloak>
   <div flex="none" layout="row">
 
     <!-- Beats with bass sounds (tabs) -->
@@ -28,7 +28,9 @@
       </div>
 
       <div class="header">
-        <div class="section-label">
+        <div
+          class="section-label"
+          ng-class="::{ 'with-tempo': beat.sectionInfo.bpm }">
           <label
             ng-if="::beat.sectionInfo.bpm"
             class="bpm">

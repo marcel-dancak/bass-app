@@ -1,0 +1,32 @@
+
+<div
+  ng-if="slide.initialized"
+  sly-show="slide.visible"
+  ng-keyup="keyPressed($event)"
+  ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
+
+  <div layout="column">
+    <div
+      ng-repeat="note in ::workspace.trackSection.instrument.notes.list | orderBy:$index:'-'"
+      class="grid-cell">
+      <!-- {{ ::note.label.join('/') }} -->
+    </div>
+  </div>
+  <div
+    ng-repeat="item in beat.data"
+    class="sound-container"
+    ng-attr-octave="{{ item.sound.note.octave }}"
+    ng-style="{
+      bottom: (15*workspace.trackSection.instrument.stringIndex(item.sound.note.code))+'px',
+      left: (100*(item.subbeat-1)/beat.subdivision)+'%',
+      width: (100 * workspace.section.timeSignature.bottom * item.sound.noteLength.beatLength * (beat.subdivision === 3? 2/3 : 1))+'%'
+    }">
+
+    <span ng-if="item.sound.prev" class="tie"></span>
+    <span ng-if="!item.sound.prev">
+      {{ ::item.sound.note.name }}
+      <span class="octave">{{ ::item.sound.note.octave }}</span>
+    </span>
+  </div>
+
+</div>
