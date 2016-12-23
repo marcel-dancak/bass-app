@@ -62,7 +62,10 @@
             }
           };
           $scope.workspace.trackSection = new BassSection($scope.workspace.section);
-          $scope.workspace.beatSlides = [createSlide(1), createSlide(2)];
+          $scope.workspace.beatSlides = [];
+          for (var i = 1; i <= (config.size || 2); i++) {
+            $scope.workspace.beatSlides.push(createSlide(i));
+          }
           $scope.workspace.addSound = addSound;
 
           var template = '<div ng-controller="{0}">'.format($scope.config.controller)+sheetTemplate+'</div>';

@@ -160,7 +160,8 @@
           ng-attr-visible-subbeats="
             {{ slide.beat.subdivision === 3? 3 : visibleSubbeats }}
           "
-          class="swiper-slide bar-slide beat beat-{{ ::slide.beat.beat }}">
+          class="swiper-slide bar-slide beat"
+          ng-class="::{ first: slide.beat.beat === 1 }">
           <label class="bar-label">
             {{ ::slide.beat.bar }}
           </label>

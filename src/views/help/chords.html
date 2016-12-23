@@ -1,0 +1,52 @@
+<section
+  id="section-1"
+  style="padding-top:44px;">
+  <h4 style="top:20px;">{{ ::item.sections[0] }}</h4>
+
+  <p>
+    You can increase the quality of bass tabs by entering chord information. The given benefits are:
+    <ul>
+      <li>Better logical structure and understanding of the composition</li>
+      <li>
+        Better visualization of notes being played on virtual fretboard in <em>Highlight view</em>,
+        so you can learn playing patterns more easily. It also works without active playback - click
+        on chord label to highlight all notes within this chord range.
+      </li>
+      <li>With double-click action on chord label (in <em>Section mode</em>), you can trigger playback
+        within chord range.
+      </li>
+    </ul>
+  </p>
+
+  <div ng-controller="ChordsController" ng-cloak>
+    <div class="bass-sheet strings-4 fret"></div>
+    <br />
+    <div>
+      <div ng-include="'views/fret_diagram.html'"></div>
+    </div>
+  </div>
+
+</section>
+
+<section id="section-2">
+  <h4>{{ ::item.sections[1] }}</h4>
+  <p>
+    Chord information for current section can be assigned in <b>Section metadata</b> window,
+    accessible from <b>Main menu (<md-icon md-svg-icon="menu-dots"></md-icon>)</b>.
+    To add chord information, click on the <em>New</em> button and enter following 
+    You will need to set following fields:
+  </p>
+  <ul>
+    <li><b>Chord</b>, composed of:</li>
+    <ul>
+      <li><em>String</em> - string label used for precise identification of main root note on the fretboard</li>
+      <li>
+        <em>Root note</em> - name of the root note with optional octave number, for example Db2.
+        When octave is not entered, first valid octave on selected string will be used.
+      </li>
+      <li><em>Type</em> - type of the chord, for example <em>maj, min, ...</em></li>
+    </ul>
+    <li><b>Position</b> defining the beginning of the chord range, composed of bar, beat and subbeat index</li>
+  </ul>
+
+</section>
