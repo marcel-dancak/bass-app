@@ -11,7 +11,7 @@
     var editGrid, editElem;
 
     function startResize(bar, beat, subbeat, string) {
-      var selector = '#bass_{0}_{1}_{2}_{3} .bass-sound-container'.format(bar, beat, subbeat, string);
+      var selector = '#bass_{0}_{1}_{2}_{3} .sound-container'.format(bar, beat, subbeat, string);
       editElem = angular.element($element[0].querySelector(selector));
       editGrid = editElem.scope().grid;
       editElem.addClass('hover');

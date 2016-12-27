@@ -64,7 +64,7 @@
       /* Create a second sound */
       function() {
         editElem = angular.element(
-          $element[0].querySelector('#bass_1_1_2_G .bass-sound-container')
+          $element[0].querySelector('#bass_1_1_2_G .sound-container')
         );
         editGrid = editElem.scope().grid;
 

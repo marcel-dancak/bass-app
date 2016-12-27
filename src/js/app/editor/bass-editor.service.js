@@ -36,7 +36,7 @@
       return {
         grid: angular.element(elem).scope().grid,
         gridElement: elem.querySelector('.bass-grid'),
-        soundElement: elem.querySelector('.bass-sound-container')
+        soundElement: elem.querySelector('.sound-container')
       };
     }
   }
@@ -572,7 +572,7 @@
       },
       selectGrid: function(evt, grid, focus) {
         this.selected.grid = grid;
-        this.selected.element = findGridContainer(evt.target).querySelector('.bass-sound-container');
+        this.selected.element = findGridContainer(evt.target).querySelector('.sound-container');
         if (focus) {
           this.selected.element.focus();
         }

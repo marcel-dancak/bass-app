@@ -22,7 +22,22 @@
       width: (100 * workspace.section.timeSignature.bottom * item.sound.noteLength.beatLength * (beat.subdivision === 3? 2/3 : 1))+'%'
     }">
 
-    <span ng-if="item.sound.prev" class="tie"></span>
+    <div class="resize-handler">
+      <div>◀</div>
+      <div>▶</div>
+    </div>
+
+    <div
+      class="resize-container"
+      resizable
+      r-directions="['right']"
+      on-resize="onResize(grid, info, $event)"
+      on-resize-start="onResizeStart(grid, info, slide.beat.subdivision, $event)"
+      on-resize-end="onResizeEnd(grid, info, $event)"
+      r-grabber="<div></div>">
+    </div>
+
+    <span ng-if="item.sound.prev" class="tie">⏝</span>
     <span ng-if="!item.sound.prev">
       {{ ::item.sound.note.name }}
       <span class="octave">{{ ::item.sound.note.octave }}</span>

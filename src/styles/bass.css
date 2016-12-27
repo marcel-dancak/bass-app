@@ -168,7 +168,7 @@
   transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
-.bass-sound-container {
+.sound-container {
   height: 100%;
   width: 100%;
   text-align: center;
@@ -187,82 +187,87 @@
   pointer-events: auto;
 }
 
-.drag-group .bass-sound-container .label-wrapper > div:not(.hammer-on-label) {
+.drag-group .sound-container .label-wrapper > div:not(.hammer-on-label) {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
 }
-.bass-sound-container .label-wrapper label.note,
-.bass-sound-container .label-wrapper label.fret {
+.sound-container .label-wrapper label.note,
+.sound-container .label-wrapper label.fret {
   display: none;
 }
-.bass-sound-container label {
+.sound-container label {
   white-space: nowrap;
 }
 
-.name .bass-sound-container .label-wrapper label.note,
-.fret .bass-sound-container .label-wrapper label.fret,
-.name-and-fret .bass-sound-container .label-wrapper label.note,
-.name-and-fret .bass-sound-container .label-wrapper label.fret {
+.name .sound-container .label-wrapper label.note,
+.fret .sound-container .label-wrapper label.fret,
+.name-and-fret .sound-container .label-wrapper label.note,
+.name-and-fret .sound-container .label-wrapper label.fret {
   display: block;
 }
 
-.name-and-fret .bass-sound-container .label-wrapper .ring,
-.name-and-fret .ring:not(.slide) .bass-sound-container .label-wrapper,
-.bass-sound-container .label-wrapper {
+.name-and-fret .sound-container .label-wrapper .ring,
+.name-and-fret .ring:not(.slide) .sound-container .label-wrapper,
+.sound-container .label-wrapper {
   line-height: 32px;
   font-size: 16px;
 }
 
 
-.name-and-fret .bass-sound-container .label-wrapper {
+.name-and-fret .sound-container .label-wrapper {
   font-size: 13px;
   line-height: normal!important;
 }
 
-.name-and-fret .bass-sound-container label.note,
-.name-and-fret .bass-sound-container label.fret {
+.name-and-fret .sound-container label.note,
+.name-and-fret .sound-container label.fret {
   display: block;
   max-height: 16px;
 }
 
-/*.bass-sound-container label.note {}
-.bass-sound-container label.fret {}*/
+/*.sound-container label.note {}
+.sound-container label.fret {}*/
 
-.ghost .bass-sound-container label.fret {
+.ghost .sound-container label.fret {
   display: none;
 }
 
-.bass-sound-container[octave="0"] {
+.sound-container[octave="0"] {
   background-color: #f44336;
 }
-.bass-sound-container[octave="1"] {
+.sound-container[octave="1"] {
   background-color: #ff5722;
 }
-.bass-sound-container[octave="2"] {
+.sound-container[octave="2"] {
   background-color: #ff9800;
 }
-.bass-sound-container[octave="3"] {
+.sound-container[octave="3"] {
   background-color: #ffc107;
 }
-.bass-sound-container[octave="4"] {
+.sound-container[octave="4"] {
   background-color: #ffeb3b;
 }
+.sound-container[octave="5"] {
+  background-color: #fff176;
+}
 
-.ghost .bass-sound-container {
+.ghost .sound-container {
   background-color: #ddd;
 }
-.ghost .bass-sound-container p {
+.ghost .sound-container p {
   line-height: 32px;
+  font-size: 16px;
+  margin: 0;
 }
 
 .ghost.bass-sound-wrapper {
   min-width: 25%;
   max-width: 25%;
 }
-.bass-sound-wrapper.selected .bass-sound-container {
+.bass-sound-wrapper.selected .sound-container {
   border: 2px solid #333;
   margin: 0 1px 0 1px;
   border-radius: 4px;
@@ -341,7 +346,7 @@
   font-size: 14px;
 }
 
-.bass-sound-container p {
+.bass .sound-container p {
   padding: 0;
   margin: 0;
   overflow: hidden;
@@ -411,47 +416,35 @@
 /** when active resize-container should be visible only when we are over it's sound container */
 /*
 .resize-container.no-transition,
-.bass-sound-container:hover .resize-container {
+.sound-container:hover .resize-container {
   display: block;
 }
 */
-.bass-sound-container .resize-handler {
+.sound-container .resize-handler {
   position: absolute;
-  display: none;
+  display: block;
   width: 10px;
   right: 0;
   padding: 4px 0;
   transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   pointer-events: none;
+  opacity: 0;
+  color: #333;
+  font-size: 13px;
+  line-height: 11px;
 }
 /** Can't hide whole resize-container, because right click menu hack (with backdrop) will not work */
-.ghost .bass-sound-container .resize-handler,
-.ghost .bass-sound-container .resize-container .rg-right {
+.ghost .sound-container .resize-handler,
+.ghost .sound-container .resize-container .rg-right {
   display: none;
 }
 
-
-.bass-sound-container .resize-handler {
-  display: block;
-  opacity: 0;
-}
-
-.bass-sound-container.hover .resize-handler,
-.bass-sound-container:hover .resize-handler {
+.sound-container.hover .resize-handler,
+.sound-container:hover .resize-handler {
   opacity: 1;
 }
-/*.bass-sound-container .resize-handler div {
-  font-size: 10px;
-  height: 13px;
-  line-height: 10px;
-  color: #333;
-}*/
 
-.bass-sound-container .resize-handler div {
-  font-size: 14px;
-  height: 12px;
-  line-height: 11px;
-  color: #333;
+.sound-container .resize-handler div {
   transform: scale(0.45, 1);
 }
 
@@ -492,12 +485,12 @@ md-input-container.slide-field > span {
   pointer-events: none;
 }*/
 
-.bass-sound-container .label-wrapper {
+.sound-container .label-wrapper {
   display: inline;
   white-space: nowrap;
 }
 
-.bass-sound-container .slide-slash {
+.sound-container .slide-slash {
   padding: 0 6px;
   width: 10px;
   line-height: 32px;
@@ -508,61 +501,61 @@ md-input-container.slide-field > span {
   transform: rotate3d(0, 0, 1, 55deg);
 }
 
-.bass-sound-container .slide-slash.down {
+.sound-container .slide-slash.down {
   transform: rotate3d(0, 0, 1, -55deg)!important;
 }
 
 /* #ff5722, #ff9800, #ffc107, #ffeb3b */
-.bass-sound-container .label-wrapper .slide > div {
+.sound-container .label-wrapper .slide > div {
   display: inline-block;
   height: 32px;
 }
 
-.bass-board-container.name .bass-sound-container .label-wrapper .fret {
+.bass-board-container.name .sound-container .label-wrapper .fret {
   display: none;
 }
-.bass-board-container.fret .bass-sound-container .label-wrapper .note {
+.bass-board-container.fret .sound-container .label-wrapper .note {
   display: none;
 }
 
-.slide .bass-sound-container .s-octave-1.e-octave-2 {
+.slide .sound-container .s-octave-1.e-octave-2 {
   background: linear-gradient(to right, #ff5722, #ff5722, #ff9800, #ff9800);
 }
-.slide .bass-sound-container .s-octave-1.e-octave-3 {
+.slide .sound-container .s-octave-1.e-octave-3 {
   background: linear-gradient(to right, #ff5722, #ff5722, #ffc107, #ffc107);
 }
-.slide .bass-sound-container .s-octave-2.e-octave-3 {
+.slide .sound-container .s-octave-2.e-octave-3 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ffc107, #ffc107);
 }
-.slide .bass-sound-container .s-octave-2.e-octave-4 {
+.slide .sound-container .s-octave-2.e-octave-4 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ffeb3b, #ffeb3b);
 }
-.slide .bass-sound-container .s-octave-3.e-octave-4 {
+.slide .sound-container .s-octave-3.e-octave-4 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ffeb3b, #ffeb3b);
 }
 
-.slide .bass-sound-container .s-octave-2.e-octave-1 {
+.slide .sound-container .s-octave-2.e-octave-1 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ff5722, #ff5722);
 }
-.slide .bass-sound-container .s-octave-3.e-octave-1 {
+.slide .sound-container .s-octave-3.e-octave-1 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ff5722, #ff5722);
 }
-. .bass-sound-containerslide .s-octave-3.e-octave-2 {
+. .sound-containerslide .s-octave-3.e-octave-2 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ff9800, #ff9800);
 }
-.slide .bass-sound-container .s-octave-4.e-octave-2 {
+.slide .sound-container .s-octave-4.e-octave-2 {
   background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ff9800, #ff9800);
 }
-.slide .bass-sound-container .s-octave-4.e-octave-3 {
+.slide .sound-container .s-octave-4.e-octave-3 {
   background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ffc107, #ffc107);
 }
 
-.bass-sound-container .grace {
+.sound-container .grace {
   font-size: 11px;
   padding-right: 3px;
 }
 
-.name-and-fret .bass-sound-container .grace {
+.name-and-fret .sound-container .grace {
   font-size: 9px;
 }
 
@@ -579,12 +572,12 @@ md-input-container.slide-field > span {
 .drag-group .label-wrapper .slide {
   max-height: 36px;
 }
-.drag-group .bass-sound-container {
+.drag-group .sound-container {
   left: 0!important;
   top: 28px!important;
 }
 
-.bass-sound-container .hammer-on-label {
+.sound-container .hammer-on-label {
   position: absolute;
   left: -15px;
   top: -28px;
@@ -597,11 +590,11 @@ md-input-container.slide-field > span {
     0px 0px 5px #fff,
     0px 0px 5px #fff;
 }
-.selected .bass-sound-container .hammer-on-label {
+.selected .sound-container .hammer-on-label {
   left: -16px;
 }
 
-.bass-sound-container .hammer-on-label > span:first-child {
+.sound-container .hammer-on-label > span:first-child {
   position: absolute;
   top: 5px;
   left: 11px;
@@ -609,7 +602,7 @@ md-input-container.slide-field > span {
   transform-origin: 50%  51%; /* to avoid blury text */
   transform: rotate3d(0, 0, 1, -90deg);
 }
-.bass-sound-container .hammer-on-label > span:last-child {
+.sound-container .hammer-on-label > span:last-child {
   position: absolute;
   top: -5px;
   left: 10px;
@@ -665,12 +658,12 @@ md-input-container.slide-field > span {
   top: -32px;
 }
 
-.no-colors .bass-sound-container {
+.no-colors .sound-container {
   background-color: #E0E0E0!important;
   border-color: #aaa;
 }
 
-.no-colors .slide .bass-sound-container .slide {
+.no-colors .slide .sound-container .slide {
   background: #E0E0E0!important;
 }
 

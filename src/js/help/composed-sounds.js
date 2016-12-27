@@ -42,7 +42,7 @@
       },
       function() {
         var elem = angular.element(
-          $element[0].querySelector('#bass_1_1_4_A .bass-sound-container')
+          $element[0].querySelector('#bass_1_1_4_A .sound-container')
         );
         var grid = elem.scope().grid;
         basicHandler.selectGrid(

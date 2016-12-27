@@ -195,10 +195,10 @@ md-dialog.help-dialog.md-transition-in {
   pointer-events: none;
 }
 
-.help-container .bass-sound-container:not(.hover) .resize-handler {
+.help-container .sound-container:not(.hover) .resize-handler {
   opacity: 0;
 }
-.help-container .bass-sound-container:hover .rg-right {
+.help-container .sound-container:hover .rg-right {
   pointer-events: none!important;
 }
 .help-container .md-panel-outer-wrapper .bass-form {
