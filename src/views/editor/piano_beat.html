@@ -2,25 +2,42 @@
 <div
   ng-if="slide.initialized"
   sly-show="slide.visible"
-  ng-keyup="keyPressed($event)"
-  ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
+  ng-keyup="eventHandler.keyPressed($event)"
+  ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)"
+  class="sounds-container">
 
   <div layout="column">
     <div
       ng-repeat="note in ::workspace.trackSection.instrument.notes.list | orderBy:$index:'-'"
-      class="grid-cell">
+      class="grid-cell"
+
+      drop-channel="piano"
+      xui-on-drag-enter="dragHandler.onDragEnter($event, slide.beat, note)"
+      ui-on-drag-over="dragHandler.onDragOver($event, slide.beat)"
+      ui-on-drop="dragHandler.onDrop($event, slide.beat, $data, note)"
+      >
       <!-- {{ ::note.label.join('/') }} -->
     </div>
   </div>
   <div
-    ng-repeat="item in beat.data"
+    ng-repeat="sound in beat.data track by (sound.string + sound.start)"
     class="sound-container"
-    ng-attr-octave="{{ item.sound.note.octave }}"
+    ng-attr-octave="{{ sound.note.octave }}"
     ng-style="{
-      bottom: (15*workspace.trackSection.instrument.stringIndex(item.sound.note.code))+'px',
-      left: (100*(item.subbeat-1)/beat.subdivision)+'%',
-      width: (100 * workspace.section.timeSignature.bottom * item.sound.noteLength.beatLength * (beat.subdivision === 3? 2/3 : 1))+'%'
-    }">
+      bottom: (15*workspace.trackSection.instrument.stringIndex(sound.note))+'px',
+      left: (100*sound.start)+'%',
+      width: (100*(sound.end - sound.start))+'%'
+    }"
+    ui-draggable="true"
+    ng-init="sound.end = sound.end || sound.start + workspace.trackSection.soundDuration(beat, sound)"
+    drag="{
+      bar: beat.bar,
+      beat: beat.beat,
+      sound: sound
+    }"
+    drag-channel="piano"
+    ng-click="eventHandler.select($event, beat, sound)"
+    >
 
     <div class="resize-handler">
       <div>◀</div>
@@ -31,16 +48,16 @@
       class="resize-container"
       resizable
       r-directions="['right']"
-      on-resize="onResize(grid, info, $event)"
-      on-resize-start="onResizeStart(grid, info, slide.beat.subdivision, $event)"
-      on-resize-end="onResizeEnd(grid, info, $event)"
+      on-resize="resizeHandler.onResize(beat, sound, info)"
+      on-resize-start="resizeHandler.onResizeStart(beat, sound, info)"
+      on-resize-end="resizeHandler.onResizeEnd(beat, sound, info, $event)"
       r-grabber="<div></div>">
     </div>
 
-    <span ng-if="item.sound.prev" class="tie">⏝</span>
-    <span ng-if="!item.sound.prev">
-      {{ ::item.sound.note.name }}
-      <span class="octave">{{ ::item.sound.note.octave }}</span>
+    <span ng-if="sound.prev" class="tie">⏝</span>
+    <span ng-if="!sound.prev">
+      {{ ::sound.note.name }}
+      <span class="octave">{{ ::sound.note.octave }}</span>
     </span>
   </div>
 
