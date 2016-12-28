@@ -20,13 +20,27 @@
           return beatData;
         }
       }
-      return {
+      beat = {
         bar: bar,
         beat: beat,
         subdivision: 4,
         meta: {},
         data: []
       };
+      this.data.push(beat);
+      return beat;
+    }
+
+    prevBeat(beat) {
+      var barIndex = beat.bar;
+      var beatIndex = beat.beat - 1;
+      if (beatIndex === 0) {
+        beatIndex = this.section.timeSignature.top;
+        barIndex--;
+      }
+      if (barIndex > 0) {
+        return this.beat(barIndex, beatIndex);
+      }
     }
 
     nextBeat(beat) {
@@ -37,10 +51,9 @@
         beatIndex = 1;
         barIndex++;
       }
-      if (barIndex > this.section.length) {
-        return null;
+      if (barIndex <= this.section.length) {
+        return this.beat(barIndex, beatIndex);
       }
-      return this.beat(barIndex, beatIndex);
     }
 
     beatSounds(beat) {
@@ -49,6 +62,107 @@
 
     rawData() {
       return this.data;
+    }
+
+    sound(beat, subbeat, string) {
+      var item = beat.data.find(function(item) {
+        return item.subbeat === subbeat && item.sound.string === string;
+      });
+      if (item) {
+        return item.sound;
+      }
+    }
+
+    nextSoundPosition(beat, sound) {
+      var beatOffset = parseInt(sound.end);
+      var start = sound.end - beatOffset;
+
+      while (beatOffset) {
+        beat = this.nextBeat(beat);
+        beatOffset--;
+      }
+      return {
+        beat: beat,
+        start: start
+      };
+    }
+
+    nextSound(beat, sound) {
+      var position = this.nextSoundPosition(beat, sound);
+      var start = position.start;
+      for (var i = 0; i < position.beat.data.length; i++) {
+        var s = position.beat.data[i];
+        if (s.string === sound.string && s.start === start) {
+          return {
+            beat: position.beat,
+            sound: s
+          }
+        }
+      }
+    }
+
+    prevSound(beat, sound) {
+      var ts = this.section.timeSignature;
+      function sectionTime(aBeat, value) {
+        var v1 = (aBeat.bar - 1)* ts.top;
+        return (aBeat.bar - 1)* ts.top + aBeat.beat + value;
+      }
+      var absEnd = sectionTime(beat, sound.start);
+      console.log('looking for: '+absEnd+' at string '+sound.string)
+      while (beat) {
+        for (var i = 0; i < beat.data.length; i++) {
+          var s = beat.data[i];
+          var stop = false;
+          if (s.string === sound.string) {
+            var end = sectionTime(beat, s.end);
+            if (end === absEnd) {
+              return {
+                beat: beat,
+                sound: s
+              }
+            }
+            if (end < absEnd) {
+              stop = true;
+            }
+          }
+        }
+        if (stop) {
+          return;
+        }
+        beat = this.prevBeat(beat);
+      }
+    }
+
+    soundDuration(beat, sound) {
+      if (sound && sound.note) {
+        var duration = this.section.timeSignature.bottom * sound.note.length;
+        if (sound.note.dotted) {
+          duration *= 1.5;
+        }
+        if (beat.subdivision === 3) {
+          duration *= 2/3;
+        }
+        return duration;
+      }
+    }
+
+    deleteSound(beat, sound) {
+      if (sound.prev) {
+        console.log('BREAK PREV SOUND CHAIN')
+        var prevSound = this.prevSound(beat, sound).sound;
+        delete prevSound.next;
+      }
+      if (sound.next) {
+        var next = this.nextSound(beat, sound);
+        delete next.sound.prev;
+        this.deleteSound(next.beat, next.sound);
+      }
+      var index = beat.data.findIndex(function(item) {
+        return item === sound;
+      });
+      if (index !== -1) {
+        beat.data.splice(index, 1);
+      }
     }
   }
 

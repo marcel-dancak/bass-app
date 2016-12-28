@@ -227,8 +227,17 @@
             }
             if (prevAudio.meta) {
               prevAudio.meta.duration += duration;
-            } else if (stack[0].meta) {
-              stack[0].meta.notes[stack[0].meta.notes.length-1].duration += duration;
+            } else {
+              for (var i = stack.length - 1; i >= 0; i--) {
+                var prevMeta = stack[i].meta;
+                if (prevMeta && prevMeta.notes) {
+                  console.log('found prev meta at: '+i);
+                  prevMeta.notes[prevMeta.notes.length-1].duration += duration;
+                  break;
+                }
+              }
+              // console.log(stack)
+              // stack[0].meta.notes[stack[0].meta.notes.length-1].duration += duration;
             }
           }
         },
@@ -387,35 +396,26 @@
         handlers:[
           {
             accepts: function(sound) {
-              return sound.note.type === 'regular';
+              return angular.isDefined(sound.note);
             },
             getResources: function(sound) {
-              var n = piano.notes.map[sound.note.code];
+              var code = sound.note.name+sound.note.octave;
+              var n = piano.notes.map[code];
               var code = n.label[n.label.length-1].replace('♭', 'b')+(sound.note.octave);
               // console.log(code)
               // return ['sounds/piano/'+code];
               return ['sounds/GrandPianoV3/'+code];
             },
-            prepareForPlayback: function(trackId, track, sound, startTime, beatTime, timeSignature) {
+            prepareForPlayback: function(trackId, track, sound, startTime, beatTime) {
               // console.log('piano')
               var resources = this.getResources(sound);
               var audio = piano.createSoundAudio(track, sound, startTime, resources[0]);
               // console.log(audio)
-              var duration = noteDuration(sound, beatTime, timeSignature);
+              var duration = (sound.end - sound.start) * beatTime;
               audio.duration = duration;
               audio.endTime = startTime+duration;
               // playMidi(track, sound, startTime, audio.duration);return [];
               return [audio];
-            }
-          }, {
-            accepts: function(sound) {
-              return true;
-            },
-            getResources: function(sound) {
-              return [];
-            },
-            prepareForPlayback: function() {
-              return [];
             }
           }
         ],
@@ -494,34 +494,29 @@
 
     AudioPlayer.prototype._bassSoundScheduled = function(trackId, sound) {};
 
-    AudioPlayer.prototype._playSound = function(trackId, track, sound, startTime, beatTime, timeSignature) {
-      var duration = noteDuration(sound, beatTime, timeSignature);
-      if (sound.prev) return;
-
-      var next = sound.next;
-      var depth = 0;
-      while (next) {
-        next = track.beatSounds(track.beat(next.bar, next.beat)).find(function(s) {
-          return s.subbeat === next.subbeat && s.sound.string === next.string;
-        }).sound;
-        // console.log('+'+noteDuration(next, beatTime, timeSignature));
-        duration += noteDuration(next, beatTime, timeSignature);
-        next = next.next;
-        depth++;
+    AudioPlayer.prototype._playSound = function(trackId, track, beat, sound, startTime, beatTime) {
+      var duration = (sound.end-sound.start) * beatTime;
+      var audio;
+      if (sound.prev) {
+        audio = this.piano.playingSounds[sound.string];
       }
-      // console.log(depth)
-      // playMidi(track, sound, startTime, duration);
-      // return;
-      var audio = this.piano.getHandler(sound).prepareForPlayback(trackId, track, sound, startTime, beatTime, timeSignature)[0];
-      if (audio) {
-        // console.log('play '+sound.note.code+' for '+duration)
-        audio.endTime = startTime + duration;
-        audio.duration = duration;
-
-        audio.gain.setValueAtTime(audio.sound.volume, startTime);
-        audio.source.start(audio.startTime, audio.offset, audio.duration+0.25);
-        audio.gain.setValueAtTime(audio.sound.volume, audio.endTime-0.05);
-        audio.gain.linearRampToValueAtTime(0.0001, audio.endTime+0.22);
+      if (!sound.prev || !audio) {
+        audio = this.piano.getHandler(sound).prepareForPlayback(trackId, track, sound, startTime, beatTime)[0];
+        if (!audio) {
+          return;
+        }
+        audio.gain.setValueAtTime(audio.sound.volume*0.8, startTime);
+        if (sound.next) {
+          audio.source.start(audio.startTime, audio.offset);
+        } else {
+          audio.source.start(audio.startTime, audio.offset, duration+0.25);
+        }
+        this.piano.playingSounds[sound.string] = audio;
+      }
+      audio.endTime = startTime + duration;
+      if (!sound.next) {
+        audio.gain.setValueAtTime(audio.sound.volume*0.8, audio.endTime-0.05);
+        audio.gain.linearRampToValueAtTime(0.0001, audio.endTime+0.2);
       }
     }
 
@@ -586,7 +581,8 @@
               } else if (track.type === 'drums') {
                 this._playDrumSound(track, subbeatSound, startAt);
               } else {
-                this._playSound(trackId, track, subbeatSound.sound, startAt, noteBeatTime, timeSignature);
+                startAt = startTime + (subbeatSound.start * beatTime);
+                this._playSound(trackId, track, trackBeat, subbeatSound, startAt, noteBeatTime);
               }
             } catch (ex) {
               if (ex instanceof ResourceNotAvailable) {
@@ -668,6 +664,7 @@
 
       oscillator.start();
       */
+      this.piano.playingSounds = {};
       var bar = this.playbackRange.start.bar;
       var beat = this.playbackRange.start.beat;
       this.playBeat(bar, beat, context.currentTime, true);
@@ -723,8 +720,7 @@
           }
           if (track.type === 'piano') {
             track.data.forEach(function(beat) {
-              beat.data.forEach(function(item) {
-                var sound = item.sound;
+              beat.data.forEach(function(sound) {
                 addResources(this.piano.getHandler(sound).getResources(sound));
               }, this)
             }, this);
