@@ -167,3 +167,18 @@
     </div>
   </md-menu-content>
 </md-menu>
+<rzslider
+  class="playback-slider"
+  rz-slider-model="player.progress.value"
+  rz-slider-options="{
+    floor: 0,
+    ceil: player.progress.max,
+    step: 1,
+    showTicks: false,
+    showSelectionBar: true,
+    showTicksValues: false,
+    hideLimitLabels: true,
+    hidePointerLabels: true,
+    onChange: player.setProgress
+  }">
+</rzslider>

@@ -86,6 +86,11 @@
         max: 1
       },
       playbackRangeChanged: angular.noop,
+      progress: {
+        max: 0,
+        value: 0
+      },
+      setProgress: angular.noop,
       graphEnabled: false,
       visibleBeatsOnly: false,
       playlist: []

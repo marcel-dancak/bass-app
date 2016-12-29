@@ -27,7 +27,7 @@
     }
 
     SwiperControl.prototype.updateSlidesVisibility = function() {
-      console.log('updateSlidesVisibility');
+      // console.log('updateSlidesVisibility');
       var playbackRange = this.lastSlide - this.firstSlide + 1;
 
       var visibleIndexes = [];
@@ -73,10 +73,13 @@
       this.lastSlide = slides.length - 1;
       // params.initialSlide = 0;
       this.reinitialize(params);
-      this.barSwiper.slideTo(0, 0, true);
+      this.barSwiper.slideTo(0, 0, false);
       this.barSwiper.setWrapperTranslate(0);
       this.updateSlidesVisibility();
       this.updateSubbeatsVisibility();
+      if (slides.length <= this.barSwiper.params.slidesPerView) {
+        this.barSwiper.lockSwipes();
+      }
     };
 
     SwiperControl.prototype._updateLastSlideClass = function() {
@@ -99,17 +102,18 @@
         destroySwiper(this.instrumentSwiper);
       }
       var barParams = angular.copy(params);
-      angular.extend(barParams, {
-        paginationClickable: true,
-        pagination: '.swiper-pagination',
-        nextButton: '.swiper-button-next',
-        prevButton: '.swiper-button-prev'
-      });
+      // angular.extend(barParams, {
+      //   paginationClickable: true,
+      //   pagination: '.swiper-pagination',
+      //   nextButton: '.swiper-button-next',
+      //   prevButton: '.swiper-button-prev'
+      // });
 
-      this.barSwiper = new Swiper('.bar.swiper-container', barParams);
-      this.instrumentSwiper = new Swiper('.instrument.swiper-container', params);
+      this.barSwiper = new Swiper('.editor .bar.swiper-container', barParams);
+      this.instrumentSwiper = new Swiper('.editor .instrument.swiper-container', params);
       this.barSwiper.params.control = this.instrumentSwiper;
       this.barSwiper.on('transitionEnd', this.updateVisibleSlides);
+      this.barSwiper.on('touchEnd', this.onTouchEnd);
       this._updateLastSlideClass();
 
       var inputs = this.barSwiper.$('.swiper-slide input');
@@ -134,7 +138,6 @@
       this.barSwiper.params.slidesPerView = slidesPerView;
       this.instrumentSwiper.params.slidesPerView = slidesPerView;
       this.barSwiper.updateSlidesSize();
-      this.barSwiper.updatePagination();
       this.instrumentSwiper.updateSlidesSize();
 
       // fix swipers over-sliding position
@@ -201,11 +204,12 @@
         slide.loading = true;
         slide.obsolete = false;
 
-        $timeout(function(slide, newBeat) {
+        // $timeout(function(slide, newBeat) {
           slide.loading = false;
           slide.beat = newBeat;
           slide.type = type;
-        }.bind(this, slide, newBeat), i*40);
+        // }.bind(this, slide, newBeat), i*40);
+        // }, i*20, true, slide, newBeat);
       }
       var loading = [];
       var obsolete = [];
@@ -303,7 +307,7 @@
     };
 
     SwiperControl.prototype.createLoop = function() {
-      console.log(this.barSwiper.params.slideDuplicateClass);
+      console.log('createLoop')
       var loopConfig = {
         firstSlide: this.firstSlide,
         lastSlide: this.lastSlide,
@@ -438,16 +442,19 @@
 
     SwiperControl.prototype.slideTo = function(slideIndex, speed, runCallbacks, internal) {
       // console.log('flatIndex: '+evt.flatIndex+' slide: '+slide);
-      // console.log('active index: '+swiperControl.barSwiper.activeIndex);
       // console.log('raw slide '+slideIndex+'  last requested: '+this.lastRequestedIndex);
-      if (slideIndex < this.lastRequestedIndex) {
+      // if (slideIndex < this.lastRequestedIndex) {
+      while (slideIndex < this.lastRequestedIndex) {
         // compute index of 'cloned' looped slide
         slideIndex = this.lastSlide - this.firstSlide + 1 + slideIndex;
       }
       // console.log('slide to '+slideIndex);
       this.lastRequestedIndex = slideIndex;
+      // console.log('slideTo: '+slideIndex);
       this.barSwiper.slideTo(slideIndex, speed, runCallbacks, internal);
     };
+
+    SwiperControl.prototype.onTouchEnd = function() {};
 
     return new SwiperControl();
   }

@@ -14,6 +14,7 @@
   min-height: 44px;
   height: 44px;
   position: relative;
+  z-index: 90;
 }
 .control-panel ::selection {
   background: #ffb7b7;
@@ -119,7 +120,7 @@
   left: 0;
   right: 0;
   top: 0;
-  bottom: -5px;
+  bottom: -10px;
   border-radius: 8px;
   box-shadow:
     2px 3px 5px 0px rgba(0, 0, 0, 0.21),
@@ -146,6 +147,7 @@
 }
 .playback-fields md-input-container input[type="number"] {
   text-align: left;
+  border-color: rgba(220,220,220,0.25);
 }
 .bpm-field::after {
   content: "bpm";
@@ -475,4 +477,39 @@ md-menu-content.playback-range {
 .play-stop-button md-progress-circular svg path {
   stroke: #3b4d55;
   stroke-width: 5px!important;
+}
+
+/** Playback progress slider **/
+.playback-slider.rzslider {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  width: auto;
+  bottom: -5px;
+  height: 16px;
+  margin: 4px 0;
+}
+.playback-slider.rzslider .rz-bar-wrapper {
+  padding-top: 0;
+  margin-top: 0;
+  height: 32px;
+}
+.playback-slider.rzslider .rz-bar-wrapper .rz-bar {
+  margin: 0;
+  width: 100%;
+  top: 14px;
+}
+.playback-slider.rzslider .rz-ticks .rz-tick {
+  height: 3px;
+  width: 1px;
+  top: 3px;
+}
+.playback-slider.rzslider .rz-pointer.rz-pointer-min {
+  width: 8px;
+  height: 8px;
+  top: -2px;
+  display: none;
+}
+.playback-slider.rzslider .rz-pointer.rz-pointer-min:after {
+  display: none;
 }

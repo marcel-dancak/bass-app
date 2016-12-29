@@ -247,25 +247,6 @@ md-dialog.help-dialog.md-transition-in {
   pointer-events: none;
   padding-bottom: 80px;
 }
-.help-container .bar.swiper-container .swiper-controls::before {
-  position: absolute;
-  content: "↑";
-  left: 0;
-  right: 0;
-  text-align: center;
-  top: 24px;
-  color: #aaa;
-  font-size: 20px;
-}
-.help-container .bar.swiper-container .swiper-controls::after {
-  position: absolute;
-  content: "Pagination Controls";
-  top: 48px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: #aaa;
-}
 
 .help-container .section-preferences {
   margin-top: 30px;

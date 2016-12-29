@@ -99,13 +99,13 @@
     var timeline = new HighlightTimeline({
       getBeatElem: function(bar, beat) {
         var slideIndex = viewer.swiper.snapIndex;
-        var beatIndex = playbackState.beatsCounter;
-        if (playbackState.beatsCounter >= viewer.beatsPerSlide) {
+        var beatIndex = playbackState.slideBeatCounter;
+        if (playbackState.slideBeatCounter >= viewer.beatsPerSlide) {
           slideIndex += 1;
           beatIndex -= viewer.beatsPerSlide;
         }
         // console.log('slideIndex: '+slideIndex+' beatIndex: '+beatIndex);
-        // console.log('{0} -> {1}/{2}'.format(playbackState.beatsCounter, slideIndex, beatIndex));
+        // console.log('{0} -> {1}/{2}'.format(playbackState.slideBeatCounter, slideIndex, beatIndex));
         var beatsElems = viewer.swiper.slides[slideIndex].querySelectorAll('.beat');
         var beatElem = beatsElems[beatIndex];
         return beatElem;
@@ -117,7 +117,6 @@
 
     function initializeSwiper(options) {
       var swiperElem = document.querySelector('.playlist-swiper');
-      swiperElem.classList
 
       var params = angular.extend({
         spaceBetween: 0,
@@ -152,6 +151,11 @@
           // s.removeSlide(0);
         }
       });
+      viewer.swiper.on('touchEnd', function(s) {
+        $mdUtil.nextTick(function() {
+          $scope.player.progress.value = s.snapIndex * viewer.beatsPerSlide;
+        });
+      });
     }
 
     function initPlaylistSlides() {
@@ -159,15 +163,18 @@
       playlist = [];
       slidesMetadata = [];
       var index = 1;
+      var beatsCount = 0;
       workspace.playlist.items.forEach(function(item) {
         var section = projectManager.getSection(item.section);
         for (var i = 0; i < item.repeats; i++) {
           if (index >= $scope.player.playbackRange.start && index <= $scope.player.playbackRange.end) {
             playlist.push(section);
+            beatsCount += section.length * section.timeSignature.top;
           }
           index++;
         }
       });
+      $scope.player.progress.max = beatsCount - 1;
       playlistSlidePosition = {
         section: 0,
         bar: 1,
@@ -175,7 +182,8 @@
       };
       playbackState = {
         section: 0,
-        beatsCounter: -1
+        slideBeatCounter: -1,
+        beatCounter: -1
       };
       if (viewer.swiper) {
         viewer.swiper.slideTo(0, 0, false);
@@ -198,12 +206,13 @@
       if (!evt.playbackActive) {
         return;
       }
-      playbackState.beatsCounter++;
-      if (playbackState.beatsCounter+2 >= viewer.beatsPerSlide) {
+
+      playbackState.slideBeatCounter++;
+      if (playbackState.slideBeatCounter+2 >= viewer.beatsPerSlide) {
 
         if ($scope.player.visibleBeatsOnly) {
           var visibleBeats = viewer.beatsPerSlide * Math.round(viewer.layout.slidesPerView);
-          if (playbackState.beatsCounter+2 === visibleBeats) {
+          if (playbackState.slideBeatCounter+2 === visibleBeats) {
             // setup end of visible screen playback
             playbackState.section = playlist.length;
             if (evt.beat < evt.timeSignature.top) {
@@ -218,13 +227,18 @@
               };
             }
           }
-        } else if (playbackState.beatsCounter >= viewer.beatsPerSlide) {
-          playbackState.beatsCounter = 0;
+        } else if (playbackState.slideBeatCounter >= viewer.beatsPerSlide) {
+          playbackState.slideBeatCounter = 0;
           viewer.swiper.slideNext(true, viewer.layout.animation);
         }
       }
       timeline.beatSync(evt);
       fretboardViewer.beatSync(evt);
+
+      playbackState.beatCounter++;
+      $mdUtil.nextTick(function() {
+        $scope.player.progress.value = playbackState.beatCounter;
+      });
     }
 
     function playSection(start) {
@@ -252,7 +266,7 @@
       playbackState.section = firstSlideMeta.playlistSectionIndex;
       playbackState.bar = firstSlideMeta.beats[0].bar;
       playbackState.beat = firstSlideMeta.beats[0].beat;
-      playbackState.beatsCounter = -1;
+      playbackState.slideBeatCounter = -1;
       var start = {
         bar: playbackState.bar,
         beat: playbackState.beat
@@ -293,7 +307,8 @@
         } else {
           playbackState = {
             section: 0,
-            beatsCounter: -1
+            slideBeatCounter: -1,
+            beatCounter: -1
           };
         }
         $scope.player.playing = true;
@@ -320,7 +335,8 @@
           } else {
             // repeat playlist playback
             playbackState.section = 0;
-            playbackState.beatsCounter = -1;
+            playbackState.beatCounter = -1;
+            playbackState.slideBeatCounter = -1;
             viewer.swiper.slideTo(0, 0);
             playSection();
           }
@@ -415,13 +431,21 @@
       audioPlayer.setPlaybackSpeed(speed/100);
     };
 
+    $scope.player.setProgress = function(id, value) {
+      if (!$scope.player.playing) {
+        // var slide = Math.round(value / viewer.beatsPerSlide);
+        var slide = parseInt(value / viewer.beatsPerSlide);
+        viewer.swiper.slideTo(slide, 0, true);
+      }
+    };
+
     projectManager.on('playlistLoaded', playlistLoaded);
     projectManager.on('projectLoaded', projectLoaded);
 
 
     $scope.player.visiblePlaybackModeChanged = function(visibleBeatsOnly) {
-      if (!visibleBeatsOnly && playbackState.beatsCounter >= viewer.beatsPerSlide) {
-        playbackState.beatsCounter -= viewer.beatsPerSlide;
+      if (!visibleBeatsOnly && playbackState.slideBeatCounter >= viewer.beatsPerSlide) {
+        playbackState.slideBeatCounter -= viewer.beatsPerSlide;
         viewer.swiper.slideNext(true, viewer.layout.animation);
       }
     };

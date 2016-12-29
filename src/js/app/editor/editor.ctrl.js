@@ -165,6 +165,8 @@
       var firstBeat = (firstBar - 1) * workspace.section.timeSignature.top;
       var lastBeat = (lastBar) * workspace.section.timeSignature.top - 1;
       swiperControl.setVisibleRange(firstBeat, lastBeat);
+
+      $scope.player.progress.max = lastBeat - firstBeat;
     }
 
 
@@ -173,6 +175,12 @@
     $scope.ui.bpmChanged = function(value) {
       if (value) {
         audioPlayer.setBpm(workspace.section.bpm);
+      }
+    };
+
+    $scope.player.setProgress = function(id, value) {
+      if (!$scope.player.playing) {
+        swiperControl.barSwiper.slideTo(value, 0, true);
       }
     };
 
@@ -205,6 +213,10 @@
 
       timeline.beatSync(evt);
       fretboardViewer.beatSync(evt);
+
+      $mdUtil.nextTick(function() {
+        $scope.player.progress.value = evt.flatIndex - swiperControl.firstSlide;
+      });
     }
 
     function updateLockedPlayerRange() {
@@ -436,6 +448,7 @@
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.max = section.length + 1;
       $scope.player.playbackRange.end = $scope.player.playbackRange.max;
+      $scope.player.progress.value = 0;
       // $scope.player.playbackRangeChanged();
 
       var bassTrack;
@@ -582,6 +595,11 @@
       });
     };
 
+    swiperControl.onTouchEnd = function(sw) {
+      $mdUtil.nextTick(function() {
+        $scope.player.progress.value = sw.snapIndex * workspace.section.beatsPerSlide;
+      });
+    }
 
     $scope.$on('$destroy', function() {
       projectManager.un('sectionLoaded', sectionLoaded);
