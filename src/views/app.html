@@ -204,14 +204,13 @@
 
       <div
         ng-if="workspace.track.type === 'piano'"
-        layout="column"
         class="piano-keys-container">
         <div
           ng-repeat="note in ::workspace.track.instrument.notes.list | orderBy:$index:'-'"
           ng-attr-key="{{ ::note.label[0] }}"
           class="piano-key"
           ng-class="::{ black: note.label.length > 1 }"
-          xng-click="playPianoSound(note)">
+          ng-click="playPianoSound(note)">
         </div>
       </div>
 

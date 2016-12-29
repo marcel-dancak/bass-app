@@ -161,7 +161,7 @@
     deleteSound(sound) {
       if (sound.prev) {
         console.log('BREAK PREV SOUND CHAIN')
-        var prevSound = this.prevSound(sound.beat, sound).sound;
+        var prevSound = this.prevSound(sound);
         delete prevSound.next;
       }
       if (sound.next) {

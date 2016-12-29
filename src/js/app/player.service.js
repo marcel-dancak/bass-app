@@ -370,6 +370,7 @@
       this.composer = new AudioComposer(context, this);
       var piano = {
         notes: new Notes('A0', 'C7'),
+        playingSounds: {},
         createSoundAudio: function(track, sound, startTime, resource) {
           // console.log('createSoundAudio: '+resource)
           var audioData = _this.bufferLoader.loadResource(resource);
@@ -834,6 +835,16 @@
         }, 50);
       }
       this.bufferLoader.loadResources(resources, afterLoad);
+    };
+
+    AudioPlayer.prototype.playPianoSample = function(track, sound) {
+      sound.start = 0;
+      sound.end = 0.5;
+      var resources = this.piano.getHandler(sound).getResources(sound);
+      this.bufferLoader.loadResources(
+        resources,
+        this._playSound.bind(this, track.id, track, {subdivision: 4}, sound, context.currentTime, 1)
+      );
     };
 
     AudioPlayer.prototype.playDrumSample = function(track, drumSound) {

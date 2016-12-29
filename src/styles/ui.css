@@ -117,7 +117,9 @@ md-backdrop.md-select-backdrop {
   z-index: 101;
 }
 
-
+.preferences md-icon {
+  fill: #555;
+}
 .preferences md-list {
   padding: 2px 10px;
 }
@@ -136,7 +138,7 @@ md-backdrop.md-select-backdrop {
   background-color: transparent;
 }
 .preferences .volume-field .md-button.active md-icon {
-  color: #2196F3;
+  fill: #2196F3;
 }
 
 .preferences md-list-item {
@@ -381,7 +383,6 @@ md-menu-item.right md-icon {
 /** Instrument swiper */
 
 .workspace {
-  xborder: 1px solid red;
   position: relative;
 }
 
@@ -887,6 +888,15 @@ md-input-container label.md-no-float {
   line-height: 14px;
   padding-left: 5px;
   top: auto;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+  box-shadow: none;
+}
+.piano .sound-container.selected {
+  border: 2px solid #555;
+  max-height: 17px;
+  transform: translate3d(0, 1px, 0);
 }
 .piano .sound-container .resize-handler {
   font-size: 8px;
@@ -910,6 +920,7 @@ md-input-container label.md-no-float {
 .piano-keys-container {
   position: absolute;
   left: 4px;
+  top: 5px;
   width: 50px;
   border: 1px solid #aaa;
   border-width: 1px 0 0 1px;
@@ -917,32 +928,33 @@ md-input-container label.md-no-float {
   z-index: 1;
 }
 .piano-keys-container .piano-key {
-  min-height: 15px;
+  min-height: 25px;
   width: 100%;
-  xborder: solid #ccc;
-  xborder-width: 1px 0 1px 1px;
   box-sizing: border-box;
 }
+.piano-keys-container .piano-key:hover {
+  background-color: #FFF9C4;
+}
 .piano-keys-container .piano-key.black {
-  background-color: #555;
-  width: 60%;
+  min-height: 1px;
+  max-height: 1px;
+  background-color: #ccc;
   position: relative;
-  overflow: visible;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
-  border: solid #fff;
-  border-width: 1px 1px 1px 0;
 }
 .piano-keys-container .piano-key.black:after {
   position: absolute;
-  background-color: #ccc;
-  height: 1px;
+  background-color: #555;
   content: "";
-  min-height: 1px;
-  top: 50%;
   left: 0;
-  width: 80%;
-  transform: translate3d(125%, 0, 0);
+  top: -6px;
+  height: 13px;
+  width: 60%;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.piano-keys-container .piano-key.black:hover:after {
+  background-color: #F57F17;
+  background-color: #ae5507;
 }
 .piano-keys-container .piano-key[key="C"] {
   border-bottom: 2px solid #ccc;
@@ -952,5 +964,6 @@ md-input-container label.md-no-float {
 }
 
 .beat-container.piano {
-  padding-top: 3px;
+  padding-top: 2px;
+  margin-top: 5px;
 }

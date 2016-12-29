@@ -96,7 +96,7 @@
         <label>
           <md-icon
             style="padding-right: 8px;"
-            md-svg-icon="{{ track.type }}">
+            md-svg-icon="{{ ::track.instrument.icon || track.type }}">
           </md-icon>
           {{ track.name }}
         </label>

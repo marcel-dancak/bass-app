@@ -305,6 +305,18 @@
       audioPlayer.playDrumSample(workspace.track, sound);
     };
 
+    $scope.playPianoSound = function(note) {
+      var sound = {
+        note: {
+          name: note.label[0],
+          octave: note.octave,
+          length: 1/2
+        },
+        string: note.label[0]+note.octave,
+        volume: 0.85
+      };
+      audioPlayer.playPianoSample(workspace.track, sound);
+    };
 
     function createSlides(trackSection) {
       var timeSignature = workspace.section.timeSignature;
