@@ -14,11 +14,12 @@
       drop-channel="piano"
       xui-on-drag-enter="dragHandler.onDragEnter($event, slide.beat, note)"
       ui-on-drag-over="dragHandler.onDragOver($event, slide.beat)"
-      ui-on-drop="dragHandler.onDrop($event, slide.beat, $data, note)"
+      ui-on-drop="dragHandler.onDrop($event, slide.beat, note)"
       >
       <!-- {{ ::note.label.join('/') }} -->
     </div>
   </div>
+  <!-- <div style="min-height: {{ ::workspace.trackSection.instrument.notes.list.length*15 }}px;"></div> -->
   <div
     ng-repeat="sound in beat.data track by (sound.string + sound.start)"
     class="sound-container"
@@ -29,14 +30,9 @@
       width: (100*(sound.end - sound.start))+'%'
     }"
     ui-draggable="true"
-    ng-init="sound.end = sound.end || sound.start + workspace.trackSection.soundDuration(beat, sound)"
-    drag="{
-      bar: beat.bar,
-      beat: beat.beat,
-      sound: sound
-    }"
+    drag="sound"
     drag-channel="piano"
-    ng-click="eventHandler.select($event, beat, sound)"
+    ng-click="eventHandler.select($event, sound)"
     >
 
     <div class="resize-handler">
@@ -48,9 +44,9 @@
       class="resize-container"
       resizable
       r-directions="['right']"
-      on-resize="resizeHandler.onResize(beat, sound, info)"
-      on-resize-start="resizeHandler.onResizeStart(beat, sound, info)"
-      on-resize-end="resizeHandler.onResizeEnd(beat, sound, info, $event)"
+      on-resize="resizeHandler.onResize(sound, info)"
+      on-resize-start="resizeHandler.onResizeStart(sound, info)"
+      on-resize-end="resizeHandler.onResizeEnd(sound, info, $event)"
       r-grabber="<div></div>">
     </div>
 

@@ -9,6 +9,14 @@
       if (!data) {
         throw new Exception();
       }
+      this.data.forEach(function(beat) {
+        beat.data.forEach(function(sound) {
+          Object.defineProperty(sound, 'end', {value: 'static', writable: true});
+          Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
+          sound.beat = beat;
+          sound.end = sound.start + this.soundDuration(sound);
+        }, this);
+      }, this);
     }
 
     beat(bar, beat) {
@@ -73,10 +81,11 @@
       }
     }
 
-    nextSoundPosition(beat, sound) {
+    nextSoundPosition(sound) {
       var beatOffset = parseInt(sound.end);
       var start = sound.end - beatOffset;
 
+      var beat = sound.beat;
       while (beatOffset) {
         beat = this.nextBeat(beat);
         beatOffset--;
@@ -87,28 +96,26 @@
       };
     }
 
-    nextSound(beat, sound) {
-      var position = this.nextSoundPosition(beat, sound);
+    nextSound(sound) {
+      var position = this.nextSoundPosition(sound);
       var start = position.start;
       for (var i = 0; i < position.beat.data.length; i++) {
         var s = position.beat.data[i];
         if (s.string === sound.string && s.start === start) {
-          return {
-            beat: position.beat,
-            sound: s
-          }
+          return s;
         }
       }
     }
 
-    prevSound(beat, sound) {
+    prevSound(sound) {
       var ts = this.section.timeSignature;
-      function sectionTime(aBeat, value) {
-        var v1 = (aBeat.bar - 1)* ts.top;
-        return (aBeat.bar - 1)* ts.top + aBeat.beat + value;
+      function sectionTime(beat, value) {
+        var v1 = (beat.bar - 1)* ts.top;
+        return (beat.bar - 1)* ts.top + beat.beat + value;
       }
-      var absEnd = sectionTime(beat, sound.start);
+      var absEnd = sectionTime(sound.beat, sound.start);
       console.log('looking for: '+absEnd+' at string '+sound.string)
+      var beat = sound.beat;
       while (beat) {
         for (var i = 0; i < beat.data.length; i++) {
           var s = beat.data[i];
@@ -116,10 +123,7 @@
           if (s.string === sound.string) {
             var end = sectionTime(beat, s.end);
             if (end === absEnd) {
-              return {
-                beat: beat,
-                sound: s
-              }
+              return s;
             }
             if (end < absEnd) {
               stop = true;
@@ -133,35 +137,41 @@
       }
     }
 
-    soundDuration(beat, sound) {
+    soundDuration(sound) {
       if (sound && sound.note) {
         var duration = this.section.timeSignature.bottom * sound.note.length;
         if (sound.note.dotted) {
           duration *= 1.5;
         }
-        if (beat.subdivision === 3) {
+        if (sound.beat.subdivision === 3) {
           duration *= 2/3;
         }
         return duration;
       }
     }
 
-    deleteSound(beat, sound) {
+    addSound(beat, sound) {
+      Object.defineProperty(sound, 'end', {value: 'static', writable: true});
+      Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
+      sound.beat = beat;
+      sound.end = sound.start + this.soundDuration(sound);
+      beat.data.push(sound);
+    }
+
+    deleteSound(sound) {
       if (sound.prev) {
         console.log('BREAK PREV SOUND CHAIN')
-        var prevSound = this.prevSound(beat, sound).sound;
+        var prevSound = this.prevSound(sound.beat, sound).sound;
         delete prevSound.next;
       }
       if (sound.next) {
-        var next = this.nextSound(beat, sound);
-        delete next.sound.prev;
-        this.deleteSound(next.beat, next.sound);
+        var next = this.nextSound(sound);
+        delete next.prev;
+        this.deleteSound(next);
       }
-      var index = beat.data.findIndex(function(item) {
-        return item === sound;
-      });
+      var index = sound.beat.data.indexOf(sound);
       if (index !== -1) {
-        beat.data.splice(index, 1);
+        sound.beat.data.splice(index, 1);
       }
     }
   }

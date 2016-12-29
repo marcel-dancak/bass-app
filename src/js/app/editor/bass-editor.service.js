@@ -293,7 +293,6 @@
           delete copy.next;
           return copy;
         });
-        console.log(dragSounds)
 
         if (evt.dataTransfer.dropEffect === "move") {
           // this.sourceSoundGrids.forEach(function(grid) {
@@ -724,46 +723,36 @@
   function eventHandler(workspace) {
     return {
       selected: {},
-      select(evt, beat, sound) {
+      select(evt, sound) {
         console.log('selectSound');
         if (this.selected.element) {
           this.selected.element.classList.remove('selected');
         }
         var elem = soundContainerElem(evt.target);
         elem.classList.add('selected');
-        this.selected.grid = {
-          bar: beat.bar,
-          beat: beat.beat,
-          sound: sound
-        };
         this.selected.element = elem;
+        this.selected.sound = sound;
       },
       keyPressed: function(evt) {
-        var grid = this.selected.grid;
+        var sound = this.selected.sound;
         console.log(evt.keyCode)
-        if (grid) {
+        if (sound) {
           switch (evt.keyCode) {
             case 46: // Del
-              workspace.trackSection.deleteSound(
-                workspace.trackSection.beat(grid.bar, grid.beat),
-                this.selected.grid.sound
-              );
+              workspace.trackSection.deleteSound(sound);
               break;
             case 78: // n
-              var n = workspace.trackSection.nextSound(
-                workspace.trackSection.beat(grid.bar, grid.beat),
-                this.selected.grid.sound
-              )
+              var n = workspace.trackSection.nextSound(sound)
               console.log(n)
               break;
             case 80: // p
-              var prev = workspace.trackSection.prevSound(
-                workspace.trackSection.beat(grid.bar, grid.beat),
-                this.selected.grid.sound
-              );
+              var prev = workspace.trackSection.prevSound(sound);
               if (prev) {
                 console.log('OK');
               }
+              break;
+            case 74: // j
+              console.log(JSON.stringify(sound));
               break;
           }
         }
@@ -772,75 +761,68 @@
   }
 
   function dragHandler2(workspace, swiperControl) {
-    var dragData;
+    var dragSound;
     var dragWidth;
     var dragHandler;
 
     var scope = angular.element(document.body).scope();
     scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
       if (channel.startsWith('piano')) {
-        dragData = data.data;
-        var isMultiSound = dragData.sound.next || dragData.sound.prev;
+        dragSound = data.data;
+        var isMultiSound = dragSound.next || dragSound.prev;
         dragHandler = isMultiSound? multiSoundHandler : singleSoundHandler;
-        dragHandler.onDragStart(e, data.data);
+        dragHandler.onDragStart(e, dragSound);
         dragBox.elem.style.opacity = 1;
       }
     });
 
-    function soundElement(beat, sound) {
-      var beatSelector = '#beat_{0}_{1} .sounds-container'.format(beat.bar, beat.beat);
+    function soundElement(sound) {
+      var beatSelector = '#beat_{0}_{1} .sounds-container'.format(sound.beat.bar, sound.beat.beat);
       var contEl = swiperControl.instrumentSwiper.wrapper[0].querySelector(beatSelector);
-      var index = beat.data.indexOf(sound);
+      var index = sound.beat.data.indexOf(sound);
       if (index !== -1) {
-        console.log(index);
         return contEl.children[index+1];
       }
     }
 
 
     var singleSoundHandler = {
-      onDragStart: function(evt, data) {
+      onDragStart: function(evt, dragSound) {
         dragWidth = evt.target.clientWidth+2;
       },
-      onDrop: function(evt, beat, data, note) {
+      onDrop: function(evt, beat, note, dragSound) {
         var box = evt.target.getBoundingClientRect();
         var grid = evt.target.offsetWidth / beat.subdivision;
-        var sound = angular.copy(data.sound);
+        var sound = angular.copy(dragSound);
         sound.start = parseInt(evt.offsetX / grid) / beat.subdivision;
-        sound.end = sound.start + workspace.trackSection.soundDuration(beat, sound)
         sound.string = note.label[0]+note.octave;
         sound.note.name = note.label[0];
         sound.note.octave = note.octave;
-        beat.data.push(sound);
 
         if (evt.dataTransfer.dropEffect === "move") {
-          var srcBeat = workspace.trackSection.beat(data.bar, data.beat);
-          workspace.trackSection.deleteSound(srcBeat, dragData.sound);
+          workspace.trackSection.deleteSound(dragSound);
         }
+        workspace.trackSection.addSound(beat, sound);
       }
     };
     var multiSoundHandler = {
-      onDragStart: function(evt, data) {
-        console.log(data)
-        var item = {
-          beat: workspace.trackSection.beat(data.bar, data.beat),
-          sound: data.sound
-        };
-        var items = [item];
-        while (item.sound.prev) {
-          item = workspace.trackSection.prevSound(item.beat, item.sound);
-          if (item) {
-            items.splice(0, 0, item);
+      onDragStart: function(evt, dragSound) {
+        var sound = dragSound;
+        var sounds = [sound];
+        while (sound.prev) {
+          sound = workspace.trackSection.prevSound(sound);
+          if (sound) {
+            sounds.splice(0, 0, sound);
           } else {
             console.log('ERROR');
             return;
           }
         }
-        item = items[items.length-1];
-        while (item.sound.next) {
-          var item = workspace.trackSection.nextSound(item.beat, item.sound);
-          if (item) {
-            items.push(item);
+        sound = dragSound;
+        while (sound.next) {
+          sound = workspace.trackSection.nextSound(sound);
+          if (sound) {
+            sounds.push(sound);
           } else {
             console.log('ERROR');
             return;
@@ -849,8 +831,8 @@
 
         dragWidth = 0;
         var dragElem = angular.element('<div class="piano drag-group"></div>')[0];
-        items.forEach(function(item) {
-          var elem = soundElement(item.beat, item.sound);
+        sounds.forEach(function(sound) {
+          var elem = soundElement(sound);
           var clone = elem.cloneNode(true);
           dragWidth += elem.clientWidth + 2;
           clone.style.width = elem.clientWidth+'px';
@@ -860,29 +842,29 @@
         });
         document.body.appendChild(dragElem);
         evt.dataTransfer.setDragImage(dragElem, 10, 36);
-        this.items = items;
+        this.sounds = sounds;
       },
-      onDrop: function(evt, beat, data, note) {
+      onDrop: function(evt, beat, note, dragSound) {
         var box = evt.target.getBoundingClientRect();
         var grid = evt.target.offsetWidth / beat.subdivision;
-        var sound = angular.copy(data.sound);
+        var sound = angular.copy(dragSound);
         var start = parseInt(evt.offsetX / grid) / beat.subdivision;
 
-        this.items.forEach(function(item) {
-          var sound = angular.copy(item.sound);
-          sound.start = start;
-          sound.end = sound.start + workspace.trackSection.soundDuration(beat, sound);
-          sound.string = note.label[0]+note.octave;
-          sound.note.name = note.label[0];
-          sound.note.octave = note.octave;
-          beat.data.push(sound);
-          var next = workspace.trackSection.nextSoundStart(beat, sound);
+        this.sounds.forEach(function(sound) {
+          var newSound = angular.copy(sound);
+          newSound.start = start;
+          newSound.string = note.label[0]+note.octave;
+          newSound.note.name = note.label[0];
+          newSound.note.octave = note.octave;
+          workspace.trackSection.addSound(beat, newSound);
+
+          var next = workspace.trackSection.nextSoundPosition(newSound);
           beat = next.beat;
           start = next.start;
         });
 
         if (evt.dataTransfer.dropEffect === "move") {
-          workspace.trackSection.deleteSound(this.items[0].beat, this.items[0].sound);
+          workspace.trackSection.deleteSound(this.sounds[0]);
         }
       }
     };
@@ -901,8 +883,8 @@
           height: box.height
         });
       },
-      onDrop: function(evt, beat, data, note) {
-        dragHandler.onDrop(evt, beat, data, note);
+      onDrop: function(evt, beat, note) {
+        dragHandler.onDrop(evt, beat, note, dragSound);
         dragBox.elem.style.opacity = 0;
       }
     }
@@ -966,43 +948,38 @@
     var resizeLength;
 
     return {
-      resizeSound: function(beat, sound, length, dotted) {
+      resizeSound: function(sound, length, dotted) {
         var dependencies = [];
 
         // collect next sounds
-        var nBeat = beat;
-        var nSound = sound;
-        while (nSound.next) {
-          var next = workspace.trackSection.nextSound(nBeat, nSound);
-          dependencies.push(next);
-          nSound = next.sound;
-          nBeat = next.beat;
+        var s = sound;
+        while (s.next) {
+          s = workspace.trackSection.nextSound(s);
+          dependencies.push(s);
         }
-
         sound.note.length = resizeLength.length;
         sound.note.dotted = resizeLength.dotted;
 
-        var duration = workspace.trackSection.soundDuration(beat, sound);
+        var duration = workspace.trackSection.soundDuration(sound);
         sound.end = sound.start + duration;
 
-        var prevBeat = beat;
         var prevSound = sound;
-        dependencies.forEach(function(item) {
-          var itemDuration = item.sound.end - item.sound.start;
-          var position = workspace.trackSection.nextSoundStart(prevBeat, prevSound);
-          item.sound.start = position.start;
-          if (position.beat !== item.beat) {
-            var index = item.beat.data.indexOf(item.sound);
-            item.beat.data.splice(index, 1);
-            position.beat.data.push(item.sound);
+        dependencies.forEach(function(depSound) {
+          var position = workspace.trackSection.nextSoundPosition(prevSound);
+          depSound.start = position.start;
+          if (position.beat !== depSound.beat) {
+            // console.log('moving to '+position.beat.beat+ ' at: '+position.start);
+            depSound.beat.data.splice(depSound.beat.data.indexOf(depSound), 1);
+            workspace.trackSection.addSound(position.beat, depSound);
+          } else {
+            // console.log('moving to position '+position.start)
+            depSound.end = depSound.start + workspace.trackSection.soundDuration(depSound);
           }
-          item.sound.end = item.sound.start + itemDuration;
-          prevBeat = position.beat;
-          prevSound = item.sound;
+          prevSound = depSound;
         });
       },
-      onResizeStart: function(beat, sound, info) {
-        eventHandler.select({target: info.element[0]}, beat, sound);
+      onResizeStart: function(sound, info) {
+        eventHandler.select({target: info.element[0]}, sound);
         var beatWidth = swiperControl.instrumentSwiper.slides[swiperControl.instrumentSwiper.snapIndex].clientWidth;
 
         notesWidths = noteLengths.map(function(noteLength) {
@@ -1011,17 +988,17 @@
           return width;
         });
 
-        this.onResize(beat, sound, info);
+        this.onResize(sound, info);
         // resizeBox.elem.style.opacity = '1';
         resizeBox.setPxStyles({height: eventHandler.selected.element.offsetHeight});
         eventHandler.selected.element.appendChild(resizeBox.elem);
       },
 
-      onResize: function(beat, sound, info) {
+      onResize: function(sound, info) {
         var delta, closestWidth;
         var minDelta = notesWidths[0];
         notesWidths.forEach(function(width, index) {
-          delta = Math.abs(info.width-width);
+          delta = Math.abs(info.width - width);
           if (delta < minDelta) {
             closestWidth = width;
             minDelta = delta;
@@ -1033,11 +1010,11 @@
         resizeBox.setSymbol(symbol, resizeLength.dotted);
       },
 
-      onResizeEnd: function(beat, sound, info, evt) {
+      onResizeEnd: function(sound, info, evt) {
         info.element.css('width', '');
         resizeBox.elem.remove();
 
-        this.resizeSound(beat, sound, resizeLength.length, resizeLength.dotted)
+        this.resizeSound(sound, resizeLength.length, resizeLength.dotted);
         evt.stopPropagation();
       }
     }
