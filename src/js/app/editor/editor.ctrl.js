@@ -150,6 +150,7 @@
 
     $scope.player.playbackRangeChanged = function() {
       console.log('playbackRangeChanged');
+      var barBeatsCount = workspace.section.timeSignature.top;
       var firstBar = $scope.player.playbackRange.start;
       var lastBar = $scope.player.playbackRange.end - 1;
       audioPlayer.playbackRange = {
@@ -162,11 +163,19 @@
           beat: workspace.section.timeSignature.top
         }
       };
-      var firstBeat = (firstBar - 1) * workspace.section.timeSignature.top;
-      var lastBeat = (lastBar) * workspace.section.timeSignature.top - 1;
+      var firstBeat = (firstBar - 1) * barBeatsCount;
+      var lastBeat = (lastBar) * barBeatsCount - 1;
       swiperControl.setVisibleRange(firstBeat, lastBeat);
 
       $scope.player.progress.max = lastBeat - firstBeat;
+      var barTicks = [];
+      for (var i = barBeatsCount; i < $scope.player.progress.max; i+= barBeatsCount) {
+        barTicks.push(i);
+      }
+      $scope.player.progress.ticks = barTicks;
+      $scope.player.progress.legend = function(value) {
+        return 1 + (value / barBeatsCount);
+      }
     }
 
 

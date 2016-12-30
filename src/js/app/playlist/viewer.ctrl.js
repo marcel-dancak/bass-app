@@ -16,7 +16,7 @@
         name: 'vertical',
         // swiper config
         direction: 'vertical',
-        slidesPerView: 1.99,
+        slidesPerView: 2,
         slidesPerColumn: 1,
         animation: 250,
         render: {
@@ -164,17 +164,28 @@
       slidesMetadata = [];
       var index = 1;
       var beatsCount = 0;
+      var sectionsTicks = [];
+      var legend = {}; // beat -> section id
+
       workspace.playlist.items.forEach(function(item) {
         var section = projectManager.getSection(item.section);
         for (var i = 0; i < item.repeats; i++) {
           if (index >= $scope.player.playbackRange.start && index <= $scope.player.playbackRange.end) {
             playlist.push(section);
+            sectionsTicks.push(beatsCount);
+            legend[beatsCount] = item.section;
             beatsCount += section.length * section.timeSignature.top;
           }
           index++;
         }
       });
+      sectionsTicks.splice(0, 1);
       $scope.player.progress.max = beatsCount - 1;
+      $scope.player.progress.ticks = sectionsTicks;
+      $scope.player.progress.legend = function(value) {
+        return $scope.sectionNames[legend[value]];
+      };
+
       playlistSlidePosition = {
         section: 0,
         bar: 1,
@@ -185,6 +196,7 @@
         slideBeatCounter: -1,
         beatCounter: -1
       };
+
       if (viewer.swiper) {
         viewer.swiper.slideTo(0, 0, false);
         viewer.swiper.removeAllSlides();
@@ -445,7 +457,21 @@
       if (!$scope.player.playing) {
         // var slide = Math.round(value / viewer.beatsPerSlide);
         var slide = parseInt(value / viewer.beatsPerSlide);
-        viewer.swiper.slideTo(slide, 0, true);
+        console.log(slide+' of '+viewer.swiper.slides.length);
+
+        var missingSlides = slide + Math.round(viewer.layout.slidesPerView) - viewer.swiper.slides.length;
+        if (missingSlides > 0) {
+          while (missingSlides > 0) {
+            console.log('generating slide');
+            generateSlide();
+            missingSlides--;
+          }
+          setTimeout(function() {
+            viewer.swiper.slideTo(slide, 0, true);
+          }, 50);
+        } else {
+          viewer.swiper.slideTo(slide, 0, true);
+        }
       }
     };
 
