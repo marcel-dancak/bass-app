@@ -271,6 +271,16 @@
         bar: playbackState.bar,
         beat: playbackState.beat
       }
+      // calculate position of beatCounter
+      playbackState.beatCounter = -1;
+      playbackState.beatCounter += (playbackState.bar - 1) * playlist[playbackState.section].timeSignature.top;
+      playbackState.beatCounter += playbackState.beat - 1;
+      var sectionIndex = playbackState.section;
+      while (sectionIndex--) {
+        var section = playlist[sectionIndex];
+        playbackState.beatCounter += section.length * section.timeSignature.top;
+      }
+
       playSection(start);
     }
 
