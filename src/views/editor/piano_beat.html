@@ -2,7 +2,7 @@
 <div
   ng-if="slide.initialized"
   sly-show="slide.visible"
-  ng-keyup="eventHandler.keyPressed($event)"
+  ng-keydown="eventHandler.keyPressed($event)"
   ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)"
   class="sounds-container">
 
@@ -10,10 +10,15 @@
     <div
       ng-repeat="note in ::workspace.trackSection.instrument.notes.list | orderBy:$index:'-'"
       class="grid-cell"
+      ng-class="::{
+        black: note.label.length > 1,
+        'c-key': note.label[0] === 'C'
+      }"
+      xng-attr-key="{{ ::note.label[0] }}"
 
-      drop-channel="piano"
-      xui-on-drag-enter="dragHandler.onDragEnter($event, slide.beat, note)"
-      ui-on-drag-over="dragHandler.onDragOver($event, slide.beat)"
+      drop-channel="piano,keyboard"
+      ui-on-drag-enter="dragHandler.onDragEnter($event, slide.beat, note)"
+      ui-on-drag-over="dragHandler.onDragOver($event, slide.beat, note)"
       ui-on-drop="dragHandler.onDrop($event, slide.beat, note)"
       >
       <!-- {{ ::note.label.join('/') }} -->
@@ -52,7 +57,7 @@
 
     <span ng-if="sound.prev" class="tie">⏝</span>
     <span ng-if="!sound.prev">
-      {{ ::sound.note.name }}
+      {{ sound.note.name }}
       <span class="octave">{{ ::sound.note.octave }}</span>
     </span>
   </div>

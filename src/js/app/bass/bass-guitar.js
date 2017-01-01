@@ -8,6 +8,9 @@
     .value('Piano', Piano)
 
 
+  var sharpNotes = 'C C♯ D D♯ E F F♯ G G♯ A A♯ B'.split(' ');
+  var flatNotes = 'C D♭ D E♭ E F G♭ G A♭ A B♭ B'.split(' ');
+
   function Notes(firstNote, lastNote) {
     this.scaleNotes = [
       {
@@ -89,6 +92,22 @@
     this.list = notes;
   }
 
+  Notes.toSharp = function(name) {
+    var index = flatNotes.indexOf(name);
+    if (index !== -1) {
+      return sharpNotes[index];
+    }
+    return name;
+  }
+
+  Notes.toFlat = function(name) {
+    var index = sharpNotes.indexOf(name);
+    if (index !== -1) {
+      return flatNotes[index];
+    }
+    return name;
+  }
+
   var bassNotes = new Notes('B0', 'C5');
   var bassStrings = [
     {
@@ -160,11 +179,17 @@
     });
   }
 
-  function Piano() {
-    this.notes = new Notes('C2', 'B5');
+  function Piano(config) {
+    var range = config.range || ['C2', 'B5'];
+    this.notes = new Notes(range[0], range[1]);
   }
-  Piano.prototype.stringIndex = function(name) {
-    return this.notes.list.indexOf(this.notes.map[name]);
+
+  Piano.prototype.stringIndex = function(note) {
+    // console.log('stringIndex')
+    if (note) {
+      var code = note.name + note.octave;
+      return this.notes.list.indexOf(this.notes.map[code]);
+    }
   }
 
 

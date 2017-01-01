@@ -257,7 +257,7 @@
       }
 
       if (track.type === 'piano') {
-        track.instrument = new Piano();
+        track.instrument = new Piano(track);
       } else {
         track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
       }
@@ -269,7 +269,7 @@
       }
 
       var compressor = compressors[track.type];
-      if (!compressor && track.type === 'bass') {
+      if (!compressor && track.type !== 'drums') {
         compressor = context.createDynamicsCompressor();
         compressor.threshold.value = -35;
         compressor.knee.value = 40;

@@ -210,7 +210,17 @@
           ng-attr-key="{{ ::note.label[0] }}"
           class="piano-key"
           ng-class="::{ black: note.label.length > 1 }"
-          ng-click="playPianoSound(note)">
+          ng-click="playPianoSound(note)"
+          ui-draggable="true"
+          drag="{
+            note: {
+              name: note.label[0],
+              octave: note.octave,
+              length: 1/8,
+            },
+            volume: 0.75
+          }"
+          drag-channel="keyboard">
         </div>
       </div>
 

@@ -13,6 +13,7 @@
         beat.data.forEach(function(sound) {
           Object.defineProperty(sound, 'end', {value: 'static', writable: true});
           Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
+          // Object.defineProperty(sound, 'grid', {value: 'static', writable: true});
           sound.beat = beat;
           sound.end = sound.start + this.soundDuration(sound);
         }, this);
@@ -173,6 +174,28 @@
       if (index !== -1) {
         sound.beat.data.splice(index, 1);
       }
+    }
+
+    clearBeat(beat) {
+      beat.data.splice(0, beat.data.length);
+    }
+
+    rawBeatData(beat) {
+      return beat;
+    }
+
+    loadBeats(beats) {
+      beats.forEach(function(beat) {
+        var destBeat = this.beat(beat.bar, beat.beat);
+        Array.prototype.push.apply(destBeat.data, beat.data);
+
+        destBeat.data.forEach(function(sound) {
+          Object.defineProperty(sound, 'end', {value: 'static', writable: true});
+          Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
+          sound.beat = destBeat;
+          sound.end = sound.start + this.soundDuration(sound);
+        }, this);
+      }, this);
     }
   }
 
