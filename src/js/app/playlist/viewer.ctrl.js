@@ -141,11 +141,11 @@
         //   console.log('upside slide needs update');
         //   updateSlide(s.snapIndex-1);
         // }
-        console.log('activeIndex: {0} slides: {1}'.format(s.activeIndex, s.slides.length));
-        if (s.slides.length - s.activeIndex <=  2 ) {
+        // console.log('activeIndex: {0} slides: {1}'.format(s.snapIndex, s.slides.length));
+        if (s.slides.length - s.snapIndex <=  2 ) {
           generateSlide();
         }
-        if (s.activeIndex > 1) {
+        if (s.snapIndex > 1) {
           // angular.element(s.slides[0]).scope().$destroy();
           /* auto-removing of slides */
           // s.removeSlide(0);
@@ -153,6 +153,7 @@
       });
       viewer.swiper.on('touchEnd', function(s) {
         $mdUtil.nextTick(function() {
+          s.activeIndex = s.snapIndex;
           $scope.player.progress.value = s.snapIndex * viewer.beatsPerSlide;
         });
       });
@@ -239,9 +240,10 @@
               };
             }
           }
-        } else if (playbackState.slideBeatCounter >= viewer.beatsPerSlide) {
+        } else if (playbackState.slideBeatCounter >= viewer.beatsPerSlide && !viewer.swiper.isEnd) {
           playbackState.slideBeatCounter = 0;
           viewer.swiper.slideNext(true, viewer.layout.animation);
+          viewer.swiper.activeIndex = viewer.swiper.snapIndex;
         }
       }
       timeline.beatSync(evt);
@@ -266,8 +268,11 @@
       };
       // audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
-      var countdown = $scope.player.countdown && (start || playbackState.section === 0);
-      audioPlayer.play(section, beatSync, playbackStopped, countdown);
+      var options = {
+        countdown: $scope.player.countdown && (start || playbackState.section === 0),
+        start: start || { bar: 1, beat: 1 }
+      }
+      audioPlayer.play(section, beatSync, playbackStopped);
     }
 
     function playFromCurrentPosition() {
@@ -300,7 +305,12 @@
       $scope.player.playing = false;
     }
 
+    // var audio = new Audio(['mgs-o.ogg']);
+    // window.a = audio;
     $scope.player.play = function() {
+      // audio.currentTime = 10;
+      // audio.currentTime = 6.7
+
       var sections = playlist.reduce(function(list, section) {
         if (list.indexOf(section) === -1) {
           list.push(section);
@@ -323,7 +333,7 @@
         audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
 
       } else {
-        var initSlides;
+        /*
         if (viewer.swiper.snapIndex !== 0) {
           initPlaylistSlides();
         } else {
@@ -333,16 +343,32 @@
             beatCounter: -1
           };
         }
+        */
         $scope.player.playing = true;
-        audioPlayer.fetchResourcesWithProgress(sections).then(playSection, failedToLoadResources);
+        audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
+        // audioPlayer.fetchResourcesWithProgress(sections).then(function() {
+        //   audio.play();
+        //   playFromCurrentPosition();
+        // }, failedToLoadResources);
       }
     };
 
-    $scope.player.stop = function() {
+    $scope.player.pause = function() {
       $scope.player.playing = false;
       playbackState.section = playlist.length;
       audioPlayer.stop();
+      // audio.pause();
     };
+
+    $scope.player.stop = function() {
+      if ($scope.player.playing) {
+        $scope.player.pause();
+      }
+      $scope.player.progress.value = 0;
+      setTimeout(function() {
+        viewer.swiper.slideTo(0, 0);
+      }, 50);
+    }
 
     function playbackStopped(evt) {
       playbackState.section++;
@@ -506,6 +532,6 @@
       projectManager.un('projectLoaded', projectLoaded);
     });
 
-    // window.v = viewer;
+    window.v = viewer;
   }
 })();

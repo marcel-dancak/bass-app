@@ -647,7 +647,7 @@
       }
     };
 
-    AudioPlayer.prototype._play = function() {
+    AudioPlayer.prototype._play = function(options) {
       // setup 'silent' source. It's needed for proper graph
       // visualization when no other source is playing
       var gain = context.createGain();
@@ -666,8 +666,9 @@
       oscillator.start();
       */
       this.piano.playingSounds = {};
-      var bar = this.playbackRange.start.bar;
-      var beat = this.playbackRange.start.beat;
+      var start = options.start || this.playbackRange.start;
+      var bar = start.bar;
+      var beat = start.beat;
       this.playBeat(bar, beat, context.currentTime, true);
     };
 
@@ -740,8 +741,8 @@
       return task.promise;
     };
 
-    AudioPlayer.prototype.play = function(section, beatPrepared, playbackStopped, countdown) {
-      console.log('PLAY');
+    AudioPlayer.prototype.play = function(section, beatPrepared, playbackStopped, options) {
+      options = options || {};
       this.section = section;
       this.playing = true;
       this.lastSyncTimerId = 0;
@@ -750,7 +751,7 @@
       this.beatPreparedCallback = angular.isFunction(beatPrepared)? beatPrepared : angular.noop;
       this.playbackStoppedCallback = angular.isFunction(playbackStopped)? playbackStopped : angular.noop;
 
-      var count = countdown? 3 : 0;
+      var count = options.countdown? 3 : 0;
       function countDownTick() {
         if (count > 0) {
           count--;
@@ -759,7 +760,7 @@
             setTimeout(countDownTick, 60000/(player.bpm * player.playbackSpeed));
           }
         } else {
-          player._play();
+          player._play(options);
         }
       }
       countDownTick();

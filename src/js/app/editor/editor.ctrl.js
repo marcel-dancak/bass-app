@@ -167,7 +167,7 @@
       var lastBeat = (lastBar) * barBeatsCount - 1;
       swiperControl.setVisibleRange(firstBeat, lastBeat);
 
-      $scope.player.progress.max = lastBeat - firstBeat;
+      $scope.player.progress.max = lastBeat - firstBeat + 1;
       var barTicks = [];
       for (var i = barBeatsCount; i < $scope.player.progress.max; i+= barBeatsCount) {
         barTicks.push(i);
@@ -200,11 +200,13 @@
         // console.log(slide-$scope.barSwiper.activeIndex);
         // console.log(timeToBeat);
         setTimeout(function() {
-          swiperControl.slideTo(
-            slide,
-            workspace.section.animationDuration,
-            true
-          );
+          if ($scope.player.playing) {
+            swiperControl.slideTo(
+              slide,
+              workspace.section.animationDuration,
+              true
+            );
+          }
         }, parseInt(timeToBeat*1000));
       }
 
@@ -224,41 +226,31 @@
       fretboardViewer.beatSync(evt);
 
       $mdUtil.nextTick(function() {
-        $scope.player.progress.value = evt.flatIndex - swiperControl.firstSlide;
+        $scope.player.progress.value = evt.flatIndex - swiperControl.firstSlide + 1;
       });
     }
 
     function updateLockedPlayerRange() {
       console.log('** updateLockedPlayerRange');
-      var maxIndex = swiperControl.lastSlide;
-      // var sFlatIndex = swiperControl.barSwiper.snapIndex
-      var sFlatIndex = swiperControl.firstSlide + swiperControl.barSwiper.snapIndex * workspace.section.beatsPerSlide;
-      var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
-
-      if (eFlatIndex > maxIndex) {
-        // invalid range for playback lock
-        return false;
+      var position = swiperControl.getPosition();
+      if (position.end.flatIndex > position.start.flatIndex) {
+        audioPlayer.playbackRange = position;
+        return true;
       }
-      audioPlayer.playbackRange = {
-        start: {
-          bar: parseInt(sFlatIndex / workspace.section.timeSignature.top) + 1,
-          beat: (sFlatIndex % workspace.section.timeSignature.top) + 1
-        },
-        end: {
-          bar: parseInt(eFlatIndex / workspace.section.timeSignature.top) + 1,
-          beat: (eFlatIndex % workspace.section.timeSignature.top) + 1
-        }
-      };
-      return true;
+      return false;
     }
 
     var timeline;
     $scope.player.play = function() {
+      if ($scope.player.graphEnabled) {
+        audioVisualiser.clear();
+      }
+      var start = swiperControl.getPosition().start;
+      // this helps when activeIndex is not the same as snapIndex
+      swiperControl.barSwiper.activeIndex = swiperControl.barSwiper.snapIndex;
       if ($scope.player.visibleBeatsOnly) {
         updateLockedPlayerRange();
       } else {
-        swiperControl.reset();
-
         if ($scope.player.loop && isLoopNeeded()) {
           swiperControl.createLoop();
         }
@@ -267,6 +259,7 @@
       audioPlayer.setBpm(workspace.section.bpm);
       timeline.start();
 
+      swiperControl.lastRequestedIndex = swiperControl.barSwiper.snapIndex;
       audioPlayer.fetchResourcesWithProgress(workspace.section)
         .then(
           audioPlayer.play.bind(
@@ -274,16 +267,28 @@
             workspace.section,
             beatPrepared,
             playbackStopped,
-            $scope.player.countdown
+            {
+              countdown: $scope.player.countdown,
+              start: start
+            }
           ),
           function() {$scope.player.playing = false}
         );
+    };
 
+    $scope.player.pause = function() {
+      $scope.player.playing = false;
+      audioPlayer.stop();
     };
 
     $scope.player.stop = function() {
-      $scope.player.playing = false;
-      audioPlayer.stop();
+      if ($scope.player.playing) {
+        $scope.player.pause();
+      }
+      $scope.player.progress.value = 0;
+      setTimeout(function() {
+        swiperControl.reset(0);
+      }, 50);
     };
 
     function playbackStopped() {

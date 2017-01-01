@@ -33,16 +33,25 @@
   md-no-ink
   aria-label="Play"
   class="play-stop-button icon-hover"
-  ng-click="player.playing? player.stop() : player.play()">
+  ng-class="{ loading: player.loading }"
+  ng-click="player.playing? player.pause() : player.play()">
   <md-icon
-    md-svg-icon="{{ player.playing? 'stop' : 'play' }}">
+    md-svg-icon="{{ player.playing? 'pause' : 'play' }}">
   </md-icon>
-  <span>{{ player.playing? 'Stop' : 'Play' }}</span>
   <md-progress-circular
-    ng-show="player.loading"
     md-mode="indeterminate"
     md-diameter="31">
   </md-progress-circular>
+</md-button>
+
+<md-button
+  md-no-ink
+  aria-label="Stop"
+  class="secondary icon-hover"
+  ng-click="player.stop()">
+  <md-icon
+    md-svg-icon="{{ player.playing? 'stop' : 'back' }}">
+  </md-icon>
 </md-button>
 
 <md-button

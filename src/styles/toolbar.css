@@ -130,8 +130,11 @@
 
 .play-stop-button {
   margin: 2px;
-  padding: 0 10px 0 0;
+  padding: 0;
   line-height: 44px;
+  min-width: 42px;
+  overflow: visible;
+  z-index: 100;
 }
 .play-stop-button md-icon {
   margin-bottom: 4px;
@@ -140,6 +143,44 @@
   height: 32px;
 }
 
+.play-stop-button md-progress-circular {
+  display: none;
+  position: absolute;
+  top: 7px;
+  left: 4px;
+}
+.play-stop-button md-progress-circular:after {
+  content: "Loading";
+  position: absolute;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  background-color: #3b4d55;
+  left: 32px;
+  top: 0;
+  padding-left: 4px;
+  line-height: 36px;
+}
+.play-stop-button md-progress-circular svg path {
+  stroke: #3b4d55;
+  stroke-width: 5px!important;
+}
+.play-stop-button.md-button.loading {
+  opacity: 1!important;
+  pointer-events: none;
+}
+.play-stop-button.loading md-progress-circular {
+  display: block;
+}
+
+.playback-fields .secondary.md-button {
+  min-width: 32px;
+  margin: 0 2px;
+}
+.playback-fields .secondary.md-button md-icon {
+  border: 1px solid #ccc;
+  border-radius: 13px;
+}
 .playback-fields .playback-speed-field,
 .playback-fields .bpm-field {
   width: 78px;
@@ -165,6 +206,7 @@
   left: 36px;
   bottom: 8px;
   font-size: 14px;
+  pointer-events: none;
 }
 
 .section-mode .playback-speed-field {
@@ -457,33 +499,11 @@ md-menu-content.playback-range {
 }
 
 
-.play-stop-button md-progress-circular {
-  position: absolute;
-  top: 7px;
-  left: 4px;
-}
-.play-stop-button md-progress-circular:after {
-  content: "Loading";
-  position: absolute;
-  font-size: 12px;
-  font-weight: 500;
-  text-transform: none;
-  background-color: #3b4d55;
-  left: 32px;
-  top: 0;
-  padding-left: 3px;
-  line-height: 35px;
-}
-.play-stop-button md-progress-circular svg path {
-  stroke: #3b4d55;
-  stroke-width: 5px!important;
-}
-
 /** Playback progress slider **/
 .playback-slider.rzslider {
   position: absolute;
-  left: 24px;
-  right: 24px;
+  left: 22px;
+  right: 22px;
   width: auto;
   bottom: -5px;
   height: 16px;
