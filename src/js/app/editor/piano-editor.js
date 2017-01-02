@@ -123,7 +123,12 @@
         dragHandler.onDragStart(e, dragSound);
         dragBox.elem.style.opacity = 1;
       }
-
+    });
+    scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
+      if (channel === 'piano' || channel === 'keyboard') {
+        dragBox.elem.style.opacity = 0;
+        dragHandler.onDragEnd(e);
+      }
     });
 
     function soundElement(sound) {
@@ -166,12 +171,18 @@
         sound.start = parseInt(evt.offsetX / grid) / beat.subdivision;
         sound.string = dragSound.note.name+dragSound.note.octave;
         workspace.trackSection.addSound(beat, sound);
-      }
+      },
+      onDragEnd: angular.noop
     };
     var singleSoundHandler = {
       onDragStart: function(evt, dragSound) {
         dragWidth = evt.target.clientWidth+2;
         evt.dataTransfer.setDragImage(evt.target, 10, 7);
+        if (!evt.ctrlKey) {
+          setTimeout(function() {
+            evt.target.classList.add('drag-move-element');
+          }, 80);
+        }
       },
       canDrop: function(key, sound) {
         return true;
@@ -185,11 +196,16 @@
         sound.note.name = note.label[0];
         sound.note.octave = note.octave;
 
-        if (evt.dataTransfer.dropEffect === "move") {
+        if (evt.dataTransfer.dropEffect === 'move') {
           workspace.trackSection.deleteSound(dragSound);
         }
         workspace.trackSection.addSound(beat, sound);
-      }
+      },
+      onDragEnd: function(evt) {
+        if (evt.target) {
+          evt.target.classList.remove('drag-move-element');
+        }
+      },
     };
     var multiSoundHandler = {
       onDragStart: function(evt, dragSound) {
@@ -215,6 +231,7 @@
           }
         }
 
+        var srcDragElems = [];
         dragWidth = 0;
         var dragElem = angular.element('<div class="piano drag-group"></div>')[0];
         sounds.forEach(function(sound) {
@@ -225,18 +242,25 @@
           clone.style.position = 'relative';
           clone.style.display = 'inline-block';
           dragElem.appendChild(clone);
+          srcDragElems.push(elem);
         });
+        this.srcDragElems = srcDragElems;
         document.body.appendChild(dragElem);
         evt.dataTransfer.setDragImage(dragElem, 10, 36);
         this.sounds = sounds;
         this.dragElem = dragElem;
+        setTimeout(function() {
+          if (!evt.ctrlKey) {
+            srcDragElems.forEach(function(elem) {
+              elem.classList.add('drag-move-element');
+            });
+          }
+        });
       },
       canDrop: function(key, sound) {
         return true;
       },
       onDrop: function(evt, beat, note, dragSound) {
-        console.log(this);
-        this.dragElem.remove();
         var box = evt.target.getBoundingClientRect();
         var grid = evt.target.offsetWidth / beat.subdivision;
         var sound = angular.copy(dragSound);
@@ -258,14 +282,19 @@
         if (evt.dataTransfer.dropEffect === "move") {
           workspace.trackSection.deleteSound(this.sounds[0]);
         }
-      }
+      },
+      onDragEnd: function(evt) {
+        this.dragElem.remove();
+        this.srcDragElems.forEach(function(elem) {
+          elem.classList.remove('drag-move-element');
+        });
+      },
     };
     return {
+      canDrop: false,
       onDragEnter: function(evt, beat, note) {
-        var canDrop = dragHandler.canDrop(note, dragSound);
-        console.log('enter: '+note.label[0]+note.octave)
-        console.log(canDrop)
-        dragBox.elem.style.borderColor = canDrop? '' : 'red';
+        this.canDrop = dragHandler.canDrop(note, dragSound);
+        dragBox.elem.style.borderColor = this.canDrop? '' : 'red';
       },
       onDragLeave: function(evt, beat, note) {},
       onDragOver: function(evt, beat, note) {
@@ -281,8 +310,9 @@
         });
       },
       onDrop: function(evt, beat, note) {
-        dragHandler.onDrop(evt, beat, note, dragSound);
-        dragBox.elem.style.opacity = 0;
+        if (this.canDrop) {
+          dragHandler.onDrop(evt, beat, note, dragSound);
+        }
       }
     }
   }
@@ -297,7 +327,6 @@
         labelElem.innerHTML = dotted? '.' : '';
       },
       setPxStyles: function(styles) {
-        // Object.keys(styles).forEach(function(key))
         for (var key in styles) {
           this.elem.style[key] = styles[key]+'px';
         }

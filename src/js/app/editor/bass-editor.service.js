@@ -131,7 +131,7 @@
       }
     }
   };
-  function dragHandler($timeout, workspace, audioPlayer, swiperControl) {
+  function dragHandler(workspace, audioPlayer, swiperControl) {
 
     var dragHandler;
     var dragData;
@@ -171,7 +171,7 @@
         dragElem.classList.add('drag');
         dragElem.style.width = evt.target.parentElement.offsetWidth+'px';
         this.dragContainer.appendChild(dragElem);
-        evt.dataTransfer.setDragImage(dragElem, 3, 6);
+        evt.dataTransfer.setDragImage(dragElem, 8, 12);
       },
       onDragEnd: function(evt) {
         while (this.dragContainer.lastChild) {
@@ -191,11 +191,11 @@
 
     var singleSoundDragHandler = {
       onDragStart: function(evt, dragData, channel) {
-        // just align drag element to left-top mouse pointer
-        evt.dataTransfer.setDragImage(evt.target, 0, 0);
+        // align drag element
+        evt.dataTransfer.setDragImage(evt.target, 8, 12);
 
         if (!evt.ctrlKey) {
-          $timeout(function() {
+          setTimeout(function() {
             evt.target.classList.add("drag-move-element");
           }, 100);
         }
@@ -249,7 +249,7 @@
           dragElem.appendChild(clone);
         });
         this.workspaceElem.appendChild(dragElem);
-        evt.dataTransfer.setDragImage(dragElem, 10, 36);
+        evt.dataTransfer.setDragImage(dragElem, 8, 42);
         dragBox.width = dragElem.clientWidth;
         var beat = workspace.trackSection.beat(dragData.bar, dragData.beat);
         dragBox.subdivision = beat.subdivision;
@@ -410,7 +410,7 @@
   }
 
 
-  function resizeHandler($timeout, workspace, swiperControl, basicHandler, Note) {
+  function resizeHandler(workspace, swiperControl, basicHandler, Note) {
 
     var resizeBox = {
       elem: angular.element('<div class="resize-box"><i></i></div>')[0],
@@ -567,16 +567,16 @@
         resizeBox.elem.style.opacity = 0.001;
         resizeBox.elem.remove();
 
-        $timeout(function() {
-          angular.extend(grid.sound.noteLength, resizeLength);
-          afterGroupResize(grid);
-        });
+        // $timeout(function() {
+        angular.extend(grid.sound.noteLength, resizeLength);
+        afterGroupResize(grid);
+        // });
         evt.stopPropagation();
       }
     }
   }
 
-  function basicHandler($timeout, workspace, audioPlayer) {
+  function basicHandler(workspace, audioPlayer) {
 
     return {
       selected: {
