@@ -40,6 +40,10 @@
           type: 'bass',
           strings: 'EADG',
         }, {
+          name: 'Piano',
+          type: 'piano',
+          range: ['C2', 'B5'],
+        }, {
           name: 'Drums',
           kit: 'Drums',
           type: 'drums'
@@ -330,7 +334,7 @@
       });
     };
 
-    workspace._import = function(section, srcBar, srcBeat, destBar, destBeat, count) {
+    workspace._import = function(section, srcBar, srcBeat, destBar, destBeat, count, tracks) {
       var barIndex = srcBar;
       var beatIndex = srcBeat;
       // var tracks = projectManager.project.tracks
@@ -361,6 +365,10 @@
       }
       // import part
       for (var trackId in workspace.section.tracks) {
+        if (tracks && tracks.indexOf(trackId) === -1) {
+          console.log('skipping track '+trackId);
+          continue;
+        }
         var trackSection = workspace.section.tracks[trackId];
         if (trackSection.loadBeats) {
           console.log('importing track beats: '+trackId);
@@ -369,20 +377,20 @@
       }
     };
 
-    workspace.importBeats = function(sectionName, srcBar, srcBeat, destBar, destBeat, count) {
+    workspace.importBeats = function(sectionName, srcBar, srcBeat, destBar, destBeat, count, tracks) {
       var sectionId = projectManager.project.sections.find(function(s) {
         return s.name === sectionName;
       }).id;
       var section = projectManager.getSection(sectionId);
-      workspace._import(section, srcBar, srcBeat, destBar, destBeat, count);
+      workspace._import(section, srcBar, srcBeat, destBar, destBeat, count, tracks);
     };
 
-    workspace.importBars = function(sectionName, srcBar, destBar, count) {
+    workspace.importBars = function(sectionName, srcBar, destBar, count, tracks) {
       var sectionId = projectManager.project.sections.find(function(s) {
         return s.name === sectionName;
       }).id;
       var section = projectManager.getSection(sectionId);
-      workspace._import(section, srcBar, 1, destBar, 1, count * section.timeSignature.top);
+      workspace._import(section, srcBar, 1, destBar, 1, count * section.timeSignature.top, tracks);
     };
 
     workspace.exportSection = function() {

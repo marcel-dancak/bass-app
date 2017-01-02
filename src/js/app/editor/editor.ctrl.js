@@ -106,7 +106,7 @@
 
 
   function EditModeController($scope, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
-              projectManager, Drums, BassSection, DrumSection, HighlightTimeline, swiperControl, fretboardViewer) {
+              projectManager, Drums, BassSection, DrumSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer) {
 
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
@@ -542,10 +542,14 @@
         } else if (track.type === 'bass') {
           workspace.trackSection = workspace.bassSection;
         } else {
-          // workspace.trackSection = new TrackSection(workspace.section.tracks[trackId]);
+          if (!workspace.section.tracks[trackId]) {
+            var trackSection = new TrackSection(workspace.section, []);
+            trackSection.instrument = track.instrument;
+            trackSection.audio = track.audio;
+            workspace.section.tracks[trackId] = trackSection;
+          }
           workspace.trackSection = workspace.section.tracks[trackId];
           workspace.trackSection.track = track;
-          console.log(workspace.trackSection)
         }
         swiperControl.switchInstrument(track.type);
       }
