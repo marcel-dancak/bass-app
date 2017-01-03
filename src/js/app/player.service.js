@@ -497,6 +497,9 @@
 
     AudioPlayer.prototype._playSound = function(trackId, track, beat, sound, startTime, beatTime) {
       var duration = (sound.end-sound.start) * beatTime;
+      if (sound.note.staccato) {
+        duration = 0.95*duration-(beatTime/4)*0.2;
+      }
       var audio;
       if (sound.prev) {
         audio = this.piano.playingSounds[sound.string];

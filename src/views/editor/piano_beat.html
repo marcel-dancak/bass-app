@@ -59,6 +59,7 @@
     <span ng-if="!sound.prev">
       {{ sound.note.name }}
       <span class="octave">{{ ::sound.note.octave }}</span>
+      <span ng-show="sound.note.staccato">.</span>
     </span>
   </div>
 

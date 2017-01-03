@@ -39,7 +39,7 @@
   function eventHandler(workspace, Notes) {
     return {
       selected: {},
-      select(evt, sound) {
+      select: function(evt, sound) {
         console.log('selectSound');
         if (this.selected.element) {
           this.selected.element.classList.remove('selected');
@@ -66,16 +66,16 @@
               }
               break;
             case 9: // Tab
-              console.log(sound.note.name)
               if (sound.note.name.endsWith('♯')) {
-                console.log('toFlat')
                 sound.note.name = Notes.toFlat(sound.note.name);
               } else if (sound.note.name.endsWith('♭')) {
                 sound.note.name = Notes.toSharp(sound.note.name);
               }
-              console.log(sound.note.name)
               evt.preventDefault();
               return false;
+            case 190: // .
+              sound.note.staccato = !sound.note.staccato;
+              break;
             case 109: // -
               sound.volume -= 0.1;
               console.log(sound.volume);
@@ -85,6 +85,7 @@
               console.log(sound.volume);
               break;
 
+            // just for debugging
             case 78: // n
               var n = workspace.trackSection.nextSound(sound)
               console.log(n)
@@ -110,8 +111,6 @@
 
     var scope = angular.element(document.body).scope();
     scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
-      console.log(data);
-      console.log(channel)
       if (channel === 'piano' || channel === 'keyboard') {
         dragSound = data.data;
         var isMultiSound = dragSound.next || dragSound.prev;
