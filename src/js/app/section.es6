@@ -14,6 +14,9 @@
           Object.defineProperty(sound, 'end', {value: 'static', writable: true});
           Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
           // Object.defineProperty(sound, 'grid', {value: 'static', writable: true});
+          if (sound.note && sound.note.length < 1) {
+            sound.note.length = Math.round(1.0/sound.note.length);
+          }
           sound.beat = beat;
           sound.end = sound.start + this.soundDuration(sound);
         }, this);
@@ -140,7 +143,7 @@
 
     soundDuration(sound) {
       if (sound && sound.note) {
-        var duration = this.section.timeSignature.bottom * sound.note.length;
+        var duration = this.section.timeSignature.bottom / sound.note.length;
         if (sound.note.dotted) {
           duration *= 1.5;
         }

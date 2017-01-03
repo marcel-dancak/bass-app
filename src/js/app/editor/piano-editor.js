@@ -336,7 +336,7 @@
     var noteLengthSymbols = {};
     for (name in Note) {
       var note = Note[name];
-      noteLengthSymbols[note.value] = note.symbol;
+      noteLengthSymbols[1.0/note.value] = note.symbol;
     }
 
     var noteLengths = [
@@ -347,26 +347,29 @@
         length: 1,
         dotted: true
       }, {
-        length: 1/2,
+        length: 2,
         dotted: false
       }, {
-        length: 1/2,
+        length: 2,
         dotted: true
       }, {
-        length: 1/4,
+        length: 4,
         dotted: false
       }, {
-        length: 1/4,
+        length: 4,
         dotted: true
       }, {
-        length: 1/8,
+        length: 8,
         dotted: false
       }, {
-        length: 1/8,
+        length: 8,
         dotted: true
       }, {
-        length: 1/16,
+        length: 16,
         dotted: false
+      }, {
+        length: 16,
+        dotted: true
       }
     ];
 
@@ -409,7 +412,7 @@
         var beatWidth = swiperControl.instrumentSwiper.slides[swiperControl.instrumentSwiper.snapIndex].clientWidth;
 
         notesWidths = noteLengths.map(function(noteLength) {
-          var length = noteLength.dotted? noteLength.length * 1.5 : noteLength.length;
+          var length = 1 / (noteLength.dotted? noteLength.length * 0.667 : noteLength.length);
           var width = length * workspace.section.timeSignature.bottom * beatWidth;
           return width;
         });
