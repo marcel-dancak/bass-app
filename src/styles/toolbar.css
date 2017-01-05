@@ -120,7 +120,7 @@
   left: 0;
   right: 0;
   top: 0;
-  bottom: -10px;
+  bottom: -11px;
   border-radius: 8px;
   box-shadow:
     2px 3px 5px 0px rgba(0, 0, 0, 0.21),
@@ -134,7 +134,7 @@
   line-height: 44px;
   min-width: 42px;
   overflow: visible;
-  z-index: 100;
+  z-index: 1;
 }
 .play-stop-button md-icon {
   margin-bottom: 4px;
@@ -176,10 +176,6 @@
 .playback-fields .secondary.md-button {
   min-width: 32px;
   margin: 0 2px;
-}
-.playback-fields .secondary.md-button md-icon {
-  border: 1px solid #ccc;
-  border-radius: 13px;
 }
 .playback-fields .playback-speed-field,
 .playback-fields .bpm-field {
@@ -505,9 +501,10 @@ md-menu-content.playback-range {
   left: 22px;
   right: 22px;
   width: auto;
-  bottom: -5px;
+  bottom: -6px;
   height: 16px;
   margin: 4px 0;
+  z-index: 2;
 }
 .playback-slider.rzslider .rz-bar-wrapper {
   padding-top: 0;

@@ -281,13 +281,17 @@
       audioPlayer.stop();
     };
 
-    $scope.player.stop = function() {
+    $scope.player.goToStart = function() {
+      var restartPlayback = $scope.player.playing;
       if ($scope.player.playing) {
         $scope.player.pause();
       }
       $scope.player.progress.value = 0;
       setTimeout(function() {
         swiperControl.reset(0);
+        if (restartPlayback) {
+          $scope.player.play();
+        }
       }, 50);
     };
 

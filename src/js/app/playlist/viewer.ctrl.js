@@ -16,7 +16,7 @@
         name: 'vertical',
         // swiper config
         direction: 'vertical',
-        slidesPerView: 2,
+        slidesPerView: 1.995,
         slidesPerColumn: 1,
         animation: 250,
         render: {
@@ -181,6 +181,7 @@
         }
       });
       sectionsTicks.splice(0, 1);
+      $scope.player.progress.value = 0;
       $scope.player.progress.max = beatsCount - 1;
       $scope.player.progress.ticks = sectionsTicks;
       $scope.player.progress.legend = function(value) {
@@ -269,10 +270,10 @@
       // audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
       var options = {
-        countdown: $scope.player.countdown && (start || playbackState.section === 0),
+        countdown: $scope.player.countdown && (angular.isDefined(start) || playbackState.section === 0),
         start: start || { bar: 1, beat: 1 }
       }
-      audioPlayer.play(section, beatSync, playbackStopped);
+      audioPlayer.play(section, beatSync, playbackStopped, options);
     }
 
     function playFromCurrentPosition() {
@@ -360,13 +361,17 @@
       // audio.pause();
     };
 
-    $scope.player.stop = function() {
+    $scope.player.goToStart = function() {
+      var restartPlayback = $scope.player.playing;
       if ($scope.player.playing) {
         $scope.player.pause();
       }
       $scope.player.progress.value = 0;
       setTimeout(function() {
         viewer.swiper.slideTo(0, 0);
+        if (restartPlayback) {
+          $scope.player.play();
+        }
       }, 50);
     }
 
