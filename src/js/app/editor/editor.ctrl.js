@@ -530,6 +530,13 @@
     };
 
 
+    function initializePianoTrack(track) {
+      var trackSection = new TrackSection(workspace.section, []);
+      trackSection.instrument = track.instrument;
+      trackSection.audio = track.audio;
+      workspace.section.tracks[track.id] = trackSection;
+    }
+
     $scope.ui.selectTrack = function(trackId) {
       console.log('selectTrack: '+trackId);
       var track = projectManager.project.tracksMap[trackId];
@@ -543,10 +550,7 @@
           workspace.trackSection = workspace.bassSection;
         } else {
           if (!workspace.section.tracks[trackId]) {
-            var trackSection = new TrackSection(workspace.section, []);
-            trackSection.instrument = track.instrument;
-            trackSection.audio = track.audio;
-            workspace.section.tracks[trackId] = trackSection;
+            initializePianoTrack(track);
           }
           workspace.trackSection = workspace.section.tracks[trackId];
           workspace.trackSection.track = track;
@@ -555,26 +559,34 @@
       }
 
       if (workspace.trackSection.track.id !== track.id) {
+        if (workspace.trackSection.convertToTrackSection) {
+          // Save/Convert sounds from instrument workspace into simple track data
+          var convertedTrack = workspace.trackSection.convertToTrackSection();
 
-        // Save/Convert sounds from instrument workspace into simple track data
-        var convertedTrack = workspace.trackSection.convertToTrackSection();
+          // id of actual instrument's track (currently loaded)
+          var instrumentTrackId = workspace.trackSection.track.id;
+          var instrumentTrack = projectManager.project.tracksMap[instrumentTrackId];
+          convertedTrack.audio = instrumentTrack.audio;
+          convertedTrack.instrument = instrumentTrack.instrument;
+          workspace.section.tracks[instrumentTrackId] = convertedTrack;
 
-        // id of actual instrument's track (currently loaded)
-        var instrumentTrackId = workspace.trackSection.track.id;
-        var instrumentTrack = projectManager.project.tracksMap[instrumentTrackId];
-        convertedTrack.audio = instrumentTrack.audio;
-        convertedTrack.instrument = instrumentTrack.instrument;
-        workspace.section.tracks[instrumentTrackId] = convertedTrack;
+          // Clear instrument workspace
+          workspace.trackSection.forEachBeat(workspace.trackSection.clearBeat, workspace.trackSection);
 
-        // Clear instrument workspace
-        workspace.trackSection.forEachBeat(workspace.trackSection.clearBeat, workspace.trackSection);
-
-        // Load instrument workspace with selected track data
-        assignTrack(workspace.trackSection, track);
-        if (workspace.section.tracks && workspace.section.tracks[track.id]) {
-          workspace.trackSection.loadBeats(workspace.section.tracks[track.id].data || []);
+          // Load instrument workspace with selected track data
+          assignTrack(workspace.trackSection, track);
+          if (workspace.section.tracks && workspace.section.tracks[track.id]) {
+            workspace.trackSection.loadBeats(workspace.section.tracks[track.id].data || []);
+          }
+          workspace.section.tracks[track.id] = workspace.trackSection;
+        } else {
+          if (!workspace.section.tracks[trackId]) {
+            initializePianoTrack(track);
+          }
+          workspace.trackSection = workspace.section.tracks[trackId];
+          workspace.trackSection.track = track;
+          swiperControl.rebuildSlides();
         }
-        workspace.section.tracks[track.id] = workspace.trackSection;
       }
       workspace.track = track;
     };

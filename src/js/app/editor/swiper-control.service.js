@@ -5,7 +5,7 @@
     .module('bd.app')
     .factory('swiperControl', swiperControl);
 
-  function swiperControl($timeout, workspace) {
+  function swiperControl($timeout, workspace, $mdUtil) {
 
 
     function destroySwiper(swiper) {
@@ -22,7 +22,8 @@
         visibleSubbeats: 4
       };
       this.updateVisibleSlides = function() {
-        $timeout(this.updateSlidesVisibility.bind(this));
+        // $timeout(this.updateSlidesVisibility.bind(this));
+        $mdUtil.nextTick(this.updateSlidesVisibility.bind(this));
       }.bind(this);
     }
 
@@ -229,6 +230,14 @@
       // console.log(loading);
       // console.log('obsolete');
       // console.log(obsolete);
+    };
+
+    SwiperControl.prototype.rebuildSlides = function(type) {
+      for (var i = 0; i < this.slides.length; i++) {
+        var slide = this.slides[i];
+        slide.initialized = false;
+      }
+      this.updateVisibleSlides();
     };
 
     function loopCallback(s) {

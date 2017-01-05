@@ -92,6 +92,8 @@
     this.list = notes;
   }
 
+  Notes.sharpNotes = sharpNotes;
+  Notes.flatNotes = flatNotes;
   Notes.toSharp = function(name) {
     var index = flatNotes.indexOf(name);
     if (index !== -1) {
@@ -106,6 +108,20 @@
       return flatNotes[index];
     }
     return name;
+  }
+
+  Notes.codeTovalue = function(code) {
+    var name = code.substring(0, code.length-1);
+    var octave = parseInt(code.charAt(code.length-1));
+    var scale = name.endsWith('♯')? Notes.sharpNotes : Notes.flatNotes;
+    var scaleIndex = scale.indexOf(name);
+    return scaleIndex + octave * 12;
+  }
+
+  Notes.noteValue = function(note) {
+    var scale = note.name.endsWith('♯')? Notes.sharpNotes : Notes.flatNotes;
+    var scaleIndex = scale.indexOf(note.name);
+    return scaleIndex + note.octave * 12;
   }
 
   var bassNotes = new Notes('B0', 'C5');
@@ -181,7 +197,9 @@
 
   function Piano(config) {
     var range = config.range || ['C2', 'B5'];
+    this.range = range;
     this.notes = new Notes(range[0], range[1]);
+    this.preset = config.preset || 'acoustic';
   }
 
   Piano.prototype.stringIndex = function(note) {

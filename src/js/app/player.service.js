@@ -10,22 +10,55 @@
     this.resource = resource;
   }
 
+
   function audioPlayer($timeout, $http, $q,
         context, soundsUrl, Observable, AudioComposer, projectManager, Notes) { //Midi
-
     // Midi();
     // var notes = new Notes('A0', 'C7');
     // function playMidi(track, sound, startTime, duration) {
-    //   var n = notes.map[sound.note.code];
-    //   var code = n.label[n.label.length-1].replace('♭', 'b')+(sound.note.octave);
-    //   // console.log(code)
+    //   var code = Notes.toFlat(sound.note.name).replace('♭', 'b')+(sound.note.octave);
+    //   console.log(code)
     //   var key = MIDI.keyToNote[code];
     //   if (key) {
     //     var start = startTime-context.currentTime;
-    //     MIDI.noteOn(0, key, 127, start);
+    //     MIDI.noteOn(0, key, 90, start);
     //     MIDI.noteOff(0, key, start+duration);
     //   }
     // }
+
+    function buildSamplesCache(baseSamples, notes) {
+      function closestSample(note) {
+        var noteValue = Notes.noteValue(note);
+        var sample;
+        var shift = 1000;
+        for (var i = 0; i < baseSamples.length; i++) {
+          var sampleCode = baseSamples[i];
+          var sampleValue = Notes.codeTovalue(sampleCode);
+          var diff = noteValue - sampleValue;
+          if (Math.abs(diff) < Math.abs(shift)) {
+            shift = diff;
+            sample = sampleCode;
+          } else {
+            break;
+          }
+        }
+        return {
+          code: sample,
+          shift: shift
+        }
+      }
+      var samples = {};
+      notes.list.forEach(function(n) {
+        var note = {
+          name: n.label[0],
+          octave: n.octave
+        };
+        var index = Notes.noteValue(note);
+        var sample = closestSample(note);
+        samples[index] = sample;
+      });
+      return samples;
+    }
 
     function noteDuration(sound, beatTime, timeSignature) {
       var duration;
@@ -362,7 +395,6 @@
               startTime: startTime,
               duration: duration
             };
-            // playMidi(track, sound, startTime, audio.duration);
             return [audio];
           }
         }
@@ -399,23 +431,24 @@
             accepts: function(sound) {
               return angular.isDefined(sound.note);
             },
-            getResources: function(sound) {
-              var code = sound.note.name+sound.note.octave;
-              var n = piano.notes.map[code];
-              var code = n.label[n.label.length-1].replace('♭', 'b')+(sound.note.octave);
-              // console.log(code)
-              // return ['sounds/piano/'+code];
-              return ['sounds/GrandPianoV3/'+code];
+            getResources: function(track, sound) {
+              var preset = track.instrument.preset;
+              var sample = piano.samples[preset][Notes.noteValue(sound.note)];
+              return ['sounds/piano/'+preset+'/'+sample.code.replace('♭', 'b')];
             },
             prepareForPlayback: function(trackId, track, sound, startTime, beatTime) {
-              // console.log('piano')
-              var resources = this.getResources(sound);
+              var resources = this.getResources(track, sound);
               var audio = piano.createSoundAudio(track, sound, startTime, resources[0]);
-              // console.log(audio)
               var duration = (sound.end - sound.start) * beatTime;
+
+              var sample = piano.samples[track.instrument.preset][Notes.noteValue(sound.note)];
+              // console.log(sample.code+' -> '+sample.shift);
+              if (sample.shift !== 0) {
+                var rate = Math.pow(Math.pow(2, 1/12), sample.shift);
+                audio.source.playbackRate.setValueAtTime(rate, startTime);
+              }
               audio.duration = duration;
-              audio.endTime = startTime+duration;
-              // playMidi(track, sound, startTime, audio.duration);return [];
+              audio.endTime = startTime + duration;
               return [audio];
             }
           }
@@ -429,7 +462,35 @@
           }
         }
       };
+      var grandPianoSamples = buildSamplesCache((
+        'C1 E♭1 G♭1 A1 C2 E♭2 G♭2 A2 C3 E♭3 G♭3 A3 '+
+        'C4 E♭4 G♭4 A4 C5 E♭5 G♭5 A5 C6 E♭6 G♭6 A6 '+
+        'C7 E♭7 G♭7 A7').split(' '), piano.notes
+      );
+      var synthPianoSamples = buildSamplesCache(
+        'F1 B1 E2 A2 D3 G3 B3 D4 F4 B4 E5 A5 D6 G6 C7'.split(' '), // jRhodes3
+        piano.notes
+      );
+      // 'C2 G♭2 C3 G♭3 C4 G♭4 C5 G♭5 C6 G♭6 C7'.split(' '), // fm-piano
+      piano.samples = {
+        acoustic: grandPianoSamples,
+        synth: synthPianoSamples
+      };
       this.piano = piano;
+      piano.strings = [
+        new Notes('E3', 'E5'),
+        new Notes('B2', 'B4'),
+        new Notes('G2', 'G4'),
+        new Notes('D2', 'D4'),
+        new Notes('A1', 'A3'),
+        new Notes('E1', 'E3')
+      ];
+      piano.note = function(string, fret) {
+        var stringNotes = this.strings[string];
+        var note = stringNotes.list[fret];
+        return note.label[0]+note.octave;
+      }
+      window.p = piano;
     }
 
     AudioPlayer.prototype = Object.create(Observable.prototype);
@@ -522,6 +583,9 @@
         audio.gain.setValueAtTime(audio.sound.volume*0.8, audio.endTime-0.05);
         audio.gain.linearRampToValueAtTime(0.0001, audio.endTime+0.2);
       }
+      // if (!sound.prev) {
+      //   playMidi(track, sound, startTime, audio.duration);
+      // }
     }
 
     AudioPlayer.prototype._playBassSound = function(trackId, track, sound, startTime, beatTime, timeSignature) {
@@ -726,7 +790,7 @@
           if (track.type === 'piano') {
             track.data.forEach(function(beat) {
               beat.data.forEach(function(sound) {
-                addResources(this.piano.getHandler(sound).getResources(sound));
+                addResources(this.piano.getHandler(sound).getResources(track, sound));
               }, this)
             }, this);
           }
@@ -844,7 +908,7 @@
     AudioPlayer.prototype.playPianoSample = function(track, sound) {
       sound.start = 0;
       sound.end = 0.5;
-      var resources = this.piano.getHandler(sound).getResources(sound);
+      var resources = this.piano.getHandler(sound).getResources(track, sound);
       this.bufferLoader.loadResources(
         resources,
         this._playSound.bind(this, track.id, track, {subdivision: 4}, sound, context.currentTime, 1)

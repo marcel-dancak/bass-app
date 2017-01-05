@@ -46,7 +46,7 @@
     md-no-ink
     aria-label="Volume"
     class="preferences icon-hover toolbar-button"
-    ng-disabled="workspace.track.type !== 'bass'"
+    ng-disabled="workspace.track.type === 'drums'"
     ng-click="$mdOpenMenu($event)">
     <md-icon
       md-svg-icon="options">
@@ -57,8 +57,14 @@
   </md-button>
   <md-menu-content
     width="4"
-    class="preferences md-whiteframe-16dp">
-    <ng-include src="'views/bass_settings.html'"></ng-include>
+    class="preferences md-whiteframe-16dp"
+    ng-switch="workspace.track.type">
+    <div ng-switch-when="bass">
+      <ng-include src="'views/bass_settings.html'"></ng-include>
+    </div>
+    <div ng-switch-when="piano">
+      <ng-include src="'views/piano_settings.html'"></ng-include>
+    </div>
   </md-menu-content>
 </md-menu>
 
