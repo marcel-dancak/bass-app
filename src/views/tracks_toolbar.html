@@ -41,13 +41,17 @@
 </md-input-container>
 
 <md-menu
-  md-offset="0 10">
+  md-offset="0 10"
+  ng-init="instrument = null">
   <md-button
     md-no-ink
     aria-label="Volume"
     class="preferences icon-hover toolbar-button"
     ng-disabled="workspace.track.type === 'drums'"
-    ng-click="$mdOpenMenu($event)">
+    ng-click="
+      instrument = workspace.track.instrument;
+      $mdOpenMenu($event)
+    ">
     <md-icon
       md-svg-icon="options">
     </md-icon>
@@ -55,6 +59,20 @@
       <span translate="INSTRUMENT_PREFERENCES"></span>
     </md-tooltip>
   </md-button>
+<!--   <md-menu-content
+    width="4"
+    class="preferences md-whiteframe-16dp">
+    <div
+      ng-if="instrument === workspace.track.instrument"
+      ng-switch="workspace.track.type">
+      <div ng-switch-when="bass">
+        <ng-include src="'views/bass_settings.html'"></ng-include>
+      </div>
+      <div ng-switch-when="piano">
+        <ng-include src="'views/piano_settings.html'"></ng-include>
+      </div>
+    </div>
+  </md-menu-content> -->
   <md-menu-content
     width="4"
     class="preferences md-whiteframe-16dp"
@@ -62,7 +80,10 @@
     <div ng-switch-when="bass">
       <ng-include src="'views/bass_settings.html'"></ng-include>
     </div>
-    <div ng-switch-when="piano">
+    <!-- Piano settings requires reinitialization -->
+    <div
+      ng-switch-when="piano"
+      ng-if="instrument === workspace.track.instrument">
       <ng-include src="'views/piano_settings.html'"></ng-include>
     </div>
   </md-menu-content>

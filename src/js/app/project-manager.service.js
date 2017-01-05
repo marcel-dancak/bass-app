@@ -257,6 +257,7 @@
       }
 
       if (track.type === 'piano') {
+        track.range = track.range || ['C2', 'B5'];
         track.instrument = new Piano(track);
       } else {
         track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];

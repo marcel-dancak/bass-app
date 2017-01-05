@@ -868,3 +868,10 @@ md-input-container label.md-no-float {
 .section-dialog md-input-container.md-input-focused .octave {
   visibility: hidden;
 }
+
+.piano-range-field .note {
+  margin: 16px 10px 0 2px;
+}
+.piano-range-field span {
+  color: #777;
+}

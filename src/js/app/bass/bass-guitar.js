@@ -196,9 +196,8 @@
   }
 
   function Piano(config) {
-    var range = config.range || ['C2', 'B5'];
-    this.range = range;
-    this.notes = new Notes(range[0], range[1]);
+    this.range = config.range;
+    this.notes = new Notes(this.range[0], this.range[1]);
     this.preset = config.preset || 'acoustic';
   }
 
@@ -210,5 +209,10 @@
     }
   }
 
+  Piano.prototype.setRange = function(start, end) {
+    this.range[0] = start;
+    this.range[1] = end;
+    this.notes = new Notes(this.range[0], this.range[1]);
+  }
 
 })();
