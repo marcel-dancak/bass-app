@@ -105,7 +105,7 @@
     }
 
 
-  function EditModeController($scope, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
+  function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
               projectManager, Drums, BassSection, DrumSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer) {
 
     $scope.swiperControl = swiperControl;
@@ -188,10 +188,21 @@
     };
 
     $scope.player.setProgress = function(id, value) {
-      if (!$scope.player.playing) {
-        swiperControl.barSwiper.slideTo(value, 0, true);
+      if ($scope.player.playing) {
+        $scope.player.playing = false;
+        audioPlayer.stop(true);
+        $scope.player.progress.restartPlayback = true;
       }
+      swiperControl.barSwiper.slideTo(value, 0, true);
     };
+
+    $scope.player.progressReleased = function(id, value) {
+      if ($scope.player.progress.restartPlayback) {
+        $scope.player.progress.restartPlayback = false;
+        // wait a little for rendering
+        $timeout($scope.player.play, 75);
+      }
+    }
 
     function beatPrepared(evt) {
       if (!$scope.player.visibleBeatsOnly) {
