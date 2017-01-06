@@ -41,14 +41,20 @@
       layout: layouts[0],
       swiper: null,
       setLayout: function(layout) {
+        var position = $scope.player.progress.value;
         viewer.layout = layout;
-        // viewer.swiper.onTransitionEnd = angular.noop;
         var slideIndex = viewer.swiper.snapIndex;
         viewer.swiper.removeAllSlides();
         viewer.swiper.container.removeClass('swiper-container-' + viewer.swiper.params.direction);
         viewer.swiper.destroy();
         initializeSwiper();
         initPlaylistSlides();
+
+        $scope.player.progress.value = position;
+        $scope.player.setProgress(1, position);
+        // $mdUtil.nextTick($scope.player.setProgress.bind($scope, 1, position));
+
+        // $scope.player.setProgress(position);
         // if (slideIndex > 0) {
         //   viewer.swiper.slideTo(slideIndex, true, 0);
         // }
@@ -57,7 +63,8 @@
         viewer.fretboardVisible = visible;
         $mdUtil.nextTick(function() {
           viewer.swiper.onResize();
-          fretboardViewer.activate(visible? $element[0].querySelector('.fret-diagram') : null);
+          var elem = $element[0].querySelector('.fretboard-container');
+          fretboardViewer.activate(visible? elem : null);
         });
       }
     };
@@ -67,6 +74,7 @@
     var playlistSlidePosition;
     var playbackState;
     var slidesMetadata;
+    var backingTrack; // workspace.playlist.backingTrack = {offset: 6.7, file: 'mgs-o.ogg'}
 
 
     function updateSlide(slideIndex, position, count) {
@@ -306,11 +314,10 @@
       $scope.player.playing = false;
     }
 
-    // var audio = new Audio(['mgs-o.ogg']);
-    // window.a = audio;
     $scope.player.play = function() {
-      // audio.currentTime = 10;
-      // audio.currentTime = 6.7
+      if (workspace.playlist.backingTrack) {
+        backingTrack.currentTime = workspace.playlist.backingTrack.offset || 0;
+      }
 
       var sections = playlist.reduce(function(list, section) {
         if (list.indexOf(section) === -1) {
@@ -346,19 +353,23 @@
         }
         */
         $scope.player.playing = true;
-        audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
-        // audioPlayer.fetchResourcesWithProgress(sections).then(function() {
-        //   audio.play();
-        //   playFromCurrentPosition();
-        // }, failedToLoadResources);
+        // audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
+        audioPlayer.fetchResourcesWithProgress(sections).then(function() {
+          if (workspace.playlist.backingTrack) {
+            backingTrack.play();
+          }
+          playFromCurrentPosition();
+        }, failedToLoadResources);
       }
     };
 
     $scope.player.pause = function() {
       $scope.player.playing = false;
       playbackState.section = playlist.length;
-      audioPlayer.stop();
-      // audio.pause();
+      audioPlayer.stop(true);
+      if (backingTrack) {
+        backingTrack.pause();
+      }
     };
 
     $scope.player.goToStart = function() {
@@ -451,13 +462,24 @@
     }
 
     function playlistLoaded(playlist) {
+      console.log('playlistLoaded')
       workspace.playlist = playlist;
       workspace.selectedPlaylistId = playlist.id;
       updatePlaylistRange();
       initPlaylistSlides();
+      if (playlist.backingTrack) {
+        console.log(playlist.backingTrack)
+        backingTrack = new Audio([playlist.backingTrack.file]);
+        backingTrack.addEventListener('playing', function() {
+          console.log('backingTrack playing');
+        });
+        window.a = backingTrack;
+      } else {
+        backingTrack = null;
+      }
     }
 
-    function projectLoaded(project) {
+    function projectLoaded1(project) {
       console.log('projectLoaded');
       workspace.playlist = project.playlists[0];
       $scope.sectionNames = {};
@@ -475,6 +497,24 @@
         workspace.selectedPlaylistId = workspace.playlist.id;
       }
       $scope.ui.trackId = 'bass_0';
+      $scope.ui.selectTrack($scope.ui.trackId);
+    }
+
+    function projectLoaded(project) {
+      console.log('projectLoaded');
+      $scope.sectionNames = {};
+      slidesMetadata = null;
+      projectManager.project.sections.forEach(function(section) {
+        $scope.sectionNames[section.id] = section.name;
+      });
+
+      $scope.ui.trackId = 'bass_0';
+      playlistLoaded(project.playlists[0]);
+
+      if (workspace.playlist.items.length === 0) {
+        $scope.ui.playlist.showEditor = true;
+        viewer.swiper.removeAllSlides();
+      }
       $scope.ui.selectTrack($scope.ui.trackId);
     }
 
@@ -524,11 +564,6 @@
 
     slidesCompiler.setTemplate('views/playlist/slide.html').then(function() {
       initializeSwiper();
-      // ugly autoselect to bass guitar track
-      // if (workspace.track && workspace.track.type !== 'bass') {
-      //   $scope.ui.trackId = 'bass_0';
-      //   $scope.ui.selectTrack($scope.ui.trackId);
-      // }
       $mdUtil.nextTick(projectLoaded.bind(this, projectManager.project));
     });
 

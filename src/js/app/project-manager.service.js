@@ -258,6 +258,7 @@
 
       if (track.type === 'piano') {
         track.range = track.range || ['C2', 'B5'];
+        track.preset = track.preset || 'acoustic';
         track.instrument = new Piano(track);
       } else {
         track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
@@ -602,7 +603,8 @@
       return this.project.playlists.map(function(playlist) {
         return {
           name: playlist.name,
-          items: playlist.items
+          items: playlist.items,
+          backingTrack: playlist.backingTrack
         };
       });
     }

@@ -278,7 +278,7 @@
 
     $scope.player.pause = function() {
       $scope.player.playing = false;
-      audioPlayer.stop();
+      audioPlayer.stop(true);
     };
 
     $scope.player.goToStart = function() {

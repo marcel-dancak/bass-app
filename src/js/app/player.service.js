@@ -842,25 +842,27 @@
       countDownTick();
     };
 
-    AudioPlayer.prototype.stop = function(noteLength) {
+    AudioPlayer.prototype.stop = function(hard) {
       this.playing = false;
       if (this.lastSyncTimerId) {
         clearTimeout(this.lastSyncTimerId);
       }
-      var currentTime = context.currentTime;
-      this.scheduledSounds.forEach(function(sound) {
-        try {
-          if (currentTime < sound.startTime) {
-            sound.source.stop();
-          } else {
-            sound.gain.cancelScheduledValues(currentTime);
-            sound.gain.setValueAtTime(sound.gain.value, currentTime);
-            sound.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
+      if (hard) {
+        var currentTime = context.currentTime;
+        this.scheduledSounds.forEach(function(sound) {
+          try {
+            if (currentTime < sound.startTime) {
+              sound.source.stop();
+            } else {
+              sound.gain.cancelScheduledValues(currentTime);
+              sound.gain.setValueAtTime(sound.gain.value, currentTime);
+              sound.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
+            }
+          } catch (ex) {
+            console.log('Error');
           }
-        } catch (ex) {
-          console.log('Error');
-        }
-      });
+        });
+      }
 
       /*
       this.oscillator.stop();

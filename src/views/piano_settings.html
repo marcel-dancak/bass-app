@@ -7,7 +7,8 @@
         md-no-ink
         aria-label="Type"
         md-container-class="preferences"
-        ng-model="instrument.preset">
+        ng-model="instrument.preset"
+        ng-change="workspace.track.preset = instrument.preset">
         <md-option value="acoustic">Acoustic</md-option>
         <md-option value="synth">Electric</md-option>
       </md-select>

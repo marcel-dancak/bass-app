@@ -279,7 +279,7 @@
 
       <md-button
         md-no-ink
-        aria-label="Layout"
+        aria-label="Fretboard"
         class="toggle-button icon-hover"
         ng-class="{ active: viewer.fretboardVisible }"
         ng-click="viewer.setFretboardVisible(!viewer.fretboardVisible)">
@@ -297,7 +297,7 @@
         ng-repeat="layout in ::viewer.layouts"
         md-no-ink
         aria-label="Layout"
-        class="toggle-button icon-hover"
+        class="toggle-button icon-hover disabled-on-playback"
         ng-class="{ active: viewer.layout === layout }"
         ng-click="viewer.setLayout(layout)">
         <md-icon md-svg-icon="{{ ::layout.name }}"></md-icon>
@@ -310,7 +310,7 @@
 
       <md-input-container
         layout="row"
-        class="input-inline-label">
+        class="input-inline-label disabled-on-playback">
         <label
           class="md-label md-no-float"
           translate="BEATS_PER_SCREEN">

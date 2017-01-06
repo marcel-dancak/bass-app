@@ -196,9 +196,9 @@
   }
 
   function Piano(config) {
+    this.preset = config.preset;
     this.range = config.range;
     this.notes = new Notes(this.range[0], this.range[1]);
-    this.preset = config.preset || 'acoustic';
   }
 
   Piano.prototype.stringIndex = function(note) {

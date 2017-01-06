@@ -385,8 +385,7 @@ md-select-menu md-content {
 }
 
 .toolbar-button[disabled],
-.playback-active .mode-switch,
-.playback-active .project-toolbar,
+.playback-active .disabled-on-playback,
 .readonly-project .md-button[aria-label="Save Section"],
 .readonly-project .md-button[aria-label="Save Playlists"],
 .readonly-project md-menu-item > .md-button[aria-label="Open Project"],
