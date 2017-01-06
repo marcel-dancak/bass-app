@@ -515,6 +515,13 @@
         // console.log(source.buffer.duration);
         // console.log('startTime: {0} volume: {1} duration: {2}'.format(startTime, sound.volume, sound.duration));
         source.start(startTime);
+        this.scheduledSounds.push({
+          // source: source,
+          gain: gain.gain,
+          // output: gain,
+          // startTime: startTime,
+          endTime: startTime + source.buffer.duration,
+        });
       }
     };
 
@@ -576,8 +583,10 @@
         } else {
           audio.source.start(audio.startTime, audio.offset, duration+0.25);
         }
+        this.scheduledSounds.push(audio);
         this.piano.playingSounds[sound.string] = audio;
       }
+      // update sound's end time
       audio.endTime = startTime + duration;
       if (!sound.next) {
         audio.gain.setValueAtTime(audio.sound.volume*0.8, audio.endTime-0.05);
