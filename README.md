@@ -52,6 +52,8 @@ Here are some examples of projects. Please note, that you cannot save changes
 in these online (remote) projects. Click on the link above to open application
 for creating your own projects.
 
+[RHCP - Dark Necessities (testing version with piano)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/test/index.html#DarkNecessities)
+
 [Slap Funk (by Mannybass)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#SlapFunk)
 
 [Cantos de Jubilo (by Mannybass)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Cantos_de_Jubilo)
