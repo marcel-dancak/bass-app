@@ -59,9 +59,7 @@
         bottom: 4
       },
       length: 2,
-      beatsPerView: 3,
-      animationDuration: 300,
-      beatsPerSlide: 1
+      beatsPerView: 3
     };
     var trackSection = new BassSection(section);
     $scope.workspace = {

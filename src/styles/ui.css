@@ -263,6 +263,9 @@ md-menu-item.right md-icon {
   overflow-x: hidden;
 }
 
+md-option {
+  height: 42px;
+}
 .sections-list md-option {
   min-width: 160px;
 }

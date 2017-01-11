@@ -52,21 +52,29 @@ Here are some examples of projects. Please note, that you cannot save changes
 in these online (remote) projects. Click on the link above to open application
 for creating your own projects.
 
-[RHCP - Dark Necessities (testing version with piano)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/test/index.html#DarkNecessities)
+Examples created by [Mannybass](https://www.youtube.com/user/manuel118215/):
 
-[Slap Funk (by Mannybass)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#SlapFunk)
+[El Leon de la tribu de Juda](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Leon)
 
-[Cantos de Jubilo (by Mannybass)](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Cantos_de_Jubilo)
+[Slap Funk](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#SlapFunk)
 
-[Jamiroquai - Runaway](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
+[Cantos de Jubilo](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Cantos_de_Jubilo)
 
-[Patrice Rushen - Forget Me Nots](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#PatriceRushen-ForgetMeNots)
+My transcriptions from various resources:
 
-[Sublime - Santeria](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Sublime-Santeria)
+[RHCP - Dark Necessities](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#DarkNecessities)
 
-[Knight Rider](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#KnightRider)
+[John Newman - Love Me Again](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Love_Me_Again)
 
-[Various short riffs](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Riffs)
+[Jamiroquai - Runaway](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Jamiroquai-Runaway)
+
+[Patrice Rushen - Forget Me Nots](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#PatriceRushen-ForgetMeNots)
+
+[Sublime - Santeria](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Sublime-Santeria)
+
+[Knight Rider](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#KnightRider)
+
+[Various short riffs](https://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html#Riffs)
 
 
 ### Project support

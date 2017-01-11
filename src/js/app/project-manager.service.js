@@ -391,7 +391,7 @@
     ProjectManager.prototype.importSection = function(section) {
       console.log('importSection');
       section.id = generateItemId(this.project.sections);
-      console.log(section);
+      wrapSection(section);
       this.project.sections.push(section);
     };
 
@@ -529,6 +529,28 @@
       }, this);
     };
 
+    function wrapSection(section) {
+      section.beatLabels = function() {
+        var labels = new Array(13);
+        if (this.barSubdivision) {
+          var parts = this.barSubdivision.split('+').map(Number);
+          var index = 1;
+          for (var i = 0; i < parts.length; i++) {
+            var iBeat = 1;
+            var count = parts[i];
+            while (count--) {
+              labels[index++] = iBeat++;
+            }
+          }
+        } else {
+          for (var i = 1; i <= this.timeSignature.top; i++) {
+            labels[i] = i;
+          }
+        }
+        return labels;
+      }.bind(section);
+    }
+
     ProjectManager.prototype.getSection = function(sectionId) {
       var section = this.project.sections.find(byId(sectionId));
       if (!section) {
@@ -557,26 +579,7 @@
         this._filterProjectTracks(storedSection);
         section = this.loadSectionData(storedSection);
       }
-      section.beatLabels = function() {
-        var labels = new Array(13);
-        if (this.barSubdivision) {
-          var parts = this.barSubdivision.split('+').map(Number);
-          var index = 1;
-          for (var i = 0; i < parts.length; i++) {
-            var iBeat = 1;
-            var count = parts[i];
-            while (count--) {
-              labels[index++] = iBeat++;
-            }
-          }
-        } else {
-          for (var i = 1; i <= this.timeSignature.top; i++) {
-            labels[i] = i;
-          }
-        }
-        return labels;
-      }.bind(section);
-
+      wrapSection(section);
       return section;
     }
 
