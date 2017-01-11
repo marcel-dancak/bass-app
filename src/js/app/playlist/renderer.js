@@ -72,6 +72,7 @@
         };
         var beats = [];
         var section = playlist[position.section];
+        var beatLabels = section? section.beatLabels() : [];
         var counter = count;
         while (section && counter--) {
           var track = section.tracks[viewerTrackId] || EMPTY_TRACK;
@@ -99,7 +100,7 @@
             subdivision: trackBeat.subdivision,
             timeSignature: section.timeSignature,
             chordLabels: chordLabels,
-            beatLabel: section.beatLabels? section.beatLabels[position.beat] : position.beat,
+            beatLabel: beatLabels[position.beat],
             meta: trackBeat.meta,
             sounds: track.beatSounds(trackBeat),
             subbeats: [1, 2, 3, 4]
@@ -138,6 +139,7 @@
               position.bar = 1;
               position.section++;
               section = playlist[position.section];
+              beatLabels = section? section.beatLabels() : [];
             }
           }
         }

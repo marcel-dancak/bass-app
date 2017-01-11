@@ -1,10 +1,20 @@
 /** Fretboard Settings (Panel) **/
 
+.fretboard.toolbar {
+  height: 32px;
+  margin-top: 4px;
+}
+
+.fretboard.toolbar i {
+  font-size: 18px;
+}
+
 .fretboard-settings {
   height: 44px;
 }
 .fretboard-settings md-input-container {
-  margin: 4px 16px 2px 5px;
+  margin: 2px 16px 2px 5px;
+  font-size: 15px;
 }
 
 .fretboard-settings .style-selectbox {

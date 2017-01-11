@@ -364,10 +364,7 @@
           bottom: 4
         },
         bpm: 80,
-        length: 4,
-        beatsPerSlide: 1,
-        beatsPerView: 8,
-        animationDuration: 300
+        length: 4
       };
       if (baseSection) {
         Object.keys(baseSection).forEach(function(property) {
@@ -419,9 +416,6 @@
         name: section.name,
         timeSignature: section.timeSignature,
         length: section.length,
-        beatsPerView: section.beatsPerView,
-        beatsPerSlide: section.beatsPerSlide,
-        animationDuration: section.animationDuration,
         bpm: section.bpm,
         meta: section.meta,
         barSubdivision: section.barSubdivision,
@@ -563,20 +557,26 @@
         this._filterProjectTracks(storedSection);
         section = this.loadSectionData(storedSection);
       }
-      // beat labels
-      if (section.barSubdivision) {
-        var parts = section.barSubdivision.split('+').map(Number);
+      section.beatLabels = function() {
         var labels = new Array(13);
-        var index = 1;
-        for (var i = 0; i < parts.length; i++) {
-          var iBeat = 1;
-          var count = parts[i];
-          while (count--) {
-            labels[index++] = iBeat++;
+        if (this.barSubdivision) {
+          var parts = this.barSubdivision.split('+').map(Number);
+          var index = 1;
+          for (var i = 0; i < parts.length; i++) {
+            var iBeat = 1;
+            var count = parts[i];
+            while (count--) {
+              labels[index++] = iBeat++;
+            }
+          }
+        } else {
+          for (var i = 1; i <= this.timeSignature.top; i++) {
+            labels[i] = i;
           }
         }
-        section.beatLabels = labels;
-      }
+        return labels;
+      }.bind(section);
+
       return section;
     }
 

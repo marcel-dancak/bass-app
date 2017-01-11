@@ -32,10 +32,14 @@
       var playbackRange = this.lastSlide - this.firstSlide + 1;
 
       var visibleIndexes = [];
-      var length = this.barSwiper.snapIndex + this.barSwiper.params.slidesPerView + this.barSwiper.params.slidesPerGroup;
-      var firstVisible = this.barSwiper.snapIndex - this.barSwiper.params.slidesPerGroup;
-      // console.log(firstVisible);
-      for (var i = firstVisible; i < length; i++) {
+      var currentIndex = this.barSwiper.snapIndex;
+      var firstVisible = currentIndex - 1;
+      var lastVisible = currentIndex + this.barSwiper.params.slidesPerView + this.preRenderedSlides;
+      // console.log(
+      //   'currentIndex: {0} firstVisible: {1} lastVisible: {2}'
+      //   .format(currentIndex, firstVisible, lastVisible)
+      // );
+      for (var i = firstVisible; i < lastVisible; i++) {
         var index = i >= playbackRange? i - playbackRange : i;
         index += this.firstSlide;
         if (index >= 0) {
@@ -156,11 +160,11 @@
       return slidesPerView;
     };
 
-    SwiperControl.prototype.setBeatsPerSlide = function(beatsPerSlide) {
-      this.barSwiper.params.slidesPerGroup = beatsPerSlide;
-      this.instrumentSwiper.params.slidesPerGroup = beatsPerSlide;
-      this.barSwiper.updateSlidesSize();
-    };
+    // SwiperControl.prototype.setBeatsPerSlide = function(beatsPerSlide) {
+    //   this.barSwiper.params.slidesPerGroup = beatsPerSlide;
+    //   this.instrumentSwiper.params.slidesPerGroup = beatsPerSlide;
+    //   this.barSwiper.updateSlidesSize();
+    // };
 
     SwiperControl.prototype.setVisibleRange = function(first, last) {
       console.log(first+' to '+last);
@@ -195,7 +199,8 @@
     SwiperControl.prototype.switchInstrument = function(type) {
       this.slideType = type;
       var start = this.firstSlide + this.barSwiper.snapIndex;
-      for (var i = 0; i <= workspace.section.beatsPerView; i++) {
+      var slidesPerView = this.barSwiper.params.slidesPerView;
+      for (var i = 0; i <= slidesPerView; i++) {
         var slideIndex = start+i;
         if (slideIndex >= this.slides.length) {
           slideIndex -= this.slides.length;
@@ -232,7 +237,8 @@
       // console.log(obsolete);
     };
 
-    SwiperControl.prototype.rebuildSlides = function(type) {
+    SwiperControl.prototype.rebuildSlides = function() {
+      console.log('rebuildSlides')
       for (var i = 0; i < this.slides.length; i++) {
         var slide = this.slides[i];
         slide.initialized = false;
@@ -250,19 +256,25 @@
 
       var instrumentSwiper = loopConfig.ctrl.instrumentSwiper;
 
-      var slideIndex = s.snapIndex * workspace.section.beatsPerSlide;
+      var slideIndex = s.snapIndex;
       // console.log('Range: {0} - {1} Active index: {2} Loop start: {3}'.format(firstSlide, firstSlide, s.activeIndex, normalSlidesCount));
       if (slideIndex >= playbackSlidesCount) {
         console.log('LAST SLIDE, fast switch {0} -> {1}: '.format(slideIndex, slideIndex-playbackSlidesCount));
+        // console.log('LAST SLIDE, fast switch {0} -> {1}: '.format(slideIndex, slideIndex-normalSlidesCount));
         slideIndex = slideIndex-playbackSlidesCount;
+        // slideIndex = loopConfig.ctrl.lastRequestedIndex - slideIndex;
+        // slideIndex = slideIndex - normalSlidesCount;
         s.slideTo(slideIndex, 0, false, true);
         loopConfig.ctrl.lastRequestedIndex = slideIndex;
       }
 
-      var lastViewIndex = slideIndex + workspace.section.beatsPerView + workspace.section.beatsPerSlide;
+      // var ahead = s.params.slidesPerGroup;
+      var ahead = loopConfig.ctrl.preRenderedSlides;
 
-      var length = Math.min(workspace.section.beatsPerView+workspace.section.beatsPerSlide, playbackSlidesCount);
-      length = workspace.section.beatsPerView+workspace.section.beatsPerSlide;
+      var lastViewIndex = slideIndex + s.params.slidesPerView + ahead;
+
+      var length = Math.min(s.params.slidesPerView + ahead, playbackSlidesCount);
+      length = s.params.slidesPerView + ahead;
       for (var i = 0; i < length; i++) {
         var j = firstSlide + i + slideIndex;
         if (j > lastSlide) {
@@ -334,7 +346,8 @@
       var emptySlide = angular.element('<div class="swiper-slide"></div>');
       emptySlide.addClass(this.barSwiper.params.slideDuplicateClass);
       emptySlide = emptySlide[0];
-      for (var i = 0; i <= workspace.section.beatsPerView; i++) {
+      var clonesCount = this.barSwiper.params.slidesPerView + 2;
+      for (var i = 0; i <= clonesCount; i++) {
         this.barSwiper.appendSlide(emptySlide.cloneNode());
         this.instrumentSwiper.appendSlide(emptySlide.cloneNode());
         loopConfig.onTheirPlace.push(false);
@@ -342,7 +355,6 @@
 
       this.reinitialize({
         slidesPerView: this.barSwiper.params.slidesPerView,
-        slidesPerGroup: this.barSwiper.params.slidesPerGroup,
         initialSlide: this.barSwiper.snapIndex
       });
 
@@ -397,8 +409,7 @@
 
       // note: maybe not needed to reinitialize
       this.reinitialize({
-        slidesPerView: this.barSwiper.params.slidesPerView,
-        slidesPerGroup: this.barSwiper.params.slidesPerGroup
+        slidesPerView: this.barSwiper.params.slidesPerView
       });
       // TODO: check if activeIndex is greater than without loop slides and reset to first slide
       this.updateSlidesVisibility();
@@ -466,15 +477,15 @@
       }
       // console.log('slide to '+slideIndex);
       this.lastRequestedIndex = slideIndex;
-      // console.log('slideTo: '+slideIndex);
+      // console.log('computed slide index: '+slideIndex);
       this.barSwiper.slideTo(slideIndex, speed, runCallbacks, internal);
     };
 
     SwiperControl.prototype.getPosition = function() {
       var maxIndex = this.lastSlide;
       // var sFlatIndex = swiperControl.barSwiper.snapIndex
-      var sFlatIndex = this.firstSlide + this.barSwiper.snapIndex * workspace.section.beatsPerSlide;
-      var eFlatIndex = sFlatIndex + workspace.section.beatsPerView - 1;
+      var sFlatIndex = this.firstSlide + this.barSwiper.snapIndex;
+      var eFlatIndex = sFlatIndex + this.barSwiper.params.slidesPerView - 1;
 
       if (eFlatIndex > maxIndex) {
         // invalid range for playback lock

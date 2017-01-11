@@ -59,45 +59,25 @@
       </md-list-item>
 
       <md-list-item>
-        <label translate="BEATS_PER_SCREEN"></label>
+        <label xtranslate="">Bar subdivision</label>
         <md-input-container>
           <input
-            aria-label="Beats per Screen"
-            type="number"
-            min="1"
-            max="16"
-            step="1"
-            ng-model="workspace.section.beatsPerView"
-            ng-change="workspace.section.beatsPerView = swiperControl.setBeatsPerView(workspace.section.beatsPerView)">
+            aria-label="Bar subdivision"
+            type="text"
+            ng-model="workspace.section.barSubdivision"
+            xng-blur="swiperControl.rebuildSlides()">
         </md-input-container>
-      </md-list-item>
 
-      <md-list-item>
-        <label>
-          <span translate="DURATION"></span>
-          /
-          <span translate="BEATS_PER_SLIDE"></span>
-        </label>
-        <md-input-container>
-          <input
-            aria-label="Duration"
-            type="number"
-            min="0"
-            max="1500"
-            step="50"
-            ng-model="workspace.section.animationDuration">
-        </md-input-container>
-        <span>&nbsp&nbsp</span>
-        <md-input-container>
-          <input
-            aria-label="Beats per Slide"
-            type="number"
-            min="1"
-            max="8"
-            step="1"
-            ng-model="workspace.section.beatsPerSlide"
-            ng-change="swiperControl.setBeatsPerSlide(workspace.section.beatsPerSlide)">
-        </md-input-container>
+        <md-tooltip
+          md-delay="1500"
+          class="multiline-tooltip">
+          <p><b>Bar subdivision</b></p>
+          <md-divider></md-divider>
+          <p>
+            Can be used to simplify counting on less common time signatures
+            (for example beats in '4+3' will be counted as 1, 2, 3, 4, 1, 2, 3)
+          </p>
+        </md-tooltip>
       </md-list-item>
 
     </md-list>

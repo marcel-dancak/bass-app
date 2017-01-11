@@ -72,7 +72,8 @@
 .viewer-container {
   position: relative;
   height: 100%;
-  margin: 0 15px 0 0px;
+  xmargin: 0 15px 0 0px;
+  padding-right: 12px;
 }
 
 .playlist-swiper {
@@ -221,7 +222,6 @@
 }
 
 .playlist-editor {
-  padding-bottom: 28px;
   padding-top: 35px;
   position: absolute;
   right: 0;
@@ -261,6 +261,7 @@
 .playlist-button {
   text-align: left;
   text-transform: none;
+  margin: 4px 16px;
 }
 
 .md-button.edit-playlist {

@@ -1,0 +1,150 @@
+<md-button
+  ng-disabled="workspace.track.type !== 'bass'"
+  md-no-ink
+  aria-label="Fretboard"
+  class="toggle-button icon-hover"
+  ng-class="{ active: editor.fretboardVisible }"
+  ng-click="editor.fretboardVisible = !editor.fretboardVisible">
+  <md-icon md-svg-icon="fretboard"></md-icon>
+  <md-tooltip
+    md-delay="1500"
+    md-direction="top">
+    <span translate="FRETBOARD"></span>
+  </md-tooltip>
+</md-button>
+
+<md-button
+  md-no-ink
+  aria-label="Signal Graph"
+  class="toggle-button icon-hover"
+  ng-class="{active: player.graphEnabled}"
+  ng-click="player.graphEnabled = !player.graphEnabled">
+  <md-icon md-svg-icon="audio-signal"></md-icon>
+  <md-tooltip
+    md-delay="1500"
+    md-direction="top"
+    class="multiline-tooltip">
+    <p><b translate="SIGNAL_VISUALIZATION"></b></p>
+    <md-divider></md-divider>
+    <p translate="SIGNAL_VISUALIZATION_DESC"></p>
+  </md-tooltip>
+</md-button>
+
+<md-divider></md-divider>
+
+<md-menu
+  md-position-mode="target target"
+  md-offset="5, 0">
+  <md-button
+    md-no-ink
+    aria-label="Selection playback"
+    class="icon-hover"
+    ng-click="
+      initSliders();
+      $mdOpenMenu($event)
+    ">
+    <!-- <md-icon md-svg-icon="slide-animation"></md-icon> -->
+    <md-icon md-svg-icon="horizontal"></md-icon>
+
+    <md-tooltip
+      md-delay="1500"
+      class="multiline-tooltip">
+      <p><b>Playback scrolling</b></p>
+      <md-divider></md-divider>
+      <p>Options to adjust layout and automatic scrolling during playback</p>
+    </md-tooltip>
+  </md-button>
+  <md-menu-content
+    class="preferences editor-layout md-whiteframe-16dp">
+
+    <md-list>
+
+      <md-list-item
+        class="layout-slider"
+        layout="column">
+        <label>Visible beats</label>
+        <rzslider
+          class="zoom-slider"
+          rz-slider-model="editor.beatsPerView"
+          rz-slider-options="{
+            floor: 1,
+            ceil: 12,
+            step: 1,
+            minLimit: 4,
+            showTicks: true,
+            showTicksValues: false,
+            hideLimitLabels: true,
+            getLegend: editor.layoutLegend,
+            onChange: updateBeatsPerView
+          }">
+        </rzslider>
+        <rzslider
+          class="animation-slider"
+          rz-slider-model="editor.slideOnBeat"
+          rz-slider-options="{
+            floor: 1,
+            ceil: 12,
+            step: 1,
+            maxLimit: editor.beatsPerView,
+            showTicks: false,
+            showTicksValues: false,
+            hideLimitLabels: true,
+            translate: editor.animationLabel
+          }">
+        </rzslider>
+      </md-list-item>
+
+      <md-list-item>
+        <label translate="DURATION"></label>
+        <md-input-container>
+          <input
+            aria-label="Duration"
+            type="number"
+            min="0"
+            max="1500"
+            step="50"
+            ng-model="editor.animationDuration">
+        </md-input-container>
+      </md-list-item>
+
+    </md-list>
+
+  </md-menu-content>
+</md-menu>
+
+<md-divider></md-divider>
+
+<md-input-container>
+  <label
+    class="md-label md-no-float"
+    translate="NOTE_LABELS">
+  </label>
+  <md-select
+    md-no-ink
+    aria-label="Note"
+    md-container-class="preferences"
+    ng-model="bass.settings.label">
+    <md-option value="name-and-fret" translate="NAME_AND_FRET"></md-option>
+    <md-option value="name" translate="NOTE_NAME"></md-option>
+    <md-option value="fret" translate="FRET"></md-option>
+  </md-select>
+  <md-tooltip
+    md-delay="1500"
+    md-direction="top">
+    <span>Note notation</span>
+  </md-tooltip>
+</md-input-container>
+
+<md-button
+  md-no-ink
+  aria-label="Colors"
+  class="toggle-button icon-hover"
+  ng-class="{ active: bass.settings.colors }"
+  ng-click="bass.settings.colors = !bass.settings.colors">
+  <md-icon md-svg-icon="color-palette"></md-icon>
+  <md-tooltip
+    md-delay="1500"
+    md-direction="top">
+    <span translate="COLORS"></span>
+  </md-tooltip>
+</md-button>

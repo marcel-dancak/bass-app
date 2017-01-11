@@ -169,7 +169,7 @@
 .bar-toolbar {
   position: absolute;
   left: -44px;
-  top: 26px;
+  top: 32px;
   width: 44px;
 }
 
@@ -233,10 +233,6 @@
   z-index: 500;
 }
 
-
-.md-open-menu-container {
-  border-radius: 8px;
-}
 
 .bar-settings-container md-input-container {
   margin

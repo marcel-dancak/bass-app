@@ -1,0 +1,132 @@
+.bottom.toolbar {
+  position: absolute;
+  top: auto;
+  bottom: -37px;
+  left: 0px;
+  xright: -12px;
+  width: 100%;
+  height: 36px;
+  background-color: #ECEFF1;
+  border-top: 1px solid #ccc;
+}
+
+.preferences.editor-layout {
+  min-width: 240px;
+}
+
+.toolbar md-input-container.input-inline-label {
+  margin-top: 2px;
+}
+.toolbar md-input-container.input-inline-label label {
+  bottom: 4px;
+}
+
+.toolbar md-divider {
+  margin: 5px 4px;
+  background-color: #ddd;
+}
+
+.toolbar .md-button {
+  height: 36px;
+  min-height: 36px;
+  margin: 0 4px;
+  min-width: 36px;
+}
+
+.toolbar md-input-container {
+  margin: 0 4px;
+}
+.toolbar md-select-value {
+  height: 26px;
+  font-size: 14px;
+  padding-top: 4px;
+}
+.toolbar md-select-value span {
+  padding-top: 5px;
+}
+
+.toolbar md-input-container label {
+  bottom: 24px;
+  left: 4px;
+  font-size: 9px;
+}
+.toolbar md-input-container:not(.md-input-invalid) label {
+  color: #777;
+}
+.toolbar md-input-container.md-input-has-value .md-select-value > span:not(.md-select-icon) {
+  transform: none;
+}
+
+.toolbar md-input-container input {
+  padding-top: 8px;
+  text-align: center;
+  margin-top: 2px;
+}
+
+md-list-item.layout-slider {
+  padding: 0 16px 4px 5px;
+}
+
+.layout-slider {
+  width: 280px;
+}
+
+.animation-slider.rzslider .rz-pointer.rz-pointer-min {
+  top: -21px;
+  border-radius: 2px;
+  width: 0;
+  height: 0;
+  background-color: transparent;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 20px solid #2196F3;
+}
+
+/*.animation-slider.rzslider .rz-pointer.rz-pointer-min {
+  top: 4px;
+  border-radius: 2px;
+  width: 0;
+  height: 0;
+  background-color: transparent;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 22px solid red;
+}*/
+
+.animation-slider.rzslider .rz-pointer.rz-pointer-min:after  {
+  display: none;
+}
+
+
+.zoom-slider.rzslider .rz-ticks .rz-tick .rz-tick-legend {
+  font-size: 13px;
+  color: #aaa;
+  top: -24px;
+}
+/*.animation-slider.rzslider .rz-pointer.rz-pointer-min:after {
+  content: "visible";
+}*/
+
+.layout-slider .rzslider {
+  height: 32px;
+}
+.layout-slider .animation-slider.rzslider {
+  margin: 0;
+  
+}
+.layout-slider .zoom-slider.rzslider {
+  margin: 0;
+}
+
+.layout-slider .animation-slider.rzslider .rz-bar {
+  display: none;
+}
+
+.animation-slider.rzslider .rz-bubble {
+  top: 2px;
+  xmargin-left: 24px;
+  font-size: 13px;
+  color: #aaa;
+  white-space: normal;
+  xmax-width: 95px;
+}

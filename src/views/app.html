@@ -37,7 +37,7 @@
         'graph-enabled': player.graphEnabled
       }"
       msd-wheel="
-        workspace.section.beatsPerView = swiperControl.setBeatsPerView(workspace.section.beatsPerView+$delta);
+        editor.beatsPerView = swiperControl.setBeatsPerView(editor.beatsPerView + $delta);
         slidesSizeChanged();
         $event.preventDefault()
       ">
@@ -87,22 +87,6 @@
           class="section-preferences"
           ng-include src="'views/editor/section_preferences.html'">
         </div>
-
-        <md-button
-          md-no-ink
-          aria-label="Signal Graph"
-          class="md-fab toggle-button icon-hover audio-graph-toggle"
-          ng-class="{active: player.graphEnabled}"
-          ng-click="player.graphEnabled = !player.graphEnabled">
-          <md-icon md-svg-icon="audio-signal"></md-icon>
-          <md-tooltip
-            md-delay="1500"
-            class="multiline-tooltip">
-            <p><b translate="SIGNAL_VISUALIZATION"></b></p>
-            <md-divider></md-divider>
-            <p translate="SIGNAL_VISUALIZATION_DESC"></p>
-          </md-tooltip>
-        </md-button>
       </div>
 
     </div>
@@ -185,7 +169,7 @@
       </div>
       <div flex style="max-height: 20px;"></div>
 
-      <div ng-show="workspace.track.type === 'bass'" style="position: relative;">
+      <div ng-show="workspace.track.type === 'bass' && editor.fretboardVisible" style="position: relative;">
         <div
           ng-include="'views/editor/fretboard.html'"
           class="diagram-container">
@@ -225,7 +209,16 @@
       </div>
 
       <span flex></span>
+
     </div>
+
+    <div
+      class="bottom toolbar"
+      layout="row"
+      ng-include="'views/editor/bottom_toolbar.html'">
+
+    </div>
+
   </div>
 
   <div
@@ -263,7 +256,7 @@
     <div flex style="max-height: 30px;"></div>
 
     <div
-      ng-if="viewer.fretboardVisible"
+      ng-show="viewer.fretboardVisible"
       class="fretboard-container"
       ng-include="'views/fret_diagram.html'">
     </div>
@@ -273,57 +266,11 @@
       ng-include="'views/playlist/editor.html'"
       class="playlist-editor">
     </div>
+
     <div
-      class="bottom-toolbar"
-      layout="row">
-
-      <md-button
-        md-no-ink
-        aria-label="Fretboard"
-        class="toggle-button icon-hover"
-        ng-class="{ active: viewer.fretboardVisible }"
-        ng-click="viewer.setFretboardVisible(!viewer.fretboardVisible)">
-        <md-icon md-svg-icon="fretboard"></md-icon>
-        <md-tooltip
-          md-delay="1500"
-          md-direction="top">
-          <span translate="FRETBOARD"></span>
-        </md-tooltip>
-      </md-button>
-
-      <md-divider></md-divider>
-
-      <md-button
-        ng-repeat="layout in ::viewer.layouts"
-        md-no-ink
-        aria-label="Layout"
-        class="toggle-button icon-hover disabled-on-playback"
-        ng-class="{ active: viewer.layout === layout }"
-        ng-click="viewer.setLayout(layout)">
-        <md-icon md-svg-icon="{{ ::layout.name }}"></md-icon>
-        <md-tooltip
-          md-delay="1500"
-          md-direction="top">
-          <span ng-attr-translate="{{ ::layout.name | uppercase }}_LAYOUT"></span>
-        </md-tooltip>
-      </md-button>
-
-      <md-input-container
-        layout="row"
-        class="input-inline-label disabled-on-playback">
-        <label
-          class="md-label md-no-float"
-          translate="BEATS_PER_SCREEN">
-        </label>
-        <input
-          type="number"
-          min="6"
-          max="12"
-          step="1"
-          ng-model="viewer.beatsPerSlide"
-          ng-change="viewer.setLayout(viewer.layout)">
-      </md-input-container>
-
+      class="bottom toolbar"
+      layout="row"
+      ng-include="'views/playlist/bottom_toolbar.html'">
     </div>
   </div>
 

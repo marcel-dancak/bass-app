@@ -1,21 +1,4 @@
-/*
-.control-panel::after {
-  position: absolute;
-  content: "";
-  bottom: -10px;
-  height: 1px;
-  left: 5px;
-  right: 5px;
-  background-color: #ddd;
-}
-*/
-.control-panel {
-  margin: 5px 10px 25px 10px;
-  min-height: 44px;
-  height: 44px;
-  position: relative;
-  z-index: 90;
-}
+
 .control-panel ::selection {
   background: #ffb7b7;
 }
@@ -30,17 +13,13 @@
   min-height: 29px;
   height: 29px;
 }
-.control-panel md-input-container label:not(.md-no-float) {
-  padding: 0 0 2px 0;
-  margin-top: 0px;
-  font-size: 15px;
-}
+
 .control-panel md-input-container label.md-no-float {
   padding: 0;
 }
 
 .control-panel md-input-container input {
-  height: 30px;
+  height: 29px;
   padding-top: 0;
 }
 .control-panel .md-button {
@@ -62,7 +41,6 @@
 
 .control-panel md-menu {
   padding: 0;
-  margin: 2px 0;
 }
 
 .control-panel md-input-container.track {
@@ -105,7 +83,7 @@
 /*  Playback tools  */
 
 .playback-fields {
-  height: 53px;
+  height: 50px;
   padding: 0 12px 0 18px;
   position: relative;
 }
@@ -120,7 +98,7 @@
   left: 0;
   right: 0;
   top: 0;
-  bottom: -11px;
+  bottom: -12px;
   border-radius: 8px;
   box-shadow:
     2px 3px 5px 0px rgba(0, 0, 0, 0.21),
@@ -227,7 +205,7 @@
   right: 20px;
   line-height: 9px;
   height: 9px;
-  font-size: 9px;
+  font-size: 10px;
   text-align: center;
   color: #bbb;
   background-color: #455A64;
@@ -246,8 +224,11 @@
   background-color: #455A64;
   padding: 0 5px;
   margin: 0;
-  height: 52px;
+  height: 50px;
   color: #fff;
+  position: relative;
+  z-index: 90;
+  font-size: 15px;
 }
 .control-panel md-select:not([disabled]):focus .md-select-value,
 .control-panel md-select .md-select-value.md-select-placeholder,
@@ -265,7 +246,6 @@
   border-radius: 0;
   margin: 8px 0;
   text-align: center;
-  xborder-left: 1px solid #999;
   position: relative;
 }
 .toolbar-separated-button::before {
@@ -292,6 +272,7 @@
 .control-panel md-select .md-select-value {
   height: 26px;
   line-height: 26px;
+  padding-top: 1px;
 }
 
 .control-panel md-icon {
@@ -500,7 +481,7 @@ md-menu-content.playback-range {
   left: 22px;
   right: 22px;
   width: auto;
-  bottom: -6px;
+  bottom: -7px;
   height: 16px;
   margin: 4px 0;
   z-index: 2;
@@ -537,6 +518,8 @@ md-menu-content.playback-range {
   transition: opacity 0.25s cubic-bezier(0.35, 0, 0.25, 1);
   pointer-events: none;
   white-space: nowrap;
+  background-color: #fff;
+  border-radius: 2px;
 }
 .playback-slider.rzslider .rz-ticks .rz-tick:hover .rz-tick-legend {
   opacity: 1;

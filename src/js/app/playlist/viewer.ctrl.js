@@ -11,64 +11,40 @@
 
     var viewerTrackId = workspace.bassSection? workspace.bassSection.track.id : 'bass_0';
 
-    var layouts = [
-      {
-        name: 'vertical',
-        // swiper config
-        direction: 'vertical',
-        slidesPerView: 1.995,
-        slidesPerColumn: 1,
-        animation: 250,
-        render: {
-          initialHeaderOn: 'all'
-        },
-        emptyLastSlide: true
-      }, {
-        name: 'horizontal',
-        // swiper config
-        direction: 'horizontal',
-        slidesPerView: 1.0,
-        slidesPerColumn: 1,
-        animation: 0,
-        render: {
-        },
-        emptyLastSlide: false
+    if (!$scope.viewer) {
+      console.log('Initializing viewer')
+      var layouts = [
+        {
+          name: 'vertical',
+          // swiper config
+          direction: 'vertical',
+          slidesPerView: 1.995,
+          slidesPerColumn: 1,
+          animation: 300,
+          render: {
+            initialHeaderOn: 'all'
+          },
+          emptyLastSlide: true
+        }, {
+          name: 'horizontal',
+          // swiper config
+          direction: 'horizontal',
+          slidesPerView: 1.0,
+          slidesPerColumn: 1,
+          animation: 0,
+          render: {
+          },
+          emptyLastSlide: false
+        }
+      ];
+      $scope.$root.viewer = {
+        beatsPerSlide: 8,
+        layouts: layouts,
+        layout: layouts[0],
+        swiper: null
       }
-    ];
-    var viewer = {
-      beatsPerSlide: 8,
-      layouts: layouts,
-      layout: layouts[0],
-      swiper: null,
-      setLayout: function(layout) {
-        var position = $scope.player.progress.value;
-        viewer.layout = layout;
-        var slideIndex = viewer.swiper.snapIndex;
-        viewer.swiper.removeAllSlides();
-        viewer.swiper.container.removeClass('swiper-container-' + viewer.swiper.params.direction);
-        viewer.swiper.destroy();
-        initializeSwiper();
-        initPlaylistSlides();
-
-        $scope.player.progress.value = position;
-        $scope.player.setProgress(1, position);
-        // $mdUtil.nextTick($scope.player.setProgress.bind($scope, 1, position));
-
-        // $scope.player.setProgress(position);
-        // if (slideIndex > 0) {
-        //   viewer.swiper.slideTo(slideIndex, true, 0);
-        // }
-      },
-      setFretboardVisible: function(visible) {
-        viewer.fretboardVisible = visible;
-        $mdUtil.nextTick(function() {
-          viewer.swiper.onResize();
-          var elem = $element[0].querySelector('.fretboard-container');
-          fretboardViewer.activate(visible? elem : null);
-        });
-      }
-    };
-    $scope.viewer = viewer;
+    }
+    var viewer = $scope.viewer;
 
     var playlist;
     var playlistSlidePosition;
@@ -577,6 +553,35 @@
       initializeSwiper();
       $mdUtil.nextTick(projectLoaded.bind(this, projectManager.project));
     });
+
+    $scope.setLayout = function(layout) {
+      var position = $scope.player.progress.value;
+      viewer.layout = layout;
+      var slideIndex = viewer.swiper.snapIndex;
+      viewer.swiper.removeAllSlides();
+      viewer.swiper.container.removeClass('swiper-container-' + viewer.swiper.params.direction);
+      viewer.swiper.destroy();
+      initializeSwiper();
+      initPlaylistSlides();
+
+      $scope.player.progress.value = position;
+      $scope.player.setProgress(1, position);
+      // $mdUtil.nextTick($scope.player.setProgress.bind($scope, 1, position));
+
+      // $scope.player.setProgress(position);
+      // if (slideIndex > 0) {
+      //   viewer.swiper.slideTo(slideIndex, true, 0);
+      // }
+    }
+
+    $scope.setFretboardVisible = function(visible) {
+      viewer.fretboardVisible = visible;
+      $mdUtil.nextTick(function() {
+        viewer.swiper.onResize();
+        var elem = $element[0].querySelector('.fretboard-container');
+        fretboardViewer.activate(visible? elem : null);
+      });
+    }
 
     $scope.$on('$destroy', function() {
       projectManager.un('playlistLoaded', playlistLoaded);

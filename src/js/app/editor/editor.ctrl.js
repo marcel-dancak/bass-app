@@ -108,17 +108,39 @@
   function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
               projectManager, Drums, BassSection, DrumSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer) {
 
+    audioPlayer.setPlaybackSpeed(1);
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
-    audioPlayer.setPlaybackSpeed(1);
 
+    if (!$scope.editor) {
+      console.log('Initializing editor')
+      $scope.$root.editor = {
+        beatsPerView: 8,
+        slideOnBeat: 1,
+        animationDuration: 250,
+        fretboardVisible: true,
+        layoutLegend: function(value) {
+          return [4, 8, 12].indexOf(value) !== -1? value : null;
+        },
+        animationLabel: function(value, sliderId, label) {
+          return "scroll after {0} beats".format(value);
+        }
+      }
+    }
+    var DEFAULT_PRERENDERED_SLIDES = 2;
+    swiperControl.preRenderedSlides = DEFAULT_PRERENDERED_SLIDES;
+    var editor = $scope.editor;
 
     function isLoopNeeded() {
       var playbackRange = swiperControl.lastSlide-swiperControl.firstSlide + 1;
-      if (playbackRange > workspace.section.beatsPerView) {
+      if (playbackRange > editor.beatsPerView) {
         return true;
       }
     }
+
+    $scope.updateBeatsPerView = function() {
+      editor.beatsPerView = swiperControl.setBeatsPerView(editor.beatsPerView)
+    };
 
     $scope.player.visiblePlaybackModeChanged = function(visibleBeatsOnly) {
       // return;
@@ -210,15 +232,22 @@
         var timeToBeat = evt.startTime - evt.eventTime;
         // console.log(slide-$scope.barSwiper.activeIndex);
         // console.log(timeToBeat);
-        setTimeout(function() {
-          if ($scope.player.playing) {
-            swiperControl.slideTo(
-              slide,
-              workspace.section.animationDuration,
-              true
-            );
-          }
-        }, parseInt(timeToBeat*1000));
+        if (evt.flatIndex < swiperControl.barSwiper.snapIndex) {
+          slide = swiperControl.lastSlide + slide + 1;
+        }
+        var offset = slide - swiperControl.barSwiper.snapIndex;
+        // console.log('slide: {0} offset: {1}'.format(slide, offset));
+        if (offset >= editor.slideOnBeat) {
+          setTimeout(function() {
+            if ($scope.player.playing) {
+              swiperControl.slideTo(
+                swiperControl.barSwiper.snapIndex + offset,
+                editor.animationDuration,
+                true
+              );
+            }
+          }, parseInt(timeToBeat*1000));
+        }
       }
 
       if (!audioVisualiser.enabled && $scope.player.graphEnabled) {
@@ -262,9 +291,11 @@
       if ($scope.player.visibleBeatsOnly) {
         updateLockedPlayerRange();
       } else {
+        swiperControl.preRenderedSlides = editor.slideOnBeat;
         if ($scope.player.loop && isLoopNeeded()) {
           swiperControl.createLoop();
         }
+        swiperControl.updateSlidesVisibility();
       }
       $scope.player.playing = true;
       audioPlayer.setBpm(workspace.section.bpm);
@@ -322,6 +353,7 @@
       $scope.player.playing = false;
       audioVisualiser.deactivate();
       timeline.stop();
+      swiperControl.preRenderedSlides = DEFAULT_PRERENDERED_SLIDES;
     }
     // audioPlayer.on('playbackStopped', playbackStopped);
 
@@ -351,13 +383,14 @@
       var timeSignature = workspace.section.timeSignature;
 
       var slides = [];
+      var beatLabels = workspace.section.beatLabels();
       trackSection.forEachBeat(function(beat) {
         var slideId = beat.bar+'_'+beat.beat;
         slides.push({
           id: slideId,
           beat: beat,
           type: workspace.track.type,
-          beatLabel: workspace.section.beatLabels? workspace.section.beatLabels[beat.beat] : beat.beat
+          beatLabel: beatLabels[beat.beat]
         });
       });
       $scope.slides = slides;
@@ -366,8 +399,9 @@
     function updateSwiperSlides() {
       $mdUtil.nextTick(function() {
         swiperControl.setSlides($scope.slides, {
-          slidesPerView: workspace.section.beatsPerView,
-          slidesPerGroup: workspace.section.beatsPerSlide
+          slidesPerView: editor.beatsPerView,
+          slidesPerGroup: 1
+          // slidesPerGroup: editor.beatsPerSlide
         });
         $scope.player.playbackRangeChanged();
       });
@@ -525,8 +559,9 @@
       createSlides(workspace.trackSection);
       $mdUtil.nextTick(function() {
         swiperControl.setSlides($scope.slides, {
-          slidesPerView: workspace.section.beatsPerView,
-          slidesPerGroup: workspace.section.beatsPerSlide
+          slidesPerView: editor.beatsPerView,
+          slidesPerGroup: 1
+          // slidesPerGroup: editor.beatsPerSlide
         });
         $scope.player.playbackRangeChanged();
         $mdUtil.nextTick(function() {
@@ -654,7 +689,7 @@
 
     swiperControl.onTouchEnd = function(sw) {
       $mdUtil.nextTick(function() {
-        $scope.player.progress.value = sw.snapIndex * workspace.section.beatsPerSlide;
+        $scope.player.progress.value = sw.snapIndex * editor.beatsPerSlide;
       });
     }
 

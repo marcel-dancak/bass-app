@@ -2,7 +2,9 @@ body {
   background-color: #fff;
   width: 100%;
   height: 100%;
+  overflow: hidden;
 }
+
 .main-page {
   padding: 0;
   padding-bottom: 38px;
@@ -10,31 +12,14 @@ body {
   height: 100%;
 }
 
-.bottom-toolbar {
-  position: absolute;
-  top: auto;
-  bottom: -36px;
-  left: 5px;
-  height: 36px;
-}
-.bottom-toolbar md-input-container.input-inline-label {
-  margin-top: 2px;
-}
-.bottom-toolbar md-divider {
-  margin: 5px 0;
-  background-color: #ddd;
+.editor {
+  position: relative;
 }
 
 md-input-container input[type="number"] {
   text-align: right;
 }
 
-.bottom-toolbar .md-button {
-  height: 36px;
-  min-height: 36px;
-  margin: 0 4px;
-  min-width: 36px;
-}
 /*.time-marker {
   width: 3px;
   height: 370px;
@@ -68,7 +53,7 @@ md-icon {
 .md-button.icon-hover:not([disabled]):not(.active) {
   opacity: 0.7;
 }
-.md-button.icon-hover:hover:not([disabled="disabled"]) {
+.md-button.icon-hover:hover:not([disabled]) {
   opacity: 1;
 }
 
@@ -162,15 +147,19 @@ md-backdrop.md-select-backdrop {
   height: 34px;
   text-align: right;
 }
-
+.preferences md-input-container input[type="text"] {
+  text-indent: 21px;
+  direction: rtl;
+}
 .preferences md-select md-select-value {
   text-align: right;
 }
 
-.preferences.md-select-menu-container {
+/*.preferences.md-select-menu-container {
   margin-top: 50px;
   xtransform: translate3d(50px, 100px, 0);
-}
+}*/
+
 /*.preferences md-option .md-text {
   text-align: right;
   width: 100%;
@@ -258,6 +247,9 @@ md-menu-item.right md-icon {
   right: 0;
 }
 
+.toggle-button.md-button[disabled] {
+  opacity: 0.5;
+}
 .toggle-button.md-button.md-focused:not([disabled]),
 .toggle-button.md-button:hover:not([disabled]) {
   background-color: transparent;
@@ -727,10 +719,10 @@ footer {
   z-index: 100;
 }
 footer span, a.button {
-  color: #777;
+  color: #555;
   font-size: 14px;
-  line-height: 36px;
-  height: 36px;
+  line-height: 33px;
+  height: 33px;
   padding: 4px 10px 0 10px;
   cursor: default;
 }
@@ -874,4 +866,8 @@ md-input-container label.md-no-float {
 }
 .piano-range-field span {
   color: #777;
+}
+
+.playback-active .swiper-wrapper {
+  transition-timing-function: linear !important;
 }
