@@ -51,7 +51,22 @@
 
         $mdDialog.show(alert);
       }
-    });
+    })
+    .directive('prettyScrollbar', prettyScrollbar)
+
+
+  function prettyScrollbar() {
+    return {
+      scope: false,
+      link: function(scope, iElem, iAttrs, ctrl) {
+        if (window.SimpleScrollbar && SimpleScrollbar.width > 0) {
+          SimpleScrollbar.initEl(iElem[0], iAttrs.glScrollbar);
+        } else {
+          iElem.css('overflow', 'auto');
+        }
+      }
+    }
+  }
 
   function AppController($scope, $q, $translate, $mdDialog, context,
       settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
