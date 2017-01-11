@@ -66,7 +66,6 @@
         BARS: 'Barras',
         BEATS_PER_SCREEN: 'Latidos por pantalla',
         BEATS_PER_SLIDE: 'Latidos por diapositiva',
-        DURATION: 'Duracion',
 
         /** Barline context menu **/
         BEAT: 'Pulso',
@@ -114,7 +113,13 @@
         HALF: 'Blanca',
         QUARTER: 'Negra',
         EIGHTH: 'Corchea',
-        SIXTEENTH: 'Semicorchea'
+        SIXTEENTH: 'Semicorchea',
+
+        FRETBOARD: 'Diapasón',
+        LAYOUT: 'Disposición',
+        HORIZONTAL_LAYOUT: 'Horizontal',
+        VERTICAL_LAYOUT: 'Vertical',
+        SCROLL_ANIMATION: 'Animación de desplazamiento (ms)'
       });
     })
 })();

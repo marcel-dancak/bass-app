@@ -445,7 +445,7 @@
               // console.log(sample.code+' -> '+sample.shift);
               if (sample.shift !== 0) {
                 var rate = Math.pow(Math.pow(2, 1/12), sample.shift);
-                audio.source.playbackRate.setValueAtTime(rate, startTime);
+                audio.source.playbackRate.value = rate;
               }
               audio.duration = duration;
               audio.endTime = startTime + duration;
@@ -462,19 +462,19 @@
           }
         }
       };
-      var grandPianoSamples = buildSamplesCache((
+      var acousticPianoSamples = buildSamplesCache((
         'C1 E♭1 G♭1 A1 C2 E♭2 G♭2 A2 C3 E♭3 G♭3 A3 '+
         'C4 E♭4 G♭4 A4 C5 E♭5 G♭5 A5 C6 E♭6 G♭6 A6 '+
         'C7 E♭7 G♭7 A7').split(' '), piano.notes
       );
-      var synthPianoSamples = buildSamplesCache(
+      var electricPianoSamples = buildSamplesCache(
         'F1 B1 E2 A2 D3 G3 B3 D4 F4 B4 E5 A5 D6 G6 C7'.split(' '), // jRhodes3
         piano.notes
       );
       // 'C2 G♭2 C3 G♭3 C4 G♭4 C5 G♭5 C6 G♭6 C7'.split(' '), // fm-piano
       piano.samples = {
-        acoustic: grandPianoSamples,
-        synth: synthPianoSamples
+        acoustic: acousticPianoSamples,
+        electric: electricPianoSamples
       };
       this.piano = piano;
       piano.strings = [

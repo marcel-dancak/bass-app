@@ -62,10 +62,10 @@
       </md-list-item>
 
       <md-list-item class="disabled-on-playback">
-        <label xtranslate="DURATION">Beats on slide</label>
+        <label translate="BEATS_PER_SLIDE"></label>
         <md-input-container>
           <input
-            aria-label="Duration"
+            aria-label="Beats"
             type="number"
             min="6"
             max="12"
@@ -76,7 +76,7 @@
       </md-list-item>
 
       <md-list-item>
-        <label translate="DURATION"></label>
+        <label translate="SCROLL_ANIMATION"></label>
         <md-input-container>
           <input
             aria-label="Duration"
@@ -93,37 +93,6 @@
 </md-menu>
 
 <md-divider></md-divider>
-
-<!-- <md-button
-  ng-repeat="layout in ::viewer.layouts"
-  md-no-ink
-  aria-label="Layout"
-  class="toggle-button icon-hover disabled-on-playback"
-  ng-class="{ active: viewer.layout === layout }"
-  ng-click="setLayout(layout)">
-  <md-icon md-svg-icon="{{ ::layout.name }}"></md-icon>
-  <md-tooltip
-    md-delay="1500"
-    md-direction="top">
-    <span ng-attr-translate="{{ ::layout.name | uppercase }}_LAYOUT"></span>
-  </md-tooltip>
-</md-button> -->
-
-
-<!-- <md-input-container class="disabled-on-playback">
-  <label
-    class="md-label md-no-float"
-    xtranslate="BEATS_PER_SCREEN">
-    Beats/slide
-  </label>
-  <input
-    type="number"
-    min="6"
-    max="12"
-    step="1"
-    ng-model="viewer.beatsPerSlide"
-    ng-change="setLayout(viewer.layout)">
-</md-input-container> -->
 
 <md-input-container>
   <label

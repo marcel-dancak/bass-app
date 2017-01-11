@@ -54,19 +54,22 @@
 
         /** Bass instrument preferences **/
         STRINGS: 'Strings',
-        NOTE_LABELS: 'Labels',
-        COLORS: 'Colors',
+        NOTE_LABELS: 'Notation',
+        COLORS: 'Colored notes by octave',
         ENABLED: 'Enabled',
         NAME_AND_FRET: 'Name + Fret',
         NOTE_NAME: 'Name',
         FRET: 'Fret',
 
+        /** Piano instrument preferences **/
+        RANGE: 'Range',
+
         /** Section preferences **/
         TIME_SIGNATURE: 'Time signature',
         BARS: 'Numer of bars',
-        BEATS_PER_SCREEN: 'Beats per screen',
+        BEATS_PER_SCREEN: 'Beats on screen',
         BEATS_PER_SLIDE: 'Beats per slide',
-        DURATION: 'Duration',
+        BEATS_COUNTING: 'Beats counting',
 
         /** Barline context menu **/
         BEAT: 'Beat',
@@ -101,6 +104,7 @@
         HAMMER_ON: 'Hammer-On',
         PULL_OFF: 'Pull-Off',
         LET_RING: 'Let ring',
+        HARMONICS: 'Harmonics',
 
         /** Note types **/
         REGULAR: 'Regular',
@@ -114,7 +118,21 @@
         HALF: 'Half',
         QUARTER: 'Quarter',
         EIGHTH: 'Eighth',
-        SIXTEENTH: 'Sixteenth'
+        SIXTEENTH: 'Sixteenth',
+
+        /** Metadata **/
+        METADATA: 'Metadata',
+        SUBBEAT: 'Subbeat',
+        CHORD: 'Chord',
+        STRING: 'String',
+        ROOT_NOTE: 'Root note',
+        TYPE: 'Type',
+
+        FRETBOARD: 'Fretboard',
+        LAYOUT: 'Layout',
+        HORIZONTAL_LAYOUT: 'Horizontal',
+        VERTICAL_LAYOUT: 'Vertical',
+        SCROLL_ANIMATION: 'Scroll animation (ms)'
       });
     })
 })();

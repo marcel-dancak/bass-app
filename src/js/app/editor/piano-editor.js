@@ -57,7 +57,7 @@
             case 46: // Del
               workspace.trackSection.deleteSound(sound);
               break;
-            case 74: // j
+            case 84: // t
               console.log(JSON.stringify(sound));
               var prevSound = workspace.trackSection.prevSound(sound);
               if (prevSound) {
