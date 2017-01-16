@@ -228,7 +228,7 @@
   }
 
   function projectManager($http, $timeout, $q, Observable, context,
-      Bass, Drums, BassTrackSection, DrumTrackSection, Piano, TrackSection) {
+      Bass, Drums, BassTrackSection, DrumTrackSection, DrumTrackSection2, Piano, TrackSection) {
 
     var idCouter = {};
     var compressors = {};
@@ -506,7 +506,7 @@
           if (type === 'bass') {
             trackClass = BassTrackSection;
           } else if (type === 'drums') {
-            trackClass = DrumTrackSection;
+            trackClass = DrumTrackSection2;
           } else {
             trackClass = TrackSection;
           }

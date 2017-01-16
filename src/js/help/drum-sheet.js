@@ -10,12 +10,12 @@
     var sheetTemplate = 
       '<div class="help-drum-sheet">'+
         '<div layout="column" class="drums-labels-container">'+
-          '<img ng-repeat="drum in workspace.drumSection.instrument track by drum.name" ng-src="{{ ::drum.image }}">'+
+          '<img ng-repeat="drum in workspace.trackSection.instrument track by drum.name" ng-src="{{ ::drum.image }}">'+
         '</div>'+
         '<div layout="row">'+
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
-            'ng-include="\'views/editor/drums_beat.html\'" '+
+            'ng-include="\'views/editor/drum_beat2.html\'" '+
             'class="beat-container beat instrument-slide">'+
           '</div>'+
         '</div>'+
@@ -27,7 +27,7 @@
         config: '=bdHelpDrumSheet'
       },
       template: '',
-      controller: function($scope, $element, $mdCompiler, Drums, DrumSection, basicHandler) {
+      controller: function($scope, $element, $mdCompiler, Drums, DrumSection, DrumTrackSection2, basicHandler) {
         function createSlide(beat) {
           return {
             id: beat,
@@ -37,9 +37,6 @@
             type: 'drums'
           }
         }
-        function addSound(bar, beat, subbeat, drum, volume) {
-          $scope.workspace.trackSection.subbeat(bar, beat, subbeat)[drum].volume = volume;
-        }
         $scope.initializeWorkspace = function(config) {
           var numbers = (config.timeSignature || '4/4').split('/');
           var timeSignature = {
@@ -47,19 +44,17 @@
             bottom: numbers[1]
           };
           var drumKit = Drums.Drums.slice(4);
+          Drums.createIndex(drumKit);
           $scope.workspace = {
             selected: basicHandler.selected,
             section: {
               timeSignature: timeSignature,
               length: config.length || 1
-            },
-            drumSection: {
-              instrument: drumKit
             }
           };
-          $scope.workspace.trackSection = new DrumSection($scope.workspace.section);
+          $scope.workspace.trackSection = new DrumTrackSection2($scope.workspace.section, []);
+          $scope.workspace.trackSection.instrument = drumKit;
           $scope.workspace.beatSlides = [createSlide(1), createSlide(2)];
-          $scope.workspace.addSound = addSound;
 
           var template = '<div ng-controller="{0}">'.format($scope.config.controller)+sheetTemplate+'</div>';
           $mdCompiler.compile({

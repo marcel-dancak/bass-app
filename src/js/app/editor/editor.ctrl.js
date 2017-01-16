@@ -106,7 +106,7 @@
 
 
   function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
-              projectManager, Drums, BassSection, DrumSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer) {
+              projectManager, Drums, BassSection, DrumSection, DrumTrackSection2, TrackSection, HighlightTimeline, swiperControl, fretboardViewer) {
 
     audioPlayer.setPlaybackSpeed(1);
     $scope.swiperControl = swiperControl;
@@ -409,10 +409,11 @@
 
     $scope.initializeWorkspace = function(bassTrack, drumsTrack) {
       workspace.bassSection = new BassSection(workspace.section);
-      workspace.drumSection = new DrumSection(workspace.section);
+      // workspace.drumSection = new DrumSection(workspace.section);
       assignTrack(workspace.bassSection, bassTrack);
-      assignTrack(workspace.drumSection, drumsTrack);
-      workspace.trackSection = (workspace.trackSection && workspace.trackSection.type === 'drums')? workspace.drumSection : workspace.bassSection;
+      // assignTrack(workspace.drumSection, drumsTrack);
+      // workspace.trackSection = (workspace.trackSection && workspace.trackSection.type === 'drums')? workspace.drumSection : workspace.bassSection;
+      workspace.trackSection = workspace.bassSection;
       workspace.track = workspace.trackSection.track;
       $scope.ui.trackId = workspace.track.id;
     };
@@ -429,7 +430,10 @@
           var iBeat = chordInfo.start[1];
           var iSubbeat = chordInfo.start[2] || 1;
           var beatElem = swiperControl.getBeatElem(iBar, iBeat);
-          var elem = angular.element('<span class="chord">{0}{1}</span>'.format(chordInfo.root, chordInfo.type))[0];
+          var elem = angular.element(
+            '<span class="chord">{0}<span class="type">{1}</span></span>'
+            .format(chordInfo.root, chordInfo.type)
+          )[0];
           var subbeatPercWidth = parseInt(100/beatElem.childElementCount);
           if (iBeat === 1 && iSubbeat === 1) {
             elem.style.left = '14px';
@@ -549,12 +553,12 @@
         console.log('loading section data into editor');
         workspace.bassSection.loadBeats(track.data || track.rawData());
       }
-      if (section.tracks[drumsTrack.id]) {
-        var track = section.tracks[drumsTrack.id];
-        workspace.drumSection.loadBeats(track.data || track.rawData());
-      }
+      // if (section.tracks[drumsTrack.id]) {
+      //   var track = section.tracks[drumsTrack.id];
+      //   workspace.drumSection.loadBeats(track.data || track.rawData());
+      // }
       section.tracks[bassTrack.id] = workspace.bassSection;
-      section.tracks[drumsTrack.id] = workspace.drumSection;
+      // section.tracks[drumsTrack.id] = workspace.drumSection;
 
       createSlides(workspace.trackSection);
       $mdUtil.nextTick(function() {
@@ -580,10 +584,12 @@
     };
 
 
-    function initializePianoTrack(track) {
-      var trackSection = new TrackSection(workspace.section, []);
+    function initializeNewTrackSection(track) {
+      var TrackSectionClass = track.type === 'drums'? DrumTrackSection2 : TrackSection;
+      var trackSection = new TrackSectionClass(workspace.section, []);
       trackSection.instrument = track.instrument;
       trackSection.audio = track.audio;
+      trackSection.type = track.type;
       workspace.section.tracks[track.id] = trackSection;
     }
 
@@ -594,13 +600,14 @@
         return;
       }
       if (workspace.track.type !== track.type) {
-        if (track.type === 'drums') {
-          workspace.trackSection = workspace.drumSection
-        } else if (track.type === 'bass') {
+        // if (track.type === 'drums') {
+          // workspace.trackSection = workspace.drumSection
+        // } else if (track.type === 'bass') {
+        if (track.type === 'bass') {
           workspace.trackSection = workspace.bassSection;
         } else {
           if (!workspace.section.tracks[trackId]) {
-            initializePianoTrack(track);
+            initializeNewTrackSection(track);
           }
           workspace.trackSection = workspace.section.tracks[trackId];
           workspace.trackSection.track = track;
@@ -609,7 +616,8 @@
       }
 
       if (workspace.trackSection.track.id !== track.id) {
-        if (workspace.trackSection.convertToTrackSection) {
+        // if (workspace.trackSection.convertToTrackSection) {
+        if (workspace.track.type === 'bass') {
           // Save/Convert sounds from instrument workspace into simple track data
           var convertedTrack = workspace.trackSection.convertToTrackSection();
 
@@ -630,8 +638,9 @@
           }
           workspace.section.tracks[track.id] = workspace.trackSection;
         } else {
+          console.log('switch new track instrument')
           if (!workspace.section.tracks[trackId]) {
-            initializePianoTrack(track);
+            initializeNewTrackSection(track);
           }
           workspace.trackSection = workspace.section.tracks[trackId];
           workspace.trackSection.track = track;
@@ -647,7 +656,7 @@
 
     $scope.updateSlides = function() {
       workspace.bassSection.setLength(workspace.section.length);
-      workspace.drumSection.setLength(workspace.section.length);
+      // workspace.drumSection.setLength(workspace.section.length);
       createSlides(workspace.trackSection);
       $scope.player.playbackRange.max = workspace.section.length + 1;
       $scope.player.playbackRange.end = $scope.player.playbackRange.max;

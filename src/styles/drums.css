@@ -53,9 +53,9 @@
 .volume-meter {
   xbackground-color: #ff5722;
   background-color: rgb(255, 152, 0);
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
   transition: transform 0.3s ease 0s;
 }
 
@@ -68,3 +68,75 @@
 .beat[subdivision="4"][visible-subbeats="2"] .drums > .subbeats-container:nth-child(4) {
   display: none;
 }
+
+.drum-grid {
+  height: 100%;
+}
+
+.drums-beat {
+  position: relative;
+  width: 100%;
+  outline: none;
+}
+.drum-sound2 {
+  position: absolute;
+  text-align: center;
+  margin: 8px 0;
+  height: 32px;
+  /*background-color: blue;*/
+}
+.drum-sound2 .volume-meter {
+  display: inline-block;
+  content: "";
+}
+
+.drumset-grid {
+  display: table-cell;
+  text-align: center;
+}
+
+.drums-beat svg,
+.drums-beat svg rect {
+  pointer-events: none;
+}
+
+/** Add/Remove animations */
+
+.drum-sound2.ng-enter .volume-meter {
+  transform: scale(0, 0)!important;
+}
+
+.drum-sound2.ng-leave {
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  transition-property: opacity;
+}
+
+.drum-sound2.ng-leave.ng-leave-active .volume-meter {
+  transform: scale(0, 0)!important;
+}
+
+.drum.drag-box {
+  border-radius: 16px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #ccc;
+}
+.drum.drag-box .volume-meter {
+  transition: none;
+}
+.drum.drop-box {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 16px;
+  border: 2px solid rgb(33,150,243);
+}
+
+/*.drums-beat svg rect {
+  display: none;
+}
+
+.beat[subdivision="3"] .grid-3,
+.beat[subdivision="4"] .grid-4 {
+  display: block;
+}*/

@@ -2,6 +2,132 @@
   'use strict';
 
 
+  class DrumTrackSection {
+    constructor(section, data) {
+      this.section = section;
+      this.data = data;
+      if (!data) {
+        throw new Exception();
+      }
+      this.data.forEach(function(beat) {
+        beat.data.forEach(function(sound) {
+          Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
+          sound.beat = beat;
+        }, this);
+      }, this);
+    }
+
+    beat(bar, beat) {
+      // var flatIndex = (bar-1)*this.timeSignature.top + beat-1;
+      // return this.data[flatIndex];
+      for (var i = 0; i < this.data.length; i++) {
+        var beatData = this.data[i];
+        if (beatData.bar === bar && beatData.beat === beat) {
+          return beatData;
+        }
+      }
+      beat = {
+        bar: bar,
+        beat: beat,
+        subdivision: 4,
+        meta: {},
+        data: []
+      };
+      this.data.push(beat);
+      return beat;
+    }
+
+    prevBeat(beat) {
+      var barIndex = beat.bar;
+      var beatIndex = beat.beat - 1;
+      if (beatIndex === 0) {
+        beatIndex = this.section.timeSignature.top;
+        barIndex--;
+      }
+      if (barIndex > 0) {
+        return this.beat(barIndex, beatIndex);
+      }
+    }
+
+    nextBeat(beat) {
+      var barIndex = beat.bar;
+      var beatIndex = beat.beat + 1;
+
+      if (beatIndex > this.section.timeSignature.top) {
+        beatIndex = 1;
+        barIndex++;
+      }
+      if (barIndex <= this.section.length) {
+        return this.beat(barIndex, beatIndex);
+      }
+    }
+
+    sound(beat, filter) {
+      for (var i = 0; i < beat.data.length; i++) {
+        var sound = beat.data[i];
+        var match = true;
+        for (var key in filter) {
+          if (sound[key] !== filter[key]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          return sound;
+        }
+      }
+    }
+
+    beatSounds(beat) {
+      return beat.data;
+    }
+
+    addSound(beat, sound) {
+      Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
+      sound.beat = beat;
+      beat.data.push(sound);
+    }
+
+    deleteSound(sound) {
+      var index = sound.beat.data.indexOf(sound);
+      if (index !== -1) {
+        sound.beat.data.splice(index, 1);
+      }
+    }
+
+    clearBeat(beat) {
+      beat.data.splice(0, beat.data.length);
+    }
+
+    loadBeats(beats) {
+      beats.forEach(function(beat) {
+        var destBeat = this.beat(beat.bar, beat.beat);
+        Array.prototype.push.apply(destBeat.data, beat.data);
+      }, this);
+    }
+
+    forEachBeat(callback, obj) {
+      if (obj) {
+        callback = callback.bind(obj);
+      }
+      var bar, barIndex, beatIndex;
+      for (barIndex = 1; barIndex <= this.section.length; barIndex++) {
+        for (beatIndex = 1; beatIndex <= this.section.timeSignature.top ; beatIndex++) {
+          callback(this.beat(barIndex, beatIndex));
+        }
+      }
+    }
+
+    rawBeatData(beat) {
+      return beat;
+    }
+
+    rawData() {
+      return this.data;
+    }
+  }
+
+
   class TrackSection {
     constructor(section, data) {
       this.section = section;
@@ -309,6 +435,7 @@
 
   angular
     .module('bd.app')
+    .value('DrumTrackSection2', DrumTrackSection)
     .value('TrackSection', TrackSection)
     .value('EditableTrackSection', EditableTrackSection);
 

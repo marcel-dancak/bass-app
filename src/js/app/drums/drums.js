@@ -80,12 +80,17 @@
       ]
     };
 
-    for (name in drumsKits) {
-      var kit = drumsKits[name];
+    Object.defineProperty(drumsKits, 'createIndex', {value: 'static', writable: true});
+    drumsKits.createIndex = function(kit) {
       kit.drumMap = {};
-      kit.forEach(function(drum) {
+      kit.index = {};
+      kit.forEach(function(drum, index) {
         kit.drumMap[drum.name] = drum;
+        kit.index[drum.name] = index;
       });
+    }
+    for (name in drumsKits) {
+      drumsKits.createIndex(drumsKits[name]);
     }
     return drumsKits;
   }
