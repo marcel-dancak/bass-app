@@ -20,22 +20,22 @@
       Half: {
         label: 'HALF',
         symbol: 'half-note',
-        value: 0.5
+        value: 2
       },
       Quarter: {
         label: 'QUARTER',
         symbol: 'quarter-note',
-        value: 0.25
+        value: 4
       },
       Eighth: {
         label: 'EIGHTH',
         symbol: 'eighth-note',
-        value: 0.125
+        value: 8
       },
       Sixteenth: {
         label: 'SIXTEENTH',
         symbol: 'sixteenth-note',
-        value: 0.0625
+        value: 16
       }
     })
     .run(function($mdDialog) {

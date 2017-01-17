@@ -316,136 +316,16 @@
     }
   }
 
-  function resizeHandler2($timeout, workspace, swiperControl, eventHandler, Note) {
+  function resizeHandler2(ResizeHandler, eventHandler) {
+    class PianoResizeHandler extends ResizeHandler {
 
-    var resizeBox = {
-      elem: angular.element('<div class="resize-box"><i></i></div>')[0],
-      setSymbol: function(symbol, dotted) {
-        var labelElem = this.elem.children[0];
-        labelElem.className = symbol;
-        labelElem.innerHTML = dotted? '.' : '';
-      },
-      setPxStyles: function(styles) {
-        for (var key in styles) {
-          this.elem.style[key] = styles[key]+'px';
-        }
-      }
-    };
-
-    var noteLengthSymbols = {};
-    for (name in Note) {
-      var note = Note[name];
-      noteLengthSymbols[1.0/note.value] = note.symbol;
-    }
-
-    var noteLengths = [
-      {
-        length: 1,
-        dotted: false
-      }, {
-        length: 1,
-        dotted: true
-      }, {
-        length: 2,
-        dotted: false
-      }, {
-        length: 2,
-        dotted: true
-      }, {
-        length: 4,
-        dotted: false
-      }, {
-        length: 4,
-        dotted: true
-      }, {
-        length: 8,
-        dotted: false
-      }, {
-        length: 8,
-        dotted: true
-      }, {
-        length: 16,
-        dotted: false
-      }, {
-        length: 16,
-        dotted: true
-      }
-    ];
-
-    var notesWidths;
-    var resizeLength;
-
-    return {
-      resizeSound: function(sound, length, dotted) {
-        var dependencies = [];
-
-        // collect next sounds
-        var s = sound;
-        while (s.next) {
-          s = workspace.trackSection.nextSound(s);
-          dependencies.push(s);
-        }
-        sound.note.length = resizeLength.length;
-        sound.note.dotted = resizeLength.dotted;
-
-        var duration = workspace.trackSection.soundDuration(sound);
-        sound.end = sound.start + duration;
-
-        var prevSound = sound;
-        dependencies.forEach(function(depSound) {
-          var position = workspace.trackSection.nextSoundPosition(prevSound);
-          depSound.start = position.start;
-          if (position.beat !== depSound.beat) {
-            // console.log('moving to '+position.beat.beat+ ' at: '+position.start);
-            depSound.beat.data.splice(depSound.beat.data.indexOf(depSound), 1);
-            workspace.trackSection.addSound(position.beat, depSound);
-          } else {
-            // console.log('moving to position '+position.start)
-            depSound.end = depSound.start + workspace.trackSection.soundDuration(depSound);
-          }
-          prevSound = depSound;
-        });
-      },
-      onResizeStart: function(sound, info) {
+      beforeResize(sound, info) {
         eventHandler.select({target: info.element[0]}, sound);
-        var beatWidth = swiperControl.instrumentSwiper.slides[swiperControl.instrumentSwiper.snapIndex].clientWidth;
-
-        notesWidths = noteLengths.map(function(noteLength) {
-          var length = 1 / (noteLength.dotted? noteLength.length * 0.667 : noteLength.length);
-          var width = length * workspace.section.timeSignature.bottom * beatWidth;
-          return width;
-        });
-
-        this.onResize(sound, info);
-        // resizeBox.elem.style.opacity = '1';
-        resizeBox.setPxStyles({height: eventHandler.selected.element.offsetHeight});
-        eventHandler.selected.element.appendChild(resizeBox.elem);
-      },
-
-      onResize: function(sound, info) {
-        var delta, closestWidth;
-        var minDelta = notesWidths[0];
-        notesWidths.forEach(function(width, index) {
-          delta = Math.abs(info.width - width);
-          if (delta < minDelta) {
-            closestWidth = width;
-            minDelta = delta;
-            resizeLength = noteLengths[index];
-          }
-        });
-        resizeBox.setPxStyles({width: closestWidth});
-        var symbol = noteLengthSymbols[resizeLength.length];
-        resizeBox.setSymbol(symbol, resizeLength.dotted);
-      },
-
-      onResizeEnd: function(sound, info, evt) {
-        info.element.css('width', '');
-        resizeBox.elem.remove();
-
-        this.resizeSound(sound, resizeLength.length, resizeLength.dotted);
-        evt.stopPropagation();
+        eventHandler.selected.element.appendChild(this.resizeBox.elem);
       }
+
     }
+    return new PianoResizeHandler();
   }
 
   function EditController($scope, eventHandler, dragHandler2, resizeHandler2) {

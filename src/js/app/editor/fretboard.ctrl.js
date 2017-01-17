@@ -35,6 +35,8 @@
 
     $scope.playBassSound = function(bassSound) {
       var sound = angular.extend({
+        start: 0,
+        end: 1,
         style: $scope.fretboard.style,
         noteLength: {
           beatLength: 1/2

@@ -135,18 +135,19 @@
                   class="beat-container"
                   ng-controller="BassBeatController">
                     <div class="bass-board"
-                      ng-include="'views/editor/bass_beat.html'">
+                      ng-include="'views/editor/bass_beat2.html'">
                     </div>
                 </div>
                 <div
                   ng-switch-when="drums"
                   class="beat-container"
-                  ng-controller="DrumsController"
+                  ng-controller="DrumController"
                   class="drums-beat-grid">
                   <div
                     class="drums-beat-container"
                     ng-if="slide.visible"
-                    ng-include="'views/editor/drums_beat.html'">
+                    xng-include="'views/editor/drums_beat.html'"
+                    ng-include="'views/editor/drum_beat2.html'">
                   </div>
                 </div>
                 <div

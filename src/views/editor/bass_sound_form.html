@@ -263,7 +263,7 @@
       </label>
       <md-select
         md-no-ink
-        ng-model="sound.noteLength.length"
+        ng-model="sound.note.length"
         md-on-close="soundLengthChanged(sound)">
         <md-option
           ng-repeat="note in ::[
@@ -285,14 +285,14 @@
     <md-checkbox
       flex="30"
       aria-label="Staccato"
-      ng-model="sound.noteLength.dotted"
+      ng-model="sound.note.dotted"
       ng-change="soundLengthChanged(sound)">
       <span translate="DOTTED_NOTE"></span>
     </md-checkbox>
     <md-checkbox
       flex="40"
       aria-label="Staccato"
-      ng-model="sound.noteLength.staccato">
+      ng-model="sound.note.staccato">
       <span translate="STACCATO_NOTE"></span>
     </md-checkbox>
   </div>

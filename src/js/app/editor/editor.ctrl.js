@@ -106,7 +106,7 @@
 
 
   function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
-              projectManager, Drums, BassSection, DrumSection, DrumTrackSection2, TrackSection, HighlightTimeline, swiperControl, fretboardViewer) {
+              projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer) {
 
     audioPlayer.setPlaybackSpeed(1);
     $scope.swiperControl = swiperControl;
@@ -407,17 +407,6 @@
       });
     }
 
-    $scope.initializeWorkspace = function(bassTrack, drumsTrack) {
-      workspace.bassSection = new BassSection(workspace.section);
-      // workspace.drumSection = new DrumSection(workspace.section);
-      assignTrack(workspace.bassSection, bassTrack);
-      // assignTrack(workspace.drumSection, drumsTrack);
-      // workspace.trackSection = (workspace.trackSection && workspace.trackSection.type === 'drums')? workspace.drumSection : workspace.bassSection;
-      workspace.trackSection = workspace.bassSection;
-      workspace.track = workspace.trackSection.track;
-      $scope.ui.trackId = workspace.track.id;
-    };
-
 
     function updateChordLabels() {
       var barlineElem = swiperControl.barSwiper.wrapper[0];
@@ -512,17 +501,7 @@
       audioVisualiser.reinitialize();
       console.log('sectionLoaded');
       console.log(section);
-      if (workspace.section) {
-        for (var trackId in workspace.section.tracks) {
-          var track = workspace.section.tracks[trackId];
-          if (track.convertToTrackSection) {
-            var convertedTrack = track.convertToTrackSection();
-            convertedTrack.audio = track.audio;
-            convertedTrack.instrument = track.instrument;
-            workspace.section.tracks[trackId] = convertedTrack;
-          }
-        }
-      }
+
       workspace.section = section;
       $scope.player.playbackRange.start = 1;
       $scope.player.playbackRange.max = section.length + 1;
@@ -530,35 +509,12 @@
       $scope.player.progress.value = 0;
       // $scope.player.playbackRangeChanged();
 
-      var bassTrack;
-      var drumsTrack;
-      if (workspace.bassSection) {
-        // choose already selected bass track
-        bassTrack = projectManager.project.tracksMap[workspace.bassSection.track.id];
+      if (workspace.track && section.tracks[workspace.track.id]) {
+        workspace.trackSection = section.tracks[workspace.track.id];
+      } else {
+        workspace.trackSection = section.tracks['bass_0'];
       }
-      if (!bassTrack) {
-        bassTrack = projectManager.project.tracksMap['bass_0'];
-      }
-      if (workspace.drumSection) {
-        // choose already selected bass track
-        drumsTrack = projectManager.project.tracksMap[workspace.drumSection.track.id];
-      }
-      if (!drumsTrack) {
-        drumsTrack = projectManager.project.tracksMap['drums_0'];
-      }
-
-      $scope.initializeWorkspace(bassTrack, drumsTrack);
-      if (section.tracks[bassTrack.id]) {
-        var track = section.tracks[bassTrack.id];
-        console.log('loading section data into editor');
-        workspace.bassSection.loadBeats(track.data || track.rawData());
-      }
-      // if (section.tracks[drumsTrack.id]) {
-      //   var track = section.tracks[drumsTrack.id];
-      //   workspace.drumSection.loadBeats(track.data || track.rawData());
-      // }
-      section.tracks[bassTrack.id] = workspace.bassSection;
-      // section.tracks[drumsTrack.id] = workspace.drumSection;
+      workspace.track = workspace.trackSection;
 
       createSlides(workspace.trackSection);
       $mdUtil.nextTick(function() {
@@ -585,7 +541,7 @@
 
 
     function initializeNewTrackSection(track) {
-      var TrackSectionClass = track.type === 'drums'? DrumTrackSection2 : TrackSection;
+      var TrackSectionClass = track.type === 'drums'? DrumTrackSection : TrackSection;
       var trackSection = new TrackSectionClass(workspace.section, []);
       trackSection.instrument = track.instrument;
       trackSection.audio = track.audio;
@@ -600,52 +556,22 @@
         return;
       }
       if (workspace.track.type !== track.type) {
-        // if (track.type === 'drums') {
-          // workspace.trackSection = workspace.drumSection
-        // } else if (track.type === 'bass') {
-        if (track.type === 'bass') {
-          workspace.trackSection = workspace.bassSection;
-        } else {
-          if (!workspace.section.tracks[trackId]) {
-            initializeNewTrackSection(track);
-          }
-          workspace.trackSection = workspace.section.tracks[trackId];
-          workspace.trackSection.track = track;
+        if (!workspace.section.tracks[trackId]) {
+          initializeNewTrackSection(track);
         }
+        workspace.trackSection = workspace.section.tracks[trackId];
+        workspace.trackSection.track = track;
         swiperControl.switchInstrument(track.type);
       }
 
       if (workspace.trackSection.track.id !== track.id) {
-        // if (workspace.trackSection.convertToTrackSection) {
-        if (workspace.track.type === 'bass') {
-          // Save/Convert sounds from instrument workspace into simple track data
-          var convertedTrack = workspace.trackSection.convertToTrackSection();
-
-          // id of actual instrument's track (currently loaded)
-          var instrumentTrackId = workspace.trackSection.track.id;
-          var instrumentTrack = projectManager.project.tracksMap[instrumentTrackId];
-          convertedTrack.audio = instrumentTrack.audio;
-          convertedTrack.instrument = instrumentTrack.instrument;
-          workspace.section.tracks[instrumentTrackId] = convertedTrack;
-
-          // Clear instrument workspace
-          workspace.trackSection.forEachBeat(workspace.trackSection.clearBeat, workspace.trackSection);
-
-          // Load instrument workspace with selected track data
-          assignTrack(workspace.trackSection, track);
-          if (workspace.section.tracks && workspace.section.tracks[track.id]) {
-            workspace.trackSection.loadBeats(workspace.section.tracks[track.id].data || []);
-          }
-          workspace.section.tracks[track.id] = workspace.trackSection;
-        } else {
-          console.log('switch new track instrument')
-          if (!workspace.section.tracks[trackId]) {
-            initializeNewTrackSection(track);
-          }
-          workspace.trackSection = workspace.section.tracks[trackId];
-          workspace.trackSection.track = track;
-          swiperControl.rebuildSlides();
+        console.log('switch new track instrument')
+        if (!workspace.section.tracks[trackId]) {
+          initializeNewTrackSection(track);
         }
+        workspace.trackSection = workspace.section.tracks[trackId];
+        workspace.trackSection.track = track;
+        swiperControl.rebuildSlides();
       }
       workspace.track = track;
     };
@@ -655,8 +581,6 @@
     }
 
     $scope.updateSlides = function() {
-      workspace.bassSection.setLength(workspace.section.length);
-      // workspace.drumSection.setLength(workspace.section.length);
       createSlides(workspace.trackSection);
       $scope.player.playbackRange.max = workspace.section.length + 1;
       $scope.player.playbackRange.end = $scope.player.playbackRange.max;

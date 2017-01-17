@@ -11,9 +11,9 @@
     });
 
 
-  function BassBeatController($scope, $timeout, basicHandler, dragHandler, resizeHandler, bassSoundForm) {
+  function BassBeatController($scope, $timeout, basicHandler, dragHandler, bassResizeHandler, bassSoundForm) {
 
-    $scope.selectGrid = basicHandler.selectGrid.bind(basicHandler);
+    $scope.selectSound = basicHandler.selectSound.bind(basicHandler);
     $scope.keyPressed = basicHandler.keyPressed.bind(basicHandler);
 
     /*****  Drag And Drop  ******/
@@ -24,14 +24,12 @@
       dragHandler.onDrop(evt, dragData, dropGrid);
 
       $timeout(function() {
-        basicHandler.selectGrid(evt, dropGrid, true);
+        basicHandler.selectSound(evt, dropGrid, true);
       });
     };
 
     /*****  Resize operation  ******/
-    $scope.onResizeStart = resizeHandler.onResizeStart;
-    $scope.onResize = resizeHandler.onResize;
-    $scope.onResizeEnd = resizeHandler.onResizeEnd;
+    $scope.resizeHandler = bassResizeHandler;
 
     $scope.openBassSoundMenu = bassSoundForm.open;
   }
@@ -99,11 +97,7 @@
     };
 
     $scope.soundLengthChanged = function(sound) {
-      var beatLength = sound.noteLength.length;
-      if (sound.noteLength.dotted) {
-        beatLength *= 1.5;
-      }
-      sound.noteLength.beatLength = beatLength;
+      sound.end = sound.start + workspace.track.soundDuration(sound);
     };
 
     $scope.updateSlide = function() {
@@ -119,7 +113,7 @@
     $scope.playSound = function() {
       var sound = this.sound;
       while (sound.prev) {
-        sound = sound.prev.ref;
+        sound = workspace.track.prevSound(sound);
       }
       audioPlayer.playBassSample(workspace.track, sound);
     };
@@ -196,19 +190,20 @@
       }
       
       var scope = angular.element(elem).scope();
-      if (scope.grid && scope.grid.sound.note) {
-        menu.open({target: elem}, scope.grid, scope.bass);
+      if (scope.sound && scope.sound.note) {
+        menu.open({target: elem}, scope.sound, scope.bass);
       }
 
       return false;
     };
 
     var menu = {
-      open: function(evt, grid, bass, options) {
+      open: function(evt, sound, bass, options) {
+        console.log('open')
         if (!appContextMenuHandler || window.oncontextmenu !== customContextMenuHandler) {
           appContextMenuHandler = window.oncontextmenu;
         }
-        $timeout(basicHandler.selectGrid.bind(basicHandler), 0, false, evt, grid);
+        $timeout(basicHandler.selectSound.bind(basicHandler), 0, false, evt, sound);
 
         var position = $mdPanel.newPanelPosition()
           .relativeTo(evt.target)
@@ -237,8 +232,8 @@
             animation: animation,
             controller: 'BassFormController',
             locals: {
-              sound: grid.sound,
-              string: grid.string,
+              sound: sound,
+              string: workspace.track.instrument.strings[sound.string],
               bass: bass
             },
             onRemoving: function() {

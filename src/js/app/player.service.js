@@ -60,15 +60,11 @@
       return samples;
     }
 
-    function noteDuration(sound, beatTime, timeSignature) {
-      var duration;
-      if (sound.note.type === 'ghost') {
-        duration = 0.25;
-      } else {
-        duration = sound.noteLength.beatLength*(timeSignature.bottom)*beatTime;
-        if (sound.noteLength.staccato) {
-          duration = 0.95*duration-(beatTime/4)*0.2;
-        }
+
+    function noteRealDuration(sound, beatTime) {
+      var duration = (sound.end-sound.start) * beatTime;
+      if (sound.note.staccato) {
+        duration = 0.95*duration-(beatTime/4)*0.2;
       }
       return duration;
     }
@@ -96,20 +92,20 @@
           accepts: function(sound) {
             return sound.style === 'hammer' || sound.style === 'pull';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             var rootSound = sound;
             while (rootSound.prev) {
-              rootSound = rootSound.prev.ref;
+              rootSound = track.prevSound(rootSound);
             }
             return ['sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string, sound.note.fret)];
           },
-          transitionPlayback: function(stack, track, sound, startTime, beatTime, timeSignature) {
+          transitionPlayback: function(stack, track, sound, startTime, beatTime) {
             /*
             var prevAudio = stack.pop();
             var audio = _this.createSoundAudio(track, sound, startTime);
             audio = _this.composer.join(prevAudio, audio);
             audio.gain.setValueAtTime(sound.volume, startTime);
-            var duration = noteDuration(sound, beatTime, timeSignature);
+            var duration = noteRealDuration(sound, beatTime);
             audio.duration += duration;
             audio.endTime += duration;
 
@@ -120,7 +116,7 @@
             // var prevAudio = stack.pop();
             var prevAudio = stack[stack.length-1];
             var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteDuration(sound, beatTime, timeSignature);
+            var duration = noteRealDuration(sound, beatTime);
             audio.duration = duration;
             audio.endTime = startTime + duration;
             _this.composer.join(prevAudio, audio);
@@ -137,10 +133,10 @@
           accepts: function(sound) {
             return sound.note.type === 'slide';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             var rootSound = sound;
             while (rootSound.prev) {
-              rootSound = rootSound.prev.ref;
+              rootSound = track.prevSound(rootSound);
             }
             var step = sound.note.fret > sound.note.slide.endNote.fret? -1 : 1;
             var outOfRange = sound.note.slide.endNote.fret + step;
@@ -150,8 +146,9 @@
             }
             return resources;
           },
-          slideCurve: function(sound, beatTime, timeSignature, slideStartOffset, slideEndOffset) {
-            var duration = noteDuration(sound, beatTime, timeSignature);
+          slideCurve: function(sound, beatTime, slideStartOffset, slideEndOffset) {
+            var duration = noteRealDuration(sound, beatTime);
+
             var steps = Math.abs(sound.note.fret-sound.note.slide.endNote.fret);
             var curve = new Array(steps+2);
             curve[0] = Math.max(duration*slideStartOffset, 0.02);
@@ -195,12 +192,12 @@
             });
             return notes;
           },
-          prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
+          prepareForPlayback: function(track, sound, startTime, beatTime) {
             var s = sound.note.slide.start || 0.2;
             var e = sound.note.slide.end || 0.8;
-            var curve = this.slideCurve(sound, beatTime, timeSignature, s, 1-e);
+            var curve = this.slideCurve(sound, beatTime, s, 1-e);
             // console.log(curve)
-            var audioStack = _this.composer.createSlide(track, null, sound, curve, startTime, beatTime, timeSignature);
+            var audioStack = _this.composer.createSlide(track, null, sound, curve, startTime, beatTime);
 
             // sound metadata
             audioStack[0].meta = {
@@ -211,13 +208,13 @@
             // playMidi(track, sound, startTime, audioStack[audioStack.length-1].endTime-startTime);
             return audioStack;
           },
-          transitionPlayback: function(stack, track, sound, startTime, beatTime, timeSignature) {
+          transitionPlayback: function(stack, track, sound, startTime, beatTime) {
             var prevAudio = stack.pop();
             var s = sound.note.slide.start || 0.05;
             var e = sound.note.slide.end || 0.85;
-            var curve = this.slideCurve(sound, beatTime, timeSignature, s, 1-e);
+            var curve = this.slideCurve(sound, beatTime, s, 1-e);
             // console.log(curve)
-            var audioSounds = _this.composer.createSlide(track, prevAudio, sound, curve, startTime, beatTime, timeSignature);
+            var audioSounds = _this.composer.createSlide(track, prevAudio, sound, curve, startTime, beatTime);
 
             // sound metadata
             var lastMetaAudio = prevAudio.meta? prevAudio : stack[0];
@@ -243,20 +240,20 @@
           accepts: function(sound) {
             return sound.style === 'ring';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             return [];
           },
           prepareForPlayback: function() {
             // error
           },
-          transitionPlayback: function(stack, track, sound, startTime, beatTime, timeSignature) {
+          transitionPlayback: function(stack, track, sound, startTime, beatTime) {
             var prevAudio = stack[stack.length-1];
             // console.log(prevAudio.endTime+' vs '+startTime);
-            var duration = noteDuration(sound, beatTime, timeSignature);
+            var duration = noteRealDuration(sound, beatTime);
             prevAudio.duration += duration;
             prevAudio.endTime += duration;
             if (sound.note.type === 'bend') {
-              _this.composer.bend(prevAudio, sound, duration, startTime, beatTime, timeSignature);
+              _this.composer.bend(prevAudio, sound, duration, startTime, beatTime);
             }
             if (prevAudio.meta) {
               prevAudio.meta.duration += duration;
@@ -278,12 +275,12 @@
           accepts: function(sound) {
             return sound.note.type === 'grace';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret-2)];
           },
-          prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
+          prepareForPlayback: function(track, sound, startTime, beatTime) {
             var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteDuration(sound, beatTime, timeSignature);
+            var duration = noteRealDuration(sound, beatTime);
 
             var startRate = Math.pow(Math.pow(2, 1/12), -2);
             audio.source.playbackRate.setValueAtTime(startRate, startTime);
@@ -315,15 +312,15 @@
           accepts: function(sound) {
             return sound.note.type === 'bend';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];
           },
-          prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
+          prepareForPlayback: function(track, sound, startTime, beatTime) {
             var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteDuration(sound, beatTime, timeSignature);
+            var duration = noteRealDuration(sound, beatTime);
             audio.duration = duration;
             audio.endTime = startTime + duration;
-            _this.composer.bend(audio, sound, duration, startTime, beatTime, timeSignature);
+            _this.composer.bend(audio, sound, duration, startTime, beatTime);
             audio.meta = {
               type: 'single',
               string: sound.string,
@@ -338,10 +335,10 @@
           accepts: function(sound) {
             return sound.note.type === 'ghost';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             return ['sounds/bass/{0}/{1}X'.format(sound.style, sound.string)];
           },
-          prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
+          prepareForPlayback: function(track, sound, startTime, beatTime) {
             var audio = _this.createSoundAudio(track, sound, startTime);
             audio.duration = 0.25;
             audio.endTime = startTime + audio.duration;
@@ -358,12 +355,12 @@
           accepts: function(sound) {
             return sound.note.type === 'harmonics';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             return ['sounds/bass/{0}/{1}{2}_H'.format(sound.style, sound.string, sound.note.fret)];
           },
-          prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
+          prepareForPlayback: function(track, sound, startTime, beatTime) {
             var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteDuration(sound, beatTime, timeSignature);
+            var duration = noteRealDuration(sound, beatTime);
             audio.duration = duration;
             audio.endTime = startTime + duration;
             audio.meta = {
@@ -380,12 +377,12 @@
           accepts: function(sound) {
             return sound.note.type === 'regular';
           },
-          getResources: function(sound) {
+          getResources: function(track, sound) {
             return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];
           },
-          prepareForPlayback: function(track, sound, startTime, beatTime, timeSignature) {
+          prepareForPlayback: function(track, sound, startTime, beatTime) {
             var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteDuration(sound, beatTime, timeSignature);
+            var duration = noteRealDuration(sound, beatTime);
             audio.duration = duration;
             audio.endTime = startTime+duration;
             audio.meta = {
@@ -526,7 +523,7 @@
     };
 
     AudioPlayer.prototype.createSoundAudio = function(track, sound, startTime, index) {
-      var resources = this._getSoundHandler(sound).getResources(sound);
+      var resources = this._getSoundHandler(sound).getResources(track, sound);
       var audioData = resources? this.bufferLoader.loadResource(resources[index || 0]) : null;
 
       if (audioData) {
@@ -564,10 +561,7 @@
     AudioPlayer.prototype._bassSoundScheduled = function(trackId, sound) {};
 
     AudioPlayer.prototype._playSound = function(trackId, track, beat, sound, startTime, beatTime) {
-      var duration = (sound.end-sound.start) * beatTime;
-      if (sound.note.staccato) {
-        duration = 0.95*duration-(beatTime/4)*0.2;
-      }
+      var duration = noteRealDuration(sound, beatTime);
       var audio;
       if (sound.prev) {
         audio = this.piano.playingSounds[sound.string];
@@ -597,23 +591,23 @@
       // }
     }
 
-    AudioPlayer.prototype._playBassSound = function(trackId, track, sound, startTime, beatTime, timeSignature) {
+    AudioPlayer.prototype._playBassSound = function(trackId, track, sound, startTime, beatTime) {
       if (sound.prev) {
         return;
       }
-      var stack = this._getSoundHandler(sound).prepareForPlayback(track, sound, startTime, beatTime, timeSignature);
+      var stack = this._getSoundHandler(sound).prepareForPlayback(track, sound, startTime, beatTime);
 
       var audio = stack[0];
       audio.gain.setValueAtTime(audio.sound.volume, startTime);
 
       if (sound.next) {
-        var nextSound = sound.next.ref;
+        var nextSound = track.nextSound(sound);
         while (nextSound) {
           var start = stack[stack.length-1].endTime;
           // audio.endTime
-          this._getSoundHandler(nextSound).transitionPlayback(stack, track, nextSound, start, beatTime, timeSignature);
+          this._getSoundHandler(nextSound).transitionPlayback(stack, track, nextSound, start, beatTime);
           audio = stack[stack.length-1];
-          nextSound = nextSound.next? nextSound.next.ref : null;
+          nextSound = nextSound.next? track.nextSound(nextSound) : null;
         }
       }
 
@@ -650,16 +644,15 @@
           var track = this.section.tracks[trackId];
           var trackBeat = track.beat(bar, beat);
           var noteBeatTime = trackBeat.subdivision === 3? beatTime*(2/3) : beatTime;
-          track.beatSounds(trackBeat).forEach(function(subbeatSound) {
-            var startAt = startTime + (beatTime / trackBeat.subdivision * (subbeatSound.subbeat - 1));
+          track.beatSounds(trackBeat).forEach(function(sound) {
+            var startAt = startTime + (sound.start * beatTime);;
             try {
               if (track.type === 'bass') {
-                this._playBassSound(trackId, track, subbeatSound.sound, startAt, noteBeatTime, timeSignature);
+                this._playBassSound(trackId, track, sound, startAt, noteBeatTime);
               } else if (track.type === 'drums') {
-                this._playDrumSound(track, subbeatSound, startAt);
+                this._playDrumSound(track, sound, startAt);
               } else {
-                startAt = startTime + (subbeatSound.start * beatTime);
-                this._playSound(trackId, track, trackBeat, subbeatSound, startAt, noteBeatTime);
+                this._playSound(trackId, track, trackBeat, sound, startAt, noteBeatTime);
               }
             } catch (ex) {
               if (ex instanceof ResourceNotAvailable) {
@@ -756,9 +749,9 @@
       this.playbackSpeed = playbackSpeed;
     };
 
-    AudioPlayer.prototype.fetchSoundResources = function(sound) {
+    AudioPlayer.prototype.fetchSoundResources = function(track, sound) {
       if (sound.style && sound.note) {
-        var resources = this._getSoundHandler(sound).getResources(sound);
+        var resources = this._getSoundHandler(sound).getResources(track, sound);
         this.bufferLoader.loadResources(resources);
       }
     }
@@ -792,7 +785,7 @@
           if (track.type === 'bass') {
             track.forEachSound(function(bassSound) {
               if (bassSound.note && bassSound.style) {
-                addResources(this._getSoundHandler(bassSound).getResources(bassSound));
+                addResources(this._getSoundHandler(bassSound).getResources(track, bassSound));
               }
             }, this);
           }
@@ -874,18 +867,17 @@
     };
 
     AudioPlayer.prototype.playBassSample = function(track, bassSound) {
-      var resources = this._getSoundHandler(bassSound).getResources(bassSound);
-
+      var resources = this._getSoundHandler(bassSound).getResources(track, bassSound);
       if (bassSound.next) {
         var nextSound = bassSound;
         while (nextSound.next) {
-          var nextResources = this._getSoundHandler(nextSound.next.ref).getResources(nextSound.next.ref);
+          nextSound = track.nextSound(nextSound);
+          var nextResources = this._getSoundHandler(nextSound).getResources(track, nextSound);
           nextResources.forEach(function(resource) {
             if (resources.indexOf(resource) === -1) {
               resources.push(resource);
             }
           });
-          nextSound = nextSound.next.ref;
         }
       }
       console.log(resources);
@@ -904,8 +896,7 @@
             track,
             bassSound,
             context.currentTime,
-            60 / (player.bpm * player.playbackSpeed),
-            { top: 4, bottom: 4 }
+            60 / (player.bpm * player.playbackSpeed)
           );
           player.playingBassSample.source.playing = true;
           player.playingBassSample.source.addEventListener('ended', function(evt) {

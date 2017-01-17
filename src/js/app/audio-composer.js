@@ -141,7 +141,7 @@
   }
 
 
-  AudioComposer.prototype.createSlide = function(track, prevAudio, sound, curve, startTime, beatTime, timeSignature) {
+  AudioComposer.prototype.createSlide = function(track, prevAudio, sound, curve, startTime, beatTime) {
     var st = performance.now();
 
     var sounds = [];
@@ -295,7 +295,7 @@
   };
 
 
-  AudioComposer.prototype.bend = function(audio, sound, duration, startTime, beatTime, timeSignature) {
+  AudioComposer.prototype.bend = function(audio, sound, duration, startTime, beatTime) {
     var durationOffset = 0;
     function bendSound(sRate, sTime, eRate, eTime) {
       audio.source.playbackRate.setValueAtTime(sRate, startTime+sTime*duration);

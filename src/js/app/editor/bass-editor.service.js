@@ -4,7 +4,6 @@
   angular
     .module('bd.app')
     .factory('dragHandler', dragHandler)
-    .factory('resizeHandler', resizeHandler)
     .factory('basicHandler', basicHandler)
 
 
@@ -23,103 +22,7 @@
     return e;
   }
 
-  function findGridContainer(elem) {
-    var e = elem;
-    var maxDepth = 10;
-    while (e.className.indexOf("bass-subbeat") === -1) {
-      //console.log(e.className);
-      e = e.parentElement;
-      if (maxDepth-- === 0) {
-        return null;
-      };
-    }
-    return e;
-  }
 
-  function getGridInfo(coords) {
-    var id = "bass_{0}_{1}_{2}_{3}".format(
-      coords.bar,
-      coords.beat,
-      coords.subbeat,
-      coords.string
-    );
-    console.log(id);
-    var elem = document.getElementById(id);
-    if (elem) {
-      return {
-        grid: angular.element(elem).scope().grid,
-        gridElement: elem.querySelector('.bass-grid'),
-        soundElement: elem.querySelector('.sound-container')
-      };
-    }
-  }
-
-  // TODO: fix crash on last grid
-  function rightGrid(workspace, grid) {
-    var timeSignature = workspace.section.timeSignature;
-    var bar = grid.bar;
-    var beat = grid.beat;
-    var subbeat = grid.subbeat;
-    var noteBeatLength = grid.sound.noteLength.beatLength*timeSignature.bottom;
-
-    var bassBeat = workspace.trackSection.beat(bar, beat);
-    var subbeatLength = 1 / bassBeat.subdivision;
-    if (bassBeat.subdivision === 3) {
-      subbeatLength = subbeatLength * (3/2);
-    }
-
-    while (noteBeatLength > 0) {
-      subbeat++;
-      if (subbeat > bassBeat.subdivision) {
-        subbeat = 1;
-        beat++;
-        if (beat > timeSignature.top) {
-          beat = 1;
-          bar++;
-        }
-      }
-      noteBeatLength-=subbeatLength;
-    }
-    var gridInfo = getGridInfo({
-      bar: bar,
-      beat: beat,
-      subbeat: subbeat,
-      string: grid.string.label
-    });
-    return gridInfo? gridInfo.grid : null;
-  }
-
-  function connectGrids(grid1, grid2) {
-    grid1.sound.next = {
-      bar: grid2.bar,
-      beat: grid2.beat,
-      subbeat: grid2.subbeat,
-      string: grid2.string.label
-    };
-    Object.defineProperty(grid1.sound.next, 'ref', {value: 'static', writable: true});
-    grid1.sound.next.ref = grid2.sound;
-
-    grid2.sound.prev = {
-      bar: grid1.bar,
-      beat: grid1.beat,
-      subbeat: grid1.subbeat,
-      string: grid1.string.label
-    };
-    Object.defineProperty(grid2.sound.prev, 'ref', {value: 'static', writable: true});
-    grid2.sound.prev.ref = grid1.sound;
-  }
-
-  function disconnectGridSound(sound) {
-    console.log('disconnectGridSound');
-    if (sound.prev) {
-      delete getGridInfo(sound.prev).grid.sound.next;
-      delete sound.prev;
-    }
-    if (sound.next) {
-      delete getGridInfo(sound.next).grid.sound.prev;
-      delete sound.next;
-    }
-  }
 
 
   var dragBox = {
@@ -410,182 +313,21 @@
   }
 
 
-  function resizeHandler(workspace, swiperControl, basicHandler, Note) {
-
-    var resizeBox = {
-      elem: angular.element('<div class="resize-box"><i></i></div>')[0],
-      setSymbol: function(symbol, dotted) {
-        var labelElem = this.elem.children[0];
-        labelElem.className = symbol;
-        labelElem.innerHTML = dotted? '.' : '';
-      },
-      setPxStyles: function(styles) {
-        // Object.keys(styles).forEach(function(key))
-        for (var key in styles) {
-          this.elem.style[key] = styles[key]+'px';
-        }
-      }
-    };
-
-    var noteLengthSymbols = {};
-    for (name in Note) {
-      var note = Note[name];
-      noteLengthSymbols[note.value] = note.symbol;
-    }
-
-    var noteLengths = [
-      {
-        length: 1,
-        dotted: false
-      }, {
-        length: 1,
-        dotted: true
-      }, {
-        length: 1/2,
-        dotted: false
-      }, {
-        length: 1/2,
-        dotted: true
-      }, {
-        length: 1/4,
-        dotted: false
-      }, {
-        length: 1/4,
-        dotted: true
-      }, {
-        length: 1/8,
-        dotted: false
-      }, {
-        length: 1/8,
-        dotted: true
-      }, {
-        length: 1/16,
-        dotted: false
-      }
-    ];
-
-    var notesWidths;
-    var resizeLength;
-
-    function afterGroupResize(grid) {
-      if (grid.sound.next) {
-        console.log('resize group');
-        // create copy of old 'next sounds chain' before deleting
-        var oldNextSounds = [];
-        var next = grid.sound.next;
-        while (next) {
-          var oldNextGrid = getGridInfo(next).grid;
-          oldNextSounds.push(angular.copy(oldNextGrid.sound));
-          next = oldNextGrid.sound.next;
-        }
-        console.log(oldNextSounds);
-        // delete old sounds chain
-        workspace.trackSection.clearSound(getGridInfo(grid.sound.next).grid.sound);
-
-        // make new 'next sounds chain' on correct positions
-        var prevGrid = grid;
-        oldNextSounds.forEach(function(oldNextSound) {
-          var newNextGrid = rightGrid(workspace, prevGrid);
-          angular.extend(newNextGrid.sound, oldNextSound);
-          connectGrids(prevGrid, newNextGrid);
-          prevGrid = newNextGrid;
-        });
-      }
-    }
-
-    return {
-      onResizeStart: function(grid, info, subdivision) {
-        console.log('onResizeStart');
-        basicHandler.selectGrid({target: info.element[0]}, grid);
-
-        // var beatWidth = swiperControl.barSwiper.slides[0].clientWidth;
-        var elem = info.element;
-        while (elem && !elem.hasClass('subbeats-container')) {
-          elem = elem.parent();
-        }
-        var beatWidth = parseInt(elem[0].clientWidth);
-
-        notesWidths = noteLengths.map(function(noteLength) {
-          var length = noteLength.dotted? noteLength.length * 1.5 : noteLength.length;
-          noteLength.beatLength = length;
-          var width = length * workspace.section.timeSignature.bottom * beatWidth;
-          return width;
-        });
-
-        this.onResize(grid, info);
-        resizeBox.elem.style.opacity = '1';
-        basicHandler.selected.element.appendChild(resizeBox.elem);
-      },
-
-      onResize: function(grid, info) {
-        var delta, closestWidth;
-        var minDelta = notesWidths[0];
-        notesWidths.forEach(function(width, index) {
-          delta = Math.abs(info.width-width);
-          if (delta < minDelta) {
-            closestWidth = width;
-            minDelta = delta;
-            resizeLength = noteLengths[index];
-          }
-        });
-        resizeBox.setPxStyles({width: closestWidth});
-        var symbol = noteLengthSymbols[resizeLength.length];
-        resizeBox.setSymbol(symbol, resizeLength.dotted);
-      },
-
-      onResizeEnd: function(grid, info, evt) {
-        // var box = info.element[0].getBoundingClientRect();
-        // console.log(box);
-        var resizeElem  = info.element[0];
-        var box = resizeBox.elem.getBoundingClientRect();
-        resizeElem.style.display = "none";
-
-        var x = box.left + box.width - 10;
-        var elem = document.elementFromPoint(x, box.top+10);
-        resizeElem.style.display = "";
-
-        var targetGrid = angular.element(elem.parentElement).scope().grid;
-        if (targetGrid && !grid.sound.next) {
-          var targetSound = targetGrid.sound;
-          if (targetSound && targetSound.note && targetSound.note.type === 'regular') {
-            if (grid !== targetGrid) {
-              grid.sound.note.type = 'slide';
-              grid.sound.note.slide = {
-                endNote: angular.copy(targetSound.note)
-              };
-
-              if (targetGrid.sound.next) {
-                connectGrids(grid, getGridInfo(targetGrid.sound.next).grid);
-                delete targetGrid.sound.next;
-              }
-              workspace.trackSection.clearSound(targetSound);
-            }
-          }
-        }
-        info.element.css('width', '');
-        resizeBox.setSymbol('');
-        resizeBox.elem.style.opacity = 0.001;
-        resizeBox.elem.remove();
-
-        // $timeout(function() {
-        angular.extend(grid.sound.noteLength, resizeLength);
-        afterGroupResize(grid);
-        // });
-        evt.stopPropagation();
-      }
-    }
-  }
-
   function basicHandler(workspace, audioPlayer) {
 
     return {
       selected: {
-        grid: null,
+        sound: null,
         element: null
       },
-      selectGrid: function(evt, grid, focus) {
-        this.selected.grid = grid;
-        this.selected.element = findGridContainer(evt.target).querySelector('.sound-container');
+      selectSound: function(evt, sound, focus) {
+        console.log('selectSound');
+        if (this.selected.element) {
+          this.selected.element.classList.remove('selected');
+        }
+        this.selected.sound = sound;
+        this.selected.element = soundContainerElem(evt.target).parentElement;
+        this.selected.element.classList.add('selected');
         if (focus) {
           this.selected.element.focus();
         }
@@ -719,7 +461,55 @@
           }
         }
       }
-    };
+    }
   }
+
+    function bassResizeHandler(ResizeHandler, eventHandler, workspace) {
+      class BassResizeHandler extends ResizeHandler {
+
+        beforeResize(sound, info) {
+          console.log('bass beforeResize');
+        }
+
+        afterResize(sound, info) {
+          function barPosition(beat, value) {
+            return (beat.bar - 1 ) * workspace.section.timeSignature.top + beat.beat - 1 + value;
+          }
+          var endPosition = barPosition(sound.beat, sound.end);
+          console.log(endPosition)
+          var beat = sound.beat;
+          var overlappingSound;
+
+
+          var sounds = [].concat(workspace.trackSection.beatSounds(beat));
+          while (beat && barPosition(beat, 1) < endPosition) {
+            beat = workspace.trackSection.nextBeat(beat);
+            Array.prototype.push.apply(sounds, workspace.trackSection.beatSounds(beat));
+          }
+          console.log(sounds);
+          for (var i = 0; i < sounds.length; i++) {
+            var s = sounds[i];
+            if (s !== sound && barPosition(s.beat, s.start) < endPosition && barPosition(s.beat, s.end) >= endPosition) {
+              console.log('overlapping');
+              overlappingSound = s;
+              break;
+            }
+          }
+          if (overlappingSound && !overlappingSound.next && overlappingSound.note && overlappingSound.note.type === 'regular') {
+            sound.note.type = 'slide';
+            sound.note.slide = {
+              endNote: angular.copy(overlappingSound.note)
+            };
+
+            workspace.trackSection.deleteSound(overlappingSound);
+          }
+        }
+      }
+      return new BassResizeHandler();
+    }
+
+  angular
+    .module('bd.app')
+    .factory('bassResizeHandler', bassResizeHandler)
 
 })();
