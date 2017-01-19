@@ -28,9 +28,7 @@
 
     $scope.fretboard = {
       style: 'finger',
-      noteLength: {
-        length: 1/8
-      }
+      noteLength: 8
     };
 
     $scope.playBassSound = function(bassSound) {

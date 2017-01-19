@@ -40,21 +40,18 @@
             ng-repeat="label in ::note.label"
             id="{{ ::string.label }}_{{ ::label }}{{ ::note.octave }}"
             ui-draggable="true"
-            drag-channel="fretboard"
+            drag-channel="instrument"
             drag="{
-              sound: {
-                style: fretboard.style,
-                note: {
-                  type: 'regular',
-                  name: label,
-                  octave: note.octave,
-                  code: label+note.octave,
-                  fret: $index
-                },
-                noteLength: fretboard.noteLength,
-                volume: 0.75,
-                string: string.label
-              }
+              style: fretboard.style,
+              note: {
+                type: 'regular',
+                name: label,
+                octave: note.octave,
+                code: label+note.octave,
+                length: fretboard.noteLength
+              },
+              string: string.label,
+              volume: 0.75
             }">
             <span class="note">{{ ::label }}</span>
           </label>
@@ -76,10 +73,6 @@
                 style: fretboard.style,
                 note: {
                   type: 'ghost'
-                },
-                noteLength: {
-                  length: 1/16,
-                  beatLength: 1/16
                 },
                 volume: 0.75,
                 string: string.label
@@ -126,7 +119,7 @@
       </label>
       <md-select
         md-no-ink
-        ng-model="fretboard.noteLength.length">
+        ng-model="fretboard.noteLength">
         <md-option
           ng-repeat="note in ::[
             Note.Whole,

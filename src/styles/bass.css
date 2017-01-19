@@ -73,17 +73,22 @@
   top: 0;
   right: 0;
   bottom: 0;
-  pointer-events: none;
-  z-index: -1;
 }
 
 .bass-string {
-  height: 1px;
-  margin: 18px 0 35px 0;
+  height: 36px;
   width: 100%;
-  background-color: #e2e2e2;
   opacity: 0.8;
-  pointer-events: none;
+  position: relative;
+}
+.bass-string:before {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  background-color: #e2e2e2;
 }
 
 .bass-subbeat {
@@ -103,7 +108,7 @@
 }
 
 .bass-sound-wrapper {
-  height: 100%;
+  height: 34px;
   top: 0;
   position: absolute;
   overflow: visible;
@@ -111,6 +116,7 @@
   z-index: 200;
   transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   transition-property: none;
+  pointer-events: none;
 }
 
 /* with enter/leave animations */
@@ -183,7 +189,6 @@
   box-sizing: border-box;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
   line-height: 34px;
-  max-height: 34px;
   pointer-events: auto;
 }
 
@@ -267,12 +272,12 @@
   min-width: 25%;
   max-width: 25%;
 }
-.bass-sound-wrapper.selected .sound-container {
+.bass-sound-wrapper.selected > .sound-container {
   border: 2px solid #333;
   margin: 0 1px 0 1px;
   border-radius: 4px;
-  line-height: 34px;
-  max-height: 36px;
+  line-height: 32px;
+  height: 36px;
 }
 .bass-sound-wrapper.selected {
   transition-property: width, opacity;
@@ -517,6 +522,12 @@ md-input-container.slide-field > span {
 .bass-board-container.fret .sound-container .label-wrapper .note {
   display: none;
 }
+/*.sound-container .label-wrapper .length {
+  display: none;
+}
+.name-and-length .label-wrapper .length {
+  display: block;
+}*/
 
 .slide .sound-container .s-octave-1.e-octave-2 {
   background: linear-gradient(to right, #ff5722, #ff5722, #ff9800, #ff9800);

@@ -11,22 +11,13 @@
     });
 
 
-  function BassBeatController($scope, $timeout, basicHandler, dragHandler, bassResizeHandler, bassSoundForm) {
+  function BassBeatController($scope, $timeout, basicHandler, bassDragHandler, bassResizeHandler, bassSoundForm) {
 
     $scope.selectSound = basicHandler.selectSound.bind(basicHandler);
     $scope.keyPressed = basicHandler.keyPressed.bind(basicHandler);
 
     /*****  Drag And Drop  ******/
-    $scope.dropValidation = dragHandler.dropValidation;
-    $scope.onDragEnter = dragHandler.onDragEnter;
-    $scope.onDragLeave = dragHandler.onDragLeave;
-    $scope.onDrop = function(evt, dragData, dropGrid) {
-      dragHandler.onDrop(evt, dragData, dropGrid);
-
-      $timeout(function() {
-        basicHandler.selectSound(evt, dropGrid, true);
-      });
-    };
+    $scope.dragHandler = bassDragHandler;
 
     /*****  Resize operation  ******/
     $scope.resizeHandler = bassResizeHandler;
