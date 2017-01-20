@@ -9,7 +9,7 @@
 
   /***************** Private helper functions ******************/
 
-  function dragHandler(workspace, audioPlayer, swiperControl, DragHandler) {
+  function dragHandler(workspace, DragHandler, basicHandler) {
     class BassDragHandler extends DragHandler {
 
       validateDrop(beat, string) {
@@ -20,22 +20,26 @@
         return false;
       }
 
-      onDragEnter(evt, beat, string) {
-        console.log('onDragEnter')
-        this.canDrop = this.validateDrop(beat, string);
-        this.dragBox.elem.style.borderColor = this.canDrop? '' : 'red';
-      }
-
       updateDropSound(sound, beat, string) {
-        console.log('--- updateDropSound ---');
+        // console.log('--- updateDropSound ---');
         sound.string = string.label;
         if (sound.note.type !== 'ghost') {
           sound.note.fret = workspace.track.instrument.stringFret(string.label, sound.note);
         }
       }
 
+      onDragStart(evt) {
+        if (this.dragChannel !== 'instrument') {
+          basicHandler.selectSound(evt, this.dragSound);
+        }
+      }
+
+      onDragEnd(evt, sound) {
+        basicHandler.selectSound(evt, sound);
+      }
+
     }
-    return new BassDragHandler();
+    return new BassDragHandler('bass');
   }
 
 
@@ -53,7 +57,6 @@
   }
 
 
-
   function basicHandler(workspace, audioPlayer) {
 
     return {
@@ -63,11 +66,12 @@
       },
       selectSound: function(evt, sound, focus) {
         console.log('selectSound');
+        console.log(evt)
         if (this.selected.element) {
           this.selected.element.classList.remove('selected');
         }
         this.selected.sound = sound;
-        this.selected.element = soundContainerElem(evt.target).parentElement;
+        this.selected.element = soundContainerElem(evt.target);
         this.selected.element.classList.add('selected');
         if (focus) {
           this.selected.element.focus();
@@ -158,7 +162,7 @@
               break;
              case 190: // .
               if (sound.note.type !== 'ghost' && !sound.next) {
-                sound.noteLength.staccato = !sound.noteLength.staccato;
+                sound.note.staccato = !sound.note.staccato;
               }
               break;
              case 38: // up

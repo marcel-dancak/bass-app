@@ -14,10 +14,10 @@
         black: note.label.length > 1,
         'c-key': note.label[0] === 'C'
       }"
-      drop-channel="piano,keyboard"
-      ui-on-drag-enter="dragHandler.onDragEnter($event, slide.beat, note)"
-      ui-on-drag-over="dragHandler.onDragOver($event, slide.beat, note)"
-      ui-on-drop="dragHandler.onDrop($event, slide.beat, note)"
+      drop-channel="piano.editor,piano.instrument"
+      ui-on-drag-enter="dragHandler.onDragEnter($event, beat, note)"
+      ui-on-drag-over="dragHandler.onDragOver($event, beat, note)"
+      ui-on-drop="dragHandler.onDrop($event, beat, note)"
       >
       <!-- {{ ::note.label.join('/') }} -->
     </div>
@@ -34,14 +34,9 @@
     }"
     ui-draggable="true"
     drag="sound"
-    drag-channel="piano"
+    drag-channel="piano.editor"
     ng-click="eventHandler.select($event, sound)"
     >
-
-    <div class="resize-handler">
-      <div>◀</div>
-      <div>▶</div>
-    </div>
 
     <div
       class="resize-container"
@@ -53,12 +48,18 @@
       r-grabber="<div></div>">
     </div>
 
+    <div class="resize-handler">
+      <div>◀</div>
+      <div>▶</div>
+    </div>
+
     <span ng-if="sound.prev" class="tie">⏝</span>
     <span ng-if="!sound.prev">
       {{ sound.note.name }}
       <span class="octave">{{ ::sound.note.octave }}</span>
       <span ng-show="sound.note.staccato">.</span>
     </span>
+
   </div>
 
 </div>

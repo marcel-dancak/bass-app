@@ -113,3 +113,9 @@
 .piano-keys-container .piano-key[key="E"] {
   border-top: 1px solid #ccc;
 }
+
+.drag-sound.piano .sound-container {
+  height: 16px!important;
+  font-size: 13px;
+  line-height: 13px;
+}

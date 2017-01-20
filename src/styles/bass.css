@@ -91,58 +91,32 @@
   background-color: #e2e2e2;
 }
 
-.bass-subbeat {
-  position: relative;
-  height: 36px;
-  width: 100%;
-}
 
-.bass-grid {
-  height: 100%;
-  overflow: visible;
-  position: relative;
-}
-
-.bass > .subbeats-container:not(.hidden) .bass-grid {
-  pointer-events: auto;
-}
-
-.bass-sound-wrapper {
-  height: 34px;
-  top: 0;
-  position: absolute;
-  overflow: visible;
-  outline: none;
-  z-index: 200;
-  transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  transition-property: none;
-  pointer-events: none;
-}
 
 /* with enter/leave animations */
 
-.bass-sound-wrapper.ng-enter {
+.sound-container.ng-enter {
   transition-property: opacity;
   opacity:0;
 }
 
-.bass-sound-wrapper.ng-enter.ng-enter-active {
+.sound-container.ng-enter.ng-enter-active {
   opacity: 1;
 }
 
-.bass-sound-wrapper.ng-leave {
+.sound-container.ng-leave {
   transition-property: opacity;
   opacity: 1;
 }
-.bass-sound-wrapper.ng-leave.ng-leave-active {
+.sound-container.ng-leave.ng-leave-active {
   opacity: 0;
 }
 
 
 /* without enter/leave animations */
 
-/*.bass-sound-wrapper.ng-enter,
-.bass-sound-wrapper.ng-leave {
+/*.sound-container.ng-enter,
+.sound-container.ng-leave {
   transition: none;
   opacity: 1;
 }*/
@@ -175,10 +149,11 @@
 }
 
 .sound-container {
-  height: 100%;
-  width: 100%;
+  top: 0;
+  height: 34px;
   text-align: center;
   z-index: 200;
+  overflow: visible;
   position: absolute;
   border-radius: 3px;
   margin: 1px 1px;
@@ -190,6 +165,8 @@
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
   line-height: 34px;
   pointer-events: auto;
+  transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  transition-property: none;
 }
 
 .drag-group .sound-container .label-wrapper > div:not(.hammer-on-label) {
@@ -221,22 +198,48 @@
   font-size: 16px;
 }
 
-
 .name-and-fret .sound-container .label-wrapper {
   font-size: 13px;
   line-height: normal!important;
+}
+.name-and-fret .sound-container .label-wrapper label {
+  position: absolute;
+}
+.sound-container .label-wrapper label {
+  width: 100%;
+}
+.sound-container .label-wrapper .slide > div {
+  width: 22px;
+  text-align: center;
+  position: relative;
 }
 
 .name-and-fret .sound-container label.note,
 .name-and-fret .sound-container label.fret {
   display: block;
-  max-height: 16px;
+  height: 16px;
+  line-height: 15px;
+}
+.name-and-fret .sound-container label.note {
+  top: 0;
+}
+.name-and-fret .sound-container label.fret {
+  bottom: 0;
 }
 
-/*.sound-container label.note {}
-.sound-container label.fret {}*/
+.ring.sound-container label.note,
+.ring.sound-container label.fret {
+  display: none!important;
+}
 
-.ghost .sound-container label.fret {
+.ring.sound-container .label-wrapper > div:before {
+  content: "⏝";
+  line-height: 32px;
+  position: absolute;
+}
+
+
+.ghost.sound-container label.fret {
   display: none;
 }
 
@@ -259,27 +262,25 @@
   background-color: #fff176;
 }
 
-.ghost .sound-container {
+.ghost.sound-container {
   background-color: #ddd;
 }
-.ghost .sound-container p {
+.ghost.sound-container p {
   line-height: 32px;
   font-size: 16px;
   margin: 0;
 }
 
-.ghost.bass-sound-wrapper {
+.ghost.sound-container {
   min-width: 25%;
   max-width: 25%;
 }
-.bass-sound-wrapper.selected > .sound-container {
+.sound-container.selected {
   border: 2px solid #333;
   margin: 0 1px 0 1px;
   border-radius: 4px;
   line-height: 32px;
   height: 36px;
-}
-.bass-sound-wrapper.selected {
   transition-property: width, opacity;
   z-index: 201;
 }
@@ -429,18 +430,19 @@
   position: absolute;
   display: block;
   width: 10px;
+  top: 0;
   right: 0;
   padding: 4px 0;
   transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  pointer-events: none;
+  pointer-events: auto;
   opacity: 0;
   color: #333;
   font-size: 13px;
   line-height: 11px;
 }
 /** Can't hide whole resize-container, because right click menu hack (with backdrop) will not work */
-.ghost .sound-container .resize-handler,
-.ghost .sound-container .resize-container .rg-right {
+.ghost.sound-container .resize-handler,
+.ghost.sound-container .resize-container .rg-right {
   display: none;
 }
 
@@ -496,8 +498,8 @@ md-input-container.slide-field > span {
 }
 
 .sound-container .slide-slash {
-  padding: 0 6px;
-  width: 10px;
+  padding: 0 4px;
+  width: 10px!important;
   line-height: 32px;
   vertical-align: top;
   max-height: 32px;
@@ -513,6 +515,9 @@ md-input-container.slide-field > span {
 /* #ff5722, #ff9800, #ffc107, #ffeb3b */
 .sound-container .label-wrapper .slide > div {
   display: inline-block;
+  height: 100%;
+}
+.sound-container .label-wrapper .slide {
   height: 32px;
 }
 
@@ -529,35 +534,35 @@ md-input-container.slide-field > span {
   display: block;
 }*/
 
-.slide .sound-container .s-octave-1.e-octave-2 {
+.slide.sound-container .s-octave-1.e-octave-2 {
   background: linear-gradient(to right, #ff5722, #ff5722, #ff9800, #ff9800);
 }
-.slide .sound-container .s-octave-1.e-octave-3 {
+.slide.sound-container .s-octave-1.e-octave-3 {
   background: linear-gradient(to right, #ff5722, #ff5722, #ffc107, #ffc107);
 }
-.slide .sound-container .s-octave-2.e-octave-3 {
+.slide.sound-container .s-octave-2.e-octave-3 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ffc107, #ffc107);
 }
-.slide .sound-container .s-octave-2.e-octave-4 {
+.slide.sound-container .s-octave-2.e-octave-4 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ffeb3b, #ffeb3b);
 }
-.slide .sound-container .s-octave-3.e-octave-4 {
+.slide.sound-container .s-octave-3.e-octave-4 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ffeb3b, #ffeb3b);
 }
 
-.slide .sound-container .s-octave-2.e-octave-1 {
+.slide.sound-container .s-octave-2.e-octave-1 {
   background: linear-gradient(to right, #ff9800, #ff9800, #ff5722, #ff5722);
 }
-.slide .sound-container .s-octave-3.e-octave-1 {
+.slide.sound-container .s-octave-3.e-octave-1 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ff5722, #ff5722);
 }
-. .sound-containerslide .s-octave-3.e-octave-2 {
+.slide.sound-containerslide .s-octave-3.e-octave-2 {
   background: linear-gradient(to right, #ffc107, #ffc107, #ff9800, #ff9800);
 }
-.slide .sound-container .s-octave-4.e-octave-2 {
+.slide.sound-container .s-octave-4.e-octave-2 {
   background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ff9800, #ff9800);
 }
-.slide .sound-container .s-octave-4.e-octave-3 {
+.slide.sound-container .s-octave-4.e-octave-3 {
   background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ffc107, #ffc107);
 }
 
@@ -587,6 +592,31 @@ md-input-container.slide-field > span {
   left: 0!important;
   top: 28px!important;
 }
+
+.drag-sound {
+  position: fixed;
+  top: -100px;
+  xtop: 100px;
+  left: 100px;
+  z-index: 200;
+}
+
+.drag-sound .resize-handler,
+.drag-sound .resize-container,
+.drag-sound .top-label {
+  display: none;
+}
+
+.drag-sound .sound-container.selected {
+  margin: 0;
+}
+
+/*.resize-container {
+  pointer-events: none;
+}
+.resize-handler {
+  pointer-events: none;
+}*/
 
 .sound-container .hammer-on-label {
   position: absolute;
@@ -629,7 +659,7 @@ md-input-container.slide-field > span {
   line-height: 36px;
 }
 
-.bass-sound-wrapper.staccato .top-label:before {
+.staccato .top-label:before {
   content: "•";
   position: absolute;
   top: 0;
@@ -637,19 +667,19 @@ md-input-container.slide-field > span {
   line-height: 12px;
 }
 
-.bass-sound-wrapper.slap .top-label:after {
+.slap .top-label:after {
   content: "S";
 }
 
-.bass-sound-wrapper.pop .top-label:after {
+.pop .top-label:after {
   content: "P";
 }
 
-.bass-sound-wrapper.tap .top-label:after {
+.tap .top-label:after {
   content: "T";
 }
 
-.bass-sound-wrapper.harmonics .top-label:after {
+.harmonics .top-label:after {
   content: "N.H.";
 }
 
@@ -695,11 +725,7 @@ md-input-container.slide-field > span {
 .beat[subdivision="4"][visible-subbeats="2"] .bass > .subbeats-container:nth-child(5) .bass-button {
   display: none;
 }
-/* disable drop on hidden grid cells */
-/*.beat[subdivision="4"][visible-subbeats="2"] .subbeats-container:nth-child(3) .bass-grid,
-.beat[subdivision="4"][visible-subbeats="2"] .subbeats-container:nth-child(5) .bass-grid {
-  pointer-events: none;
-}*/
+
 
 bd-bend {
   position: absolute;

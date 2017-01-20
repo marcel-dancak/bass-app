@@ -40,7 +40,7 @@
             ng-repeat="label in ::note.label"
             id="{{ ::string.label }}_{{ ::label }}{{ ::note.octave }}"
             ui-draggable="true"
-            drag-channel="instrument"
+            drag-channel="bass.instrument"
             drag="{
               style: fretboard.style,
               note: {

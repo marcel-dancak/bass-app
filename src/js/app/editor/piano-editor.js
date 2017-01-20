@@ -5,8 +5,8 @@
     .module('bd.app')
 
     .factory('eventHandler', eventHandler)
-    .factory('dragHandler2', dragHandler2)
-    .factory('resizeHandler2', resizeHandler2)
+    .factory('pianoDragHandler', pianoDragHandler)
+    .factory('pianoResizeHandler', pianoResizeHandler)
     .controller('EditController', EditController);
 
 
@@ -26,15 +26,6 @@
     return e;
   }
 
-  var dragBox = {
-    elem: angular.element('<div class="drag-box"></div>')[0],
-    setPxStyles: function(styles) {
-      // Object.keys(styles).forEach(function(key))
-      for (var key in styles) {
-        this.elem.style[key] = styles[key]+'px';
-      }
-    }
-  };
 
   function eventHandler(workspace, Notes) {
     return {
@@ -102,221 +93,9 @@
     }
   }
 
-  function dragHandler2(workspace, swiperControl) {
-    var dragSound;
-    var dragWidth;
-    var dragHandler;
-
-    document.body.appendChild(dragBox.elem);
-
-    var scope = angular.element(document.body).scope();
-    scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
-      if (channel === 'piano' || channel === 'keyboard') {
-        dragSound = data.data;
-        var isMultiSound = dragSound.next || dragSound.prev;
-        if (channel === 'keyboard') {
-          dragHandler = keyboardSoundHandler;
-        } else {
-          dragHandler = isMultiSound? multiSoundHandler : singleSoundHandler;
-        }
-        dragHandler.onDragStart(e, dragSound);
-        dragBox.elem.style.opacity = 1;
-      }
-    });
-    scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
-      if (channel === 'piano' || channel === 'keyboard') {
-        dragBox.elem.style.opacity = 0;
-        dragHandler.onDragEnd(e);
-      }
-    });
-
-    function soundElement(sound) {
-      var beatSelector = '#beat_{0}_{1} .sounds-container'.format(sound.beat.bar, sound.beat.beat);
-      var contEl = swiperControl.instrumentSwiper.wrapper[0].querySelector(beatSelector);
-      var index = sound.beat.data.indexOf(sound);
-      if (index !== -1) {
-        return contEl.children[index+1];
-      }
-    }
 
 
-    var keyboardSoundHandler = {
-      dragElem: null,
-      onDragStart: function(evt, dragSound) {
-        dragWidth = evt.target.clientWidth+2;
-        var dragElem = document.createElement('div');
-        dragElem.className = 'piano drag-group';
-        dragElem.style.width = evt.target.clientWidth+'px';
-        var noteElem = document.createElement('div');
-        noteElem.className = 'sound-container';
-        noteElem.setAttribute('octave', dragSound.note.octave);
-        noteElem.appendChild(document.createTextNode(dragSound.note.name));
-        dragElem.appendChild(noteElem);
-
-        document.body.appendChild(dragElem);
-        evt.dataTransfer.setDragImage(dragElem, 10, 36);
-        this.dragElem = dragElem;
-      },
-      canDrop: function(key, sound) {
-        // var piano = workspace.trackSection.instrument;
-        // return piano.stringIndex(note) === piano.stringIndex(dragSound.note);
-        return key.octave === sound.note.octave && key.label[0] === sound.note.name;
-      },
-      onDrop: function(evt, beat, note, dragSound) {
-        this.dragElem.remove();
-        var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
-        var sound = angular.copy(dragSound);
-        sound.start = parseInt(evt.offsetX / grid) / beat.subdivision;
-        sound.string = dragSound.note.name+dragSound.note.octave;
-        workspace.trackSection.addSound(beat, sound);
-      },
-      onDragEnd: angular.noop
-    };
-    var singleSoundHandler = {
-      onDragStart: function(evt, dragSound) {
-        dragWidth = evt.target.clientWidth+2;
-        evt.dataTransfer.setDragImage(evt.target, 10, 7);
-        if (!evt.ctrlKey) {
-          setTimeout(function() {
-            evt.target.classList.add('drag-move-element');
-          }, 80);
-        }
-      },
-      canDrop: function(key, sound) {
-        return true;
-      },
-      onDrop: function(evt, beat, note, dragSound) {
-        var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
-        var sound = angular.copy(dragSound);
-        sound.start = parseInt(evt.offsetX / grid) / beat.subdivision;
-        sound.string = note.label[0]+note.octave;
-        sound.note.name = note.label[0];
-        sound.note.octave = note.octave;
-
-        if (evt.dataTransfer.dropEffect === 'move') {
-          workspace.trackSection.deleteSound(dragSound);
-        }
-        workspace.trackSection.addSound(beat, sound);
-      },
-      onDragEnd: function(evt) {
-        if (evt.target) {
-          evt.target.classList.remove('drag-move-element');
-        }
-      },
-    };
-    var multiSoundHandler = {
-      onDragStart: function(evt, dragSound) {
-        var sound = dragSound;
-        var sounds = [sound];
-        while (sound.prev) {
-          sound = workspace.trackSection.prevSound(sound);
-          if (sound) {
-            sounds.splice(0, 0, sound);
-          } else {
-            console.log('ERROR');
-            return;
-          }
-        }
-        sound = dragSound;
-        while (sound.next) {
-          sound = workspace.trackSection.nextSound(sound);
-          if (sound) {
-            sounds.push(sound);
-          } else {
-            console.log('ERROR');
-            return;
-          }
-        }
-
-        var srcDragElems = [];
-        dragWidth = 0;
-        var dragElem = angular.element('<div class="piano drag-group"></div>')[0];
-        sounds.forEach(function(sound) {
-          var elem = soundElement(sound);
-          var clone = elem.cloneNode(true);
-          dragWidth += elem.clientWidth + 2;
-          clone.style.width = elem.clientWidth+'px';
-          clone.style.position = 'relative';
-          clone.style.display = 'inline-block';
-          dragElem.appendChild(clone);
-          srcDragElems.push(elem);
-        });
-        this.srcDragElems = srcDragElems;
-        document.body.appendChild(dragElem);
-        evt.dataTransfer.setDragImage(dragElem, 10, 36);
-        this.sounds = sounds;
-        this.dragElem = dragElem;
-        setTimeout(function() {
-          if (!evt.ctrlKey) {
-            srcDragElems.forEach(function(elem) {
-              elem.classList.add('drag-move-element');
-            });
-          }
-        });
-      },
-      canDrop: function(key, sound) {
-        return true;
-      },
-      onDrop: function(evt, beat, note, dragSound) {
-        var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
-        var sound = angular.copy(dragSound);
-        var start = parseInt(evt.offsetX / grid) / beat.subdivision;
-
-        this.sounds.forEach(function(sound) {
-          var newSound = angular.copy(sound);
-          newSound.start = start;
-          newSound.string = note.label[0]+note.octave;
-          newSound.note.name = note.label[0];
-          newSound.note.octave = note.octave;
-          workspace.trackSection.addSound(beat, newSound);
-
-          var next = workspace.trackSection.nextSoundPosition(newSound);
-          beat = next.beat;
-          start = next.start;
-        });
-
-        if (evt.dataTransfer.dropEffect === "move") {
-          workspace.trackSection.deleteSound(this.sounds[0]);
-        }
-      },
-      onDragEnd: function(evt) {
-        this.dragElem.remove();
-        this.srcDragElems.forEach(function(elem) {
-          elem.classList.remove('drag-move-element');
-        });
-      },
-    };
-    return {
-      canDrop: false,
-      onDragEnter: function(evt, beat, note) {
-        this.canDrop = dragHandler.canDrop(note, dragSound);
-        dragBox.elem.style.borderColor = this.canDrop? '' : 'red';
-      },
-      onDragLeave: function(evt, beat, note) {},
-      onDragOver: function(evt, beat, note) {
-        // console.log('onDragOver');
-        var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
-        var x = parseInt(evt.offsetX / grid);
-        dragBox.setPxStyles({
-          left: box.left + x * grid,
-          top: box.top-1,
-          width: dragWidth,
-          height: box.height
-        });
-      },
-      onDrop: function(evt, beat, note) {
-        if (this.canDrop) {
-          dragHandler.onDrop(evt, beat, note, dragSound);
-        }
-      }
-    }
-  }
-
-  function resizeHandler2(ResizeHandler, eventHandler) {
+  function pianoResizeHandler(ResizeHandler, eventHandler) {
     class PianoResizeHandler extends ResizeHandler {
 
       beforeResize(sound, info) {
@@ -328,10 +107,42 @@
     return new PianoResizeHandler();
   }
 
-  function EditController($scope, eventHandler, dragHandler2, resizeHandler2) {
-    $scope.dragHandler = dragHandler2;
+
+  function pianoDragHandler(workspace, DragHandler, eventHandler) {
+    class PianoDragHandler extends DragHandler {
+
+      validateDrop(beat, key) {
+        if (this.dragChannel === 'instrument') {
+          return key.octave === this.dragSound.note.octave && key.label[0] === this.dragSound.note.name;
+        }
+        return true;
+      }
+
+      updateDropSound(sound, beat, note) {
+        // console.log('--- updateDropSound ---');
+        sound.string = note.label[0] + note.octave;
+        sound.note.name = note.label[0];
+        sound.note.octave = note.octave;
+      }
+
+      onDragStart(evt) {
+        if (this.dragChannel !== 'instrument') {
+          eventHandler.select(evt, this.dragSound);
+        }
+      }
+
+      onDragEnd(evt, sound) {
+        eventHandler.select(evt, sound);
+      }
+
+    }
+    return new PianoDragHandler('piano');
+  }
+
+  function EditController($scope, eventHandler, pianoDragHandler, pianoResizeHandler) {
     $scope.eventHandler = eventHandler;
-    $scope.resizeHandler = resizeHandler2;
+    $scope.dragHandler = pianoDragHandler;
+    $scope.resizeHandler = pianoResizeHandler;
   }
 
 })();
