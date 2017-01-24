@@ -88,29 +88,26 @@
           </div>
         </div>
         <div
-          ng-repeat="item in ::beat.sounds"
+          ng-repeat="sound in ::beat.sounds"
           class="
-            bass-sound-wrapper
-            string-{{ ::{G: 4, D: 3, A: 2, E: 1, B: 0}[item.sound.string] }}
-            {{ ::item.sound.style }}
-            {{ ::item.sound.note.type }}
-            {{ ::item.sound.noteLength.staccato? 'staccato' : '' }}
+            sound-container
+            string-{{ ::{G: 4, D: 3, A: 2, E: 1, B: 0}[sound.string] }}
+            {{ ::sound.style }}
+            {{ ::sound.note.type }}
+            {{ ::sound.note.staccato? 'staccato' : '' }}
           "
           style="
-            left: {{ ::100*(item.subbeat-1)/beat.subdivision }}%;
-            top: {{ ::{G: '0', D: '36px', A: '72px', E: '108px', B: '144px'}[item.sound.string] }};
-            width: {{ ::(100 * beat.timeSignature.bottom * item.sound.noteLength.beatLength * (beat.subdivision === 3? 2/3 : 1)) }}%;">
+            left: {{ ::100*sound.start }}%;
+            top: {{ ::{G: '0', D: '36px', A: '72px', E: '108px', B: '144px'}[sound.string] }};
+            width: {{ ::100 * (sound.end - sound.start) }}%;"
+          ng-attr-octave="{{ ::sound.note.octave }}">
           <div
             class="top-label">
           </div>
-          <div
-            ng-attr-octave="{{ ::item.sound.note.octave }}"
-            class="sound-container">
-            <bd-sound-label
-              sound="item.sound"
-              string="track.instrument.stringByName(item.sound.string)">
-            </bd-sound-label>
-          </div>
+          <bd-sound-label
+            sound="sound"
+            string="track.instrument.stringByName(sound.string)">
+          </bd-sound-label>
         </div>
         <span class="bottom-note">{{ ::beat.meta.note }}</span>
       </div>

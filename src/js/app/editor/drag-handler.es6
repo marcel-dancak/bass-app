@@ -6,18 +6,6 @@
     .factory('DragHandler', dragHandler)
 
 
-  function soundContainerElem(elem) {
-    var e = elem;
-    var maxDepth = 10;
-    while (e.className.indexOf("sound-container") === -1) {
-      //console.log(e.className);
-      e = e.parentElement;
-      if (maxDepth-- === 0) {
-        return null;
-      };
-    }
-    return e;
-  }
 
   var dragBox = {
     elem: angular.element('<div class="drag-box"></div>')[0],
@@ -34,7 +22,8 @@
     var dragWidth;
     var dragHandler;
 
-    var workspaceElem = document.querySelector('.instrument-grid');
+    var workspaceElem;
+    // var workspaceElem = document.querySelector('.instrument-grid');
     document.body.appendChild(dragBox.elem);
 
     var instrumentSoundHandler = {
@@ -217,33 +206,6 @@
 
     var registredHandlers = {}
 
-    var scope = angular.element(document.body).scope();
-    scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
-      console.log('ANGULAR_DRAG_START');
-      // console.log(data.data)
-      var channelParts = channel.split('.');
-      var _this = registredHandlers[channelParts[0]];
-      if (_this) {
-        dragHandler = _this.selectDragHandler(channelParts[1], data.data);
-        if (dragHandler) {
-          dragHandler.mainHandler = _this;
-          dragSound = data.data;
-          _this.dragSound = dragSound;
-          _this.dragChannel = channelParts[1];
-          _this.onDragStart(e);
-          dragHandler.onDragStart(e, dragSound);
-          dragBox.elem.style.opacity = 1;
-        }
-      }
-    });
-    scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
-      console.log('ANGULAR_DRAG_END');
-      if (dragHandler) {
-        dragBox.elem.style.opacity = 0;
-        dragHandler.onDragEnd(e);
-      }
-    });
-
     class DragHandler {
       constructor(type) {
         this.dragBox = dragBox;
@@ -259,7 +221,6 @@
       }
 
       selectDragHandler(channel, sound) {
-        console.log('selectDragHandler')
         if (channel === 'instrument') {
           return instrumentSoundHandler;
         }
@@ -299,6 +260,41 @@
           this.onDragEnd({target: soundElement(sound)}, sound);
         }.bind(this));
       }
+    }
+
+    DragHandler.initialize = function(selector) {
+      workspaceElem = document.querySelector(selector);
+      var scope = angular.element(workspaceElem).scope();
+      scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
+        console.log('ANGULAR_DRAG_START');
+        // console.log(data.data)
+        var channelParts = channel.split('.');
+        var _this = registredHandlers[channelParts[0]];
+        if (_this) {
+          dragHandler = _this.selectDragHandler(channelParts[1], data.data);
+          if (dragHandler) {
+            dragHandler.mainHandler = _this;
+            dragSound = data.data;
+            _this.dragSound = dragSound;
+            _this.dragChannel = channelParts[1];
+            _this.onDragStart(e);
+            dragHandler.onDragStart(e, dragSound);
+            dragBox.elem.style.opacity = 1;
+          }
+        }
+      });
+
+      scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
+        console.log('ANGULAR_DRAG_END');
+        if (dragHandler) {
+          dragBox.elem.style.opacity = 0;
+          dragHandler.onDragEnd(e);
+        }
+      });
+
+      scope.$on('$destroy', function() {
+        workspaceElem = null;
+      });
     }
     return DragHandler;
   }
