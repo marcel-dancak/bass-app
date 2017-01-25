@@ -4,7 +4,8 @@
   class="bass sounds-container"
   ng-keyup="keyPressed($event)"
   ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
-  <div class="string-container">
+  <div class="string-container"
+    ng-click="bassForm.openNew($event, beat, bass)">
     <div
       ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
       class="bass-string"
@@ -35,11 +36,8 @@
     drag="sound"
     drag-channel="bass.editor"
 
-    ng-click="
-      selectSound($event, sound);
-      $event.stopPropagation()
-    "
-    ng-right-click="openBassSoundMenu($event, sound, bass)">
+    ng-click="selectSound($event, sound)"
+    ng-right-click="bassForm.open($event, sound, bass)">
 
     <div
       class="top-label">

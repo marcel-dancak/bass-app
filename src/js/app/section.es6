@@ -27,9 +27,11 @@
             }
             sound.style = sound.sound.style;
             sound.string = sound.sound.string;
-            sound.prev = Boolean(sound.sound.prev);
-            sound.next = Boolean(sound.sound.next);
-            // delete sound.sound;
+            sound.prev = sound.sound.prev? true : undefined;
+            sound.next = sound.sound.next? true : undefined;
+            delete sound.sound;
+            delete sound.subbeat;
+            delete sound.note.code;
             // TODO fix triplets
           }
           this.initializeSound(sound);

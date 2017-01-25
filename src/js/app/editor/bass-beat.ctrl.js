@@ -11,18 +11,12 @@
     });
 
 
-  function BassBeatController($scope, $timeout, basicHandler, bassDragHandler, bassResizeHandler, bassSoundForm) {
-
+  function BassBeatController($scope, basicHandler, bassDragHandler, bassResizeHandler, bassSoundForm) {
     $scope.selectSound = basicHandler.selectSound.bind(basicHandler);
     $scope.keyPressed = basicHandler.keyPressed.bind(basicHandler);
-
-    /*****  Drag And Drop  ******/
     $scope.dragHandler = bassDragHandler;
-
-    /*****  Resize operation  ******/
     $scope.resizeHandler = bassResizeHandler;
-
-    $scope.openBassSoundMenu = bassSoundForm.open;
+    $scope.bassForm = bassSoundForm;
   }
 
 
@@ -143,24 +137,11 @@
     $scope.fretsStringNotes = fretsStringNotes;
     $scope.inlineStringNotes = inlineStringNotes;
 
-    // initialize empty sound
-    if (!sound.note) {
-      sound.style = 'finger';
-      sound.volume = 0.8;
-      sound.note = angular.copy(inlineStringNotes[0]);
-      sound.note.type = 'regular';
-      sound.string = string.label;
-      sound.noteLength = {
-        length: 1/16,
-        beatLength: 1/16
-      };
-    }
-
     $scope.sound = sound;
     $scope.bass = bass;
   }
 
-  function bassSoundForm($timeout, $mdPanel, basicHandler) {
+  function bassSoundForm($mdUtil, $mdPanel, basicHandler, swiperControl) {
 
     var panelRef;
     var appContextMenuHandler;
@@ -189,12 +170,17 @@
     };
 
     var menu = {
+      openNew: function(evt, beat, bass) {
+        var sound = basicHandler.createSound(evt, beat);
+        $mdUtil.nextTick(function() {
+          this.open({target: swiperControl.getSoundElem(sound)}, sound, bass);
+        }.bind(this));
+      },
       open: function(evt, sound, bass, options) {
-        console.log('open')
         if (!appContextMenuHandler || window.oncontextmenu !== customContextMenuHandler) {
           appContextMenuHandler = window.oncontextmenu;
         }
-        $timeout(basicHandler.selectSound.bind(basicHandler), 0, false, evt, sound);
+        basicHandler.selectSound(evt, sound);
 
         var position = $mdPanel.newPanelPosition()
           .relativeTo(evt.target)
@@ -215,6 +201,10 @@
         if (options) {
           panelConfig = angular.extend(panelConfig, options);
         }
+        // compute code property
+        if (sound.note) {
+          sound.note.code = sound.note.name + sound.note.octave;
+        }
         panelRef = $mdPanel.create(
           angular.extend(panelConfig, {
             templateUrl: 'views/editor/bass_sound_form.html',
@@ -228,6 +218,8 @@
               bass: bass
             },
             onRemoving: function() {
+              // remove computed code value
+              delete sound.note.code;
               window.oncontextmenu = appContextMenuHandler;
             },
             onOpenComplete: function() {

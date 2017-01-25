@@ -102,16 +102,6 @@
       },
     };
 
-    function soundElement(sound) {
-      var beatSelector = '#beat_{0}_{1} .sounds-container'.format(sound.beat.bar, sound.beat.beat);
-      var contEl = swiperControl.instrumentSwiper.wrapper[0].querySelector(beatSelector);
-      var index = sound.beat.data.indexOf(sound);
-      // console.log(index+'/'+contEl.childElementCount)
-      if (index !== -1) {
-        return contEl.children[index+1];
-      }
-    }
-
     var multiSoundHandler = {
       onDragStart: function(evt, dragSound) {
         var sound = dragSound;
@@ -140,7 +130,7 @@
         var srcDragElems = [];
         dragWidth = 0;
         sounds.forEach(function(sound) {
-          var elem = soundElement(sound);
+          var elem = swiperControl.getSoundElem(sound);
           var clone = elem.cloneNode(true);
           dragWidth += elem.clientWidth + 2;
           clone.style.position = 'relative';
@@ -257,7 +247,7 @@
         var sound = dragHandler.onDrop(evt, this, dragSound, beat, position);
         dragHandler = null;
         $mdUtil.nextTick(function() {
-          this.onDragEnd({target: soundElement(sound)}, sound);
+          this.onDragEnd({target: swiperControl.getSoundElem(sound)}, sound);
         }.bind(this));
       }
     }

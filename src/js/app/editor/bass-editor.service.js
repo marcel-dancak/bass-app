@@ -35,7 +35,7 @@
       }
 
       onDragEnd(evt, sound) {
-        basicHandler.selectSound(evt, sound);
+        basicHandler.selectSound(evt, sound, true);
       }
 
     }
@@ -57,19 +57,56 @@
   }
 
 
-  function basicHandler(workspace, audioPlayer) {
+  function getSoundGrid(evt, beat) {
+    var container = evt.target.parentElement;
+
+    var box = container.getBoundingClientRect();
+    var x = evt.clientX - box.left;
+    var y = evt.clientY - box.top;
+
+    var subbeat = 1 + parseInt((x * beat.subdivision) / box.width);
+    var stringIndex = workspace.track.instrument.strings.length - 1 - parseInt(y / 36);
+    var string = workspace.track.instrument.strings[stringIndex];
+
+    return {
+      subbeat: subbeat,
+      string: string,
+      containerElem: container
+    };
+  }
+
+  function basicHandler(workspace, swiperControl) {
 
     return {
       selected: {
         sound: null,
         element: null
       },
+      createSound: function(evt, beat) {
+        var position = getSoundGrid(evt, beat);
+        var sound = {
+          string: position.string.label,
+          style: 'finger',
+          volume: 0.75,
+          start: (position.subbeat-1) / beat.subdivision,
+          note: {
+            type: 'regular',
+            name: position.string.notes[0].label[0],
+            octave: position.string.notes[0].octave,
+            fret: 0,
+            length: 16
+          }
+        };
+        sound.note.code = sound.note.name + sound.note.octave;
+        workspace.trackSection.addSound(beat, sound);
+        return sound;
+      },
       selectSound: function(evt, sound, focus) {
         console.log('selectSound');
         this.clearSelection();
 
         this.selected.sound = sound;
-        this.selected.element = soundContainerElem(evt.target);
+        this.selected.element = evt? soundContainerElem(evt.target) : swiperControl.getSoundElem(sound);
         this.selected.element.classList.add('selected');
         if (focus) {
           this.selected.element.focus();
@@ -96,8 +133,6 @@
               var ringNote = this.selected.sound.note;
               var prevNote = soundOnLeft.note.type === 'slide'? soundOnLeft.note.slide.endNote : soundOnLeft.note;
               var fretOffset = selectedSound.note.fret - prevNote.fret;
-              console.log(fretOffset);
-              // this.selected.grid.sound.note = angular.copy(leftElemGrid.sound.note);
               if (fretOffset === 0) {
                 angular.merge(selectedSound.note, {
                   type: 'regular',
@@ -129,11 +164,10 @@
           } else {
             this.selected.sound.style = 'finger';
           }
-
         } else {
-          if (this.selected.grid.sound.prev) {
-            delete getGridInfo(this.selected.grid.sound.prev).grid.sound.next;
-            delete this.selected.grid.sound.prev;
+          if (this.selected.sound.prev) {
+            delete workspace.trackSection.prevSound(this.selected.sound).next;
+            delete this.selected.sound.prev;
           }
         }
       },

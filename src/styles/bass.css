@@ -73,6 +73,7 @@
   top: 0;
   right: 0;
   bottom: 0;
+  outline: none;
 }
 
 .bass-string {
@@ -227,12 +228,12 @@
   bottom: 0;
 }
 
-.ring.sound-container label.note,
-.ring.sound-container label.fret {
+.sound-container.ring:not(.slide) label.note,
+.sound-container.ring:not(.slide) label.fret {
   display: none!important;
 }
 
-.ring.sound-container .label-wrapper > div:before {
+.sound-container.ring:not(.slide) .label-wrapper > div:before {
   content: "⏝";
   line-height: 32px;
   position: absolute;

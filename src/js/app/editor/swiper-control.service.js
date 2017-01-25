@@ -458,6 +458,17 @@
       return elems[0];
     };
 
+    SwiperControl.prototype.getSoundElem = function(sound) {
+      var beatSelector = '#beat_{0}_{1} .sounds-container'.format(sound.beat.bar, sound.beat.beat);
+      var contEl = this.instrumentSwiper.wrapper[0].querySelector(beatSelector);
+      console.log(contEl)
+      var index = sound.beat.data.indexOf(sound);
+      console.log(index+'/'+contEl.childElementCount)
+      if (index !== -1) {
+        return contEl.children[index+1];
+      }
+    };
+
     SwiperControl.prototype.getBarWrapper = function() {
       return this.barSwiper.wrapper[0];
     };
