@@ -66,10 +66,8 @@
       },
       selectSound: function(evt, sound, focus) {
         console.log('selectSound');
-        console.log(evt)
-        if (this.selected.element) {
-          this.selected.element.classList.remove('selected');
-        }
+        this.clearSelection();
+
         this.selected.sound = sound;
         this.selected.element = soundContainerElem(evt.target);
         this.selected.element.classList.add('selected');
@@ -78,10 +76,11 @@
         }
       },
       clearSelection: function() {
-        // if (evt.target.className.indexOf('bass-board-container') !== -1) {
+        if (this.selected.element) {
+          this.selected.element.classList.remove('selected');
+        }
         this.selected.sound = null;
         this.selected.element = null;
-        // }
       },
 
       soundStyleChanged: function(style) {

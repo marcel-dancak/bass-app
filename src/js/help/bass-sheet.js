@@ -17,7 +17,7 @@
         '<div class="beats-container" layout="row">'+
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
-            'ng-include="\'views/editor/bass_beat.html\'" '+
+            'ng-include="\'views/editor/bass_beat2.html\'" '+
             'class="beat-container beat instrument-slide">'+
           '</div>'+
         '</div>'+
@@ -29,7 +29,7 @@
         config: '=bdHelpBassSheet'
       },
       template: '',
-      controller: function($scope, $element, $mdCompiler, Bass, BassSection, basicHandler) {
+      controller: function($scope, $element, $mdCompiler, Bass, TrackSection, basicHandler) {
         function createSlide(beat) {
           return {
             id: beat,
@@ -39,12 +39,7 @@
             type: 'bass'
           }
         }
-        function addSound(bar, beat, subbeat, sound) {
-          angular.extend(
-            $scope.workspace.trackSection.subbeat(bar, beat, subbeat)[sound.string].sound,
-            sound
-          );
-        }
+
         $scope.initializeWorkspace = function(config) {
           var numbers = (config.timeSignature || '4/4').split('/');
           var timeSignature = {
@@ -61,12 +56,11 @@
               instrument: new Bass({strings: config.strings || 'EADG'})
             }
           };
-          $scope.workspace.trackSection = new BassSection($scope.workspace.section);
+          $scope.workspace.trackSection = new TrackSection($scope.workspace.section, []);
           $scope.workspace.beatSlides = [];
           for (var i = 1; i <= (config.size || 2); i++) {
             $scope.workspace.beatSlides.push(createSlide(i));
           }
-          $scope.workspace.addSound = addSound;
 
           var template = '<div ng-controller="{0}">'.format($scope.config.controller)+sheetTemplate+'</div>';
           $mdCompiler.compile({

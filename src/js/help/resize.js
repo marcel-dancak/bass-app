@@ -6,34 +6,35 @@
     .controller('ResizeSlideshow', ResizeSlideshow);
 
 
-  function ResizeSlideshow($scope, $element, $timeout, basicHandler, resizeHandler) {
+  function ResizeSlideshow($scope, $element, $timeout, basicHandler, bassResizeHandler) {
 
-    var editGrid, editElem;
+    var editSound, editElem;
 
-    function startResize(bar, beat, subbeat, string) {
-      var selector = '#bass_{0}_{1}_{2}_{3} .sound-container'.format(bar, beat, subbeat, string);
-      editElem = angular.element($element[0].querySelector(selector));
-      editGrid = editElem.scope().grid;
+    function startResize(index) {
+      var soundElem = $element[0].querySelectorAll('.sound-container')[index];
+      editElem = angular.element(soundElem.querySelector('.resize-container'));
+      editSound = editElem.scope().sound;
+
+      basicHandler.selectSound({target: soundElem}, editSound);
       editElem.addClass('hover');
-      resizeHandler.onResizeStart(
-        editGrid,
-        {element: editElem, width: editElem[0].offsetWidth},
-        4
+      bassResizeHandler.onResizeStart(
+        editSound,
+        {element: editElem, width: editElem[0].offsetWidth}
       );
     }
     function resizeTo(factor) {
       var startWidth = editElem[0].clientWidth;
       var endWidth = startWidth * factor;
-      resizeHandler.onResize(
-        editGrid,
+      bassResizeHandler.onResize(
+        editSound,
         {element: editElem, width: endWidth}
       );
     }
     function finishResize() {
       // timeout is used for nicer animation
       $timeout(function() {
-        resizeHandler.onResizeEnd(
-          editGrid,
+        bassResizeHandler.onResizeEnd(
+          editSound,
           {element: editElem},
           {stopPropagation: angular.noop}
         );
@@ -43,51 +44,54 @@
     $scope.instructions = [
       /* Create sounds */
       function() {
-        $scope.workspace.addSound(1, 1, 2, {
-          string: 'A',
-          style: 'slap',
-          note: {
-            type: 'regular',
-            name: 'B',
-            octave: 1,
-            fret: 2
-          },
-          noteLength: {
-            length: 1/16,
-            beatLength: 1/16
+        $scope.workspace.trackSection.addSound(
+          $scope.workspace.trackSection.beat(1, 1),
+          {
+            start: 0.25,
+            string: 'A',
+            style: 'slap',
+            note: {
+              type: 'regular',
+              name: 'B',
+              octave: 1,
+              fret: 2,
+              length: 16,
+            }
           }
-        });
-        $scope.workspace.addSound(1, 2, 2, {
-          string: 'A',
-          style: 'slap',
-          note: {
-            type: 'regular',
-            name: 'C',
-            octave: 2,
-            fret: 3
-          },
-          noteLength: {
-            length: 1/16,
-            beatLength: 1/16
+        );
+        $scope.workspace.trackSection.addSound(
+          $scope.workspace.trackSection.beat(1, 2),
+          {
+            start: 0.25,
+            string: 'A',
+            style: 'slap',
+            note: {
+              type: 'regular',
+              name: 'C',
+              octave: 2,
+              fret: 3,
+              length: 16,
+            }
           }
-        });
-        $scope.workspace.addSound(1, 2, 3, {
-          string: 'A',
-          style: 'slap',
-          note: {
-            type: 'regular',
-            name: 'E',
-            octave: 2,
-            fret: 7
-          },
-          noteLength: {
-            length: 1/16,
-            beatLength: 1/16
+        );
+        $scope.workspace.trackSection.addSound(
+          $scope.workspace.trackSection.beat(1, 2),
+          {
+            start: 0.5,
+            string: 'A',
+            style: 'slap',
+            note: {
+              type: 'regular',
+              name: 'E',
+              octave: 2,
+              fret: 7,
+              length: 16,
+            }
           }
-        });
+        );
       },
       function() {
-        startResize(1, 1, 2, 'A');
+        startResize(0);
       },
       function() {
         resizeTo(3);
@@ -101,7 +105,7 @@
         editElem.removeClass('hover');
       },
       function() {
-        startResize(1, 2, 2, 'A');
+        startResize(1);
       },
       function() {
         resizeTo(2);

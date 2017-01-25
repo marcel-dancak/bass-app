@@ -7,7 +7,7 @@
     .controller('ToolbarController', ToolbarController);
 
 
-  function ToolbarController($scope, $element, $timeout, $mdCompiler, Bass, BassSection) {
+  function ToolbarController($scope, $element, $timeout, $mdCompiler, Bass, TrackSection) {
     var section = {
       timeSignature: {
         top: 4,
@@ -17,7 +17,7 @@
       bpm: 80,
       name: 'Verse'
     };
-    var trackSection = new BassSection(section);
+    var trackSection = new TrackSection(section, []);
 
     $scope.project = {
       tracks: [{
@@ -46,7 +46,7 @@
     };
   }
 
-  function HelpBarController($scope, $element, $timeout, $mdCompiler, BassSection) {
+  function HelpBarController($scope, $element, $timeout, $mdCompiler, TrackSection) {
 
     $scope.barLabels = {
       3: ['trip', 'let'],
@@ -61,7 +61,7 @@
       length: 2,
       beatsPerView: 3
     };
-    var trackSection = new BassSection(section);
+    var trackSection = new TrackSection(section, []);
     $scope.workspace = {
       section: section,
       trackSection: trackSection

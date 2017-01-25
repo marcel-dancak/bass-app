@@ -9,49 +9,46 @@
 
     $scope.instructions = [
       function() {
-        $scope.workspace.addSound(1, 1, 2, {
-          string: 'A',
-          style: 'slap',
-          note: {
-            type: 'regular',
-            name: 'C',
-            octave: 2,
-            fret: 3
-          },
-          noteLength: {
-            length: 1/8,
-            beatLength: 1/8
+        $scope.workspace.trackSection.addSound(
+          $scope.workspace.trackSection.beat(1, 1),
+          {
+            start: 0.25,
+            string: 'A',
+            style: 'slap',
+            note: {
+              type: 'regular',
+              name: 'C',
+              octave: 2,
+              fret: 3,
+              length: 8,
+            }
           }
-        });
-      },
-      function() {
-        $scope.workspace.addSound(1, 1, 4, {
-          string: 'A',
-          style: 'slap',
-          note: {
-            type: 'regular',
-            name: 'D',
-            octave: 2,
-            fret: 5
-          },
-          noteLength: {
-            length: 1/16,
-            beatLength: 1/16
-          }
-        })
-      },
-      function() {
-        var elem = angular.element(
-          $element[0].querySelector('#bass_1_1_4_A .sound-container')
-        );
-        var grid = elem.scope().grid;
-        basicHandler.selectGrid(
-          {target: elem[0]},
-          grid
         );
       },
       function() {
-        basicHandler.selected.grid.sound.style = 'hammer';
+        $scope.workspace.trackSection.addSound(
+          $scope.workspace.trackSection.beat(1, 1),
+          {
+            start: 0.75,
+            string: 'A',
+            style: 'slap',
+            note: {
+              type: 'regular',
+              name: 'D',
+              octave: 2,
+              fret: 5,
+              length: 16,
+            }
+          }
+        );
+      },
+      function() {
+        var elem = $element[0].querySelectorAll('.sound-container')[1];
+        var sound = angular.element(elem).scope().sound;
+        basicHandler.selectSound({target: elem}, sound);
+      },
+      function() {
+        basicHandler.selected.sound.style = 'hammer';
         basicHandler.soundStyleChanged('hammer');
         basicHandler.clearSelection();
       },

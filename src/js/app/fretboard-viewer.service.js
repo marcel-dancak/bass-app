@@ -64,6 +64,8 @@
     function FretboardViewer() {
       
       audioPlayer._bassSoundScheduled = function(trackId, sound) {
+        // console.log('_bassSoundScheduled')
+        // console.log(diagramElem)
         if (diagramElem && trackId === workspace.track.id) {
           var currentTime = context.currentTime;
           function delayTime(time) {
@@ -139,7 +141,7 @@
       }
     }
 
-    FretboardViewer.prototype.setChord = function(section, chord) {
+    FretboardViewer.prototype.setChord = function(section, trackId, chord) {
       this.clearDiagram();
       if (!diagramElem || !chord.root) {
         return;
@@ -155,6 +157,7 @@
       var sBeat = chord.start[1];
       var sSubbeat = chord.start[2] || 1;
 
+      var trackSection = section.tracks[trackId];
       var nextChordIndex = section.meta.chords.indexOf(chord);
       var nextChord = section.meta.chords[nextChordIndex+1];
 
@@ -167,19 +170,18 @@
       var endRange = eBar*1000 + eBeat*10 + eSubbeat;
 
       // collect sounds in chord range
-      var track = section.tracks[workspace.track.id];
       var sounds = [];
-      var beat = track.beat(sBar, sBeat);
+      var beat = trackSection.beat(sBar, sBeat);
       while (beat && (beat.bar*1000 + beat.beat*10) < endRange) {
         Array.prototype.push.apply(
           sounds,
-          track.beatSounds(beat)
+          trackSection.beatSounds(beat)
             .filter(function(sound) {
               var soundPosition = beat.bar*1000 + beat.beat*10 + sound.subbeat;
               return soundPosition >= startRange && soundPosition < endRange;
             })
         );
-        beat = track.nextBeat(beat);
+        beat = trackSection.nextBeat(beat);
       }
 
       var ids = new Set();
@@ -215,7 +217,7 @@
         // TODO: get beat subdivision properly
         var time = (evt.startTime - evt.eventTime) + (subbeat-1)*evt.duration/4;
         setTimeout(function() {
-          this.setChord(evt.section, newChord);
+          this.setChord(evt.section, workspace.track.id, newChord);
         }.bind(this), parseInt(time*1000)-10);
       }
     };

@@ -6,7 +6,7 @@
     .factory('ResizeHandler', resizeHandler)
 
 
-  function resizeHandler(workspace, swiperControl, Note) {
+  function resizeHandler(workspace, Note) {
 
     var resizeBox = {
       elem: angular.element('<div class="resize-box"><i></i></div>')[0],
@@ -110,7 +110,8 @@
         this.resizeBox.setPxStyles({height: soundElem.offsetHeight});
         soundElem.appendChild(this.resizeBox.elem);
 
-        var beatWidth = swiperControl.instrumentSwiper.slides[swiperControl.instrumentSwiper.snapIndex].clientWidth;
+        // var beatWidth = swiperControl.instrumentSwiper.slides[swiperControl.instrumentSwiper.snapIndex].clientWidth;
+        var beatWidth = soundElem.parentElement.clientWidth;
 
         notesWidths = noteLengths.map(function(noteLength) {
           var length = 1 / (noteLength.dotted? noteLength.length * 0.667 : noteLength.length);

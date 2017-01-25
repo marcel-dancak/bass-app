@@ -430,11 +430,15 @@ var fixture = {
         ]
     }
 }
-  function ChordsController($scope, $element, $mdUtil, Bass, BassTrackSection, slidesCompiler, fretboardViewer) {
+
+  function ChordsController($scope, $element, $mdUtil, Bass, TrackSection, slidesCompiler, fretboardViewer) {
 
     var section = angular.copy(fixture);
+    section.beatLabels = function(beat) {
+      return [0,1,2,3,4,5,6,7,8,9,10,11,12];
+    }
     var data = section.tracks.bass_0;
-    section.tracks.bass_0 = new BassTrackSection(section, data);
+    section.tracks.bass_0 = new TrackSection(section, data);
 
     $scope.project = {
       tracks: [{
@@ -465,6 +469,9 @@ var fixture = {
       bar: 1,
       beat: 1
     };
+    console.log($scope.workspace);
+    console.log(section.tracks.bass_0);
+
     slidesCompiler.setTemplate('views/playlist/slide.html').then(function() {
       var slide = slidesCompiler.generateSlide($scope, playlist, position, 5, 'bass_0', {});
       var containerEl = $element[0].querySelector('.bass-sheet');
@@ -473,7 +480,7 @@ var fixture = {
       // wait for fretboard's angular compiation and then highlight notes 
       $mdUtil.nextTick(function() {
         fretboardViewer.activate($element[0]);
-        fretboardViewer.setChord($scope.workspace.section, $scope.workspace.section.meta.chords[0]); 
+        fretboardViewer.setChord(section, 'bass_0', section.meta.chords[0]);
       });
 
     });

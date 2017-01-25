@@ -27,7 +27,7 @@
         config: '=bdHelpDrumSheet'
       },
       template: '',
-      controller: function($scope, $element, $mdCompiler, Drums, DrumSection, DrumTrackSection2, basicHandler) {
+      controller: function($scope, $element, $mdCompiler, Drums, DrumTrackSection, basicHandler) {
         function createSlide(beat) {
           return {
             id: beat,
@@ -52,7 +52,7 @@
               length: config.length || 1
             }
           };
-          $scope.workspace.trackSection = new DrumTrackSection2($scope.workspace.section, []);
+          $scope.workspace.trackSection = new DrumTrackSection($scope.workspace.section, []);
           $scope.workspace.trackSection.instrument = drumKit;
           $scope.workspace.beatSlides = [createSlide(1), createSlide(2)];
 

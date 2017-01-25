@@ -1,6 +1,6 @@
 <div
   ng-if="slide.initialized"
-  sly-show="slide.visible"
+  sly-show="slide.initialized && slide.visible"
   class="bass sounds-container"
   ng-keyup="keyPressed($event)"
   ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
@@ -16,7 +16,7 @@
   </div>
 
   <div
-    ng-repeat="sound in beat.data"
+    ng-repeat="sound in beat.data track by (sound.string + sound.start)"
     class="sound-container string-{{ ::{G: '4', D: '3', A: '2', E: '1', B: '0'}[sound.string] }}"
     ng-class="[{
         staccato: sound.note.staccato

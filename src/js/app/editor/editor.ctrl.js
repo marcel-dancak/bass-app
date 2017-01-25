@@ -434,7 +434,7 @@
           }
 
           angular.element(elem).on('click', function(evt) {
-            fretboardViewer.setChord(workspace.section, chordInfo);
+            fretboardViewer.setChord(workspace.section, workspace.track.id, chordInfo);
           });
           angular.element(elem).on('dblclick', function(evt) {
             playChord(chordInfo);
@@ -510,12 +510,10 @@
       $scope.player.progress.value = 0;
       // $scope.player.playbackRangeChanged();
 
-      if (workspace.track && section.tracks[workspace.track.id]) {
-        workspace.trackSection = section.tracks[workspace.track.id];
-      } else {
-        workspace.trackSection = section.tracks['bass_0'];
-      }
+      var trackId = workspace.track && section.tracks[workspace.track.id]? workspace.track.id : 'bass_0';
+      workspace.trackSection = section.tracks[trackId];
       workspace.track = workspace.trackSection;
+      workspace.track.id = trackId;
 
       createSlides(workspace.trackSection);
       $mdUtil.nextTick(function() {
@@ -575,6 +573,7 @@
         swiperControl.rebuildSlides();
       }
       workspace.track = track;
+      workspace.track.id = trackId;
     };
 
     if (workspace.section) {

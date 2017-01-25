@@ -9,7 +9,7 @@
 
   function SoundPropertiesSlideshow($scope, $element, $timeout, basicHandler, bassSoundForm, $mdCompiler) {
 
-    var editGrid, editElem, form, formScope;
+    var editSound, editElem, form, formScope;
 
     var bass = {
       playingStyles: [
@@ -44,33 +44,28 @@
     $scope.instructions = [
       /* Create a first sound */
       function() {
-        $scope.workspace.addSound(1, 1, 2, {
+        editSound = {
+          start: 0.5,
           string: 'G',
+          volume: 0.75,
           style: 'finger',
           note: {
             type: 'regular',
             name: 'A',
             octave: 2,
             code: 'A2',
-            fret: 2
-          },
-          noteLength: {
-            length: 1/16,
-            beatLength: 1/16
-          },
-          volume: 0.75
-        });
+            fret: 2,
+            length: 16,
+          }
+        };
+        $scope.workspace.trackSection.addSound($scope.workspace.trackSection.beat(1, 1), editSound);
       },
-      /* Create a second sound */
       function() {
-        editElem = angular.element(
-          $element[0].querySelector('#bass_1_1_2_G .sound-container')
-        );
-        editGrid = editElem.scope().grid;
+        editElem = $element[0].querySelector('.sound-container');
 
         form = bassSoundForm.open(
-          {target: editElem[0]},
-          editGrid,
+          {target: editElem},
+          editSound,
           bass,
           {
             clickOutsideToClose: false,
@@ -83,11 +78,11 @@
       },
       function() {
         formScope = angular.element(document.querySelector('.bass-sound-form')).scope();
-        editGrid.sound.noteLength.dotted = true;
-        formScope.soundLengthChanged(editGrid.sound);
+        editSound.note.dotted = true;
+        formScope.soundLengthChanged(editSound);
       },
       function() {
-        editGrid.sound.noteLength.staccato = true;
+        editSound.note.staccato = true;
       },
 
       /* Clear bass sheet */
