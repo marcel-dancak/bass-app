@@ -227,6 +227,14 @@
         // console.log('onDragEnter')
         this.canDrop = this.validateDrop(beat, position);
         this.dragBox.elem.style.borderColor = this.canDrop? '' : 'red';
+        if (!this.dragSound.prev && !this.dragSound.next) {
+          var beatWidth = evt.target.clientWidth;
+          var tmpSound = {
+            beat: beat,
+            note: dragSound.note
+          }
+          dragWidth = workspace.trackSection.soundDuration(tmpSound) * beatWidth;
+        }
       }
 
       onDragOver(evt, beat, position) {
@@ -234,6 +242,7 @@
         var box = evt.target.getBoundingClientRect();
         var grid = evt.target.offsetWidth / beat.subdivision;
         var x = parseInt(evt.offsetX / grid);
+
         dragBox.setPxStyles({
           left: box.left + x * grid,
           top: box.top-1,

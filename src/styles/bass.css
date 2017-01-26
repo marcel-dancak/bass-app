@@ -596,7 +596,7 @@ md-input-container.slide-field > span {
 
 .drag-sound {
   position: fixed;
-  top: -100px;
+  top: -200px;
   xtop: 100px;
   left: 100px;
   z-index: 200;
@@ -781,4 +781,20 @@ bd-bend {
   display: block;
   bottom: -6px;
   right: 0px;
+}
+
+
+.bass-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  pointer-events: none;
+}
+
+.workspace:hover .bass-grid {
+  opacity: 1;
 }

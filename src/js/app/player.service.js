@@ -643,16 +643,15 @@
         for (var trackId in this.section.tracks) {
           var track = this.section.tracks[trackId];
           var trackBeat = track.beat(bar, beat);
-          var noteBeatTime = trackBeat.subdivision === 3? beatTime*(2/3) : beatTime;
           track.beatSounds(trackBeat).forEach(function(sound) {
             var startAt = startTime + (sound.start * beatTime);;
             try {
               if (track.type === 'bass') {
-                this._playBassSound(trackId, track, sound, startAt, noteBeatTime);
+                this._playBassSound(trackId, track, sound, startAt, beatTime);
               } else if (track.type === 'drums') {
                 this._playDrumSound(track, sound, startAt);
               } else {
-                this._playSound(trackId, track, trackBeat, sound, startAt, noteBeatTime);
+                this._playSound(trackId, track, trackBeat, sound, startAt, beatTime);
               }
             } catch (ex) {
               if (ex instanceof ResourceNotAvailable) {

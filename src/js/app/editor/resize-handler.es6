@@ -110,13 +110,11 @@
         this.resizeBox.setPxStyles({height: soundElem.offsetHeight});
         soundElem.appendChild(this.resizeBox.elem);
 
-        // var beatWidth = swiperControl.instrumentSwiper.slides[swiperControl.instrumentSwiper.snapIndex].clientWidth;
         var beatWidth = soundElem.parentElement.clientWidth;
-
+        var tmpSound = {beat: sound.beat};
         notesWidths = noteLengths.map(function(noteLength) {
-          var length = 1 / (noteLength.dotted? noteLength.length * 0.667 : noteLength.length);
-          var width = length * workspace.section.timeSignature.bottom * beatWidth;
-          return width;
+          tmpSound.note = noteLength;
+          return workspace.trackSection.soundDuration(tmpSound) * beatWidth;
         });
 
         this.onResize(sound, info);

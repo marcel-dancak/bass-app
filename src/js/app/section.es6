@@ -32,7 +32,6 @@
             delete sound.sound;
             delete sound.subbeat;
             delete sound.note.code;
-            // TODO fix triplets
           }
           this.initializeSound(sound);
         }, this);
