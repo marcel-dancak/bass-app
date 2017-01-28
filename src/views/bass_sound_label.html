@@ -9,10 +9,6 @@
     <label class="fret">
       {{ sound.note.fret }}
     </label>
-    <!-- <label class="length">
-      <i ng-class="noteLengthSymbols[sound.noteLength.length]"></i>
-      <span ng-show="sound.noteLength.dotted">.</span>
-    </label> -->
   </div>
 
   <!-- Ghost note label -->
@@ -63,11 +59,6 @@
 
   <bd-bend height="25" ng-if="sound.note.type === 'bend'"></bd-bend>
 
-  <div
-    ng-if="sound.style === 'hammer' || sound.style === 'pull'"
-    class="hammer-on-label">
-    <span>)</span>
-    <span>{{ sound.style === 'hammer'? 'H' : 'P'}}</span>
-  </div>
+  <div class="hammer-on-label"></div>
 
 </div>

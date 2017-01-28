@@ -620,6 +620,7 @@ md-input-container.slide-field > span {
 }*/
 
 .sound-container .hammer-on-label {
+  display: none;
   position: absolute;
   left: -15px;
   top: -28px;
@@ -632,11 +633,12 @@ md-input-container.slide-field > span {
     0px 0px 5px #fff,
     0px 0px 5px #fff;
 }
-.selected .sound-container .hammer-on-label {
+.selected.sound-container .hammer-on-label {
   left: -16px;
 }
 
-.sound-container .hammer-on-label > span:first-child {
+.sound-container .hammer-on-label:before {
+  content: ")";
   position: absolute;
   top: 5px;
   left: 11px;
@@ -644,11 +646,22 @@ md-input-container.slide-field > span {
   transform-origin: 50%  51%; /* to avoid blury text */
   transform: rotate3d(0, 0, 1, -90deg);
 }
-.sound-container .hammer-on-label > span:last-child {
+.sound-container .hammer-on-label:after {
   position: absolute;
   top: -5px;
   left: 10px;
   font-size: 14px;
+}
+.sound-container.hammer .hammer-on-label:after {
+  content: "H";
+}
+.sound-container.pull .hammer-on-label:after {
+  content: "P";
+}
+
+.sound-container.hammer .hammer-on-label,
+.sound-container.pull .hammer-on-label {
+  display: block;
 }
 
 .top-label {
