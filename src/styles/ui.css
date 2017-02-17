@@ -1,3 +1,6 @@
+html {
+  overflow-y: hidden!important;
+}
 body {
   background-color: #fff;
   width: 100%;
@@ -5,6 +8,9 @@ body {
   overflow: hidden;
 }
 
+/*body > div {
+  overflow: hidden;
+}*/
 .main-page {
   padding: 0;
   padding-bottom: 38px;
@@ -12,8 +18,12 @@ body {
   height: 100%;
 }
 
-.editor {
-  position: relative;
+.editor, .viewer-container {
+  position: absolute;
+  top: 50px;
+  bottom: 40px;
+  left: 0;
+  width: 100%;
 }
 
 md-input-container input[type="number"] {
@@ -148,8 +158,7 @@ md-backdrop.md-select-backdrop {
   text-align: right;
 }
 .preferences md-input-container input[type="text"] {
-  text-indent: 21px;
-  direction: rtl;
+  padding-right: 24px;
 }
 .preferences md-select md-select-value {
   text-align: right;
@@ -197,6 +206,14 @@ md-menu-item md-icon {
 }
 md-menu-item.md-indent .md-button {
   padding-left: 44px;
+}
+
+md-select-menu md-checkbox {
+  padding: 15px;
+  margin: 0;
+}
+md-select-menu md-checkbox .md-container {
+  left: 15px;
 }
 
 .md-menu .expand-arrow {
@@ -819,9 +836,6 @@ md-input-container label.md-no-float {
   overflow: hidden;
 }
 
-.section-dialog md-input-container input[type="text"] {
-  padding-right: 24px;
-}
 
 .section-dialog md-input-container {
   margin-right: 5px;
@@ -874,3 +888,4 @@ md-input-container label.md-no-float {
 .playback-active .swiper-wrapper {
   transition-timing-function: linear !important;
 }
+

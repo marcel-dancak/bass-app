@@ -77,6 +77,7 @@
       
       return {
         subbeat: subbeat,
+        start: (subbeat - 1) / beat.subdivision,
         drum: drum,
         drumIndex: drumIndex,
         containerElem: container
@@ -86,7 +87,7 @@
     return {
       click: function(evt, beat) {
         var grid = getSoundGrid(evt, beat);
-        var sound = workspace.trackSection.sound(beat, {subbeat: grid.subbeat, drum: grid.drum});
+        var sound = workspace.trackSection.sound(beat, {start: grid.start, drum: grid.drum});
         if (sound) {
           var index = drumsVolumeLevels.indexOf(sound.volume);
           var nextIndex = (index+1) % drumsVolumeLevels.length;
@@ -97,7 +98,7 @@
           }
         } else {
           console.log('ADD sound')
-          sound = {subbeat: grid.subbeat, drum: grid.drum, volume: 0.85};
+          sound = {start: grid.start, drum: grid.drum, volume: 0.85};
           workspace.trackSection.addSound(beat, sound);
         }
       },
@@ -133,7 +134,7 @@
       onDrop: function(evt, beat) {
         var grid = getSoundGrid(evt, beat);
 
-        var destSound = workspace.trackSection.sound(beat, {subbeat: grid.subbeat, drum: grid.drum});
+        var destSound = workspace.trackSection.sound(beat, {start: grid.start, drum: grid.drum});
         if (destSound) {
           if (destSound === dragSound) {
             return;
@@ -142,7 +143,7 @@
         } else {
           destSound = {
             volume: dragSound.volume,
-            subbeat: grid.subbeat,
+            start: grid.start,
             drum: grid.drum
           };
           workspace.trackSection.addSound(beat, destSound);

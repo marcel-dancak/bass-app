@@ -48,6 +48,7 @@
   width: 320px;
   padding: 0;
   margin: 0 16px;
+  position: relative;
 }
 
 .playlist-panel .toolbar {
@@ -69,10 +70,8 @@
 .playlist-container {
   padding: 5px 20px 20px 20px;
 }
+
 .viewer-container {
-  position: relative;
-  height: 100%;
-  xmargin: 0 15px 0 0px;
   padding-right: 12px;
 }
 
@@ -86,7 +85,7 @@
   width: 100%;
   padding-left: 7px;
   padding-right: 10px;
-  padding-top: 12px;
+  padding-top: 10px;
 }
 
 .playlist-swiper .bar-beat {
@@ -286,4 +285,8 @@
 }
 .playlist-swiper.swiper-container-horizontal.strings-4 {
   min-height: 304px;
+}
+
+.display-note-length .playlist-swiper {
+  padding-bottom: 24px;
 }

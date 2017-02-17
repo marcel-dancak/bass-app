@@ -104,6 +104,14 @@
           <div
             class="top-label">
           </div>
+          <div class="bottom-label">
+            <i ng-class="::
+              [Note.map[sound.note.length],
+              { dotted: sound.note.dotted }]">
+            </i>
+          </div>
+
+
           <bd-sound-label
             sound="sound"
             string="track.instrument.stringByName(sound.string)">

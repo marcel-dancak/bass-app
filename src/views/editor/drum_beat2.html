@@ -45,7 +45,7 @@
     />
   </svg> -->
 
-  <div
+<!--   <div
     class="drum-grid"
     ng-switch="beat.subdivision">
     <svg width="100%" height="100%" ng-switch-when="4">
@@ -76,7 +76,37 @@
         height="100%"
       />
     </svg>
+  </div> -->
+
+
+  <div class="drum-grid" ng-switch="beat.subdivision">
+    <svg width="100%" height="100%" ng-switch-when="3">
+      <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]" ng-attr-transform="translate(0, {{ ::y*48 }})">
+        <circle cx="16.67%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="50%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="83.33%" cy="24" r="16" fill="none" stroke="#ccc"/>
+      </g>
+    </svg>
+    <svg width="100%" height="100%" ng-switch-when="4">
+      <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]" ng-attr-transform="translate(0, {{ ::y*48 }})">
+        <circle cx="12.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="37.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="62.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="87.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+      </g>
+    </svg>
   </div>
+
+<!--   <div class="drum-grid">
+    <svg width="100%" height="100%">
+      <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]" ng-attr-transform="translate(0, {{ ::y*48 }})">
+        <circle cx="12.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="37.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="62.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+        <circle cx="87.5%" cy="24" r="16" fill="none" stroke="#ccc"/>
+      </g>
+    </svg>
+  </div> -->
 
 <!--   <svg width="100%" height="384" ng-if="slide.beat.subdivision === 4">
     <defs>
@@ -109,10 +139,10 @@
   </svg> -->
 
   <div
-    ng-repeat="sound in beat.data track by (sound.drum + sound.subbeat)"
+    ng-repeat="sound in beat.data track by (sound.drum + sound.start)"
     class="drum-sound2"
     ng-style="{
-      left: (100*(sound.subbeat-1)/beat.subdivision)+'%',
+      left: (100*sound.start)+'%',
       width: (100/beat.subdivision)+'%'
     }"
     style="top: {{ ::workspace.trackSection.instrument.index[sound.drum] * 48 }}px;"

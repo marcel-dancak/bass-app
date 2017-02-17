@@ -88,23 +88,6 @@
   position: relative;
 }
 
-.playback-fields .player-bg {
-  position: absolute;
-  content: "";
-  background-color: #3b4d55;
-  border: 1px solid #aaa;
-  border-width: 0 1px 1px 1px;
-  transform: perspective(120px) rotateX(-16deg) ;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: -12px;
-  border-radius: 8px;
-  box-shadow:
-    2px 3px 5px 0px rgba(0, 0, 0, 0.21),
-    -5px 5px 5px 0px rgba(0, 0, 0, 0.06);
-}
-
 
 .play-stop-button {
   margin: 2px;
@@ -222,11 +205,12 @@
 
 .control-panel {
   background-color: #455A64;
+  position: absolute;
   padding: 0 5px;
   margin: 0;
   height: 50px;
+  width: 100%;
   color: #fff;
-  position: relative;
   z-index: 90;
   font-size: 15px;
 }

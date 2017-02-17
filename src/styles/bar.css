@@ -19,6 +19,9 @@
   cursor: pointer;
   color: #777;
 }
+.bar-slide .chord .type {
+  font-size: 14px;
+}
 
 .audio-graph-container::before,
 .bar-beat::before {
@@ -385,10 +388,6 @@ md-menu-content.beat-menu-content {
 .beat-menu.md-open .button {
   xborder-color: rgba(33,150,243,0.6);
   background-color: #ffffe0;
-}
-
-.audio-graph-toggle {
-  margin: 2px 4px;
 }
 
 .audio-graph-container {

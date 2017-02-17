@@ -50,6 +50,7 @@
         var newScope = scope.$new(true);
         newScope.track = scope.workspace.track;
         newScope.barLabels = scope.barLabels;
+        newScope.Note = scope.Note;
         newScope.beats = slideData.beats;
         newScope.emptyBeats = slideData.emptyBeats;
 
@@ -65,6 +66,7 @@
         var newScope = scope.$new(true);
         newScope.track = scope.workspace.track;
         newScope.barLabels = scope.barLabels;
+        newScope.Note = scope.Note;
 
         var slideData = {
           playlistSectionIndex: position.section,

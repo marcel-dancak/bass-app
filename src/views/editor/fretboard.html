@@ -66,16 +66,15 @@
               string: string.label
             })"
             ui-draggable="true"
-            drag-channel="fretboard"
+            drag-channel="bass.instrument"
             drag="{
-              sound: {
-                style: fretboard.style,
-                note: {
-                  type: 'ghost'
-                },
-                volume: 0.75,
-                string: string.label
-              }
+              style: fretboard.style,
+              note: {
+                type: 'ghost',
+                length: 16
+              },
+              volume: 0.75,
+              string: string.label
             }">x
           </label>
         </div>

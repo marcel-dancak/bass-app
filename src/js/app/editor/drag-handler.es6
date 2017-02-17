@@ -34,12 +34,13 @@
         var dragElem = this.mainHandler.createDragWrapperElement();
 
         var noteElem = document.createElement('div');
-        noteElem.className = 'sound-container selected';
+        noteElem.className = 'sound-container selected '+(dragSound.note.type || '');
         noteElem.style.width = evt.target.clientWidth+'px';
         noteElem.style.height = evt.target.clientHeight+'px';
         noteElem.style.top = '';
         noteElem.setAttribute('octave', dragSound.note.octave);
-        noteElem.appendChild(document.createTextNode(dragSound.note.name));
+        var label = dragSound.note.name || evt.target.textContent;
+        noteElem.appendChild(document.createTextNode(label));
         dragElem.appendChild(noteElem);
 
         workspaceElem.appendChild(dragElem);

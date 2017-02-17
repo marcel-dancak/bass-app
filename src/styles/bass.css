@@ -1,3 +1,4 @@
+
 .bass-left-panel {
   position: absolute;
   width: 65px;
@@ -28,10 +29,10 @@
 }
 
 .strings-4 .bass-board {
-  height: 144px;
+  height: 145px;
 }
 .strings-5 .bass-board {
-  height: 180px;
+  height: 181px;
 }
 /*
 .bass-tunning-button {
@@ -170,13 +171,6 @@
   transition-property: none;
 }
 
-.drag-group .sound-container .label-wrapper > div:not(.hammer-on-label) {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
 .sound-container .label-wrapper label.note,
 .sound-container .label-wrapper label.fret {
   display: none;
@@ -244,6 +238,11 @@
   display: none;
 }
 
+/*bd-sound-label {
+  display: block;
+  width: 100%;
+  height: 100%;
+}*/
 .sound-container[octave="0"] {
   background-color: #f44336;
 }
@@ -277,7 +276,7 @@
   max-width: 25%;
 }
 .sound-container.selected {
-  border: 2px solid #333;
+  border: 2px solid #333!important;
   margin: 0 1px 0 1px;
   border-radius: 4px;
   line-height: 32px;
@@ -498,7 +497,7 @@ md-input-container.slide-field > span {
   white-space: nowrap;
 }
 
-.sound-container .slide-slash {
+.slide .slide-slash {
   padding: 0 4px;
   width: 10px!important;
   line-height: 32px;
@@ -506,11 +505,11 @@ md-input-container.slide-field > span {
   max-height: 32px;
   font-size: 20px;
   font-weight: 300;
-  transform: rotate3d(0, 0, 1, 55deg);
+  transform: rotateZ(55deg);
 }
 
-.sound-container .slide-slash.down {
-  transform: rotate3d(0, 0, 1, -55deg)!important;
+.slide.down .slide-slash {
+  transform: rotateZ(-55deg)!important;
 }
 
 /* #ff5722, #ff9800, #ffc107, #ffeb3b */
@@ -528,44 +527,23 @@ md-input-container.slide-field > span {
 .bass-board-container.fret .sound-container .label-wrapper .note {
   display: none;
 }
-/*.sound-container .label-wrapper .length {
-  display: none;
-}
-.name-and-length .label-wrapper .length {
-  display: block;
-}*/
 
-.slide.sound-container .s-octave-1.e-octave-2 {
-  background: linear-gradient(to right, #ff5722, #ff5722, #ff9800, #ff9800);
+.slide.octave-0 {
+  background: linear-gradient(to right, transparent, transparent, #f44336, #f44336);
 }
-.slide.sound-container .s-octave-1.e-octave-3 {
-  background: linear-gradient(to right, #ff5722, #ff5722, #ffc107, #ffc107);
+.slide.octave-1 {
+  background: linear-gradient(to right, transparent, transparent, #ff5722, #ff5722);
 }
-.slide.sound-container .s-octave-2.e-octave-3 {
-  background: linear-gradient(to right, #ff9800, #ff9800, #ffc107, #ffc107);
+.slide.octave-2 {
+  background: linear-gradient(to right, transparent, transparent, #ff9800, #ff9800);
 }
-.slide.sound-container .s-octave-2.e-octave-4 {
-  background: linear-gradient(to right, #ff9800, #ff9800, #ffeb3b, #ffeb3b);
+.slide.octave-3 {
+  background: linear-gradient(to right, transparent, transparent, #ffc107, #ffc107);
 }
-.slide.sound-container .s-octave-3.e-octave-4 {
-  background: linear-gradient(to right, #ffc107, #ffc107, #ffeb3b, #ffeb3b);
+.slide.octave-4 {
+  background: linear-gradient(to right, transparent, transparent, #ffeb3b, #ffeb3b);
 }
 
-.slide.sound-container .s-octave-2.e-octave-1 {
-  background: linear-gradient(to right, #ff9800, #ff9800, #ff5722, #ff5722);
-}
-.slide.sound-container .s-octave-3.e-octave-1 {
-  background: linear-gradient(to right, #ffc107, #ffc107, #ff5722, #ff5722);
-}
-.slide.sound-containerslide .s-octave-3.e-octave-2 {
-  background: linear-gradient(to right, #ffc107, #ffc107, #ff9800, #ff9800);
-}
-.slide.sound-container .s-octave-4.e-octave-2 {
-  background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ff9800, #ff9800);
-}
-.slide.sound-container .s-octave-4.e-octave-3 {
-  background: linear-gradient(to right, #ffeb3b, #ffeb3b, #ffc107, #ffc107);
-}
 
 .sound-container .grace {
   font-size: 11px;
@@ -576,23 +554,6 @@ md-input-container.slide-field > span {
   font-size: 9px;
 }
 
-.drag-group {
-  position: fixed;
-  top: -100px;
-  xtop: 10px;
-  left: 0;
-  overflow: hidden;
-  xbackground-color: rgba(255,0,0,0.1);
-  height: 64px;
-}
-
-.drag-group .label-wrapper .slide {
-  max-height: 36px;
-}
-.drag-group .sound-container {
-  left: 0!important;
-  top: 28px!important;
-}
 
 .drag-sound {
   position: fixed;
@@ -604,10 +565,15 @@ md-input-container.slide-field > span {
 
 .drag-sound .resize-handler,
 .drag-sound .resize-container,
-.drag-sound .top-label {
-  display: none;
+.drag-sound .top-label,
+.drag-sound .bottom-label {
+  display: none!important;
 }
 
+.drag-sound .ghost.sound-container {
+  min-width: 0;
+  max-width: none;
+}
 .drag-sound .sound-container.selected {
   margin: 0;
 }
@@ -644,7 +610,7 @@ md-input-container.slide-field > span {
   left: 11px;
   font-size: 20px;
   transform-origin: 50%  51%; /* to avoid blury text */
-  transform: rotate3d(0, 0, 1, -90deg);
+  transform: rotateZ(-90deg);
 }
 .sound-container .hammer-on-label:after {
   position: absolute;
@@ -664,7 +630,8 @@ md-input-container.slide-field > span {
   display: block;
 }
 
-.top-label {
+.top-label,
+.bottom-label {
   position: absolute;
   z-index: 201;
   text-align: center;
@@ -713,15 +680,53 @@ md-input-container.slide-field > span {
   top: -32px;
 }
 
+
+.bottom-label {
+  display: none;
+}
+
+.display-note-length .bottom-label {
+  display: block;
+}
+
+.strings-5 .string-0 .bottom-label {
+  top: 28px;
+}
+.strings-5 .string-1 .bottom-label {
+  top: 64px;
+}
+.strings-5 .string-2 .bottom-label {
+  top: 100px;
+}
+.strings-5 .string-3 .bottom-label {
+  top: 136px;
+}
+.strings-5 .string-4 .bottom-label {
+  top: 172px;
+}
+
+
+.strings-4 .string-1 .bottom-label {
+  top: 30px;
+}
+.strings-4 .string-2 .bottom-label {
+  top: 66px;
+}
+.strings-4 .string-3 .bottom-label {
+  top: 102px;
+}
+.strings-4 .string-4 .bottom-label {
+  top: 138px;
+}
+
 .no-colors .sound-container {
   background-color: #E0E0E0!important;
   border-color: #aaa;
 }
 
-.no-colors .slide .sound-container .slide {
+.no-colors .slide.sound-container .slide {
   background: #E0E0E0!important;
 }
-
 
 
 .beat .subbeats-container {
@@ -810,4 +815,19 @@ bd-bend {
 
 .workspace:hover .bass-grid {
   opacity: 1;
+}
+
+.trapezoid {
+  position: absolute;
+  left: -24px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  xopacity: 0.6;
+  xdisplay: none;
+}
+.trapezoid .fill {
+  stroke: #ccc;
+  stroke-width: 0.2;
+  fill: #3b4d55;
 }

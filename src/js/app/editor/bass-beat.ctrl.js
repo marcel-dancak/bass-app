@@ -100,7 +100,7 @@
       while (sound.prev) {
         sound = workspace.track.prevSound(sound);
       }
-      audioPlayer.playBassSample(workspace.track, sound);
+      audioPlayer.playBassSample(workspace.trackSection, sound);
     };
 
     $scope.updateLineEditor = function() {

@@ -250,7 +250,7 @@ md-input-container.input-inline-label label {
 
 .fretboard .frets-labels,
 .fret-diagram .frets-labels {
-  padding-right: 50px;
+  padding-right: 64px;
   line-height: 20px;
   height: 23px;
 }

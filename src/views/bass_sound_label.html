@@ -16,7 +16,11 @@
 
   <!-- Slide note label -->
   <div ng-switch-when="slide"
-    class="slide s-octave-{{ sound.note.octave}} e-octave-{{ sound.note.slide.endNote.octave }}">
+    class="slide"
+    ng-class="[
+      'octave-'+sound.note.slide.endNote.octave,
+      { down: sound.note.slide.endNote.fret < sound.note.fret }
+    ]">
 
     <div ng-if="sound.style !== 'ring'">
       <label class="note">
@@ -27,8 +31,7 @@
       </label>
     </div>
     <div
-      class="slide-slash"
-      ng-class="{down: sound.note.slide.endNote.fret < sound.note.fret }">|</div>
+      class="slide-slash">|</div>
     <div>
       <label class="note">
         {{ sound.note.slide.endNote.name }}

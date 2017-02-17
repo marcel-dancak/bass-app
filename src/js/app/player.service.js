@@ -740,6 +740,14 @@
 
       oscillator.start();
       */
+      if (options.backingTrack) {
+        options.backingTrack.audio.addEventListener('playing', function() {
+          console.log('backingTrack playing');
+        });
+        options.backingTrack.audio.currentTime = options.backingTrack.start || 0;
+        options.backingTrack.audio.play();
+        this.backingTrack = options.backingTrack;
+      }
       this.piano.playingSounds = {};
       var start = options.start || this.playbackRange.start;
       var bar = start.bar;
@@ -861,6 +869,9 @@
             console.log('Error');
           }
         });
+        if (this.backingTrack) {
+          this.backingTrack.audio.pause();
+        }
       }
 
       /*

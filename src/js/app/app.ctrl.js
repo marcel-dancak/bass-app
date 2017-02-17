@@ -176,6 +176,14 @@
       4: ['e', 'and', 'a']
     };
 
+    Object.defineProperty(Note, 'map', {value: 'static', writable: true});
+    Note.map = {};
+    for (var key in Note) {
+      var note = Note[key];
+      Note.map[note.value] = note.symbol;
+    }
+    $scope.Note = Note;
+
     $scope.toggleVolumeMute = function(instrument) {
       if (!instrument.muted) {
         instrument._volume = instrument.audio.gain.value;

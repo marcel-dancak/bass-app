@@ -303,6 +303,16 @@
       timeline.start();
 
       swiperControl.lastRequestedIndex = swiperControl.barSwiper.snapIndex;
+      var options = {
+        countdown: $scope.player.countdown,
+        start: start
+      }
+      if (projectManager.project.backingTrack) {
+        options.backingTrack = {
+          audio: projectManager.project.backingTrack,
+          start: workspace.section.backingTrackStart
+        }
+      }
       audioPlayer.fetchResourcesWithProgress(workspace.section)
         .then(
           audioPlayer.play.bind(
@@ -310,10 +320,7 @@
             workspace.section,
             beatPrepared,
             playbackStopped,
-            {
-              countdown: $scope.player.countdown,
-              start: start
-            }
+            options
           ),
           function() {$scope.player.playing = false}
         );
@@ -512,6 +519,9 @@
 
       var trackId = workspace.track && section.tracks[workspace.track.id]? workspace.track.id : 'bass_0';
       workspace.trackSection = section.tracks[trackId];
+      if (!workspace.trackSection) {
+        workspace.trackSection = initializeNewTrackSection(projectManager.project.tracksMap[trackId]);
+      }
       workspace.track = workspace.trackSection;
       workspace.track.id = trackId;
 
@@ -532,13 +542,6 @@
     projectManager.on('sectionLoaded', sectionLoaded);
 
 
-    function assignTrack(trackSection, track) {
-      trackSection.instrument = track.instrument;
-      trackSection.track = track;
-      trackSection.audio = track.audio;
-    };
-
-
     function initializeNewTrackSection(track) {
       var TrackSectionClass = track.type === 'drums'? DrumTrackSection : TrackSection;
       var trackSection = new TrackSectionClass(workspace.section, []);
@@ -546,6 +549,7 @@
       trackSection.audio = track.audio;
       trackSection.type = track.type;
       workspace.section.tracks[track.id] = trackSection;
+      return trackSection;
     }
 
     $scope.ui.selectTrack = function(trackId) {

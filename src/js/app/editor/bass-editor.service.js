@@ -13,6 +13,9 @@
     class BassDragHandler extends DragHandler {
 
       validateDrop(beat, string) {
+        if (this.dragSound.note.type === 'ghost') {
+          return true;
+        }
         // if (this.dragChannel === 'instrument') {
           var fret = workspace.track.instrument.stringFret(string.label, this.dragSound.note);
           return fret >= 0;

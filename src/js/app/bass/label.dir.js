@@ -7,23 +7,11 @@
     .directive('bdBend', bendLabel);
 
 
-  var noteLengthSymbols;
   function soundLabel(Note) {
     return {
       scope: {
         sound: '=sound',
         string: '=string'
-      },
-      controller: function($scope) {
-        if (!noteLengthSymbols) {
-          noteLengthSymbols = {};
-          for (var key in Note) {
-            var note = Note[key];
-            noteLengthSymbols[note.value] = note.symbol;
-          }
-          console.log(noteLengthSymbols);
-        }
-        $scope.noteLengthSymbols = noteLengthSymbols;
       },
       templateUrl: 'views/bass_sound_label.html'
     };

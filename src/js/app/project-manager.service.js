@@ -315,6 +315,11 @@
       delete this.project.tracksMap[trackId];
     };
 
+    // var backingTrack; // backingTrack = {offset: 6.7, file: 'mgs-o.ogg'}
+    ProjectManager.prototype.addBackingTrack = function(file) {
+      this.project.backingTrack = new Audio([file]);
+    };
+
     ProjectManager.prototype.createProject = function(tracks) {
       idCouter = {};
       compressors = {};

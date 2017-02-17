@@ -50,7 +50,6 @@
     var playlistSlidePosition;
     var playbackState;
     var slidesMetadata;
-    var backingTrack; // workspace.playlist.backingTrack = {offset: 6.7, file: 'mgs-o.ogg'}
 
 
     function updateSlide(slideIndex, position, count) {
@@ -108,7 +107,8 @@
         slidesPerView: viewer.layout.slidesPerView,
         slidesPerColumn: viewer.layout.slidesPerColumn,
         initialSlide: 0,
-        roundLengths: true
+        roundLengths: true,
+        mousewheelControl: true
       }, options);
       viewer.swiper = new Swiper(swiperElem, params);
 
@@ -291,10 +291,6 @@
     }
 
     $scope.player.play = function() {
-      if (workspace.playlist.backingTrack) {
-        backingTrack.currentTime = workspace.playlist.backingTrack.offset || 0;
-      }
-
       var sections = playlist.reduce(function(list, section) {
         if (list.indexOf(section) === -1) {
           list.push(section);
@@ -329,13 +325,7 @@
         }
         */
         $scope.player.playing = true;
-        // audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
-        audioPlayer.fetchResourcesWithProgress(sections).then(function() {
-          if (workspace.playlist.backingTrack) {
-            backingTrack.play();
-          }
-          playFromCurrentPosition();
-        }, failedToLoadResources);
+        audioPlayer.fetchResourcesWithProgress(sections).then(playFromCurrentPosition, failedToLoadResources);
       }
     };
 
@@ -343,9 +333,6 @@
       $scope.player.playing = false;
       playbackState.section = playlist.length;
       audioPlayer.stop(true);
-      if (backingTrack) {
-        backingTrack.pause();
-      }
     };
 
     $scope.player.goToStart = function() {
@@ -443,16 +430,6 @@
       workspace.selectedPlaylistId = playlist.id;
       updatePlaylistRange();
       initPlaylistSlides();
-      if (playlist.backingTrack) {
-        console.log(playlist.backingTrack)
-        backingTrack = new Audio([playlist.backingTrack.file]);
-        backingTrack.addEventListener('playing', function() {
-          console.log('backingTrack playing');
-        });
-        window.a = backingTrack;
-      } else {
-        backingTrack = null;
-      }
     }
 
     function projectLoaded1(project) {

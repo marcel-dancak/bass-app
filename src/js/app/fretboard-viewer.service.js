@@ -177,7 +177,7 @@
           sounds,
           trackSection.beatSounds(beat)
             .filter(function(sound) {
-              var soundPosition = beat.bar*1000 + beat.beat*10 + sound.subbeat;
+              var soundPosition = beat.bar*1000 + beat.beat*10 + (sound.start*beat.subdivision)+1;
               return soundPosition >= startRange && soundPosition < endRange;
             })
         );
@@ -185,8 +185,7 @@
       }
 
       var ids = new Set();
-      sounds.forEach(function(beatSound) {
-        var sound = beatSound.sound;
+      sounds.forEach(function(sound) {
         if (sound.note.type !== 'ghost') {
           var id = '#'+sound.string+'_'+sound.note.name+sound.note.octave;
           ids.add(id);

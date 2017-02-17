@@ -13,20 +13,24 @@
     <link rel="stylesheet" type="text/css" href="bower_components/angular-resizable/src/angular-resizable.css"/>
     <link rel="stylesheet" type="text/css" href="bower_components/swiper/dist/css/swiper.min.css">
     <link rel="stylesheet" type="text/css" href="bower_components/angularjs-slider/dist/rzslider.css">
+    <link rel="stylesheet" type="text/css" href="styles/simple-scrollbar.min.css">
 
     <link rel="stylesheet" type="text/css" href="styles/fonts.css">
     <link rel="stylesheet" type="text/css" href="styles/ui.css">
     <link rel="stylesheet" type="text/css" href="styles/toolbar.css">
+    <link rel="stylesheet" type="text/css" href="styles/bottom-toolbar.css">
     <link rel="stylesheet" type="text/css" href="styles/bar.css">
     <link rel="stylesheet" type="text/css" href="styles/bass.css">
     <link rel="stylesheet" type="text/css" href="styles/bass-sound-form.css">
     <link rel="stylesheet" type="text/css" href="styles/drums.css">
     <link rel="stylesheet" type="text/css" href="styles/fretboard.css">
+    <link rel="stylesheet" type="text/css" href="styles/piano.css">
     <link rel="stylesheet" type="text/css" href="styles/playlist.css">
     <link rel="stylesheet" type="text/css" href="styles/help.css">
+    <!-- <link rel="stylesheet" type="text/css" href="styles/screenshot.css"> -->
 
-    <script type="text/javascript" src="bower_components/swiper/dist/js/swiper.js"></script>
-    <!-- <script type="text/javascript" src="bower_components/swiper/dist/js/swiper_3.4.min.js"></script> -->
+    <!-- <script type="text/javascript" src="bower_components/swiper/dist/js/swiper.js"></script> -->
+    <script type="text/javascript" src="bower_components/swiper/dist/js/swiper_3.4.min.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
     <script type="text/javascript" src="bower_components/angular-animate/angular-animate.js"></script>
     <script type="text/javascript" src="bower_components/angular-material/angular-material.js"></script>
@@ -47,6 +51,15 @@
     <script src="lib/string-format.js"></script>
     <script src="lib/buffer-loader.js"></script>
     <script src="lib/audiobuffer-to-wav.js"></script>
+    <script src="lib/fft/complex.js"></script>
+    <script src="lib/fft/pitch.js"></script>
+    <script src="lib/bezier-easing.min.js"></script>
+    <script src="lib/midi/base64-binary.js"></script>
+    <script src="lib/midi/stream.js"></script>
+    <script src="lib/midi/midifile.js"></script>
+    <script src="lib/midi/replayer.js"></script>
+    <script src="lib/midi/MIDI.js"></script>
+    <script src="lib/simple-scrollbar.min.js"></script>
 
     <script src="js/app/app.module.js"></script>
     <script src="js/app/observable.js"></script>
@@ -54,20 +67,23 @@
     <script src="js/app/app.ctrl.js"></script>
     <script src="js/app/project.ctrl.js"></script>
     <script src="js/app/section.es6"></script>
-
     <script src="js/app/audio-composer.js"></script>
     <script src="js/app/project-manager.service.js"></script>
     <script src="js/app/player.service.js"></script>
     <script src="js/app/timeline.js"></script>
     <script src="js/app/highlight-timeline.js"></script>
+    <script src="js/app/fretboard-viewer.service.js"></script>
+    <script src="js/app/midi.js"></script>
 
     <script src="js/app/bass/bass-guitar.js"></script>
-    <script src="js/app/bass/bass-section.es6"></script>
+    <!-- <script src="js/app/bass/bass-section.es6"></script> -->
     <script src="js/app/bass/label.dir.js"></script>
     <script src="js/app/drums/drums.js"></script>
-    <script src="js/app/drums/drum-section.es6"></script>
+    <!-- <script src="js/app/drums/drum-section.es6"></script> -->
 
     <!-- Section/Editor Mode -->
+    <script src="js/app/editor/resize-handler.es6"></script>
+    <script src="js/app/editor/drag-handler.es6"></script>
     <script src="js/app/editor/editor.ctrl.js"></script>
     <script src="js/app/editor/bar.ctrl.js"></script>
     <script src="js/app/editor/swiper-control.service.js"></script>
@@ -76,8 +92,11 @@
     <script src="js/app/editor/bass-editor.service.js"></script>
     <script src="js/app/editor/drums.ctrl.js"></script>
     <script src="js/app/editor/fretboard.ctrl.js"></script>
+    <script src="js/app/editor/piano-editor.js"></script>
+    <script src="js/app/editor/drum-editor.js"></script>
 
     <!-- Playlist Mode -->
+    <script src="js/app/playlist/renderer.js"></script>
     <script src="js/app/playlist/viewer.ctrl.js"></script>
     <script src="js/app/playlist/editor.ctrl.js"></script>
 
@@ -96,6 +115,7 @@
     <script src="js/help/sound-properties.js"></script>
     <script src="js/help/drum-grid.js"></script>
     <script src="js/help/barline.js"></script>
+    <script src="js/help/chords.js"></script>
 
     <script type="text/javascript">
       angular.module('bd.app')

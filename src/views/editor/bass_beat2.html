@@ -14,6 +14,44 @@
       ui-on-drag-over="dragHandler.onDragOver($event, beat, string)"
       ui-on-drop="dragHandler.onDrop($event, beat, string)">
     </div>
+
+    <div
+      class="bass-grid"
+      ng-switch="beat.subdivision">
+      <svg width="100%" height="100%" ng-switch-when="4">
+        <defs>
+          <pattern id="grid-4" x="12.5%" y="0" width="25%" height="36" patternUnits="userSpaceOnUse">
+            <circle cx="17" cy="18" r="16" fill="#fff" stroke="#ddd"/>
+            <line x1="13" y1="18.5" x2="22" y2="18.5" stroke="#ddd"/>
+            <line x1="17.5" y1="14" x2="17.5" y2="23" stroke="#ddd"/>
+          </pattern>
+        </defs>
+        <rect
+          class="grid-4"
+          transform="translate(-17, 0)"
+          fill="url(#grid-4)"
+          width="110%"
+          height="100%"
+        />
+      </svg>
+      <svg width="100%" height="100%" ng-switch-when="3">
+        <defs>
+          <pattern id="grid-3" x="16.67%" y="0" width="33.33%" height="36" patternUnits="userSpaceOnUse">
+            <circle cx="17" cy="18" r="16" fill="#fff" stroke="#ddd"/>
+            <line x1="13" y1="18.5" x2="22" y2="18.5" stroke="#ddd"/>
+            <line x1="17.5" y1="14" x2="17.5" y2="23" stroke="#ddd"/>
+          </pattern>
+        </defs>
+        <rect
+          class="grid-3"
+          transform="translate(-17, 0)"
+          fill="url(#grid-3)"
+          width="110%"
+          height="100%"
+        />
+      </svg>
+    </div>
+
   </div>
 
   <div
@@ -39,11 +77,16 @@
     ng-click="selectSound($event, sound)"
     ng-right-click="bassForm.open($event, sound, bass)">
 
-    <div
-      class="top-label">
+    <div class="top-label"></div>
+
+    <div class="bottom-label">
+      <i ng-class="
+        [Note.map[sound.note.length],
+        { dotted: sound.note.dotted }]">
+      </i>
     </div>
 
-    <bd-sound-label sound="sound" string="string"></bd-sound-label>
+    <div bd-sound-label sound="sound" string="workspace.track.instrument.strings[sound.string]"></div>
 
     <div
       class="resize-container"
