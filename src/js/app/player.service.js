@@ -276,36 +276,43 @@
             return sound.note.type === 'grace';
           },
           getResources: function(track, sound) {
-            return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret-2)];
+            return [
+              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret-2),
+              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)
+            ];
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
-            var audio = _this.createSoundAudio(track, sound, startTime);
+            console.log('grace sound')
+            var graceTime = 0.08;
+            var startAudio = _this.createSoundAudio(track, sound, startTime);
+            var endAudio = _this.createSoundAudio(track, sound, startTime + graceTime, 1);
+
             var duration = noteRealDuration(sound, beatTime);
+            startAudio.duration = graceTime;
+            startAudio.endTime = startTime+startAudio.duration;
 
-            var startRate = Math.pow(Math.pow(2, 1/12), -2);
-            audio.source.playbackRate.setValueAtTime(startRate, startTime);
-            audio.source.playbackRate.setValueAtTime(1, startTime+0.075);
+            endAudio.duration = duration - startAudio.duration;
+            endAudio.endTime = startTime + duration;
 
-            audio.duration = duration;
-            audio.endTime = startTime+duration;
+            _this.composer.join(startAudio, endAudio);
 
             // sound metadata
-            audio.meta = {
+            endAudio.meta = {
               type: 'sequence',
               string: sound.string,
               notes: [
                 {
                   note: { fret: sound.note.fret - 2 },
                   startTime: startTime,
-                  duration: 0.075
+                  duration: graceTime
                 }, {
                   note: sound.note,
-                  startTime: startTime + 0.075,
-                  duration: duration - 0.075
+                  startTime: startTime + graceTime,
+                  duration: duration - graceTime
                 }
               ]
             };
-            return [audio];
+            return [startAudio, endAudio];
           }
         },
         {
