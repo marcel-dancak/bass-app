@@ -43,13 +43,16 @@
     speed: 500,
     roundLengths: true,
     direction: 'vertical',
-    threshold: 20,
+    // threshold: 5,
     // slidesPerView: 1,
     slidesPerView: 'auto',
     centeredSlides: true,
     paginationClickable: true,
     spaceBetween: 0,
     mousewheelControl: true,
+    resistance: false,
+    resistanceRatio: 0.15,
+
     // freeMode: true,
     // freeModeMomentum: false,
     // grabCursor: true,
@@ -87,7 +90,6 @@
         sw.enableMousewheelControl();
       }
       slideAnimation(sw);
-      
     }
   });
   swiper.$('.home-menu').on('click', function() {
@@ -382,20 +384,46 @@
   });
   
 
-function toggleFullScreen() {
-  var doc = window.document;
-  var docEl = doc.documentElement;
+  function toggleFullScreen() {
+    var doc = window.document;
+    var docEl = doc.documentElement;
 
-  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
 
-  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-    requestFullScreen.call(docEl);
+    if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+      requestFullScreen.call(docEl);
+    }
+    else {
+      cancelFullScreen.call(doc);
+    }
   }
-  else {
-    cancelFullScreen.call(doc);
-  }
-}
 
+
+  if (navigator.maxTouchPoints > 0) {
+    window.scrollTo(0, 0);
+    document.body.classList.add('scroll-hack');
+    var initHeight = window.innerHeight;
+    window.addEventListener( "resize", function(evt) {
+      // console.log(initHeight+ ' vs '+window.innerHeight);
+      if (window.innerHeight > initHeight) {
+        document.body.classList.remove('scroll-hack');
+      }
+    });
+    window.addEventListener( "scroll", function(evt) {
+      // console.log(document.body.scrollTop);
+      if (document.body.scrollTop > 60) {
+        document.body.classList.remove('scroll-hack');
+      }
+    }, false);
+
+    var prevSlide = 0;
+    swiper.on('transitionEnd', function(sw) {
+      if (sw.snapIndex === 0 && prevSlide > 0) {
+        document.body.classList.add('scroll-hack');
+      }
+      prevSlide = sw.snapIndex;
+    });
+  }
 
 })(this, this.document);

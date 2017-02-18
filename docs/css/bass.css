@@ -507,12 +507,6 @@ section {
 @media (min-width: 1200px) {
   .container {
     width: 1170px; } }
-.l-pad {
-  padding-left: 2em; }
-
-.r-pad {
-  padding-right: 2em; }
-
 .about h2 {
   color: #fff; }
 
@@ -777,6 +771,27 @@ svg.thumbnail {
     .text-block {
       max-width: 100%; } }
 
+.flex-center {
+  justify-content: center; }
+
+.l-pad {
+  padding-left: 2em; }
+
+.r-pad {
+  padding-right: 2em; }
+
+@media (max-width: 768px) {
+  .sd-reverse {
+    flex-wrap: wrap-reverse; } }
+@media (min-width: 768px) {
+  .md-l-pad {
+    padding-left: 2em; }
+
+  .md-r-pad {
+    padding-right: 2em; }
+
+  .md-b-pad {
+    padding-bottom: 2em; } }
 @media (max-width: 63.99em) {
   .md-flex-column {
     display: flex;
@@ -807,6 +822,9 @@ svg.thumbnail {
 
 .is-center {
   text-align: center; }
+
+.is-left {
+  text-align: left; }
 
 /** Swiper **/
 .swiper-slide.compact {
@@ -850,6 +868,16 @@ svg.thumbnail {
   bottom: 0;
   height: auto; }
 
+.main.swiper-scrollbar:before {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 100%;
+  left: -12px; }
+
+.main.swiper-scrollbar:hover {
+  opacity: 1 !important; }
+
 .fa-1x {
   font-size: 1.85em; }
 
@@ -889,8 +917,21 @@ svg.thumbnail {
     .item-list .item .right:hover {
       color: #E64A19; }
 
-.nested.swiper-container .swiper-slide {
-  height: auto; }
+.nested.swiper-container {
+  overflow: visible;
+  z-index: auto; }
+  .nested.swiper-container .swiper-wrapper {
+    z-index: auto; }
+  .nested.swiper-container .swiper-slide {
+    height: auto; }
+  .nested.swiper-container:after {
+    content: "";
+    position: absolute;
+    right: -20%;
+    top: 0;
+    /*background-color: red;*/
+    height: 100%;
+    width: 20%; }
 
 #features {
   background-color: #ccc; }
@@ -967,6 +1008,14 @@ header .more.btn {
   bottom: 5%;
   left: 50%;
   transform: translateX(-50%); }
+header .credits {
+  position: absolute;
+  color: #fff;
+  xleft: 50%;
+  xtransform: translateX(-50%);
+  bottom: 5px;
+  right: 16px;
+  text-shadow: 2px 1px 3px #000; }
 
 @media (max-width: 47.99em) {
   .submenu .tabs-paginator {
@@ -1044,3 +1093,24 @@ header .more.btn {
 
 .fa-1x {
   font-size: 28px; }
+
+.page.swiper-container {
+  position: fixed;
+  top: 0; }
+
+body.scroll-hack .page.swiper-container {
+  z-index: 0; }
+body.scroll-hack .overflow {
+  height: 120%;
+  xz-index: 1; }
+  body.scroll-hack .overflow:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    bottom: calc(5% + 50px);
+    background-color: rgba(200, 0, 0, 0.01); }
+
+body {
+  -webkit-tap-highlight-color: transparent; }
