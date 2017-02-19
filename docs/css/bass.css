@@ -916,6 +916,10 @@ svg.thumbnail {
       margin-top: 2px; }
     .item-list .item .right:hover {
       color: #E64A19; }
+.item-list hr {
+  max-height: 30px;
+  margin-top: 15px;
+  margin-bottom: 15px; }
 
 .nested.swiper-container {
   overflow: visible;
