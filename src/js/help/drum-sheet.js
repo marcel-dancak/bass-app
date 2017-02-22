@@ -15,7 +15,7 @@
         '<div layout="row">'+
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
-            'ng-include="\'views/editor/drum_beat2.html\'" '+
+            'ng-include="\'views/editor/drums_beat.html\'" '+
             'class="beat-container beat instrument-slide">'+
           '</div>'+
         '</div>'+

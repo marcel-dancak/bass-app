@@ -1,103 +1,111 @@
 <div
   ng-if="slide.initialized"
-  sly-show="slide.visible"
+  sly-show="slide.initialized && slide.visible"
+  class="bass sounds-container"
   ng-keyup="keyPressed($event)"
-  class="bass">
-  <div class="string-container">
+  ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
+  <div class="string-container"
+    ng-click="bassForm.openNew($event, beat, bass)">
     <div
-      ng-repeat="string in workspace.track.instrument.strings track by string.index"
-      class="bass-string">
+      ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
+      class="bass-string"
+      drop-channel="bass.instrument,bass.editor"
+      ui-on-drag-enter="dragHandler.onDragEnter($event, beat, string)"
+      ui-on-drag-over="dragHandler.onDragOver($event, beat, string)"
+      ui-on-drop="dragHandler.onDrop($event, beat, string)">
     </div>
+
+    <div
+      class="bass-grid"
+      ng-switch="beat.subdivision">
+      <svg width="100%" height="100%" ng-switch-when="4">
+        <defs>
+          <pattern id="grid-4" x="12.5%" y="0" width="25%" height="36" patternUnits="userSpaceOnUse">
+            <circle cx="17" cy="18" r="16" fill="#fff" stroke="#ddd"/>
+            <line x1="13" y1="18.5" x2="22" y2="18.5" stroke="#ddd"/>
+            <line x1="17.5" y1="14" x2="17.5" y2="23" stroke="#ddd"/>
+          </pattern>
+        </defs>
+        <rect
+          class="grid-4"
+          transform="translate(-17, 0)"
+          fill="url(#grid-4)"
+          width="110%"
+          height="100%"
+        />
+      </svg>
+      <svg width="100%" height="100%" ng-switch-when="3">
+        <defs>
+          <pattern id="grid-3" x="16.67%" y="0" width="33.33%" height="36" patternUnits="userSpaceOnUse">
+            <circle cx="17" cy="18" r="16" fill="#fff" stroke="#ddd"/>
+            <line x1="13" y1="18.5" x2="22" y2="18.5" stroke="#ddd"/>
+            <line x1="17.5" y1="14" x2="17.5" y2="23" stroke="#ddd"/>
+          </pattern>
+        </defs>
+        <rect
+          class="grid-3"
+          transform="translate(-17, 0)"
+          fill="url(#grid-3)"
+          width="110%"
+          height="100%"
+        />
+      </svg>
+    </div>
+
   </div>
 
   <div
-    class="subbeats-container"
-    layout="column"
-    ng-repeat="bassSubbeats in ::slide.beat.subbeats track by $index">
+    ng-repeat="sound in beat.data track by (sound.string + sound.start)"
+    class="sound-container string-{{ ::{G: '4', D: '3', A: '2', E: '1', B: '0'}[sound.string] }}"
+    ng-class="[{
+        staccato: sound.note.staccato
+      },
+      sound.note.type,
+      sound.style
+    ]"
+    ng-attr-octave="{{ sound.note.octave }}"
+    ng-style="{
+      left: (100*sound.start)+'%',
+      top: {G: '0', D: '36px', A: '72px', E: '108px', B: '144px'}[sound.string],
+      width: (100*(sound.end - sound.start))+'%'
+    }"
+
+    ui-draggable="true"
+    drag="sound"
+    drag-channel="bass.editor"
+
+    ng-click="selectSound($event, sound)"
+    ng-right-click="bassForm.open($event, sound, bass)">
+
+    <div class="top-label"></div>
+
+    <div class="bottom-label">
+      <i ng-class="
+        [Note.map[sound.note.length],
+        { dotted: sound.note.dotted }]">
+      </i>
+    </div>
+
+    <div bd-sound-label sound="sound" string="workspace.track.instrument.strings[sound.string]"></div>
 
     <div
-      ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
-      id="bass_{{::slide.beat.bar}}_{{::slide.beat.beat}}_{{::$parent.$index+1}}_{{::string.label}}"
-
-      ng-init="grid={
-        bar: slide.beat.bar,
-        beat: slide.beat.beat,
-        subbeat: $parent.$index+1,
-        string: string,
-        sound: bassSubbeats[string.label].sound
-      }"
-      class="bass-subbeat string-{{ ::string.index }}"
-      ng-style="{
-        left: (($parent.$index/slide.beat.subdivision)*(slide.beat.subdivision===4? 100 : 150))+'%'
-      }">
-      <div
-        class="bass-grid"
-        drop-channel="bassboard,fretboard"
-        drop-validate="dropValidation(workspace.track.instrument, grid, $data)"
-        ui-on-drag-enter="onDragEnter(slide.beat, grid, $event)"
-        ui-on-drag-leave="onDragLeave(slide.beat, grid, $event)"
-        ui-on-drop="onDrop($event, $data, grid)">
-
-        <md-button
-          md-no-ink
-          aria-label="Sound"
-          class="bass-button"
-          ng-click="openBassSoundMenu($event, grid, bass)"
-          ng-right-click="openBassSoundMenu($event, grid, bass)">+
-        </md-button>
-      </div>
-
-      <div
-        ng-if="grid.sound.note"
-        class="bass-sound-wrapper"
-        ng-class="[{
-            selected: workspace.selected.grid === grid,
-            staccato: grid.sound.noteLength.staccato
-          },
-          grid.sound.note.type,
-          grid.sound.style
-        ]"
-        ng-style="{
-          width: (100 * workspace.section.timeSignature.bottom * grid.sound.noteLength.beatLength)+'%'
-        }">
-
-        <div
-          class="top-label">
-        </div>
-
-        <div
-          ui-draggable="true"
-          drag="grid"
-          drag-channel="bassboard"
-
-          ng-attr-octave="{{ grid.sound.note.octave }}"
-          class="sound-container"
-          ng-click="selectGrid($event, grid);$event.stopPropagation()"
-          ng-right-click="openBassSoundMenu($event, grid, bass)">
-
-          <div class="resize-handler">
-<!--             <div>❮</div>
-            <div>❯</div> -->
-            <div>◀</div>
-            <div>▶</div>
-          </div>
-
-          <div
-            class="resize-container"
-            resizable
-            r-directions="['right']"
-            on-resize="onResize(grid, info, $event)"
-            on-resize-start="onResizeStart(grid, info, slide.beat.subdivision, $event)"
-            on-resize-end="onResizeEnd(grid, info, $event)"
-            r-grabber="<div></div>">
-          </div>
-
-          <bd-sound-label sound="grid.sound" string="string"></bd-sound-label>
-
-        </div>
-      </div>
-
+      class="resize-container"
+      resizable
+      r-directions="['right']"
+      on-resize="resizeHandler.onResize(sound, info)"
+      on-resize-start="
+        selectSound({target: info.element[0]}, sound);
+        resizeHandler.onResizeStart(sound, info)
+      "
+      on-resize-end="resizeHandler.onResizeEnd(sound, info, $event)"
+      r-grabber="<div></div>">
     </div>
+
+    <div class="resize-handler">
+      <div>◀</div>
+      <div>▶</div>
+    </div>
+
   </div>
 
 </div>
