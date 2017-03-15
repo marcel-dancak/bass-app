@@ -7,21 +7,21 @@
 
     <title>Drums and Bass</title>
     <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/dist/v20/styles/styles.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/styles.min.css">
 
-    <script src="https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/dist/v20/js/app.min.js"></script>
+    <script src="js/app.min.js"></script>
     <script type="text/javascript">
       angular.module('bd.app')
         .config(function($mdIconProvider, $sceDelegateProvider) {
           $sceDelegateProvider.resourceUrlWhitelist([
             'self',
-            'https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/**'
+            'https://s3.eu-central-1.amazonaws.com/bass-app/**'
           ]);
           $mdIconProvider
-            .defaultIconSet('https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/dist/v20/styles/icons.svg', 32)
+            .defaultIconSet('styles/icons.svg', 32)
         })
-        .constant('soundsUrl', 'https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/')
-        .constant('dataUrl', 'https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/dist/v20/');
+        .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/')
+        .constant('dataUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/data/');
     </script>
   </head>
   <body
