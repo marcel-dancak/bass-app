@@ -88,6 +88,7 @@ md-input-container.input-inline-label label {
 .fretboard .fret-box label {
   display: inline-block;
   width: 100%;
+  height: 32px;
 }
 .fretboard .fret-box.dual-label label {
   width: 50%;
