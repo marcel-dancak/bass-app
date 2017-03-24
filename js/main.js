@@ -1,4 +1,7 @@
 (function (window, document) {
+  window.Dom7 = new Swiper().$;
+
+  /** Responsive menu **/
   var menu = document.getElementById('menu');
   var WINDOW_CHANGE_EVENT = ('onorientationchange' in window) ? 'orientationchange':'resize';
 
@@ -38,105 +41,9 @@
   window.addEventListener(WINDOW_CHANGE_EVENT, closeMenu);
 
 
-  var navbarElem = document.querySelector('.home-menu');
-  var swiper = new Swiper('.page.swiper-container', {
-    speed: 500,
-    roundLengths: true,
-    direction: 'vertical',
-    // threshold: 5,
-    // slidesPerView: 1,
-    slidesPerView: 'auto',
-    centeredSlides: true,
-    paginationClickable: true,
-    spaceBetween: 0,
-    mousewheelControl: true,
-    resistance: false,
-    resistanceRatio: 0.15,
-
-    // freeMode: true,
-    // freeModeMomentum: false,
-    // grabCursor: true,
-
-    // Scrollbar
-    scrollbar: '.main.swiper-scrollbar',
-    scrollbarHide: true,
-    scrollbarDraggable: true,
-    scrollbarSnapOnRelease: true,
-
-    pagination: '.menu-pagination',
-    paginationClickable: true,
-    bulletClass: 'pure-menu-item',
-    bulletActiveClass: 'pure-menu-selected',
-    paginationBulletRender: function(swiper, index, className) {
-      return swiper.paginationContainer[0].children[index].outerHTML;
-    },
-    breakpoints: {
-      // when window width is <= 320px
-      840: {
-        // freeMode: true,
-        spaceBetween: 0
-      }
-    },
-    onInit: function(sw) {
-      document.body.setAttribute('page', sw.snapIndex);
-    },
-    onTransitionEnd: function(sw) {
-      console.log('TRANSITION END: '+sw.snapIndex);
-      document.body.setAttribute('page', sw.snapIndex);
-      var slideElem = sw.slides[sw.snapIndex];
-      if (slideElem.classList.contains('scrolling')) {
-        sw.disableMousewheelControl();
-      } else {
-        sw.enableMousewheelControl();
-      }
-      slideAnimation(sw);
-    }
-  });
-  swiper.$('.home-menu').on('click', function() {
-    // toggleFullScreen();
-  });
-
-  var startBtn = document.querySelector('[data-scroll]');
-  swiper.$('[data-scroll]').on('click', function(evt) {
-    var page = parseInt(evt.target.getAttribute('data-scroll'));
-    evt.preventDefault();
-    swiper.slideTo(page);
-  });
-
-
-  /**  Tab Swipers  **/
-  function initializeTabSwiper(pageElem) {
-    new Swiper(pageElem.querySelector('.swiper-container'), {
-      speed: 500,
-      roundLengths: true,
-      direction: 'horizontal',
-      slidesPerView: 1,
-      spaceBetween: 20,
-      // freeMode: false,
-
-      // direction: 'vertical',
-      // slidesPerView: 'auto',
-      // freeMode: true,
-      // nested: true,
-
-      nextButton: pageElem.querySelector('.slide-button-next'),
-      prevButton: pageElem.querySelector('.slide-button-prev'),
-
-      pagination: pageElem.querySelector('.tabs-paginator'),
-      paginationClickable: true,
-      bulletClass: 'tab-item',
-      bulletActiveClass: 'tab-item-selected',
-      paginationBulletRender: function(swiper, index, className) {
-        return swiper.paginationContainer[0].children[index].outerHTML;
-      },
-      onTransitionEnd: slideAnimation,
-    });
-  }
-  var tabSwipers = document.querySelectorAll('.tabs-swiper');
-  for (var i = 0; i < tabSwipers.length; i++) {
-    initializeTabSwiper(tabSwipers[i]);
-  }
-
+  /**
+    Handles animation on swiper slide right after it's activation
+  */
   function slideAnimation(s) {
     if (s.snapIndex === (s.prevActiveIndex || 0)) {
       // the same slide => skip animation
@@ -178,94 +85,258 @@
     s.prevActiveIndex = s.snapIndex;
   }
 
-  function imageRealBounds(imgEl) {
-    var box = imgEl.getBoundingClientRect();
+  /** Main pages swiper **/
+  var pageSwiperEl = document.querySelector('.page.swiper-container');
+  if (pageSwiperEl) {
+    var swiper = new Swiper(pageSwiperEl, {
+      speed: 500,
+      roundLengths: true,
+      direction: 'vertical',
+      slidesPerView: 'auto',
+      centeredSlides: true,
+      paginationClickable: true,
+      spaceBetween: 0,
+      mousewheelControl: true,
+      // resistanceRatio: 0.15,
 
+      // freeMode: true,
+      // freeModeMomentum: false,
+      // grabCursor: true,
+
+      // Scrollbar
+      scrollbar: '.main.swiper-scrollbar',
+      scrollbarHide: true,
+      scrollbarDraggable: !Swiper.prototype.support.touch,
+      scrollbarSnapOnRelease: true,
+
+      pagination: '.menu-pagination',
+      paginationClickable: true,
+      bulletClass: 'pure-menu-item',
+      bulletActiveClass: 'pure-menu-selected',
+      paginationBulletRender: function(swiper, index, className) {
+        return swiper.paginationContainer[0].children[index].outerHTML;
+      },
+      onInit: function(sw) {
+        document.body.setAttribute('page', sw.snapIndex);
+        if (!Swiper.prototype.support.touch) {
+          sw.container.addClass('scrollbar-control');
+        }
+      },
+      onTransitionEnd: function(sw) {
+        document.body.setAttribute('page', sw.snapIndex);
+        var slideElem = sw.slides[sw.snapIndex];
+        if (slideElem.classList.contains('scrolling')) {
+          sw.disableMousewheelControl();
+        } else {
+          sw.enableMousewheelControl();
+        }
+        slideAnimation(sw);
+      }
+    });
+
+    // Initialize links for swiper navigation
+    swiper.$('[data-scroll]').on('click', function(evt) {
+      var page = parseInt(evt.target.getAttribute('data-scroll'));
+      evt.preventDefault();
+      swiper.slideTo(page);
+    });
+
+    // A little workaround for hiding address bar on touch devices
+    if (navigator.maxTouchPoints > 0) {
+      window.scrollTo(0, 0);
+      document.body.classList.add('scroll-hack');
+      var initHeight = window.innerHeight;
+      window.addEventListener( "resize", function(evt) {
+        // console.log(initHeight+ ' vs '+window.innerHeight);
+        if (window.innerHeight > initHeight) {
+          document.body.classList.remove('scroll-hack');
+        }
+      });
+      window.addEventListener( "scroll", function(evt) {
+        // console.log(document.body.scrollTop);
+        if (document.body.scrollTop > 60) {
+          document.body.classList.remove('scroll-hack');
+        }
+      }, false);
+
+      var prevSlide = 0;
+      swiper.on('transitionEnd', function(sw) {
+        if (sw.snapIndex === 0 && prevSlide > 0) {
+          document.body.classList.add('scroll-hack');
+        }
+        prevSlide = sw.snapIndex;
+      });
+    }
+  }
+
+
+  /**  Tab Swipers  **/
+  function initializeTabSwiper(pageElem) {
+    new Swiper(pageElem.querySelector('.swiper-container'), {
+      speed: 500,
+      roundLengths: true,
+      direction: 'horizontal',
+      slidesPerView: 1,
+      spaceBetween: 20,
+
+      nextButton: pageElem.querySelector('.slide-button-next'),
+      prevButton: pageElem.querySelector('.slide-button-prev'),
+
+      pagination: pageElem.querySelector('.tabs-paginator'),
+      paginationClickable: true,
+      bulletClass: 'tab-item',
+      bulletActiveClass: 'tab-item-selected',
+      paginationBulletRender: function(swiper, index, className) {
+        return swiper.paginationContainer[0].children[index].outerHTML;
+      },
+      onTransitionEnd: slideAnimation,
+    });
+  }
+  var tabSwipers = document.querySelectorAll('.tabs-swiper');
+  for (var i = 0; i < tabSwipers.length; i++) {
+    initializeTabSwiper(tabSwipers[i]);
+  }
+
+  /** Swiper gallery **/
+  function galleryLayout(sw) {
+    if (sw.slides.length === 0) return;
+
+    var layout = sw.width / sw.height > 1.2? 'horizontal' : 'vertical';
+    sw.container.attr('layout', layout);
+
+    var slideEl = sw.slides[sw.snapIndex];
+    var imgEl = slideEl.querySelector('img');
     var imgRatio = imgEl.naturalWidth / imgEl.naturalHeight;
-    var elemRatio = box.width / box.height;
-    // console.log(Math.abs(elemRatio - imgRatio));
-    if (Math.abs(elemRatio - imgRatio) > 0.03) {
-      if (elemRatio > imgRatio) {
-        var imgWidth = box.height * imgRatio;
-        var offset = (box.width - imgWidth) / 2;
-        box = {
-          top: box.top,
-          left: box.left + offset,
-          right: box.left + offset + imgWidth,
-          width: imgWidth,
-          height: box.height,
-        }
-        // console.log('h_offset: '+offset);
-      } else {
-        var imgHeight = box.width / imgRatio;
-        var offset = (box.height - imgHeight) / 2;
-        box = {
-          top: box.top + offset,
-          left: box.left,
-          right: box.left + box.width,
-          width: box.width,
-          height: imgHeight,
-        }
-        // console.log('v_offset: '+offset);
+
+    var parent = imgEl.parentElement;
+    var parentBox = parent.getBoundingClientRect()
+    var padding = parseFloat(Dom7(parent).css('padding'));
+
+    var containerBox = {
+      top: parentBox.top+padding,
+      left: parentBox.left+padding,
+      width: parentBox.width-2*padding,
+      height: parentBox.height-2*padding
+    }
+    // compute available space for image element
+    var availableSpace;
+    if (layout === 'horizontal') {
+      availableSpace = {
+        top: containerBox.top,
+        left: containerBox.left,
+        width: Math.min(containerBox.width * 0.8, containerBox.width-175),
+        height: containerBox.height
+      };
+    } else {
+      var h = Math.max(containerBox.width * 0.8, 150);
+      availableSpace = {
+        width: containerBox.width,
+        height: h,
+        top: containerBox.top + (containerBox.height - h), // align bottom
+        left: containerBox.left
+      };
+    }
+
+    // compute a visible image bounds inside availableSpace
+    var objPos = Dom7(imgEl).css('object-position').split(' ');
+    var imgRatio = imgEl.naturalWidth / imgEl.naturalHeight;
+    var elemRatio = availableSpace.width / availableSpace.height;
+    var box;
+    if (elemRatio > imgRatio) {
+      var objPosX = parseFloat(objPos[0].replace('%', '')/100);
+      var imgWidth = availableSpace.height * imgRatio;
+      var offset = (availableSpace.width - imgWidth) / 2;
+      box = {
+        top: availableSpace.top,
+        left: availableSpace.left + offset,
+        right: availableSpace.left + offset + imgWidth,
+        width: imgWidth,
+        height: availableSpace.height,
+      }
+    } else {
+      var objPosY = parseFloat(objPos[1].replace('%', '')/100);
+      var imgHeight = availableSpace.width / imgRatio;
+      var offset = (availableSpace.height - imgHeight) * objPosY;
+      box = {
+        top: availableSpace.top + offset,
+        left: availableSpace.left,
+        right: availableSpace.left + availableSpace.width,
+        width: availableSpace.width,
+        height: imgHeight,
       }
     }
-    return box;
+
+    // apply layout settings for all slides
+    for (var i = 0; i < sw.slides.length; i++) {
+      slideEl = sw.slides[i];
+      var panelEl = Dom7('.image-panel', slideEl);
+      if (layout === 'horizontal') {
+        panelEl.css({
+          width: px(containerBox.width - availableSpace.width),
+          height: px(box.height)
+        });
+      } else {
+        panelEl.css({
+          width: '',
+          height: px(containerBox.height - box.height)
+        });
+      }
+      Dom7('img', slideEl).css('minWidth', px(box.width));
+    }
+
+    // toolbar layout
+    var toolbarEl = sw.container.find('.gallery-toolbar');
+    if (layout === 'horizontal') {
+      toolbarEl.css({
+        width: px(containerBox.width - availableSpace.width),
+        left: px(box.left + box.width),
+        top: px(box.top)
+      });
+    } else {
+      toolbarEl.css({
+        width: '',
+        left: '',
+        top: ''
+      });
+    }
+
+    sw.layoutParams = {
+      imgBox: box,
+      imgAvailableBox: availableSpace
+    };
+
+    // Dom7('.available').css({
+    //   top: px(availableSpace.top),
+    //   left: px(availableSpace.left),
+    //   width: px(availableSpace.width),
+    //   height: px(availableSpace.height)
+    // })
+
+    // Dom7('.image').css({
+    //   top: px(box.top),
+    //   left: px(box.left),
+    //   width: px(box.width),
+    //   height: px(box.height)
+    // })
   }
+
 
   function px(value) {
     return parseInt(value)+'px';
   }
 
-  function updateLayout(s) {
-    // var layout = s.width > s.height? 'horizontal' : 'vertical';
-    var layout = s.width / s.height > 1.2? 'horizontal' : 'vertical';
-    s.container.attr('layout', layout);
-
-    var slideElem = s.slides[s.snapIndex];
-    var panelElem = slideElem.querySelector('.image-panel');
-    var footerEl = s.paginationContainer[0].parentElement;
-    var imgElem = slideElem.querySelector('img');
-    var imgBox = imageRealBounds(imgElem);
-
-    /*
-    if (slideElem.classList.contains('zoomed')) {
-      footerEl.style.opacity = 0;
-    } else {
-      if (footerEl.style.opacity === '0') {
-        footerEl.style.opacity = 1;
-      }
-      // ...
-    }*/
-    if (s.container.attr('layout') === 'vertical') {
-      panelElem.style.width = px(imgBox.width);
-      panelElem.style.height = '';
-      footerEl.style.width = '';
-      footerEl.style.right = px(window.innerWidth - imgBox.right);
-      // var freeSpace = 100 * (1 - imgBox.height / window.innerHeight);
-      // panelElem.style.maxHeight = 0.9*freeSpace + '%';
-      // console.log(freeSpace)
-    } else {
-      s.paginationContainer[0].parentElement.style.top = px(imgBox.top);
-      panelElem.style.height = px(imgBox.height);
-      panelElem.style.width = '';
-      footerEl.style.width = px(panelElem.children[0].offsetWidth);
-      footerEl.style.right = px((window.innerWidth - imgBox.width - panelElem.offsetWidth) / 2);
-    }
-    footerEl.style.top = px(panelElem.getBoundingClientRect().top);
-    slideAnimation(s);
-  }
-
-
   function openGallery(evt, index) {
     var box = evt.target.getBoundingClientRect();
-    var elem = evt.target.cloneNode(true);
-    elem.className.baseVal = 'thumbnail';
+    var elem = Dom7(evt.target.cloneNode(true));
+    elem.addClass('thumbnail');
 
-    elem.style.position = 'fixed';
-    elem.style.top = box.top + 'px';
-    elem.style.left = box.left + 'px';
-    elem.style.width = box.width + 'px';
-    elem.style.height = box.height + 'px';
+    elem.css({
+      position: 'fixed',
+      top: box.top + 'px',
+      left: box.left + 'px',
+      width: box.width + 'px',
+      height: box.height + 'px'
+    });
 
     var galleryElem = document.querySelector('.swiper-container-gallery');
     var slidesWrapper = document.querySelector('.gallery-images').cloneNode(true);
@@ -289,45 +360,48 @@
       paginationType: 'fraction',
       paginationClickable: true,
 
-      onTransitionEnd: updateLayout,
-      onInit: setTimeout.bind(null, updateLayout, gallerySwiper)
+      onTransitionEnd: slideAnimation,
+      onInit: setTimeout.bind(null, function(sw) {
+        sw.container.removeClass('zoom-mode');
+        galleryLayout(sw);
+        slideAnimation(sw);
+      }, gallerySwiper)
     });
     gallerySwiper.prevActiveIndex = -1;
-    gallerySwiper.on('doubleTap', function(s) {
-      s.container.toggleClass('zoom-mode');
-      // s.slides[s.snapIndex].classList.toggle('zoomed');
-      updateLayout(s);
+    gallerySwiper.on('doubleTap', function(s, evt) {
+      if (evt.target.tagName === 'IMG') {
+        s.container.toggleClass('zoom-mode');
+        // galleryLayout(s);
+      }
     });
 
-    gallerySwiper.updateLayout = updateLayout.bind(null, gallerySwiper);
+    gallerySwiper.updateLayout = galleryLayout.bind(null, gallerySwiper);
     window.addEventListener('resize', gallerySwiper.updateLayout);
-    window.gs = gallerySwiper;
 
-    document.body.appendChild(elem);
+    document.body.appendChild(elem[0]);
     // Open animation
     setTimeout(function() {
+      document.body.classList.add('modal-open');
       galleryElem.style.opacity = 1;
-      var imgElem = gallerySwiper.slides[gallerySwiper.snapIndex].querySelector('img');
-      var endBox = imageRealBounds(imgElem);
 
-
-      gallerySwiper.$(elem).once('transitionend webkitTransitionEnd', function() {
-        console.log('transitionend END');
+      var endBox = gallerySwiper.layoutParams.imgBox;
+      elem.transitionEnd(function() {
         elem.remove();
         galleryElem.classList.add('initialized');
       });
 
-      elem.className.baseVal += ' animated';
+      elem.addClass('animated');
 
       var dx = endBox.left - box.left;
       var dy = endBox.top - box.top;
       var sx = endBox.width / box.width;
       var sy = endBox.height / box.height;
 
-      elem.style.transform = 'translate3d('+dx+'px,'+dy+'px,0) scale3d('+sx+','+sy+',1)';
+      elem.transform('translate3d('+dx+'px,'+dy+'px,0) scale3d('+sx+','+sy+',1)');
     }, 30);
 
     function close() {
+      document.body.classList.remove('modal-open');
       galleryElem.style.opacity = 0;
       setTimeout(function() {
         window.removeEventListener('resize', gallerySwiper.updateLayout);
@@ -349,15 +423,16 @@
     var keyListener = document.addEventListener('keydown', keyHandler);
   }
 
-  swiper.$('.thumbnails .thumbnail svg').on('click', function(evt) {
+
+  Dom7('.thumbnails .thumbnail svg').on('click', function(evt) {
     var index = parseInt(evt.target.getAttribute('data-gallery-index')) || 0;
     openGallery(evt, index);
   });
 
-  swiper.$('[data-animate], [data-animate-once]').addClass('invisible');
-  window.sw = swiper;
+  Dom7('[data-animate], [data-animate-once]').addClass('invisible');
 
-  
+
+  /** Scrolling slides (nested in main swiper) **/
   new Swiper('.swiper-container.nested', {
     roundLengths: true,
     direction: 'vertical',
@@ -387,50 +462,32 @@
       }
       sw._progressStack.push(progress);
       sw._progressStack.splice(0, 1);
+    },
+    onInit: function(s) {
+      if (!Swiper.prototype.support.touch) {
+        s.container.addClass('scrollbar-control');
+      }
     }
   });
-  
 
-  function toggleFullScreen() {
-    var doc = window.document;
-    var docEl = doc.documentElement;
-
-    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-    if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-      requestFullScreen.call(docEl);
+  new Swiper('.development .swiper-container', {
+    speed: 500,
+    roundLengths: true,
+    nextButton: '.slide-button-next',
+    prevButton: '.slide-button-prev',
+    slideActiveClass: 'active-slide',// workaround for nested slide animations
+    slidesPerView: 2,
+    resistanceRatio: 0,
+    breakpoints: {
+      1200: {
+        slidesPerView: 1.5,
+      },
+      1000: {
+        slidesPerView: 1.25
+      },
+      600: {
+        slidesPerView: 1
+      }
     }
-    else {
-      cancelFullScreen.call(doc);
-    }
-  }
-
-
-  if (navigator.maxTouchPoints > 0) {
-    window.scrollTo(0, 0);
-    document.body.classList.add('scroll-hack');
-    var initHeight = window.innerHeight;
-    window.addEventListener( "resize", function(evt) {
-      // console.log(initHeight+ ' vs '+window.innerHeight);
-      if (window.innerHeight > initHeight) {
-        document.body.classList.remove('scroll-hack');
-      }
-    });
-    window.addEventListener( "scroll", function(evt) {
-      // console.log(document.body.scrollTop);
-      if (document.body.scrollTop > 60) {
-        document.body.classList.remove('scroll-hack');
-      }
-    }, false);
-
-    var prevSlide = 0;
-    swiper.on('transitionEnd', function(sw) {
-      if (sw.snapIndex === 0 && prevSlide > 0) {
-        document.body.classList.add('scroll-hack');
-      }
-      prevSlide = sw.snapIndex;
-    });
-  }
-
+  });
 })(this, this.document);
