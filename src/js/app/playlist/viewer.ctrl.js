@@ -9,7 +9,7 @@
   function PlaylistViewer($scope, $timeout, $element, $mdUtil, audioPlayer, projectManager,
         workspace, HighlightTimeline, slidesCompiler, fretboardViewer) {
 
-    var viewerTrackId = workspace.bassSection? workspace.bassSection.track.id : 'bass_0';
+    var viewerTrackId = workspace.track? workspace.track.id : 'bass_0';
 
     if (!$scope.viewer) {
       console.log('Initializing viewer')
@@ -432,29 +432,12 @@
       initPlaylistSlides();
     }
 
-    function projectLoaded1(project) {
-      console.log('projectLoaded');
-      workspace.playlist = project.playlists[0];
-      $scope.sectionNames = {};
-      slidesMetadata = null;
-      projectManager.project.sections.forEach(function(section) {
-        $scope.sectionNames[section.id] = section.name;
-      });
-      updatePlaylistRange();
-
-      if (workspace.playlist.items.length === 0) {
-        console.log('SHOW PLAYLIST EDITOR');
-        $scope.ui.playlist.showEditor = true;
-        viewer.swiper.removeAllSlides();
-      } else {
-        workspace.selectedPlaylistId = workspace.playlist.id;
-      }
-      $scope.ui.trackId = 'bass_0';
-      $scope.ui.selectTrack($scope.ui.trackId);
-    }
 
     function projectLoaded(project) {
       console.log('projectLoaded');
+      if (!viewer.swiper) {
+        return;
+      }
       $scope.sectionNames = {};
       slidesMetadata = null;
       projectManager.project.sections.forEach(function(section) {
@@ -528,7 +511,9 @@
 
     slidesCompiler.setTemplate('views/playlist/slide.html').then(function() {
       initializeSwiper();
-      $mdUtil.nextTick(projectLoaded.bind(this, projectManager.project));
+      if (projectManager.project) {
+        $mdUtil.nextTick(projectLoaded.bind(this, projectManager.project));
+      }
     });
 
     $scope.setLayout = function(layout) {

@@ -127,6 +127,9 @@
           return "scroll after {0} beats".format(value);
         }
       }
+      if (!workspace.section && projectManager.section) {
+        sectionLoaded(projectManager.section);
+      }
     }
     var DEFAULT_PRERENDERED_SLIDES = 2;
     swiperControl.preRenderedSlides = DEFAULT_PRERENDERED_SLIDES;
