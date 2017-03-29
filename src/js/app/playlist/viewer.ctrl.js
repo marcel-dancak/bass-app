@@ -135,12 +135,14 @@
           // s.removeSlide(0);
         }
       });
-      viewer.swiper.on('touchEnd', function(s) {
+      var updatePlayerProgress = function(s) {
         $mdUtil.nextTick(function() {
           s.activeIndex = s.snapIndex;
           $scope.player.progress.value = s.snapIndex * viewer.beatsPerSlide;
         });
-      });
+      }
+      viewer.swiper.on('touchEnd', updatePlayerProgress);
+      viewer.swiper.on('onScroll', updatePlayerProgress);
     }
 
     function initPlaylistSlides() {
@@ -430,6 +432,7 @@
       workspace.selectedPlaylistId = playlist.id;
       updatePlaylistRange();
       initPlaylistSlides();
+      fretboardViewer.clearDiagram();
     }
 
 
