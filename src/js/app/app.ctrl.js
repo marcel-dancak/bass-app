@@ -248,20 +248,15 @@
       return '{0}styles/images/{1}.svg'.format(dataUrl, drum.name);
     }
 
-    // Load standard drums kit sounds
+    // Assign isons for Drums/Percussions
     Drums.Drums.icon = 'drums';
     Drums.Percussions.icon = 'percussions';
-    var resources = Drums.Drums.map(function(drum) {
+    Drums.Drums.forEach(function(drum) {
       drum.image = drumImageUrl(drum);
-      return drum.filename;
     });
-    audioPlayer.bufferLoader.loadResources(resources);
-    // Load bongo drums kit sounds
-    resources = Drums.Percussions.map(function(drum) {
+    Drums.Percussions.forEach(function(drum) {
       drum.image = drumImageUrl(drum);
-      return drum.filename;
     });
-    audioPlayer.bufferLoader.loadResources(resources);
 
     // Stop playback when a tab is going to the background (setTimout will not work
     // properly in background tab)

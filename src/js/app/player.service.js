@@ -796,6 +796,11 @@
       sections.forEach(function(section) {
         for (var trackId in section.tracks) {
           var track = section.tracks[trackId];
+          if (track.type === 'drums') {
+            track.forEachSound(function(drumSound) {
+              addResources([track.instrument.drumMap[drumSound.drum].filename])
+            })
+          }
           if (track.type === 'bass') {
             track.forEachSound(function(bassSound) {
               if (bassSound.note && bassSound.style) {
@@ -935,7 +940,10 @@
     };
 
     AudioPlayer.prototype.playDrumSample = function(track, drumSound) {
-      this._playDrumSound(track, drumSound, context.currentTime);
+      this.bufferLoader.loadResource(
+        track.instrument.drumMap[drumSound.drum].filename,
+        this._playDrumSound.bind(this, track, drumSound, context.currentTime)
+      );
     };
 
     return new AudioPlayer();
