@@ -68,7 +68,7 @@
     }
   }
 
-  function AppController($scope, $q, $translate, $mdDialog, context,
+  function AppController($scope, $q, $translate, $mdDialog, $location, context,
       settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
     $scope.Note = Note;
     $scope.settings = settings;
@@ -89,6 +89,7 @@
       playlist: {},
     };
     $scope.player = {
+      mode: $location.hash()? 1 : 0,
       playing: false,
       play: angular.noop,
       input: audioPlayer.input,
