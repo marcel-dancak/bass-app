@@ -629,7 +629,7 @@
         a.source.start(a.startTime, a.offset, a.duration);
         this.scheduledSounds.push(a);
         if (a.meta) {
-          this._bassSoundScheduled(trackId, a.meta);
+          this._bassSoundScheduled(trackId, a);
         }
       }
       return audio;

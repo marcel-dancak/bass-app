@@ -364,6 +364,7 @@
       $scope.player.playing = false;
       audioVisualiser.deactivate();
       timeline.stop();
+      setTimeout(fretboardViewer.clearDiagram.bind(fretboardViewer), 1000);
       swiperControl.preRenderedSlides = DEFAULT_PRERENDERED_SLIDES;
     }
     // audioPlayer.on('playbackStopped', playbackStopped);

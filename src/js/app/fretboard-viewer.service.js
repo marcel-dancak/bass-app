@@ -61,9 +61,15 @@
   function fretboardViewer(context, workspace, audioPlayer) {
 
     var diagramElem;
+    var lastPlayedFret = 5;
+    var stringsMap = {};
+    var ghostMap = {}
+
     function FretboardViewer() {
       
-      audioPlayer._bassSoundScheduled = function(trackId, sound) {
+      audioPlayer._bassSoundScheduled = function(trackId, audio) {
+        var sound = audio.meta;
+
         // console.log('_bassSoundScheduled')
         // console.log(diagramElem)
         if (diagramElem && trackId === workspace.track.id) {
@@ -75,14 +81,46 @@
             // console.log('HIGHLIGHT NOTE');
             var id = '#'+sound.string+'_'+sound.note.name+sound.note.octave;
             var elem = diagramElem.querySelector(id);
+
             setTimeout(function(elem) {
+              if (stringsMap[sound.string] && stringsMap[sound.string].elem === elem) {
+                if (stringsMap[sound.string].end) {
+                  var elapsed = context.currentTime - stringsMap[sound.string].end
+                  // console.log('same note: '+elapsed)
+                  if (elapsed < 0.012) {
+                    elem.style.opacity = 0.75
+                    setTimeout(function() {
+                      elem.style.opacity = 1
+                    }, 20)
+                  }
+                }
+              }
+              // console.log('starting playback: '+sound.startTime)
+              stringsMap[sound.string] = {
+                start: sound.startTime,
+                elem: elem
+              };
               elem.classList.add('highlight');
+              lastPlayedFret = sound.note.fret;
             }, delayTime(sound.startTime), elem);
-            setTimeout(function(elem) {
-              elem.classList.remove('highlight');
-            }, delayTime(sound.startTime+sound.duration)-5, elem);
+
+            audio.source.onended = function() {
+              if (sound.startTime === stringsMap[sound.string].start) {
+                stringsMap[sound.string].end = context.currentTime
+              }
+              if (sound.startTime === stringsMap[sound.string].start || elem !== stringsMap[sound.string].elem) {
+                elem.classList.remove('highlight');
+              } else {
+                // same note as previous, but a new one is already highlighted
+                // console.log('blink')
+                elem.style.opacity = 0.75
+                setTimeout(function() {
+                  elem.style.opacity = 1
+                }, 30)
+              }
+            }
           } else if (sound.type === 'sequence') {
-            // console.log('HIGHLIGHT SLIDE');
+            console.log('HIGHLIGHT sequence');
             // console.log(sound)
             var prevElems = [];
             sound.notes.forEach(function(subsound, index) {
@@ -113,6 +151,68 @@
               });
             }, delayTime(lastNote.startTime+lastNote.duration)-5);
           } else if (sound.type === 'ghost') {
+            var ghostFret = angular.isDefined(audio.sound.note.fret)? audio.sound.note.fret : lastPlayedFret;
+
+            /*
+            var query = '.string.{0} .fret-{1}'.format(sound.string, ghostFret+1)
+            var elem = diagramElem.querySelector(query);
+            elem.classList.add('x')
+
+            audio.source.onended = function() {
+              console.log('ghost ended')
+              elem.classList.remove('x');
+            }
+            */
+            var query = [ghostFret, ghostFret+1, ghostFret+2].map(function(fret) {
+              return '.string.{0} .fret-{1} label'.format(sound.string, fret)
+            }).join(',')
+            var elems = Array.from(diagramElem.querySelectorAll(query));
+
+            setTimeout(function() {
+              console.log('GHOST START: '+sound.startTime)
+              elems.forEach(function(elem) {
+                elem.classList.add('highlight');
+                elem.classList.add('x');
+              });
+              ghostMap[sound.string] = {
+                start: sound.startTime,
+                fret: ghostFret
+              };
+            }, delayTime(sound.startTime));
+
+            audio.source.onended = function() {
+              console.log('GHOST END: '+ghostMap[sound.string].start)
+              // elems.forEach(function(elem) {
+              //   elem.classList.remove('highlight');
+              //   elem.classList.remove('x');
+              // });
+              console.log(ghostFret +' vs ' + ghostMap[sound.string].fret)
+              if (sound.startTime === ghostMap[sound.string].start || ghostFret !== ghostMap[sound.string].fret) {
+                elems.forEach(function(elem) {
+                  elem.classList.remove('highlight');
+                  elem.classList.remove('x');
+                })
+              } else {
+                // same note as previous, but a new one is already highlighted
+                console.log('ghost blink')
+                elems.forEach(function(elem) {
+                  elem.style.opacity = 0.75;
+                })
+                setTimeout(function() {
+                  elems.forEach(function(elem) {
+                    elem.style.opacity = 1;
+                  })
+                }, 30)
+              }
+            }
+
+            // setTimeout(function() {
+            //   elems.forEach(function(elem) {
+            //     elem.classList.remove('highlight');
+            //   });
+            // }, delayTime(sound.startTime+sound.duration));
+
+            /*
             var ghostElem = diagramElem.querySelector('.string.{0} .ghost-note label'.format(sound.string));
             setTimeout(function() {
               ghostElem.classList.add('highlight');
@@ -120,6 +220,7 @@
             setTimeout(function() {
               ghostElem.classList.remove('highlight');
             }, delayTime(sound.startTime+sound.duration));
+            */
           }
         }
       }
@@ -129,7 +230,7 @@
       diagramElem = containerElem;
     };
 
-    FretboardViewer.prototype.clearDiagram = function() {
+    FretboardViewer.prototype.clearActiveChord = function() {
       if (!diagramElem) return;
       var elems = Array.from(diagramElem.querySelectorAll('.active'));
       elems.forEach(function(elem) {
@@ -141,8 +242,18 @@
       }
     }
 
+    FretboardViewer.prototype.clearDiagram = function() {
+      console.log('clearDiagram')
+      if (!diagramElem) return;
+      this.clearActiveChord();
+      var elems = Array.from(diagramElem.querySelectorAll('.highlight'));
+      elems.forEach(function(elem) {
+        elem.classList.remove('highlight');
+      });
+    }
+
     FretboardViewer.prototype.setChord = function(section, trackId, chord) {
-      this.clearDiagram();
+      this.clearActiveChord();
       if (!diagramElem || !chord.root) {
         return;
       }
