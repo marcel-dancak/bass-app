@@ -7,9 +7,9 @@
 
     <title>Drums and Bass</title>
     <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="styles/styles.min.css">
+    <link rel="stylesheet" type="text/css" href="https://s3.eu-central-1.amazonaws.com/bass-app/app/latest/styles/styles.min.css">
 
-    <script src="js/app.min.js"></script>
+    <script src="https://s3.eu-central-1.amazonaws.com/bass-app/app/latest/js/app.min.js"></script>
     <script type="text/javascript">
       angular.module('bd.app')
         .config(function($mdIconProvider, $sceDelegateProvider) {
@@ -18,7 +18,7 @@
             'https://s3.eu-central-1.amazonaws.com/bass-app/**'
           ]);
           $mdIconProvider
-            .defaultIconSet('styles/icons.svg', 32)
+            .defaultIconSet('https://s3.eu-central-1.amazonaws.com/bass-app/app/latest/styles/icons.svg', 32)
         })
         .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/')
         .constant('dataUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/data/');
