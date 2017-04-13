@@ -1181,7 +1181,7 @@ header .credits {
         display: none; }
 
 .swiper-slide ul {
-  padding-left: 20px; }
+  /*padding-left: 20px;*/ }
   .swiper-slide ul li {
     line-height: 1.75em;
     font-size: 1.17em; }
@@ -1265,3 +1265,22 @@ footer {
   @media (min-width: 1201px) {
     .development .slide-button-prev, .development .slide-button-next {
       display: none; } }
+
+.slide-list {
+  list-style: none;
+  padding-left: 0; }
+  .slide-list li {
+    max-width: 410px; }
+  .slide-list h3 {
+    font-size: 17px;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: bold; }
+  .slide-list p {
+    margin: 0 0 16px 0;
+    opacity: 0.75;
+    font-size: 16px; }
+  .slide-list.cascade li:nth-child(1) {
+    padding-left: 16px; }
+  .slide-list.cascade li:nth-child(2) {
+    padding-left: 32px; }
