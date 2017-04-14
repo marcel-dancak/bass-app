@@ -1,6 +1,8 @@
-function BufferLoader(context, serverUrl) {
+function BufferLoader(context, serverUrl, localSoundsUrl) {
   this.context = context;
-  this.serverUrl = serverUrl;
+  this.remoteServerUrl = serverUrl;
+  this.localSoundsUrl = localSoundsUrl;
+  this.serverUrl = localSoundsUrl || serverUrl;
   this.format = 'ogg';
 
   this.loadedResources = {};
@@ -59,13 +61,17 @@ BufferLoader.prototype.loadResource = function(url, callback, errorCallback) {
     );
   }
 
-  request.onerror = function() {
-    alert('BufferLoader: XHR error');
+  request.onerror = function(response) {
+    if (this.serverUrl !== this.remoteServerUrl) {
+      this.serverUrl = this.remoteServerUrl;
+      this.loadResource(url, callback, errorCallback)
+    }
+
     var index = loader.loadingResources.indexOf(url);
     if (index !== -1) {
       loader.loadingResources.splice(index, 1);
     }
-  }
+  }.bind(this)
 
   request.send();
 }

@@ -11,8 +11,8 @@
   }
 
 
-  function audioPlayer($timeout, $http, $q,
-        context, soundsUrl, Observable, AudioComposer, projectManager, Notes) { //Midi
+  function audioPlayer($timeout, $q,
+        context, localSoundsUrl, soundsUrl, Observable, AudioComposer, Notes) { //Midi
     // Midi();
     // var notes = new Notes('A0', 'C7');
     // function playMidi(track, sound, startTime, duration) {
@@ -75,7 +75,7 @@
       this.countdown = false;
       this.setBpm(60);
       this.setPlaybackSpeed(1);
-      this.bufferLoader = new BufferLoader(context, soundsUrl);
+      this.bufferLoader = new BufferLoader(context, soundsUrl, localSoundsUrl);
       this.scheduledSounds = [];
 
       this.input = {
