@@ -7,23 +7,24 @@
 
     <title>Drums and Bass</title>
     <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700">
     <link rel="stylesheet" type="text/css" href="styles/styles.min.css">
 
     <script src="js/app.min.js"></script>
     <script type="text/javascript">
       angular.module('bd.app')
-        .config(function($mdIconProvider) {
+        .config(function($mdIconProvider, $sceDelegateProvider) {
           $mdIconProvider
             .defaultIconSet('styles/icons.svg', 32)
+            .iconSet('drums', 'styles/drums.svg', 512)
         })
-        .constant('soundsUrl', 'https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/')
-        .constant('dataUrl', 'https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/');
+        .constant('localSoundsUrl', 'http://127.0.0.1:8887/')
+        .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/')
+        .constant('catalogUrl', 'https://basscloud.net/')
+        .constant('dataUrl', '/app/');
     </script>
   </head>
   <body
     ng-controller="AppController"
-    ng-init="player.mode = 0"
     ng-class="[
       player.mode === 0? 'section-mode' : 'playlist-mode',
       {

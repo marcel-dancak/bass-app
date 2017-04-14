@@ -176,10 +176,11 @@
       ng-if="workspace.track.type === 'drums'"
       layout="column"
       class="drums-labels-container">
-      <img
+      <md-icon
         ng-repeat="drum in workspace.track.instrument track by drum.name"
-        ng-src="{{ ::drum.image }}"
+        md-svg-icon="{{ ::'drums:'+ drum.name }}"
         ng-click="playDrumSound(drum.name)">
+      </md-icon>
     </div>
 
     <div

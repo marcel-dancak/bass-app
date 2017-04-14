@@ -245,19 +245,9 @@
       $scope.$broadcast('rzSliderForceRender');
     };
 
-    function drumImageUrl(drum) {
-      return '{0}styles/images/{1}.svg'.format(dataUrl, drum.name);
-    }
-
     // Assign isons for Drums/Percussions
     Drums.Drums.icon = 'drums';
     Drums.Percussions.icon = 'percussions';
-    Drums.Drums.forEach(function(drum) {
-      drum.image = drumImageUrl(drum);
-    });
-    Drums.Percussions.forEach(function(drum) {
-      drum.image = drumImageUrl(drum);
-    });
 
     // Stop playback when a tab is going to the background (setTimout will not work
     // properly in background tab)
