@@ -1,0 +1,163 @@
+<md-dialog class="upload-project-dialog">
+  <div class="dialog-header">
+    <span ng-attr-translate="{{ ::newUpload? 'UPLOAD' : 'UPDATE' }}"></span>
+    <md-button
+      md-no-ink
+      aria-label="Close"
+      class="dialog-close icon-hover"
+      ng-click="close()">
+      <md-icon md-svg-icon="x"></md-icon>
+    </md-button>
+  </div>
+
+  <md-dialog-content layout-padding ng-switch="form">
+    <form
+      style="width:680px;max-width: 100%"
+      xng-hide="showLogin" ng-switch-when="upload">
+      <md-input-container class="md-block">
+        <label class="md-no-float">Title</label>
+        <input
+          required
+          md-no-asterisk
+          ng-model="project.title">
+      </md-input-container>
+      <md-input-container class="md-block">
+        <label class="md-no-float">Artist</label>
+        <input ng-model="project.artist">
+      </md-input-container>
+      <md-input-container class="md-block">
+        <label class="md-no-float">Description</label>
+        <textarea ng-model="project.description"></textarea>
+      </md-input-container>
+
+      <div layout="row">
+        <md-input-container class="md-block" flex="50">
+          <label class="md-no-float">Category</label>
+          <md-select md-no-ink ng-model="project.category">
+            <md-option value="Cover">Cover</md-option>
+            <md-option value="Lesson">Lesson</md-option>
+            <md-option value="Arrangement">Arrangement</md-option>
+            <md-option value="Original Composition">Original Composition</md-option>
+            <md-option value="Backing Track">Backing Track</md-option>
+          </md-select>
+        </md-input-container>
+
+        <md-input-container class="md-block" flex="50">
+          <label class="md-no-float">Level</label>
+          <md-select md-no-ink ng-model="project.level">
+            <md-option
+              ng-repeat="level in ::difficulties"
+              ng-value="$index">
+              <div layout="row">
+                <span flex>{{ ::level.title }}</span>
+                <span style="opacity:0.5">{{ ::level.numeric }}/5</span>
+              </div>
+            </md-option>
+          </md-select>
+        </md-input-container>
+      </div>
+
+      <md-input-container class="md-block">
+        <label class="md-no-float">Musical genres</label>
+        <md-chips
+          ng-model="project.genres"
+          md-autocomplete-snap
+          xmd-transform-chip="transformChip($chip)"
+          md-require-match="false">
+          <md-autocomplete
+            md-selected-item="ctrl.selectedItem"
+            md-search-text="genres.searchText"
+            md-items="item in querySearch(genres.searchText)"
+            md-item-text="item.name"
+            placeholder="Search for a style">
+            <span md-highlight-text="ctrl.searchText">
+              {{ item }}
+            </span>
+          </md-autocomplete>
+        </md-chips>
+      </md-input-container>
+      <!-- <br /> -->
+      <div style="min-height: 8px;"></div>
+      <md-input-container class="md-block">
+        <label class="md-no-float">Playing style</label>
+        <md-chips
+          ng-model="project.playing_styles"
+          xreadonly="true"
+          md-removable="true">
+        </md-chips>
+      </md-input-container>
+      <div style="min-height: 8px;"></div>
+      <md-input-container class="md-block">
+        <label class="md-no-float">Tags</label>
+        <md-chips
+          ng-model="project.tags"
+          md-removable="true"
+          placeholder="Characterictic keywords"
+          secondary-placeholder="Add new">
+        </md-chips>
+        <p class="note">( Any characteristic keywords. Also useful for searching )</p>
+      </md-input-container>
+      <md-input-container class="md-block">
+        <label class="md-no-float">Linked Video</label>
+        <input ng-model="project.video_link">
+      </md-input-container>
+    </form>
+
+    <form
+      name="loginForm"
+      style="max-width:400px;"
+      xng-show="showLogin"
+      ng-switch-when="login">
+      <p class="text-center">You have to be authenticated with
+        <a href="https://basscloud.net">BassCloud</a> service
+      </p>
+
+      <br />
+      <md-input-container class="md-block">
+        <label>Username</label>
+        <input ng-model="user.username">
+      </md-input-container>
+      <md-input-container class="md-block">
+        <label>Password</label>
+        <input
+          type="password"
+          ng-model="user.password">
+      </md-input-container>
+      <small class="error" ng-show="loginFailed">
+        Authentication Failed! Please enter a correct username and password.
+      </small>
+    </form>
+  </md-dialog-content>
+
+  <md-dialog-actions>
+    <span flex></span>
+    <md-button
+      ng-hide="showLogin"
+      md-no-ink
+      aria-label="Upload"
+      ng-click="upload()"
+      translate="UPLOAD"
+      class="md-raised md-primary">
+    </md-button>
+    <md-button
+      ng-show="showLogin"
+      md-no-ink
+      aria-label="Continue"
+      ng-click="login()"
+      translate="CONTINUE"
+      class="md-raised md-primary">
+    </md-button>
+  </md-dialog-actions>
+
+  <div
+    ng-if="fetching"
+    class="dialog-backdrop"
+    layout-padding>
+    <p style="text-align: center;font-weight:500">Fetching project data. Please wait.</p>
+    <md-progress-circular
+      md-mode="indeterminate"
+      md-diameter="24"
+      style="margin:0 auto">
+    </md-progress-circular>
+  </div>
+</md-dialog>

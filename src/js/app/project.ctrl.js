@@ -13,7 +13,7 @@
     });
 
 
-  function ProjectController($scope, $timeout, $http, $window, $location, $mdToast, $mdDialog,
+  function ProjectController($scope, $timeout, $controller, $http, $window, $location, $mdToast, $mdDialog,
         projectManager, workspace, ReadOnlyStore, ProjectLocalStore, dataUrl) {
 
     function showNotification(htmlContent) {
@@ -98,8 +98,6 @@
         $location.hash('');
       }
       document.title = "New Project";
-      workspace.bassSection = null;
-      workspace.drumSection = null;
       $scope.project = projectManager.createProject([
         {
           type: 'bass',
@@ -280,7 +278,16 @@
 
     var projectParam = $location.hash();
     if (projectParam) {
-      $http.get(dataUrl+projectParam+'.json').then(function(response) {
+      // $http.get(dataUrl+projectParam+'.json')
+      $http({
+        url: dataUrl+projectParam+'.json',
+        method: 'GET',
+        // transformResponse: [function (data) {
+        //     return JSON.parse(LZString.decompressFromBase64(data));
+        // }]
+      })
+      .then(function(response) {
+        // console.log(response)
         projectManager.store = new ReadOnlyStore(response.data);
         $scope.project = projectManager.loadProject(1);
         workspace.selectedSectionId = $scope.project.sections[0].id;
@@ -311,13 +318,28 @@
 
     $scope.exportProject = function() {
       var data = projectManager.store._projectData();
-      console.log(data);
+
+      var text = JSON.stringify(data);
       var blob = new Blob(
         // [JSON.stringify(data, null, 4)],
         [JSON.stringify(data)],
+        // [LZString.compressToBase64(text)],
+        // [LZString.compressToUTF16(text)],
         {type: "application/json;charset=utf-8"}
       );
+
       saveAs(blob, projectManager.project.name+'.json');
+    };
+
+    $scope.uploadProject = function() {
+      var UploadController = $controller('UploadController', {'$scope': $scope.$new(true)}).constructor
+      $mdDialog.show({
+        templateUrl: 'views/upload_form.html',
+        controller: UploadController,
+        autoWrap: false
+        // clickOutsideToClose: true
+        // targetEvent: evt
+      });
     };
 
     workspace.importProject = function() {

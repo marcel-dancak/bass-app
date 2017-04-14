@@ -209,6 +209,16 @@
         </md-button>
       </md-menu-item>
 
+      <md-menu-item>
+        <md-button
+          md-no-ink
+          aria-label="Upload"
+          ng-click="uploadProject()"
+          translate="UPLOAD"
+          ng-disabled="!projectManager.store.project">
+        </md-button>
+      </md-menu-item>
+
       <md-menu-item
         ng-if-start="player.mode === 0"
         class="menu-group-item">

@@ -571,7 +571,7 @@
         swiperControl.switchInstrument(track.type);
       }
 
-      if (workspace.trackSection.track.id !== track.id) {
+      if (workspace.track.id !== track.id) {
         console.log('switch new track instrument')
         if (!workspace.section.tracks[trackId]) {
           initializeNewTrackSection(track);

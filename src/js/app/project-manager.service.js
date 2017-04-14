@@ -74,6 +74,7 @@
 
     this.project = {
       id: projectId,
+      upload_id: projectConfig.upload_id || '',
       name: projectConfig.name,
       sections: projectConfig.sections,
       tracks: projectConfig.tracks,
