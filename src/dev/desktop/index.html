@@ -46,6 +46,10 @@
     <script type="text/javascript" src="bower_components/file-saver/FileSaver.min.js"></script>
     <script type="text/javascript" src="bower_components/angular-scroll/angular-scroll.min.js"></script>
     <script type="text/javascript" src="bower_components/angular-translate/angular-translate.min.js"></script>
+    <script type="text/javascript" src="lib/lz-string.min.js"></script>
+    <!-- <script type="text/javascript" src="lib/base64-string.js"></script> -->
+    <!-- <script type="text/javascript" src="lib/lz-string_1.3.7.min.js"></script> -->
+    <!-- <script type="text/javascript" src="lib/lz-string.js"></script> -->
 
 
     <script src="lib/string-format.js"></script>
@@ -73,13 +77,12 @@
     <script src="js/app/timeline.js"></script>
     <script src="js/app/highlight-timeline.js"></script>
     <script src="js/app/fretboard-viewer.service.js"></script>
-    <script src="js/app/midi.js"></script>
+    <script src="js/app/upload.ctrl.js"></script>
+    <!-- <script src="js/app/midi.js"></script> -->
 
     <script src="js/app/bass/bass-guitar.js"></script>
-    <!-- <script src="js/app/bass/bass-section.es6"></script> -->
     <script src="js/app/bass/label.dir.js"></script>
     <script src="js/app/drums/drums.js"></script>
-    <!-- <script src="js/app/drums/drum-section.es6"></script> -->
 
     <!-- Section/Editor Mode -->
     <script src="js/app/editor/resize-handler.es6"></script>
@@ -89,10 +92,10 @@
     <script src="js/app/editor/swiper-control.service.js"></script>
     <script src="js/app/editor/audio-visualiser.service.js"></script>
     <script src="js/app/editor/bass-beat.ctrl.js"></script>
-    <script src="js/app/editor/bass-editor.service.js"></script>
+    <script src="js/app/editor/bass-editor.es6"></script>
     <script src="js/app/editor/drums.ctrl.js"></script>
     <script src="js/app/editor/fretboard.ctrl.js"></script>
-    <script src="js/app/editor/piano-editor.js"></script>
+    <script src="js/app/editor/piano-editor.es6"></script>
     <script src="js/app/editor/drum-editor.js"></script>
 
     <!-- Playlist Mode -->
@@ -122,15 +125,19 @@
         .config(function($mdIconProvider) {
           $mdIconProvider
             .defaultIconSet('styles/icons.svg', 32)
+            .iconSet('drums', 'styles/drums.svg', 512)
         })
-        .constant('soundsUrl', '/') // https://dl.dropboxusercontent.com/u/4466860/drums-and-bass/
+        .constant('soundsUrl', '/')
+        // .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/')
+        .constant('localSoundsUrl', 'http://127.0.0.1:8887/')
+        .constant('uploadUrl', 'http://localhost:8000/')
+        // .constant('uploadUrl', 'https://basscloud.net/')
         .constant('dataUrl', '/');
     </script>
   </head>
 
   <body
     ng-controller="AppController"
-    ng-init="player.mode = 0"
     ng-class="[
       player.mode === 0? 'section-mode' : 'playlist-mode',
       {

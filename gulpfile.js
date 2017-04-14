@@ -10,15 +10,19 @@ var path = require('path');
 var babel = require('gulp-babel');
 
 
-var TARGET = 'dist/v17/';
+var TARGET = 'dist/v21/';
 
-var DEV_JS = 'src/js/**/*.js';
+var DEV_JS = ['src/js/**/*.js', 'src/js/**/*.es6'];
 var DEV_HTML = 'src/views/**/*.html';
 var DEV_CSS = 'src/styles/**/*.css';
 
 /**
  * Tasks for development
  */
+
+var devserver = {
+  index_dir: '',
+};
 
 gulp.task('devserver', function() {
   var port = 3000;
@@ -27,7 +31,7 @@ gulp.task('devserver', function() {
     port = parseInt(process.argv[portArgIndex+1]);
   }
   connect.server({
-    root: ['./', 'src/'],
+    root: ['./', 'src/', devserver.index_dir],
     port: port,
     // livereload: true
     livereload: {
@@ -52,22 +56,33 @@ gulp.task('dev-templates', function () {
 });
 
 gulp.task('dev-index', function () {
-  gulp.src('src/index.html')
+  var index = devserver.index_dir+'index.html';
+  gulp.src(index)
     .pipe(connect.reload());
 });
 
 gulp.task('watch', function () {
+  var index = devserver.index_dir+'index.html';
   gulp.watch(DEV_JS, ['dev-js']);
   gulp.watch(DEV_HTML, ['dev-templates']);
   gulp.watch(DEV_CSS, ['dev-styles']);
-  gulp.watch('src/index.html', ['dev-index']);
+  gulp.watch(index, ['dev-index']);
 });
 
 /**
  * Start development server on http://localhost:3000 with live reloading
  */
-gulp.task('serve', ['devserver', 'watch']);
+// gulp.task('serve', ['devserver', 'watch']);
 
+gulp.task('serve', function() {
+  devserver.index_dir = 'src/dev/desktop/';
+  gulp.start('devserver', 'watch');
+});
+
+gulp.task('serve-mobile', function() {
+  devserver.index_dir = 'src/dev/mobile/';
+  gulp.start('devserver', 'watch');
+});
 
 /**
  * Compile all JavaScript and HTML templates files into single minified file
@@ -86,6 +101,9 @@ gulp.task('uglify', function() {
         'bower_components/angular-animate/angular-animate.min.js',
         'bower_components/angular-translate/angular-translate.min.js',
 
+        '!src/lib/fft/*.js',
+        '!src/lib/midi/*.js',
+        'src/lib/bezier-easing.min.js',
         'src/lib/**/*.js',
 
         // 'bower_components/angular-material/angular-material.js',
@@ -109,11 +127,14 @@ gulp.task('uglify', function() {
         'bower_components/angular-material/modules/js/dialog/dialog.min.js',
         'bower_components/angular-material/modules/js/subheader/subheader.min.js',
         'bower_components/angular-material/modules/js/sticky/sticky.min.js',
+        'bower_components/angular-material/modules/js/chips/chips.min.js',
+        'bower_components/angular-material/modules/js/autocomplete/autocomplete.min.js',
+        'bower_components/angular-material/modules/js/virtualRepeat/virtualRepeat.min.js',
         'bower_components/angular-material/modules/js/progressCircular/progressCircular.min.js',
 
         // 'bower_components/angular-material/modules/js/radioButton/radioButton.min.js',
         // 'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
-        // 'bower_components/angular-material/modules/js/showHide/showHide.min.js',
+        'bower_components/angular-material/modules/js/showHide/showHide.min.js',
 
         // 'bower_components/angular-material/modules/js/slider/slider.min.js',
         // 'bower_components/angular-material/modules/js/tabs/tabs.min.js',
@@ -129,6 +150,7 @@ gulp.task('uglify', function() {
         "bower_components/angular-scroll/angular-scroll.min.js",
 
 
+        '!src/js/mobile/**/*.js',
         'src/js/**/*.module.js',
         'src/js/**/*.js'
       ]),
@@ -175,6 +197,9 @@ gulp.task('csss', function() {
       'bower_components/angular-resizable/src/angular-resizable.css',
       'bower_components/swiper/dist/css/swiper.min.css',
       'bower_components/angularjs-slider/dist/rzslider.css',
+
+      '!src/styles/mobile/**/*.css',
+      '!src/styles/screenshot.css',
       'src/styles/ui.css',
       'src/styles/**/*.css'
     ])
@@ -182,11 +207,8 @@ gulp.task('csss', function() {
       .pipe(concat('styles.min.css'))
       .pipe(gulp.dest(TARGET + 'styles')),
 
-    gulp.src('src/styles/icons.svg')
+    gulp.src('src/styles/*.svg')
       .pipe(gulp.dest(TARGET + 'styles')),
-
-    gulp.src('src/styles/images/*.svg')
-      .pipe(gulp.dest(TARGET + 'styles/images')),
 
     gulp.src('src/favicon-16x16.png')
       .pipe(gulp.dest(TARGET)),
@@ -239,3 +261,112 @@ gulp.task('icons', function() {
     //.pipe(gzip({append: true,gzipOptions: { level: 9 }}))
     //.pipe(gulp.dest('src/web/styles/'));
 });
+
+
+gulp.task('drum-icons', function() {
+  var svgmin = require('gulp-svgmin');
+  var svgng = require('gulp-svg-ngmaterial');
+
+  return gulp
+    .src('svg/drums/*.svg')
+    .pipe(svgmin())
+    .pipe(svgng({ filename : "drums.svg"}))
+    .pipe(gulp.dest('src/styles/'));
+});
+
+
+/**
+ * Minify all css files
+ */
+gulp.task('mobile-csss', function() {
+  var minifyCss = require('gulp-minify-css');
+  return gulp.src([
+    'bower_components/angular-material/angular-material.css',
+
+    'bower_components/swiper/dist/css/swiper.min.css',
+    'bower_components/angularjs-slider/dist/rzslider.css',
+    'src/styles/ui.css',
+    'src/styles/**/*.css',
+    'src/styles/moible/viewer.css'
+  ])
+    .pipe(minifyCss())
+    .pipe(concat('mobile.min.css'))
+    .pipe(gulp.dest(TARGET + 'styles'));
+});
+
+/**
+ * Compile all JavaScript and HTML templates files into single minified file
+ */
+gulp.task('mobile-uglify', function() {
+  var series = require('stream-series');
+  var ngAnnotate = require('gulp-ng-annotate');
+  var templateCache = require('gulp-angular-templatecache/');
+
+  return series(
+    series(
+      gulp.src([
+        'bower_components/swiper/dist/js/swiper.js',
+        'bower_components/angular/angular.min.js',
+        'bower_components/angular-aria/angular-aria.min.js',
+        'bower_components/angular-animate/angular-animate.min.js',
+        'bower_components/angular-translate/angular-translate.min.js',
+
+        '!src/lib/fft/*.js',
+        '!src/lib/scalyr.js',
+        '!src/lib/bezier-easing.min.js',
+        'src/lib/*.js',
+
+        'src/angular-material.module.js',
+        'bower_components/angular-material/modules/js/core/core.min.js',
+        'bower_components/angular-material/modules/js/backdrop/backdrop.min.js',
+        'bower_components/angular-material/modules/js/button/button.min.js',
+        'bower_components/angular-material/modules/js/checkbox/checkbox.min.js',
+        'bower_components/angular-material/modules/js/icon/icon.min.js',
+        'bower_components/angular-material/modules/js/input/input.min.js',
+        'bower_components/angular-material/modules/js/textField/textField.min.js',
+        'bower_components/angular-material/modules/js/list/list.min.js',
+        'bower_components/angular-material/modules/js/menu/menu.min.js',
+        'bower_components/angular-material/modules/js/menuBar/menuBar.min.js',
+        'bower_components/angular-material/modules/js/select/select.min.js',
+        'bower_components/angular-material/modules/js/tooltip/tooltip.min.js',
+        'bower_components/angular-material/modules/js/toast/toast.min.js',
+        'bower_components/angular-material/modules/js/panel/panel.min.js',
+        'bower_components/angular-material/modules/js/dialog/dialog.min.js',
+        'bower_components/angular-material/modules/js/subheader/subheader.min.js',
+        'bower_components/angular-material/modules/js/sticky/sticky.min.js',
+        'bower_components/angular-material/modules/js/progressCircular/progressCircular.min.js',
+        'bower_components/angular-material/modules/js/content/content.min.js',
+
+        'bower_components/angularjs-slider/dist/rzslider.min.js',
+
+        '!src/js/app/app.module.js',
+        '!src/js/app/playlist/**/*.js',
+        '!src/js/app/editor/**/*.js',
+        'src/js/**/*.module.js',
+        'src/js/**/*.js'
+      ]),
+      gulp.src('src/js/app/**/*.es6')
+        .pipe(babel({
+          presets: ['es2015']
+      }))
+    ).pipe(ngAnnotate({ add: true })),
+    gulp.src([
+      '!src/views/editor/**/*.html',
+      '!src/views/playlist/**/*.html',
+      '!src/views/help/**/*.html',
+      '!src/views/app.html',
+      'src/views/**/*.html',
+    ])
+      .pipe(templateCache('templateCache.js', {root: 'views/'}))
+  )
+    .pipe(uglify())
+    .pipe(concat('mobile.min.js'))
+    .pipe(gulp.dest(TARGET + 'js/'));
+});
+
+gulp.task('mobile-index-page', function() {
+  return gulp.src('src/index-mobile.html')
+    .pipe(concat('mobile.html'))
+    .pipe(gulp.dest(TARGET));
+});
+gulp.task('build-mobile', ['mobile-index-page', 'mobile-uglify', 'mobile-csss']);
