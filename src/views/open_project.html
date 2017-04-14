@@ -1,5 +1,4 @@
 <md-dialog class="open-project-dialog">
-  <div class="info-note" translate="IMPORT_PROJECT_DESC"></div>
   <div class="dialog-header">
     <span translate="PROJECT"></span>
     <md-button
@@ -11,27 +10,30 @@
     </md-button>
   </div>
 
-  <md-dialog-content bd-file-drop="importProjectFile($file)">
-    <md-list
-      md-no-ink
-      ng-init="
-        form = {
-          selected: -1
-        }
-      "
-      class="select-list">
-      <md-list-item
-        ng-repeat="project in projects"
-        ng-class="{
-          selected: form.selected === $index
-        }"
-        ng-disabled="$index === 0 && openedProjectId === project.id"
-        ng-click="form.selected = $index">
-        {{ ::project.name }}
-      </md-list-item>
+  <div layout="column">
+    <small class="note text-center" translate="IMPORT_PROJECT_DESC"></small>
+    <md-dialog-content bd-file-drop="importProjectFile($file)">
+      <md-list
+        md-no-ink
+        ng-init="
+          form = {
+            selected: -1
+          }
+        "
+        class="select-list">
+        <md-list-item
+          ng-repeat="project in projects"
+          ng-class="{
+            selected: form.selected === $index
+          }"
+          ng-disabled="$index === 0 && openedProjectId === project.id"
+          ng-click="form.selected = $index">
+          {{ ::project.name }}
+        </md-list-item>
 
-    </md-list>
-  </md-dialog-content>
+      </md-list>
+    </md-dialog-content>
+  </div>
 
   <p
     class="confirm ng-hide"
@@ -44,23 +46,25 @@
       md-no-ink
       aria-label="Delete"
       ng-disabled="form.selected === -1"
-      ng-click="showConfirmation = true">
+      ng-click="showConfirmation = true"
+      class="md-raised">
       <span translate="DELETE"></span>
     </md-button>
-    <span flex></span>
     <md-button
       md-no-ink
       aria-label="Open"
       ng-disabled="form.selected === -1"
       ng-click="openProject(projects[form.selected].id)"
-      translate="OPEN">
+      translate="OPEN"
+      class="md-raised md-primary">
     </md-button>
   </md-dialog-actions>
   <md-dialog-actions class="confirm-actions" ng-show="showConfirmation">
     <md-button
       md-no-ink
       aria-label="No"
-      ng-click="showConfirmation = false">
+      ng-click="showConfirmation = false"
+      class="md-raised">
       <span translate="NO"></span>
     </md-button>
     <md-button
@@ -70,7 +74,8 @@
         deleteProject(projects[form.selected].id);
         form.selected = -1;
         showConfirmation = false
-      ">
+      "
+      class="md-raised md-primary">
       <span translate="YES"></span>
     </md-button>
   </md-dialog-actions>

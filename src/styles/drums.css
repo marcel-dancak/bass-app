@@ -7,10 +7,10 @@
   top: 0;
 }
 
-.drums-labels-container img {
-  position: relative;
+.drums-labels-container md-icon {
   height: 48px;
   width: 48px;
+  margin: 0;
   outline: none;
   cursor: pointer;
 }

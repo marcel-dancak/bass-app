@@ -521,7 +521,7 @@ md-option[selected] md-icon {
 }
 
 md-menu-content.big {
-  max-height: 400px;
+  max-height: 420px;
 }
 
 md-dialog .md-button.md-primary {
@@ -659,15 +659,7 @@ md-tooltip md-divider {
   transform: translate3d(0, 0, 0);
 }
 .open-project-dialog .confirm-actions {
-  border-top: 1px solid #ccc;
   z-index: 1;
-}
-.open-project-dialog .info-note {
-  color: #444;
-  left: 0;
-  right: 0;
-  position: absolute;
-  top: -22px;
 }
 
 .open-project-dialog p.confirm.ng-hide-add,
@@ -820,13 +812,6 @@ md-input-container label.md-no-float {
   pointer-events: none;
 }
 
-.info-note {
-  padding: 4px 0;
-  text-align: center;
-  font-size: 13px;
-  color: #777;
-}
-
 .section-dialog {
   width: 500px;
   min-height: 280px;
@@ -889,3 +874,88 @@ md-input-container label.md-no-float {
   transition-timing-function: linear !important;
 }
 
+.md-chip-input-container {
+  height: 32px;
+}
+md-chips .md-chips.md-focused {
+  box-shadow: 0 2px #2196f3;
+}
+md-chips md-chip.md-focused {
+  background: #2196f3;
+}
+
+.upload-project-dialog .layout-row md-input-container {
+  margin-top: 0;
+}
+/*.upload-project-dialog md-select {
+  height: 52px;
+}*/
+
+.upload-project-dialog .note {
+  color: #999;
+  font-size: 13px;
+  margin-top: 4px;
+  padding-bottom: 6px;
+}
+md-dialog-content md-content {
+  background-color: #fff;
+}
+
+md-option .md-text {
+  width: 100%;
+}
+
+md-dialog.md-content-overflow md-dialog-actions {
+  border-top-style: none;
+}
+
+md-dialog md-dialog-actions {
+  padding: 0 24px;
+  xbackground-color: #f7f7f7;
+}
+md-dialog md-dialog-actions .md-button {
+  min-width: 100px;
+}
+
+.dialog-backdrop {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(50,50,50, 0.6);
+  color: #fff;
+}
+.dialog-backdrop md-progress-circular path {
+  stroke: #fff;
+}
+
+md-dialog a[href]:not(.md-button) {
+  text-decoration: none;
+  color: #1976D2;
+}
+.error {
+  color: #d32f2f;
+}
+.text-center {
+  text-align: center;
+}
+
+md-dialog small {
+  opacity: 0.75;
+  margin: 8px 0;
+}
+
+.md-button.md-default-theme.md-primary.md-raised:not([disabled]):hover,
+.md-button.md-primary.md-raised:not([disabled]):hover,
+.md-button.md-default-theme.md-primary.md-fab:not([disabled]):hover,
+.md-button.md-primary.md-fab:not([disabled]):hover {
+  background-color: #1e88e5;
+}
+
+.md-button.md-default-theme.md-primary.md-raised:not([disabled]),
+.md-button.md-primary.md-raised:not([disabled]),
+.md-button.md-default-theme.md-primary.md-fab:not([disabled]),
+.md-button.md-primary.md-fab:not([disabled]) {
+  background-color: #2196f3;
+}
