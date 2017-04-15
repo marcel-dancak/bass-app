@@ -19,8 +19,11 @@
           ]);
           $mdIconProvider
             .defaultIconSet('styles/icons.svg', 32)
+            .iconSet('drums', 'styles/drums.svg', 512)
         })
+        .constant('localSoundsUrl', 'http://127.0.0.1:8887/')
         .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/')
+        .constant('uploadUrl', 'https://basscloud.net/')
         .constant('dataUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/data/');
     </script>
   </head>
