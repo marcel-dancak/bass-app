@@ -81,6 +81,35 @@ class Converter(object):
         else:
             print 'Unknown DRUM:', note.value
 
+    def piano_note(self, context, beat, note):
+        pitch = PitchClass(note.realValue)
+        octave = divmod(note.realValue, 12)[0] - 1
+
+        pitch = encode_note(pitch)
+        sound = DotMap({
+            'string': '{0}{1}'.format(pitch, octave),
+            'volume': 0.75,
+            'note': {
+                'name': pitch,
+                'octave': octave,
+                'length': beat.duration.value,
+                'dotted': beat.duration.isDotted,
+                'staccato': note.effect.staccato,
+            }
+        })
+        if note.type == NoteType.tie:
+            sound.prev = True
+
+            prevSound = context.prevStringSound[note.string]
+            prevSound.next = True
+            sound.string = prevSound.string
+            sound.note.name = prevSound.note.name
+            sound.note.octave = prevSound.note.octave
+
+        # context.strings[note.string]
+        context.prevStringSound[note.string] = sound
+        return sound
+
     def string_note(self, context, beat, note):
         #print note.effect.ghostNote
         style = 'finger'
@@ -133,6 +162,7 @@ class Converter(object):
 
         if note.effect.hammer:
             sound._hammer = True # TODO Pull
+            print 'hammer', sound.string
 
         if note.effect.slides:
             print note.effect.slides
@@ -167,11 +197,6 @@ class Converter(object):
             sound.note.octave = prevSound.note.octave
             sound.note.code = prevSound.note.code
             sound.note.fret = prevSound.note.fret
-
-
-        # fix piano unique string name
-        if track.channel.instrument == 0:
-           sound.string = sound.note.code
 
         # if sound.note.code == 'B1':
         #     ipdb.set_trace()
@@ -208,9 +233,10 @@ class Converter(object):
             soundsMap = soundsMap
         )
 
+        postprocess = False
         while bar.number <= end:
             barBeats = {i: [] for i in range(1, bar.timeSignature.numerator+1)}
-            # print "generating bar:", bar.number
+            print "generating bar:", bar.number
             for beat in bar.voices[0].beats:
                 #print beat
                 for note in beat.notes:
@@ -225,9 +251,36 @@ class Converter(object):
                             if not sound:
                                 continue
                             sound.subbeat = iSubbeat
+
+                        # piano sound
+                        elif track.channel.instrument == 0:
+                            sound = self.piano_note(context, beat, note)
+                            # print position
+                            sound.start = (position - (iBeat - 1) * beatLength) / float(beatLength)
+                            #print sound.start
                         else:
+                            postprocess = True
                             sound = self.string_note(context, beat, note)
-                    
+                            prev = prevStringSound.get(note.string, {})
+                            if '_hammer' in prev:
+                                print 'RESOLVE HAMER'
+                                del prev._hammer
+                                sound.style = 'hammer' if prev.note.fret < sound.note.fret else 'pull'
+                                prev.next = {
+                                    'bar': iBar,
+                                    'beat': iBeat,
+                                    'subbeat': iSubbeat,
+                                    'string': sound.string
+                                }
+                                key = soundsMap.keys()[soundsMap.values().index(prev)]
+                                prevCoords = map(int, key.split(':')[:3])
+                                sound.prev = {
+                                    'bar': prevCoords[0],
+                                    'beat': prevCoords[1],
+                                    'subbeat': prevCoords[2],
+                                    'string': sound.string
+                                }
+
                             prevStringSound[note.string] = sound
                             if sound.string not in stringSounds:
                                 stringSounds[sound.string] = []
@@ -268,7 +321,7 @@ class Converter(object):
             iBar += 1
 
 
-        if track.isPercussionTrack:
+        if not postprocess:
             return sounds
 
 
@@ -281,7 +334,8 @@ class Converter(object):
                 sound = item.sound
                 if sound.note is None:
                     obsolete.append((beat_sounds.data, item))
-                elif sound._hammer:
+                elif '_hammer' in sound:
+                    """
                     del sound._hammer
                     index = stringSounds[sound.string].index(sound)
                     next = stringSounds[sound.string][index+1]
@@ -300,6 +354,7 @@ class Converter(object):
                         'subbeat': item.subbeat,
                         'string': sound.string
                     }
+                    """
                 elif sound.style == 'ring':
                     index = stringSounds[sound.string].index(sound)
                     prev = stringSounds[sound.string][index-1]
@@ -357,7 +412,6 @@ class Converter(object):
                     next._prev = sound
                     #print 'SLIDE', sound.note.name, 'to', next.note.name
 
-
         for array, item in obsolete:
             array.remove(item)
 
@@ -397,11 +451,11 @@ tracks = {
 }
 
 # gloria.gp5
-tracks = {
-    'drums_0': 0,
-    'bass_0': 3,
-    'piano_0': 1
-}
+# tracks = {
+#     'drums_0': 0,
+#     'bass_0': 3,
+#     'piano_0': 1
+# }
 
 # leon.gp5
 # tracks = {
@@ -413,21 +467,26 @@ tracks = {
 # 10-17
 # 18-25
 # 26-34
-# 35-44
-# 45-51
-# 52
+# 35-43
+# 44-51
+# 52-59
 
-filename = 'gloria.gp5'
-converter = Converter(filename)
+# vamos.gp5
+# tracks = {
+#     'drums_0': 6,
+#     'bass_0': 1,
+#     'piano_0': 2,
+#     'piano_1': 3
+# }
+
+filename = 'cantos.gp5'
+converter = Converter(os.path.join('gp5', filename))
 
 for track in converter.song.tracks:
     print track.name, track.channel.instrument
 print '------------------'
 
 project = os.path.splitext(filename)[0]
-data = converter.convert(tracks, 1, 24, project)
+data = converter.convert(tracks, 25, 36, project)
 with open('{0}.json'.format(project), 'w') as f:
     json.dump(data, f, indent=2)
-
-# NklOVDg3NzMzODgAAAAAAEFOQVNNUktOUlZYUlBTTQDu6g64qVhbq/i3az/5aHny
-# bCSay/YMCzFUrzJbEmPyjR3dySwWBiBdthQomKLrXCCbWE4cZRM5WYWYk40RS3977vnWLi776yQsRXVjPn6tRQ==
