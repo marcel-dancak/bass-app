@@ -36,8 +36,19 @@
     </md-input-container>
   </div>
 
+  <md-input-container ng-if="sound.note.type === 'ghost'">
+    <label translate="FRET"></label>
+    <input
+      type="number"
+      min="0"
+      max="24"
+      step="1"
+      ng-model="sound.note.fret">
+  </md-input-container>
+
   <div
-    layout="row">
+    layout="row"
+    ng-if="sound.note.type !== 'ghost'">
     <md-input-container
       flex
       class="selectbox-spinner">

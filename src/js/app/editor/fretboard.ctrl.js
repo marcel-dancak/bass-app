@@ -36,9 +36,6 @@
         start: 0,
         end: 1,
         style: $scope.fretboard.style,
-        noteLength: {
-          beatLength: 1/2
-        },
         volume: 0.75
       }, bassSound);
       audioPlayer.playBassSample(workspace.track, sound);

@@ -3,8 +3,7 @@
   font-size: 15px;
   max-height: 400px;
   min-height: 250px;
-  xposition: fixed;
-  z-index: 300;
+  /*z-index: 300;*/
 }
 
 .bass-sound-form.closed {
