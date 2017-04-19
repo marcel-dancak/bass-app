@@ -232,11 +232,34 @@
 .playlist-editor > div {
   height: 100%;
 }
-.playlist-editor .info-note {
+/*.playlist-editor .info-note {
   position: absolute;
   top: -3px;
   left: 0;
   right: 0;
+}*/
+
+.close-playlist {
+  position: absolute;
+  right: 0;
+  top: 0;
+  min-width: 36px;
+  margin: 3px 2px;
+}
+
+.playlist-editor .top-toolbar {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  margin: 0 16px;
+}
+
+.playlist-editor .info-note {
+  padding: 4px 0;
+  text-align: center;
+  font-size: 13px;
+  color: #777;
 }
 
 .playlist-editor.ng-enter, .playlist-editor.ng-leave {
@@ -261,15 +284,6 @@
   text-align: left;
   text-transform: none;
   margin: 4px 16px;
-}
-
-.md-button.edit-playlist {
-  position: absolute;
-  right: 26px;
-  top: 1px;
-}
-.playback-active .md-button.edit-playlist {
-  display: none;
 }
 
 .playlist-swiper .bottom-note {

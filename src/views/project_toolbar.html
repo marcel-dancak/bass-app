@@ -138,7 +138,20 @@
           ng-model="workspace.playlist.name">
       </md-input-container>
     </div>
+
     <md-button
+      ng-hide="ui.playlist.showEditor"
+      md-no-ink
+      aria-label="Show Editor"
+      class="toolbar-button icon-hover"
+      ng-click="ui.playlist.showEditor = !ui.playlist.showEditor">
+      <md-icon
+        md-svg-icon="pen">
+      </md-icon>
+      <md-tooltip md-delay="1500"><span xtranslate="SAVE">Show playlist</span></md-tooltip>
+    </md-button>
+    <md-button
+      ng-show="ui.playlist.showEditor"
       type="submit"
       md-no-ink
       aria-label="Save Playlists"
@@ -149,6 +162,7 @@
       </md-icon>
       <md-tooltip md-delay="1500"><span translate="SAVE"></span></md-tooltip>
     </md-button>
+
   </form>
 
   <md-menu

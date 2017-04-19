@@ -2,6 +2,22 @@
   ng-controller="PlaylistEditor"
   layout="row">
 
+  <div class="top-toolbar">
+    <md-button
+      md-no-ink
+      aria-label="Editor"
+      class="icon-hover close-playlist"
+      ng-click="ui.playlist.showEditor = false">
+      <md-icon md-svg-icon="x"></md-icon>
+    </md-button>
+
+    <!-- <div flex></div> -->
+    <p
+      class="info-note"
+      translate="PLAYLIST_INSTRUCTIONS">
+    </p>
+  </div>
+
   <div layout="column">
     <div
       flex
@@ -88,9 +104,4 @@
     </md-button>
   </div>
 
-  <!-- <div flex></div> -->
-  <p
-    class="info-note"
-    translate="PLAYLIST_INSTRUCTIONS">
-  </p>
 </div>
