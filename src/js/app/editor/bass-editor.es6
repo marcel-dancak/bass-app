@@ -151,6 +151,8 @@
                   fret: prevNote.fret,
                   name: prevNote.name,
                   octave: prevNote.octave,
+                  length: ringNote.length,
+                  dotted: ringNote.dotted,
                   slide: {
                     start: 0.05,
                     end: 0.85,
