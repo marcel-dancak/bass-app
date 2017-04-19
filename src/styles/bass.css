@@ -664,19 +664,19 @@ md-input-container.slide-field > span {
   content: "N.H.";
 }
 
-.string-0 .top-label {
+.string-5 .top-label {
   top: -176px;
 }
-.string-1 .top-label {
+.string-4 .top-label {
   top: -140px;
 }
-.string-2 .top-label {
+.string-3 .top-label {
   top: -104px;
 }
-.string-3 .top-label {
+.string-2 .top-label {
   top: -68px;
 }
-.string-4 .top-label {
+.string-1 .top-label {
   top: -32px;
 }
 
@@ -689,35 +689,39 @@ md-input-container.slide-field > span {
   display: block;
 }
 
-.strings-5 .string-0 .bottom-label {
-  top: 28px;
-}
-.strings-5 .string-1 .bottom-label {
-  top: 64px;
-}
-.strings-5 .string-2 .bottom-label {
-  top: 100px;
-}
-.strings-5 .string-3 .bottom-label {
+.string-1 .bottom-label {
   top: 136px;
 }
-.strings-5 .string-4 .bottom-label {
-  top: 172px;
+.string-2 .bottom-label {
+  top: 100px;
+}
+.string-3 .bottom-label {
+  top: 64px;
+}
+.string-4 .bottom-label {
+  top: 28px;
+}
+.string-5 .bottom-label {
+  top: -8px;
 }
 
+.strings-5 .bottom-label {
+  transform: translate3d(0, 36px, 0);
+}
 
-.strings-4 .string-1 .bottom-label {
-  top: 30px;
+.string-2.sound-container {
+  top: 36px;
 }
-.strings-4 .string-2 .bottom-label {
-  top: 66px;
+.string-3.sound-container {
+  top: 72px;
 }
-.strings-4 .string-3 .bottom-label {
-  top: 102px;
+.string-4.sound-container {
+  top: 108px;
 }
-.strings-4 .string-4 .bottom-label {
-  top: 138px;
+.string-5.sound-container {
+  top: 144px;
 }
+
 
 .no-colors .sound-container {
   background-color: #E0E0E0!important;

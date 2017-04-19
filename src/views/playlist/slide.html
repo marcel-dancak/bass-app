@@ -91,14 +91,13 @@
           ng-repeat="sound in ::beat.sounds"
           class="
             sound-container
-            string-{{ ::{G: 4, D: 3, A: 2, E: 1, B: 0}[sound.string] }}
+            string-{{ ::track.instrument.stringIndex[sound.string] }}
             {{ ::sound.style }}
             {{ ::sound.note.type }}
             {{ ::sound.note.staccato? 'staccato' : '' }}
           "
           style="
             left: {{ ::100*sound.start }}%;
-            top: {{ ::{G: '0', D: '36px', A: '72px', E: '108px', B: '144px'}[sound.string] }};
             width: {{ ::100 * (sound.end - sound.start) }}%;"
           ng-attr-octave="{{ ::sound.note.octave }}">
           <div

@@ -174,12 +174,15 @@
     this.layout = layout;
     var first = 'BEADGC'.indexOf(this.layout[0]);
     this.strings = bassStrings.slice(first, first+this.layout.length);
-    this.strings.forEach(function(string) {
+    var stringIndex = {}
+    this.strings.forEach(function(string, index) {
       if (!string.notes) {
         string.notes = bassNotes.list.slice(string.noteIndex, string.noteIndex+25);
       }
       this.strings[string.label] = string;
+      stringIndex[string.label] = layout.length-index;
     }, this);
+    this.stringIndex = stringIndex;
   };
 
   Bass.prototype.stringFret = function(string, note) {
