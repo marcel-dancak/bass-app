@@ -451,7 +451,7 @@
       }
       var trackExcludedProperties = ['id', 'instrument', 'audio', '_volume'];
       var tracks = this.project.tracks.map(function(track) {
-        return Object.keys(track).reduce(function(obj, property) {
+        var trackConfig = Object.keys(track).reduce(function(obj, property) {
           if (trackExcludedProperties.indexOf(property) === -1) {
             obj[property] = track[property];
           }
@@ -462,6 +462,10 @@
           };
           return obj;
         }, {});
+        if (track.instrument.getConfig) {
+          Object.assign(trackConfig, track.instrument.getConfig())
+        }
+        return trackConfig;
       });
 
       var sectionsIndex = this.project.sections.map(function(section) {

@@ -166,7 +166,7 @@
 
   function Bass(config) {
     this.notes = bassNotes;
-    this.setLayout(config.strings);
+    this.setLayout(config.strings || 'EADG');
   }
 
   Bass.prototype.setLayout = function(layout) {
@@ -193,6 +193,12 @@
     return this.strings.find(function(string) {
       return string.label === name;
     });
+  }
+
+  Bass.prototype.getConfig = function() {
+    return {
+      strings: this.layout
+    }
   }
 
   function Piano(config) {
