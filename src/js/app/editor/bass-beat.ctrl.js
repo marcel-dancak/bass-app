@@ -62,23 +62,7 @@
         return note.code === n.code;
       });
       angular.extend(note, noteData);
-
-      var nextSound = this.sound.next;
-      while (nextSound) {
-        nextSound = nextSound.ref;
-        if (nextSound.style === 'hammer' || nextSound.style === 'pull') {
-          break;
-        }
-        var prevSound = nextSound.prev.ref;
-        var prevEndNote = prevSound.note.type === 'slide'? prevSound.note.slide.endNote : prevSound.note;
-
-        nextSound.note.name = prevEndNote.name;
-        nextSound.note.octave = prevEndNote.octave;
-        nextSound.note.code = prevEndNote.code;
-        nextSound.note.fret = prevEndNote.fret;
-
-        nextSound = nextSound.next;
-      }
+      basicHandler.soundLabelChanged(this.sound);
     };
 
     $scope.soundLengthChanged = function(sound) {

@@ -78,7 +78,7 @@
     };
   }
 
-  function basicHandler(workspace, swiperControl) {
+  function basicHandler(workspace, swiperControl, Notes) {
 
     return {
       selected: {
@@ -177,6 +177,22 @@
         }
       },
 
+      soundLabelChanged(sound) {
+        while (sound.next) {
+          var nextSound = workspace.trackSection.nextSound(sound);
+          if (nextSound.style === 'hammer' || nextSound.style === 'pull') {
+            break;
+          }
+          var endNote = sound.note.type === 'slide'? sound.note.slide.endNote : sound.note;
+          nextSound.note.name = endNote.name;
+          nextSound.note.octave = endNote.octave;
+          nextSound.note.code = endNote.code;
+          nextSound.note.fret = endNote.fret;
+
+          sound = nextSound;
+        }
+      },
+
       keyPressed: function(evt) {
         console.log(evt.keyCode);
         if (this.selected.sound) {
@@ -211,6 +227,7 @@
                 sound.note.name = note.label[0];
                 sound.note.octave = note.octave;
                 sound.note.code = sound.note.name+sound.note.octave;
+                this.soundLabelChanged(sound)
               }
               break;
              case 40: // down
@@ -221,6 +238,7 @@
                 sound.note.name = note.label[0];
                 sound.note.octave = note.octave;
                 sound.note.code = sound.note.name+sound.note.octave;
+                this.soundLabelChanged(sound)
               }
               break;
             case 109: // -
@@ -231,6 +249,16 @@
               sound.volume += 0.1;
               console.log(sound.volume);
               break;
+            case 76: // l
+              if (sound.note.name.endsWith('♯')) {
+                sound.note.name = Notes.toFlat(sound.note.name);
+                this.soundLabelChanged(sound)
+              } else if (sound.note.name.endsWith('♭')) {
+                sound.note.name = Notes.toSharp(sound.note.name);
+                this.soundLabelChanged(sound)
+              }
+              evt.preventDefault();
+              return false;
           }
         }
       }
