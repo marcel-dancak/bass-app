@@ -30,6 +30,7 @@
           ng-click="selectChord(chord)"
           ng-class="{ selected: form.chord === chord }">
           {{ chord.root }}{{ chord.type }}
+          <span ng-show="chord.bass">&nbsp;/ {{ chord.bass }}</span>
         </md-list-item>
         <!-- <md-list-item
           md-no-ink
@@ -54,29 +55,15 @@
       class="preferences">
       <md-list-item layput="row">
         <label translate="CHORD"></label>
-        <md-input-container>
-          <label class="md-no-float" translate="STRING"></label>
-          <md-select
-            ng-model="form.chord.string"
-            ng-change="">
-            <md-option
-              md-no-ink
-              ng-repeat="string in track.instrument.strings | orderBy:string.index:'-'"
-              ng-value="string.label">
-              {{ string.label }}
-            </md-option>
-          </md-select>
-        </md-input-container>
 
         <md-input-container>
           <label class="md-no-float" translate="ROOT_NOTE"></label>
           <input
             aria-label="Root note"
             type="text"
-            ng-model="form.root"
-            ng-focus="form.root = form.chord.root + form.chord.octave"
-            ng-blur="updateChord()">
-          <sub class="octave">{{ form.chord.octave }}</sub>
+            ng-model="form.chord.root"
+            ng-blur="updateChord()"
+            placeholder="C#">
         </md-input-container>
 
         <md-input-container>
@@ -85,8 +72,28 @@
             aria-label="Type"
             type="text"
             ng-model="form.chord.type"
+            ng-blur="updateChord()"
+            placeholder="min, maj, ...">
+        </md-input-container>
+
+        <md-input-container class="slash">
+          <label class="md-no-float" translate="BASS_NOTE"></label>
+          <input
+            aria-label="Bass note"
+            type="text"
+            ng-model="form.chord.bass"
             ng-blur="updateChord()">
         </md-input-container>
+
+<!--         <md-input-container>
+          <label class="md-no-float" translate="OCTAVE"></label>
+          <input
+            aria-label="Octave"
+            type="number"
+            ng-model="form.chord.octave"
+            ng-blur="updateChord()">
+        </md-input-container> -->
+
       </md-list-item>
 
       <md-list-item layout="row">

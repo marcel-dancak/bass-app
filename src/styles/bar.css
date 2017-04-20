@@ -18,9 +18,14 @@
   text-align: center;
   cursor: pointer;
   color: #777;
+  white-space: nowrap;
 }
 .bar-slide .chord .type {
   font-size: 14px;
+}
+
+.bar-slide .chord .slash:before {
+  content: " / ";
 }
 
 .audio-graph-container::before,

@@ -293,6 +293,7 @@
     }
 
     $scope.player.play = function() {
+      fretboardViewer.clearDiagram();
       var sections = playlist.reduce(function(list, section) {
         if (list.indexOf(section) === -1) {
           list.push(section);

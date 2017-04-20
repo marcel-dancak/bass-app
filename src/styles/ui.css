@@ -143,7 +143,7 @@ md-backdrop.md-select-backdrop {
   border-bottom: 1px solid #eee;
 }
 .preferences md-input-container {
-  margin: 16px 0 6px 0;
+  margin: 16px 0 8px 0;
   padding: 0;
   width: 100%;
 }
@@ -162,6 +162,16 @@ md-backdrop.md-select-backdrop {
 }
 .preferences md-select md-select-value {
   text-align: right;
+}
+.preferences md-input-container.slash {
+  margin-left: 10px;
+}
+.preferences md-input-container.slash:before {
+  content: "/";
+  color: #999;
+  position: absolute;
+  bottom: 2px;
+  left: -8px;
 }
 
 /*.preferences.md-select-menu-container {
@@ -823,7 +833,7 @@ md-input-container label.md-no-float {
 
 
 .section-dialog md-input-container {
-  margin-right: 5px;
+  margin-right: 10px;
   margin-top: 32px;
 }
 .section-dialog .md-no-float {

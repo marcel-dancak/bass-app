@@ -89,8 +89,12 @@
                 return chord.start[0] === trackBeat.bar && chord.start[1] === trackBeat.beat;
               })
               .map(function(chord) {
+                var label = (chord.root || '')+(chord.type || '');
+                if (chord.bass) {
+                  label += ' / '+chord.bass;
+                }
                 return {
-                  label: (chord.root || '')+(chord.type || ''),
+                  label: label,
                   subbeat: chord.start[2]
                 };
               });

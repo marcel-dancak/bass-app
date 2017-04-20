@@ -28,7 +28,8 @@
           flex>
           <label
             ng-repeat="label in ::note.label"
-            id="{{ ::string.label }}_{{ ::label }}{{ ::note.octave }}">
+            note="{{ ::label }}"
+            octave="{{ ::note.octave }}">
             <span class="note">{{ ::label }}</span>
           </label>
         </div>

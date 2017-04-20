@@ -347,13 +347,13 @@
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
             var audio = _this.createSoundAudio(track, sound, startTime);
-            audio.duration = 0.25;
+            audio.duration = Math.min(noteRealDuration(sound, beatTime), audio.source.buffer.duration)-0.02;
             audio.endTime = startTime + audio.duration;
             audio.meta = {
               type: 'ghost',
               string: sound.string,
               startTime: startTime,
-              duration: audio.source.buffer.duration
+              duration: audio.duration
             };
             return [audio];
           }

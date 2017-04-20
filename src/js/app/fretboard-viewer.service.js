@@ -120,7 +120,6 @@
               }
             }
           } else if (sound.type === 'sequence') {
-            console.log('HIGHLIGHT sequence');
             // console.log(sound)
             var prevElems = [];
             sound.notes.forEach(function(subsound, index) {
@@ -151,8 +150,6 @@
               });
             }, delayTime(lastNote.startTime+lastNote.duration)-5);
           } else if (sound.type === 'ghost') {
-            var ghostFret = angular.isDefined(audio.sound.note.fret)? audio.sound.note.fret : lastPlayedFret;
-
             /*
             var query = '.string.{0} .fret-{1}'.format(sound.string, ghostFret+1)
             var elem = diagramElem.querySelector(query);
@@ -163,13 +160,22 @@
               elem.classList.remove('x');
             }
             */
-            var query = [ghostFret, ghostFret+1, ghostFret+2].map(function(fret) {
-              return '.string.{0} .fret-{1} label'.format(sound.string, fret)
-            }).join(',')
-            var elems = Array.from(diagramElem.querySelectorAll(query));
+            var elems;
+            var ghostFret;
 
             setTimeout(function() {
-              console.log('GHOST START: '+sound.startTime)
+
+              if (Number.isInteger(audio.sound.note.fret)) {
+                lastPlayedFret = audio.sound.note.fret;
+              }
+              var ghostFret = lastPlayedFret;
+              var query = [ghostFret, ghostFret+1, ghostFret+2].map(function(fret) {
+                return '.string.{0} .fret-{1} label'.format(sound.string, fret)
+              }).join(',')
+              elems = Array.from(diagramElem.querySelectorAll(query));
+
+
+              // console.log('GHOST START: '+sound.startTime)
               elems.forEach(function(elem) {
                 elem.classList.add('highlight');
                 elem.classList.add('x');
@@ -181,12 +187,12 @@
             }, delayTime(sound.startTime));
 
             audio.source.onended = function() {
-              console.log('GHOST END: '+ghostMap[sound.string].start)
+              // console.log('GHOST END: '+ghostMap[sound.string].start)
               // elems.forEach(function(elem) {
               //   elem.classList.remove('highlight');
               //   elem.classList.remove('x');
               // });
-              console.log(ghostFret +' vs ' + ghostMap[sound.string].fret)
+              // console.log(ghostFret +' vs ' + ghostMap[sound.string].fret)
               if (sound.startTime === ghostMap[sound.string].start || ghostFret !== ghostMap[sound.string].fret) {
                 elems.forEach(function(elem) {
                   elem.classList.remove('highlight');
@@ -236,10 +242,10 @@
       elems.forEach(function(elem) {
         elem.classList.remove('active');
       });
-      var rootElem = diagramElem.querySelector('.root');
-      if (rootElem) {
-        rootElem.classList.remove('root');
-      }
+      elems = Array.from(diagramElem.querySelectorAll('.root'))
+      elems.forEach(function(elem) {
+        elem.classList.remove('root');
+      });
     }
 
     FretboardViewer.prototype.clearDiagram = function() {
@@ -257,12 +263,15 @@
       if (!diagramElem || !chord.root) {
         return;
       }
-
-      var qs = '#{0}_{1}{2}'.format(chord.string, chord.root, chord.octave);
-      var rootElem = diagramElem.querySelector(qs);
-      if (rootElem) {
-        rootElem.classList.add('root');
+      var rootQs = 'label[note="{0}"]'.format(chord.root);
+      var octave = parseInt(chord.octave);
+      if (Number.isInteger(octave)) {
+        rootQs += '[octave="{0}"]'.format(octave);
       }
+      var rootNotesElems = Array.from(diagramElem.querySelectorAll(rootQs));
+      rootNotesElems.forEach(function(elem) {
+        elem.classList.add('root');
+      })
 
       var sBar = chord.start[0];
       var sBeat = chord.start[1];

@@ -32,12 +32,9 @@
         $scope.section = section;
         $scope.form = {
           chord: null, // selected chord item
-          root: ''
         };
         selectFirst();
       }
-
-      $scope.track = workspace.track;
 
       $scope.close = function() {
         reorderChords();
@@ -46,11 +43,7 @@
       };
 
       $scope.selectChord = function(chord) {
-        if (!chord.string) {
-          chord.string = 'E';
-        }
         $scope.form.chord = chord;
-        $scope.form.root = chord.root;
       };
 
 
@@ -60,30 +53,22 @@
       };
       $scope.updateChord = function() {
         var chord = $scope.form.chord;
-        if ($scope.form.root) {
-          var label = $scope.form.root.replace('#', '♯').replace('b', '♭');
-          chord.root = label;
-          var octave = parseInt(label[label.length-1]);
-          if (Number.isInteger(octave)) {
-            chord.root = label.substring(0, label.length-1);
-            chord.octave = octave;
-          } else if (!Number.isInteger(chord.octave)) {
-            // select first octave
-            var string = $scope.track.instrument.strings[$scope.form.chord.string];
-            var note = string.notes.find(function(note) {
-              return note.label[0] === label || note.label[1] === label;
-            });
-            if (note) {
-              chord.octave = note.octave;
-            }
-          }
-          $scope.form.root = chord.root;
+        if (chord.root) {
+          chord.root = chord.root.replace('#', '♯').replace('b', '♭');
+        }
+        if (chord.bass) {
+          chord.bass = chord.bass.replace('#', '♯').replace('b', '♭');
         }
         updateChordLabels();
       };
 
       $scope.newChord = function() {
-        var newChord = {start: [1,1,1]};
+        var initialPosition = [1,1,1];
+        if ($scope.section.meta.chords.length) {
+          var last = $scope.section.meta.chords[$scope.section.meta.chords.length - 1];
+          initialPosition = [last.start[0] + 1, 1, 1];
+        }
+        var newChord = {start: initialPosition};
         $scope.section.meta.chords.push(newChord);
         $scope.selectChord(newChord);
       };
@@ -289,6 +274,8 @@
       if ($scope.player.graphEnabled) {
         audioVisualiser.clear();
       }
+      fretboardViewer.clearDiagram();
+
       var start = swiperControl.getPosition().start;
       // this helps when activeIndex is not the same as snapIndex
       swiperControl.barSwiper.activeIndex = swiperControl.barSwiper.snapIndex;
@@ -364,7 +351,7 @@
       $scope.player.playing = false;
       audioVisualiser.deactivate();
       timeline.stop();
-      setTimeout(fretboardViewer.clearDiagram.bind(fretboardViewer), 1000);
+      // setTimeout(fretboardViewer.clearDiagram.bind(fretboardViewer), 1000);
       swiperControl.preRenderedSlides = DEFAULT_PRERENDERED_SLIDES;
     }
     // audioPlayer.on('playbackStopped', playbackStopped);
@@ -431,10 +418,12 @@
           var iBeat = chordInfo.start[1];
           var iSubbeat = chordInfo.start[2] || 1;
           var beatElem = swiperControl.getBeatElem(iBar, iBeat);
-          var elem = angular.element(
-            '<span class="chord">{0}<span class="type">{1}</span></span>'
-            .format(chordInfo.root, chordInfo.type)
-          )[0];
+
+          var label = '{0}<span class="type">{1}</span>'.format(chordInfo.root, chordInfo.type)
+          if (chordInfo.bass) {
+            label += '<span class="slash">{0}</span>'.format(chordInfo.bass)
+          }
+          var elem = angular.element('<span class="chord">'+label+'</span>')[0];
           var subbeatPercWidth = parseInt(100/beatElem.childElementCount);
           if (iBeat === 1 && iSubbeat === 1) {
             elem.style.left = '14px';
