@@ -103,6 +103,7 @@ md-input-container.input-inline-label label {
   display: inline-block;
   border-radius: 50%;
   margin: 2px 1px;
+  position: relative;
 }
 
 .fretboard .fret-box.octave-0,
@@ -187,8 +188,35 @@ md-input-container.input-inline-label label {
 }
 .fret-diagram .fret-box label.highlight {
   /*background-color: #2196F3;*/
-  background-color: #e53935;
+  background-color: #e53935!important;
 }
+
+.fret-diagram .fret-box label.highlight.x:after {
+  content: "X";
+  font-size: 13px;
+  position: absolute;
+  text-align: center;
+  background-color: #e53935;
+  left: 0;
+  right: 0;
+  border-radius: 50%;
+}
+/*
+.fret-diagram .fret-box.x:after {
+  content: "x";
+  position: absolute;
+  color: #fff;
+  line-height: 24px;
+  background-color: #e53935;
+  opacity: 0.8;
+  top: 4px;
+  bottom: 4px;
+  left: -100%;
+  right: -100%;
+  border-radius: 12px;
+  z-index: 100;
+}
+*/
 
 /** Borders **/
 

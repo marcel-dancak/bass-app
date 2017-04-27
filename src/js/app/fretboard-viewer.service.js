@@ -65,8 +65,16 @@
     var stringsMap = {};
     var ghostMap = {}
 
+    function fretboardSelector(string, note) {
+      var qs = '.string.{0} .fret-{1} label'.format(string, note.fret);
+      if (note.name) {
+        qs += '[note="'+note.name+'"]'
+      }
+      return qs;
+    }
+
     function FretboardViewer() {
-      
+
       audioPlayer._bassSoundScheduled = function(trackId, audio) {
         var sound = audio.meta;
 
@@ -79,8 +87,8 @@
           }
           if (sound.type === 'single') {
             // console.log('HIGHLIGHT NOTE');
-            var id = '#'+sound.string+'_'+sound.note.name+sound.note.octave;
-            var elem = diagramElem.querySelector(id);
+            var qs = fretboardSelector(sound.string, sound.note);
+            var elem = diagramElem.querySelector(qs);
 
             setTimeout(function(elem) {
               if (stringsMap[sound.string] && stringsMap[sound.string].elem === elem) {
@@ -123,12 +131,7 @@
             // console.log(sound)
             var prevElems = [];
             sound.notes.forEach(function(subsound, index) {
-              var query;
-              if (subsound.note.name) {
-                query = '#'+sound.string+'_'+subsound.note.name+subsound.note.octave;
-              } else {
-                query = '.string.{0} .fret-{1} label'.format(sound.string, subsound.note.fret);
-              }
+              var query = fretboardSelector(sound.string, subsound.note);
               var elems = Array.from(diagramElem.querySelectorAll(query));
               setTimeout(function(elems, prevElems) {
                 prevElems.forEach(function(elem) {
@@ -170,7 +173,7 @@
               }
               var ghostFret = lastPlayedFret;
               var query = [ghostFret, ghostFret+1, ghostFret+2].map(function(fret) {
-                return '.string.{0} .fret-{1} label'.format(sound.string, fret)
+                return fretboardSelector(sound.string, {fret: fret});
               }).join(',')
               elems = Array.from(diagramElem.querySelectorAll(query));
 
@@ -200,7 +203,6 @@
                 })
               } else {
                 // same note as previous, but a new one is already highlighted
-                console.log('ghost blink')
                 elems.forEach(function(elem) {
                   elem.style.opacity = 0.75;
                 })
@@ -249,7 +251,6 @@
     }
 
     FretboardViewer.prototype.clearDiagram = function() {
-      console.log('clearDiagram')
       if (!diagramElem) return;
       this.clearActiveChord();
       var elems = Array.from(diagramElem.querySelectorAll('.highlight'));
@@ -304,18 +305,16 @@
         beat = trackSection.nextBeat(beat);
       }
 
-      var ids = new Set();
+      var selectors = new Set();
       sounds.forEach(function(sound) {
         if (sound.note.type !== 'ghost') {
-          var id = '#'+sound.string+'_'+sound.note.name+sound.note.octave;
-          ids.add(id);
+          selectors.add(fretboardSelector(sound.string, sound.note));
         }
         if (sound.note.type === 'slide') {
-          var id = '#'+sound.string+'_'+sound.note.slide.endNote.name+sound.note.slide.endNote.octave;
-          ids.add(id);
+          selectors.add(fretboardSelector(sound.string, sound.note.slide.endNote));
         }
       });
-      var query = Array.from(ids).join(',');
+      var query = Array.from(selectors).join(',');
       if (query) {
         Array.from(diagramElem.querySelectorAll(query)).forEach(function(elem) {
           elem.classList.add('active');

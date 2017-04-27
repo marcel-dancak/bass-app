@@ -548,6 +548,9 @@
         fretboardViewer.activate(visible? elem : null);
       });
     }
+    if (viewer.fretboardVisible) {
+      $scope.setFretboardVisible(true);
+    }
 
     $scope.$on('$destroy', function() {
       projectManager.un('playlistLoaded', playlistLoaded);
