@@ -24,10 +24,14 @@
       }
 
       updateDropSound(sound, beat, string) {
-        // console.log('--- updateDropSound ---');
         sound.string = string.label;
         if (sound.note.type !== 'ghost') {
           sound.note.fret = workspace.track.instrument.stringFret(string.label, sound.note);
+        }
+        if (sound.note.type === 'slide') {
+          sound.note.slide.endNote.fret = workspace.track.instrument.stringFret(
+            string.label, sound.note.slide.endNote
+          );
         }
       }
 

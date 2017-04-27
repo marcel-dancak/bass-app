@@ -120,9 +120,10 @@
 
       updateDropSound(sound, beat, note) {
         // console.log('--- updateDropSound ---');
-        sound.string = note.label[0] + note.octave;
-        sound.note.name = note.label[0];
+        var isFlat = sound.note.name[1] === '♭';
+        sound.note.name = note.label[(isFlat && note.label[1])? 1 : 0];
         sound.note.octave = note.octave;
+        sound.string = note.label[0] + note.octave;
       }
 
       onDragStart(evt) {

@@ -72,6 +72,7 @@
         clone.style.height = evt.target.offsetHeight+'px';
         dragElem.appendChild(clone);
         workspaceElem.appendChild(dragElem);
+        console.log(evt.target.getBoundingClientRect().height)
 
         evt.dataTransfer.setDragImage(dragElem, 10, evt.target.clientHeight/2);
         this.dragElem = dragElem;
@@ -137,7 +138,7 @@
           clone.style.position = 'relative';
           clone.style.width = elem.offsetWidth+'px';
           clone.style.height = elem.offsetHeight+'px';
-          clone.style.top = '';
+          clone.style.top = '0';
           clone.style.bottom = '';
           clone.style.left = '';
           clone.style.display = 'inline-block';
