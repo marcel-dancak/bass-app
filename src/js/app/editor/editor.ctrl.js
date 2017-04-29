@@ -510,7 +510,7 @@
       $scope.player.progress.value = 0;
       // $scope.player.playbackRangeChanged();
 
-      var trackId = workspace.track && section.tracks[workspace.track.id]? workspace.track.id : 'bass_0';
+      var trackId = workspace.track? workspace.track.id : 'bass_0';
       workspace.trackSection = section.tracks[trackId];
       if (!workspace.trackSection) {
         workspace.trackSection = initializeNewTrackSection(projectManager.project.tracksMap[trackId]);
@@ -571,6 +571,9 @@
       }
       workspace.track = track;
       workspace.track.id = trackId;
+      if ($scope.ui.trackId !== trackId) {
+        $scope.ui.trackId = trackId;
+      }
     };
 
     if (workspace.section) {

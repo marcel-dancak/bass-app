@@ -56,7 +56,7 @@
       ];
       $scope.addTrack = function(trackInfo) {
         projectManager.addTrack(trackInfo);
-        $mdDialog.hide();
+        $mdDialog.hide(trackInfo);
       }
     }
     $scope.addTrackDialog = function(evt) {
@@ -67,6 +67,10 @@
         autoWrap: false,
         clickOutsideToClose: true
         // targetEvent: evt
+      }).then(function(track) {
+        if (track) {
+          $scope.ui.selectTrack(track.id);
+        }
       });
     };
 
