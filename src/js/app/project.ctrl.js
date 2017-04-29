@@ -89,7 +89,6 @@
           $mdDialog.alert()
             .title("Warning")
             .textContent("Can't remove this track, it's the last track of its instrument kind!")
-            .theme(' ')
             .ok("Close")
         );
       }
@@ -207,7 +206,6 @@
           .textContent('Please enter project name:')
           .placeholder('Name')
           .ariaLabel('Name')
-          .theme(' ')
           .ok('Save')
           .cancel('Cancel');
 
@@ -309,7 +307,6 @@
             .textContent(
               'Failed to open latest project.'
             )
-            .theme(' ')
             .ok('Close');
 
           $mdDialog.show(alert);

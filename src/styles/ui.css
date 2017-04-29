@@ -956,16 +956,7 @@ md-dialog small {
   margin: 8px 0;
 }
 
-.md-button.md-default-theme.md-primary.md-raised:not([disabled]):hover,
-.md-button.md-primary.md-raised:not([disabled]):hover,
-.md-button.md-default-theme.md-primary.md-fab:not([disabled]):hover,
-.md-button.md-primary.md-fab:not([disabled]):hover {
-  background-color: #1e88e5;
-}
 
-.md-button.md-default-theme.md-primary.md-raised:not([disabled]),
-.md-button.md-primary.md-raised:not([disabled]),
-.md-button.md-default-theme.md-primary.md-fab:not([disabled]),
-.md-button.md-primary.md-fab:not([disabled]) {
-  background-color: #2196f3;
+md-list-item .md-button.md-raised:not([disabled]).md-focused:not(:hover) {
+  background-color: transparent;
 }

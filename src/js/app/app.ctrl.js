@@ -46,14 +46,17 @@
           'It is highly recommended to use Blink/Webkit based browser (Chrome, Chromium, Opera). '+
           'Application may not work properly in other browsers.'
         )
-        .theme(' ')
         .ok('Close');
 
         $mdDialog.show(alert);
       }
     })
     .directive('prettyScrollbar', prettyScrollbar)
-
+    .config(function($mdThemingProvider) {
+      $mdThemingProvider.theme('default')
+        .primaryPalette('blue')
+        .accentPalette('blue-grey');
+    })
 
   function prettyScrollbar() {
     return {
