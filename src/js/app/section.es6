@@ -213,6 +213,8 @@
 
     nextSound(sound) {
       var position = this.nextSoundPosition(sound);
+      if (!position.beat) return;
+
       var start = position.start;
       for (var i = 0; i < position.beat.data.length; i++) {
         var s = position.beat.data[i];
@@ -256,12 +258,14 @@
       if (sound.prev) {
         // console.log('BREAK PREV SOUND CHAIN')
         var prevSound = this.prevSound(sound);
-        delete prevSound.next;
+        if (prevSound) delete prevSound.next;
       }
       if (sound.next) {
         var next = this.nextSound(sound);
-        delete next.prev;
-        this.deleteSound(next);
+        if (next) {
+          delete next.prev;
+          this.deleteSound(next);
+        }
       }
       super.deleteSound(sound);
     }
