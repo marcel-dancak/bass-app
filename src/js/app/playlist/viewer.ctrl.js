@@ -259,6 +259,12 @@
         countdown: $scope.player.countdown && (angular.isDefined(start) || playbackState.section === 0),
         start: start || { bar: 1, beat: 1 }
       }
+      if (playbackState.section === 0 && projectManager.project.backingTrack && Number.isFinite(workspace.playlist.backingTrackStart)) {
+        options.backingTrack = {
+          audio: projectManager.project.backingTrack,
+          start: workspace.playlist.backingTrackStart
+        }
+      }
       audioPlayer.play(section, beatSync, playbackStopped, options);
     }
 

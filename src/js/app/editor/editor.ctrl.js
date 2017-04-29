@@ -297,7 +297,7 @@
         countdown: $scope.player.countdown,
         start: start
       }
-      if (projectManager.project.backingTrack) {
+      if (projectManager.project.backingTrack && Number.isFinite(workspace.section.backingTrackStart)) {
         options.backingTrack = {
           audio: projectManager.project.backingTrack,
           start: workspace.section.backingTrackStart
