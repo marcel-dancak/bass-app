@@ -462,9 +462,10 @@
           };
           return obj;
         }, {});
-        if (track.instrument.getConfig) {
-          Object.assign(trackConfig, track.instrument.getConfig())
-        }
+        // Currently not needed
+        // if (track.instrument.getConfig) {
+        //   Object.assign(trackConfig, track.instrument.getConfig())
+        // }
         return trackConfig;
       });
 

@@ -82,7 +82,7 @@
     $scope.playSound = function() {
       var sound = this.sound;
       while (sound.prev) {
-        sound = workspace.track.prevSound(sound);
+        sound = workspace.trackSection.prevSound(sound);
       }
       audioPlayer.playBassSample(workspace.trackSection, sound);
     };

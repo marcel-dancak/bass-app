@@ -148,7 +148,7 @@
           $scope.close();
 
         }, function(resp) {
-          if (resp.status === 401) {
+          if (resp.status === 401 || resp.status === 403) {
             $scope.showLogin = true;
             $scope.form = "login";
           } else if (resp.status === 403) {

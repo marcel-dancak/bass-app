@@ -43,12 +43,14 @@
     <md-button
       md-no-ink
       aria-label="Cancel"
+      class="md-raised"
       ng-click="close()">
       Cancel
     </md-button>
     <md-button
       md-no-ink
       aria-label="Ok"
+      class="md-raised md-primary"
       ng-disabled="!form.track.type || !form.name"
       ng-click="
         form.track.name = form.name;

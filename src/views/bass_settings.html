@@ -1,4 +1,4 @@
-<md-list>
+<md-list ng-init="config=projectManager.project.tracksMap[workspace.track.id]">
 
   <md-list-item>
     <label translate="STRINGS"></label>
@@ -7,9 +7,9 @@
         md-no-ink
         aria-label="Strings"
         md-container-class="preferences"
-        ng-model="workspace.track.strings"
+        ng-model="config.strings"
         ng-change="
-          instrument.setLayout(workspace.track.strings);
+          instrument.setLayout(config.strings);
         ">
         <md-option value="EADG">E A D G</md-option>
         <md-option value="BEADG">B E A D G</md-option>
