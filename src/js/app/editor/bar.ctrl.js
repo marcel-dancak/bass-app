@@ -67,6 +67,9 @@
       });
 
       workspace.trackSection.loadBeats(workspace.clipboard);
+      // make a new copy for next use (to avoid linked sounds)
+      workspace.clipboard = angular.copy(workspace.clipboard);
+      workspace.clipboard.type = workspace.trackSection.type;
     };
 
     $scope.clearBar = function() {
