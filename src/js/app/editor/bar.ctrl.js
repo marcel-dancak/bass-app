@@ -5,7 +5,7 @@
     .module('bd.app')
     .controller('BarController', BarController);
 
-  function BarController($scope, $timeout, workspace) {
+  function BarController($scope, $timeout, $mdDialog, workspace) {
 
     $scope.contextMenu = {
       show: angular.noop,
@@ -79,5 +79,24 @@
         workspace.trackSection.clearBeat(beat);
       }
     };
+
+    $scope.labelEditor = function(ev) {
+      // Appending dialog to document.body to cover sidenav in docs app
+      var confirm = $mdDialog.prompt()
+        .title('Text Comment')
+        .textContent('Text comment displayed at the bottom')
+        .placeholder('Text')
+        .ariaLabel('Text')
+        .targetEvent(ev)
+        .ok('OK')
+        .cancel('Cancel');
+      if ($scope.contextMenu.beat.meta) {
+        confirm = confirm.initialValue($scope.contextMenu.beat.meta.note || '');
+      }
+
+      $mdDialog.show(confirm).then(function(result) {
+        $scope.contextMenu.beat.meta.note = result;
+      }, angular.noop);
+    }
   }
 })();

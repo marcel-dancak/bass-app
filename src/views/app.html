@@ -55,11 +55,6 @@
           <label class="bar-label">
             {{ ::slide.beat.bar }}
           </label>
-          <!-- <input
-            spellcheck="false"
-            class="chord-label"
-            ng-model="slide.beat.meta.chord"
-            ng-blur="slide.beat.meta.chord = slide.beat.meta.chord.replace('#', '♯').replace('b', '♭')"> -->
           <div
             id="beat_{{ ::slide.beat.bar }}_{{ ::slide.beat.beat }}"
             class="bar-beat"
@@ -153,10 +148,11 @@
                     ng-include="'views/editor/piano_beat.html'">
                   </div>
               </div>
-              <md-input-container
+              <!-- <md-input-container
                 class="bottom-note"
                 bd-textarea="slide.beat.meta.note">
-              </md-input-container>
+              </md-input-container> -->
+              <span class="bottom-note" ng-bind="slide.beat.meta.note"></span>&nbsp;
             </div>
           </div>
         </div>

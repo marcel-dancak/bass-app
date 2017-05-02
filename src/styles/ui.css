@@ -771,11 +771,14 @@ md-input-container label.md-no-float {
 }
 
 .bottom-note {
+  /*
   position: relative;
   margin: 6px 0 0 5px;
   padding: 0;
-  width: calc(100% - 10px);
+  width: calc(100% - 10px);*/
   overflow: visible;
+  opacity: 0.75;
+  font-size: 13px;
 }
 .bottom-note textarea {
   position: absolute;
