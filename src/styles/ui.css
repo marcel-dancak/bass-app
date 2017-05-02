@@ -847,14 +847,21 @@ md-input-container label.md-no-float {
 .section-dialog .left-panel .md-button {
   text-transform: none;
   text-align: left;
+  min-height: 43px;
 }
 .section-dialog .select-list {
   max-height: 500px;
   overflow: auto;
 }
-.section-dialog .select-list md-list-item {
-  padding-left: 16px;
+.section-dialog .select-list md-list-item:before,
+.section-dialog .select-list .md-list-item-inner:before {
+  min-height: 0;
+  display: none;
 }
+.section-dialog .select-list md-list-item {
+  min-height: 43px;
+}
+
 .section-dialog .left-panel {
   background-color: #f9f9f9;
 }

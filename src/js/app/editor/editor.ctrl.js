@@ -601,7 +601,7 @@
         .withAnimation($mdPanel.animation.SCALE)
 
       var dialog = $mdPanel.open({
-        templateUrl: 'views/editor/section_metadata.html',
+        templateUrl: 'views/editor/section_chords.html',
         controller: 'MetadataController',
         locals: {
           updateChordLabels: updateChordLabels

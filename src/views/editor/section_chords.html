@@ -3,7 +3,7 @@
   class="section-dialog md-whiteframe-16dp"
   layout="column">
   <div class="dialog-header">
-    <span xtranslate="PROJECT">Section metadata</span>
+    <span translate="CHORDS_EDITOR"></span>
     <md-button
       md-no-ink
       aria-label="Close"
@@ -23,7 +23,6 @@
         flex
         class="select-list"
         ng-keyup="keyPressed($event)">
-        <md-subheader class="md-no-sticky">Chords:</md-subheader>
         <md-list-item
           md-no-ink
           ng-repeat="chord in section.meta.chords"
@@ -32,12 +31,6 @@
           {{ chord.root }}{{ chord.type }}
           <span ng-show="chord.bass">&nbsp;/ {{ chord.bass }}</span>
         </md-list-item>
-        <!-- <md-list-item
-          md-no-ink
-          ng-click="section.meta.chords.push({start: [1,1,1]})">
-          <md-icon md-svg-icon="plus"></md-icon>
-          Add
-        </md-list-item> -->
       </md-list>
       <md-button
         md-no-ink

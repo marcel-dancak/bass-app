@@ -31,22 +31,25 @@
 <section id="section-2">
   <h4>{{ ::item.sections[1] }}</h4>
   <p>
-    Chord information for current section can be assigned in <b>Section metadata</b> window,
-    accessible from <b>Main menu (<md-icon md-svg-icon="menu-dots"></md-icon>)</b>.
-    To add chord information, click on the <em>New</em> button and enter following 
-    You will need to set following fields:
+    Chord information for current section can be assigned in <b>Chord Editor</b>,
+    accessible from <a ng-click="setHelpPage(helpPages[0], 3)">Section preferences</a> menu.
+    To add chord label, click on the <em>New</em> button and set following fields:
   </p>
   <ul>
     <li><b>Chord</b>, composed of:</li>
     <ul>
-      <li><em>String</em> - string label used for precise identification of main root note on the fretboard</li>
       <li>
-        <em>Root note</em> - name of the root note with optional octave number, for example Db2.
-        When octave is not entered, first valid octave on selected string will be used.
-      </li>
-      <li><em>Type</em> - type of the chord, for example <em>maj, min, ...</em></li>
+        <em>Root note</em>
+        - name of the root note, for example: <em>Db, C#, ...</em>
+      <li>
+        <em>Type</em>
+        - type of the chord, for example: <em>maj, min, ...</em>
+      <li>
+        <em>Bass note</em>
+        - optional note name, used to define <em>Slash chord</em> - chord which
+        indicates emphasis of a bass note other than the root of the chord.
     </ul>
-    <li><b>Position</b> defining the beginning of the chord range, composed of bar, beat and subbeat index</li>
+    <li><b>Position</b> defining start of the chord range, composed from bar, beat and subbeat index</li>
   </ul>
 
 </section>
