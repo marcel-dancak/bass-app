@@ -30,6 +30,6 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 
 
 
-![BassCloud](docs/basscloud.svg)
+![BassCloud](https://cdn.rawgit.com/marcel-dancak/drums-and-bass/master/docs/basscloud.svg)
 
 BassCloud will be a new online service for hosting projects created with this application. It is still under development, but you can already check it [HERE](https://basscloud.net).
