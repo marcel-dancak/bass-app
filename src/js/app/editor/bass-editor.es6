@@ -104,7 +104,6 @@
             length: 16
           }
         };
-        sound.note.code = sound.note.name + sound.note.octave;
         workspace.trackSection.addSound(beat, sound);
         return sound;
       },
@@ -131,7 +130,6 @@
         if (style === 'hammer' || style === 'pull' || style === 'ring') {
           var selectedSound = this.selected.sound;
           var soundOnLeft = workspace.trackSection.prevSound(selectedSound);
-          console.log(soundOnLeft)
           if (soundOnLeft && soundOnLeft.note) {
             soundOnLeft.next = true;
             selectedSound.prev = true;
@@ -143,7 +141,6 @@
               if (fretOffset === 0) {
                 angular.merge(selectedSound.note, {
                   type: 'regular',
-                  code: prevNote.code,
                   fret: prevNote.fret,
                   name: prevNote.name,
                   octave: prevNote.octave,
@@ -151,7 +148,6 @@
               } else {
                 selectedSound.note = {
                   type: 'slide',
-                  code: prevNote.code,
                   fret: prevNote.fret,
                   name: prevNote.name,
                   octave: prevNote.octave,
@@ -161,7 +157,6 @@
                     start: 0.05,
                     end: 0.85,
                     endNote: {
-                      code: ringNote.code,
                       fret: ringNote.fret,
                       name: ringNote.name,
                       octave: ringNote.octave
@@ -190,7 +185,6 @@
           var endNote = sound.note.type === 'slide'? sound.note.slide.endNote : sound.note;
           nextSound.note.name = endNote.name;
           nextSound.note.octave = endNote.octave;
-          nextSound.note.code = endNote.code;
           nextSound.note.fret = endNote.fret;
 
           sound = nextSound;
@@ -230,7 +224,6 @@
                 var note = bassString.notes[sound.note.fret];
                 sound.note.name = note.label[0];
                 sound.note.octave = note.octave;
-                sound.note.code = sound.note.name+sound.note.octave;
                 this.soundLabelChanged(sound)
               }
               break;
@@ -241,7 +234,6 @@
                 var note = bassString.notes[sound.note.fret];
                 sound.note.name = note.label[0];
                 sound.note.octave = note.octave;
-                sound.note.code = sound.note.name+sound.note.octave;
                 this.soundLabelChanged(sound)
               }
               break;

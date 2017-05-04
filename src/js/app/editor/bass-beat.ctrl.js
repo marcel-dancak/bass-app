@@ -188,6 +188,9 @@
         // compute code property
         if (sound.note) {
           sound.note.code = sound.note.name + sound.note.octave;
+          if (sound.note.slide) {
+            sound.note.slide.endNote.code = sound.note.slide.endNote.name + sound.note.slide.endNote.octave;
+          }
         }
         panelRef = $mdPanel.create(
           angular.extend(panelConfig, {
@@ -204,6 +207,9 @@
             onRemoving: function() {
               // remove computed code value
               delete sound.note.code;
+              if (sound.note.slide) {
+                delete sound.note.slide.endNote.code;
+              }
               window.oncontextmenu = appContextMenuHandler;
             },
             onOpenComplete: function() {
