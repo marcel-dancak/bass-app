@@ -26,7 +26,7 @@
         flex
         md-no-ink
         ng-model="sound.note.type"
-        md-on-close="">
+        md-on-close="noteTypeChanged()">
         <md-option
           ng-repeat="item in ::['regular', 'ghost', 'slide', 'grace', 'bend', 'harmonics']"
           ng-value="item"
@@ -103,19 +103,19 @@
     <md-input-container
       flex
       class="selectbox-spinner"
-      ng-if="sound.note.type === 'slide'"
+      ng-if="sound.note.type === 'slide' || sound.note.type === 'grace'"
       ng-init="
-        sound.note.slide.endNote = sound.note.slide.endNote || {
+        sound.endNote = sound.endNote || {
           code: sound.note.code,
           name: sound.note.name,
           octave: sound.note.octave,
           fret: sound.note.fret
         }">
-      <label class="md-label" translate="SLIDE_TO"></label>
+      <label class="md-label" translate="END_PITCH"></label>
       <md-select
         md-container-class="note-select-menu"
-        ng-model="sound.note.slide.endNote.code"
-        md-on-close="soundPitchChanged(sound.note.slide.endNote)"
+        ng-model="sound.endNote.code"
+        md-on-close="soundPitchChanged(sound.endNote)"
         >
         <div
           ng-repeat="note in fretsStringNotes"
@@ -145,13 +145,13 @@
         <md-button
           aria-label="Next note"
           md-prevent-menu-close
-          ng-click="nextNote(sound.note.slide.endNote)">
+          ng-click="nextNote(sound.endNote)">
           <md-icon md-svg-icon="arrow-up"></md-icon>
         </md-button>
         <md-button
           aria-label="Previous note"
           md-prevent-menu-close
-          ng-click="prevNote(sound.note.slide.endNote)">
+          ng-click="prevNote(sound.endNote)">
           <md-icon md-svg-icon="arrow-down"></md-icon>
         </md-button>
       </div>
@@ -166,7 +166,7 @@
     ">
     <label class="md-no-float" translate="SLIDE_TIMING"></label>
     <div class="slide-graph line-editor"
-      ng-class="{down: sound.note.slide.endNote.fret < sound.note.fret }">
+      ng-class="{down: sound.endNote.fret < sound.note.fret }">
       <rzslider
         class="point-node"
         rz-slider-model="sound.note.slide.start"

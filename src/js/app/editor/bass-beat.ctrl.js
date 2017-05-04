@@ -69,14 +69,8 @@
       sound.end = sound.start + workspace.track.soundDuration(sound);
     };
 
-    $scope.updateSlide = function() {
-      var endindex = this.sound.note.fret+this.sound.note.slide;
-      if (endindex < 0) {
-        this.sound.note.slide += -(endindex);
-      } else if (endindex > 24) {
-        this.sound.note.slide -= endindex-24;
-      }
-      this.slideEndNote = this.stringNotes[this.sound.note.fret+this.sound.note.slide];
+    $scope.noteTypeChanged = function() {
+      basicHandler.noteTypeChanged(this.sound);
     }
 
     $scope.playSound = function() {
@@ -188,8 +182,8 @@
         // compute code property
         if (sound.note) {
           sound.note.code = sound.note.name + sound.note.octave;
-          if (sound.note.slide) {
-            sound.note.slide.endNote.code = sound.note.slide.endNote.name + sound.note.slide.endNote.octave;
+          if (sound.endNote) {
+            sound.endNote.code = sound.endNote.name + sound.endNote.octave;
           }
         }
         panelRef = $mdPanel.create(
@@ -207,8 +201,8 @@
             onRemoving: function() {
               // remove computed code value
               delete sound.note.code;
-              if (sound.note.slide) {
-                delete sound.note.slide.endNote.code;
+              if (sound.endNote) {
+                delete sound.endNote.code;
               }
               window.oncontextmenu = appContextMenuHandler;
             },

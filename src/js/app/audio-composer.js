@@ -145,8 +145,8 @@
     var st = performance.now();
 
     var sounds = [];
-    var steps = Math.abs(sound.note.fret - sound.note.slide.endNote.fret);
-    var direction = (sound.note.fret > sound.note.slide.endNote.fret)? -1 : 1;
+    var steps = Math.abs(sound.note.fret - sound.endNote.fret);
+    var direction = (sound.note.fret > sound.endNote.fret)? -1 : 1;
 
     var audio = prevAudio || this.player.createSoundAudio(track, sound, startTime, 0);
     var buffer = audio.source.buffer.getChannelData(0);

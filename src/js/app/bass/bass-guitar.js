@@ -110,7 +110,7 @@
     return name;
   }
 
-  Notes.codeTovalue = function(code) {
+  Notes.codeToValue = function(code) {
     var name = code.substring(0, code.length-1);
     var octave = parseInt(code.charAt(code.length-1));
     var scale = name.endsWith('♯')? Notes.sharpNotes : Notes.flatNotes;

@@ -2,6 +2,24 @@
   'use strict';
 
 
+  const SharpNotes = 'C C♯ D D♯ E F F♯ G G♯ A A♯ B'.split(' ');
+  const FlatNotes = 'C D♭ D E♭ E F G♭ G A♭ A B♭ B'.split(' ');
+  function detune(note, offset) {
+    var scale = note.name.indexOf('♭') !== -1? FlatNotes : SharpNotes;
+    var index = scale.indexOf(note.name);
+    index += offset;
+    while (index < 0) {
+      index += 12;
+      note.octave--;
+    }
+    while (index > 11) {
+      index -= 12;
+      note.octave++;
+    }
+    note.fret += offset;
+    note.name = scale[index];
+  }
+
   class BaseTrackSection {
     constructor(section, data) {
       this.section = section;
@@ -32,6 +50,25 @@
             delete sound.sound;
             delete sound.subbeat;
             delete sound.note.code;
+          }
+          if (sound.note) {
+            // convert old slide format
+            if (sound.note.slide && sound.note.slide.endNote) {
+              sound.endNote = sound.note.slide.endNote;
+              delete sound.note.slide.endNote;
+            }
+            // convert old grace format
+            if (sound.note.type === 'grace' && !sound.endNote) {
+              sound.endNote = {
+                name: sound.note.name,
+                octave: sound.note.octave,
+                fret: sound.note.fret
+              }
+              detune(sound.note, -2);
+            }
+            if (sound.note.type === 'ghost' && !sound.note.length) {
+              sound.note.length = 16;
+            }
           }
           this.initializeSound(sound);
         }, this);

@@ -18,8 +18,8 @@
   <div ng-switch-when="slide"
     class="slide"
     ng-class="[
-      'octave-'+sound.note.slide.endNote.octave,
-      { down: sound.note.slide.endNote.fret < sound.note.fret }
+      'octave-'+sound.endNote.octave,
+      { down: sound.endNote.fret < sound.note.fret }
     ]">
 
     <div ng-if="sound.style !== 'ring'">
@@ -34,11 +34,11 @@
       class="slide-slash">|</div>
     <div>
       <label class="note">
-        {{ sound.note.slide.endNote.name }}
-        <sub>{{ sound.note.slide.endNote.octave }}</sub>
+        {{ sound.endNote.name }}
+        <sub>{{ sound.endNote.octave }}</sub>
       </label>
       <label class="fret">
-        {{ sound.note.slide.endNote.fret }}
+        {{ sound.endNote.fret }}
       </label>
     </div>
   </div>
@@ -47,16 +47,16 @@
     ng-switch-when="grace">
     <label class="note">
       <span class="grace">
-        {{ string.notes[sound.note.fret-2].label[0] }}
-        <sub>{{ string.notes[sound.note.fret-2].octave }}</sub>
+        {{ sound.note.name }}
+        <sub>{{ sound.note.octave }}</sub>
       </span>
-      {{ sound.note.name }}<sub>{{ sound.note.octave }}</sub>
+      {{ sound.endNote.name }}<sub>{{ sound.endNote.octave }}</sub>
     </label>
     <label class="fret">
       <span class="grace">
-        {{ sound.note.fret-2 }}
+        {{ sound.note.fret }}
       </span>
-      {{ sound.note.fret }}
+      {{ sound.endNote.fret }}
     </label>
   </div>
 

@@ -33,7 +33,7 @@
         var shift = 1000;
         for (var i = 0; i < baseSamples.length; i++) {
           var sampleCode = baseSamples[i];
-          var sampleValue = Notes.codeTovalue(sampleCode);
+          var sampleValue = Notes.codeToValue(sampleCode);
           var diff = noteValue - sampleValue;
           if (Math.abs(diff) < Math.abs(shift)) {
             shift = diff;
@@ -138,8 +138,8 @@
             while (rootSound.prev) {
               rootSound = track.prevSound(rootSound);
             }
-            var step = sound.note.fret > sound.note.slide.endNote.fret? -1 : 1;
-            var outOfRange = sound.note.slide.endNote.fret + step;
+            var step = sound.note.fret > sound.endNote.fret? -1 : 1;
+            var outOfRange = sound.endNote.fret + step;
             var resources = [];
             for (var i = sound.note.fret; i !== outOfRange; i += step) {
               resources.push('sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string, i));
@@ -149,7 +149,7 @@
           slideCurve: function(sound, beatTime, slideStartOffset, slideEndOffset) {
             var duration = noteRealDuration(sound, beatTime);
 
-            var steps = Math.abs(sound.note.fret-sound.note.slide.endNote.fret);
+            var steps = Math.abs(sound.note.fret-sound.endNote.fret);
             var curve = new Array(steps+2);
             curve[0] = Math.max(duration*slideStartOffset, 0.02);
             curve[curve.length-1] = Math.max(duration*slideEndOffset, 0.02);
@@ -176,7 +176,7 @@
               startTime: startTime,
               duration: curve[0]
             });
-            var direction = sound.note.slide.endNote.fret > sound.note.fret? 1 : -1;
+            var direction = sound.endNote.fret > sound.note.fret? 1 : -1;
             for (var i = 1; i < curve.length-2; i++) {
               var prevNote = notes[notes.length-1];
               notes.push({
@@ -186,7 +186,7 @@
               });
             }
             notes.push({
-              note: sound.note.slide.endNote,
+              note: sound.endNote,
               startTime: notes[notes.length-1].startTime + notes[notes.length-1].duration,
               duration: curve[curve.length-1]
             });
@@ -277,8 +277,8 @@
           },
           getResources: function(track, sound) {
             return [
-              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret-2),
-              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)
+              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret),
+              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.endNote.fret)
             ];
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
@@ -302,11 +302,11 @@
               string: sound.string,
               notes: [
                 {
-                  note: { fret: sound.note.fret - 2 },
+                  note: sound.note,
                   startTime: startTime,
                   duration: graceTime
                 }, {
-                  note: sound.note,
+                  note: sound.endNote,
                   startTime: startTime + graceTime,
                   duration: duration - graceTime
                 }

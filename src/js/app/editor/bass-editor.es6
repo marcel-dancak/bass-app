@@ -28,9 +28,9 @@
         if (sound.note.type !== 'ghost') {
           sound.note.fret = workspace.track.instrument.stringFret(string.label, sound.note);
         }
-        if (sound.note.type === 'slide') {
-          sound.note.slide.endNote.fret = workspace.track.instrument.stringFret(
-            string.label, sound.note.slide.endNote
+        if (sound.endNote) {
+          sound.endNote.fret = workspace.track.instrument.stringFret(
+            string.label, sound.endNote
           );
         }
       }
@@ -136,7 +136,7 @@
 
             if (style === 'ring') {
               var ringNote = this.selected.sound.note;
-              var prevNote = soundOnLeft.note.type === 'slide'? soundOnLeft.note.slide.endNote : soundOnLeft.note;
+              var prevNote = soundOnLeft.endNote || soundOnLeft.note;
               var fretOffset = selectedSound.note.fret - prevNote.fret;
               if (fretOffset === 0) {
                 angular.merge(selectedSound.note, {
@@ -155,14 +155,14 @@
                   dotted: ringNote.dotted,
                   slide: {
                     start: 0.05,
-                    end: 0.85,
-                    endNote: {
-                      fret: ringNote.fret,
-                      name: ringNote.name,
-                      octave: ringNote.octave
-                    }
+                    end: 0.85
                   }
                 };
+                selectedSound.endNote = {
+                  fret: ringNote.fret,
+                  name: ringNote.name,
+                  octave: ringNote.octave
+                }
               }
             }
           } else {
@@ -176,13 +176,20 @@
         }
       },
 
+      noteTypeChanged(sound) {
+        var type = sound.note.type;
+        if (sound.endNote && type !== 'slide' && type !== 'grace') {
+          delete sound.endNote;
+        }
+      },
+
       soundLabelChanged(sound) {
         while (sound.next) {
           var nextSound = workspace.trackSection.nextSound(sound);
           if (nextSound.style === 'hammer' || nextSound.style === 'pull') {
             break;
           }
-          var endNote = sound.note.type === 'slide'? sound.note.slide.endNote : sound.note;
+          var endNote = sound.endNote || sound.note;
           nextSound.note.name = endNote.name;
           nextSound.note.octave = endNote.octave;
           nextSound.note.fret = endNote.fret;
@@ -294,9 +301,7 @@
           }
           if (overlappingSound && !overlappingSound.next && overlappingSound.note && overlappingSound.note.type === 'regular') {
             sound.note.type = 'slide';
-            sound.note.slide = {
-              endNote: angular.copy(overlappingSound.note)
-            };
+            sound.endNote = angular.copy(overlappingSound.note);
 
             workspace.trackSection.deleteSound(overlappingSound);
           }
