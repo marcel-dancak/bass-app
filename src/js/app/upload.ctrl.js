@@ -23,7 +23,8 @@
     var genres = [
       'Funk', 'Rock', 'Pop', 'Jazz', 'Soul', 'RnB', 'Disco', 'Blues',
       'Punk', 'Ska', 'House', 'Reggae', 'Hip hop', 'Trance', 'Gospel',
-      'Country', 'Folk', 'Indie', 'Alternative', 'Metal', 'Techno', 'Rock and Roll'
+      'Country', 'Folk', 'Indie', 'Alternative', 'Metal', 'Techno', 'Rock and Roll',
+      'Merengue', 'Salsa'
     ];
     $scope.difficulties = [
       {
@@ -60,7 +61,6 @@
     // data = LZString.compressToBase64(JSON.stringify(data));
     // data = LZString.compressToUTF16(JSON.stringify(data));
 
-    console.log(data)
     // console.log(LZString.decompressFromBase64(data));
 
     // analyze project data
@@ -107,8 +107,6 @@
       level: 3
     }
 
-    // $http.get(uploadUrl+'logout/', {withCredentials: true})
-
     var uploadId = projectManager.store.project.upload_id;
     $scope.newUpload = !Boolean(uploadId);
     if (uploadId) {
@@ -117,6 +115,7 @@
         .then(function(resp) {
           // do not override playing_styles
           delete resp.data.playing_styles;
+          delete resp.data.tracks;
           // update form with fetched data
           console.log(resp.data)
           for (var key in resp.data) {
@@ -141,18 +140,17 @@
     $scope.upload = function() {
       $http.post(uploadUrl+'project/', $scope.project, {withCredentials: true})
         .then(function(resp) {
-          console.log(resp.data)
           projectManager.store.project.upload_id = resp.data;
           projectManager.saveProjectConfig();
-          // TODO show some toast message
-          $scope.close();
+          $scope.close(true);
 
         }, function(resp) {
           if (resp.status === 401 || resp.status === 403) {
+            if (resp.status === 403) {
+              $http.get(uploadUrl+'logout/', {withCredentials: true});
+            }
             $scope.showLogin = true;
             $scope.form = "login";
-          } else if (resp.status === 403) {
-            // Show Permission Denied
           }
         })
     }

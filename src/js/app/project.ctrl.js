@@ -31,6 +31,9 @@
       showNotification('<span>Section <b>{0}</b> was saved</span>'.format(sectionName));
     }
 
+    function showUploadNotification() {
+      showNotification('Project was uploaded');
+    }
 
     function AddTrackController($scope, projectManager, $mdDialog) {
       $scope.close = $mdDialog.hide;
@@ -78,17 +81,17 @@
       console.log('remove track: '+trackId);
 
       var track = projectManager.project.tracksMap[trackId];
-      var nextSelected = projectManager.project.tracks.find(function(t) {
-        return t.type === track.type && t.id !== trackId;
-      });
-      if (nextSelected) {
+      if (projectManager.project.tracks.length) {
+        var nextSelected = projectManager.project.tracks.find(function(t) {
+          return t.type === track.type && t.id !== trackId;
+        }) || projectManager.project.tracks[0];
         $scope.ui.selectTrack(nextSelected.id);
         projectManager.removeTrack(trackId);
       } else {
         $mdDialog.show(
           $mdDialog.alert()
             .title("Warning")
-            .textContent("Can't remove this track, it's the last track of its instrument kind!")
+            .textContent("You cannot remove last track!")
             .ok("Close")
         );
       }
@@ -284,9 +287,12 @@
       $http({
         url: dataUrl+projectParam+'.json',
         method: 'GET',
-        // transformResponse: [function (data) {
-        //     return JSON.parse(LZString.decompressFromBase64(data));
-        // }]
+        transformResponse: [function (data) {
+          if (data[0] !== '{') {
+            data = LZString.decompressFromBase64(data);
+          }
+          return JSON.parse(data);
+        }]
       })
       .then(function(response) {
         // console.log(response)
@@ -333,13 +339,17 @@
     };
 
     $scope.uploadProject = function() {
-      var UploadController = $controller('UploadController', {'$scope': $scope.$new(true)}).constructor
+      // var UploadController = $controller('UploadController', {'$scope': $scope.$new(true)}).constructor;
       $mdDialog.show({
         templateUrl: 'views/upload_form.html',
-        controller: UploadController,
+        controller: 'UploadController',
         autoWrap: false
         // clickOutsideToClose: true
         // targetEvent: evt
+      }).then(function(success) {
+        if (success) {
+          showUploadNotification();
+        }
       });
     };
 

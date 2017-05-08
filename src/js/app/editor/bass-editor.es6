@@ -302,6 +302,7 @@
           if (overlappingSound && !overlappingSound.next && overlappingSound.note && overlappingSound.note.type === 'regular') {
             sound.note.type = 'slide';
             sound.endNote = angular.copy(overlappingSound.note);
+            sound.note.slide = {};
 
             workspace.trackSection.deleteSound(overlappingSound);
           }

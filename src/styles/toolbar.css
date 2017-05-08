@@ -269,7 +269,8 @@
 }
 
 md-select-menu,
-md-select-menu md-content {
+md-select-menu md-content,
+md-menu-content.preferences {
   max-height: 360px;
 }
 
@@ -357,6 +358,7 @@ md-select-menu md-content {
 .readonly-project md-menu-item > .md-button[aria-label="New Section"],
 .readonly-project md-menu-item > .md-button[aria-label="Save As"],
 .readonly-project md-menu-item > .md-button[aria-label="Export"],
+.readonly-project md-menu-item > .md-button[aria-label="Upload"],
 .readonly-project md-menu-item > .md-button[aria-label="Delete Section"] {
   opacity: 0.6!important;
   pointer-events: none;

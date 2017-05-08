@@ -9,7 +9,7 @@
 
   function SoundPropertiesSlideshow($scope, $element, $timeout, basicHandler, bassSoundForm, $mdCompiler) {
 
-    var editSound, editElem, form, formScope;
+    var editSound, editElem, form;
 
     var bass = {
       playingStyles: [
@@ -77,9 +77,10 @@
         );
       },
       function() {
-        formScope = angular.element(document.querySelector('.bass-sound-form')).scope();
+        // formScope = angular.element(document.querySelector('.bass-sound-form')).scope();
         editSound.note.dotted = true;
-        formScope.soundLengthChanged(editSound);
+        // formScope.soundLengthChanged(editSound);
+        editSound.end = editSound.start + workspace.trackSection.soundDuration(editSound);
       },
       function() {
         editSound.note.staccato = true;
