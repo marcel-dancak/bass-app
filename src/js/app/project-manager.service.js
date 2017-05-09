@@ -49,28 +49,39 @@
     return 'bd.section.{0}.{1}'.format(projectId, sectionId);
   }
 
+  ProjectLocalStore.prototype.save = function(key, value) {
+    localStorage.setItem(key, LZString.compressToUTF16(value));
+  }
+
+  ProjectLocalStore.prototype.read = function(key, def) {
+    var value = localStorage.getItem(key);
+    if (value) {
+      if (value[0] !== '{' && value[0] !== '[') {
+        value = LZString.decompressFromUTF16(value);
+      }
+      return JSON.parse(value);
+    }
+    return def;
+  }
+
   ProjectLocalStore.prototype._updateProjectsOrder = function(latestProjectId) {
     var index = this.projects.findIndex(byId(latestProjectId));
     if (index !== -1) {
       var item = this.projects.splice(index, 1)[0];
       this.projects.splice(0, 0, item);
       var data = JSON.stringify(this.projects);
-      localStorage.setItem(this.PROJECTS_KEY, data);
+      this.save(this.PROJECTS_KEY, data);
     }
   };
 
   ProjectLocalStore.prototype.projectsList = function() {
-    var data = localStorage.getItem(this.PROJECTS_KEY);
-    if (data) {
-      return JSON.parse(data);
-    }
-    return [];
+    return this.read(this.PROJECTS_KEY, []);
   };
 
 
   ProjectLocalStore.prototype.getProject = function(projectId) {
-    var projectConfig = JSON.parse(localStorage.getItem(projectKey(projectId)));
-    var playlists = JSON.parse(localStorage.getItem(playlistsKey(projectId))) || [];
+    var projectConfig = this.read(projectKey(projectId));
+    var playlists = this.read(playlistsKey(projectId), []);
 
     this.project = {
       id: projectId,
@@ -103,7 +114,7 @@
     });
 
     var data = JSON.stringify(this.projects);
-    localStorage.setItem(this.PROJECTS_KEY, data);
+    this.save(this.PROJECTS_KEY, data);
     return this.project;
   };
 
@@ -124,8 +135,7 @@
       }
       return v;
     });
-    console.log(data);
-    localStorage.setItem(projectKey(projectId), data);
+    this.save(projectKey(projectId), data)
   };
 
   ProjectLocalStore.prototype.deleteProject = function(projectId) {
@@ -133,7 +143,7 @@
       console.log('!! deleting opened project !!');
       return;
     }
-    var projectConfig = JSON.parse(localStorage.getItem(projectKey(projectId)));
+    var projectConfig = this.read(projectKey(projectId));
     if (projectConfig) {
       var keys = projectConfig.sections.map(
         function(section) {
@@ -150,7 +160,7 @@
     var index = projects.findIndex(byId(projectId));
     if (index !== -1) {
       projects.splice(index, 1);
-      localStorage.setItem(this.PROJECTS_KEY, JSON.stringify(projects));
+      this.save(this.PROJECTS_KEY, JSON.stringify(projects));
     }
     this.projects = projects;
   };
@@ -168,7 +178,7 @@
         name: sectionName
       });
     }
-    localStorage.setItem(key, serializedData);
+    this.save(key, serializedData);
   };
 
   ProjectLocalStore.prototype.getSection = function(sectionId) {
@@ -176,9 +186,8 @@
       return;
     }
     var key = sectionKey(this.project.id, sectionId);
-    var data = localStorage.getItem(key);
+    var data = this.read(key);
     if (data) {
-      data = JSON.parse(data);
       data.id = sectionId;
       return data;
     }
@@ -192,17 +201,16 @@
   ProjectLocalStore.prototype.savePlaylists = function(playlists) {
     var key = playlistsKey(this.project.id);
     console.log('ProjectLocalStore.savePlaylists: '+key);
-    localStorage.setItem(key, JSON.stringify(playlists));
+    this.save(key, JSON.stringify(playlists))
   };
 
   ProjectLocalStore.prototype._projectData = function() {
     var projectId = this.project.id;
-    var projectConfig = JSON.parse(localStorage.getItem(projectKey(projectId)));
-    var playlists = JSON.parse(localStorage.getItem(playlistsKey(projectId))) || [];
+    var projectConfig = this.read(projectKey(projectId));
+    var playlists = this.read(playlistsKey(projectId), []);
     var sections = projectConfig.sections.map(function(sectionIndex) {
-      var key = sectionKey(projectId, sectionIndex.id);
-      return JSON.parse(localStorage.getItem(key));
-    });
+      return this.read(sectionKey(projectId, sectionIndex.id));
+    }, this);
     var data = {
       name: projectConfig.name,
       index: projectConfig.sections,
@@ -439,8 +447,13 @@
           // data.tracks[track.id] = trackSection.rawData();
         }
       }, this);
-      return JSON.stringify(data);
-      // return JSON.stringify(data, null, 4);
+
+      return JSON.stringify(data, function(k, v) {
+        if (k.startsWith('$$')) { // clean JSON from Angular hashes
+          return undefined;
+        }
+        return v;
+      });
     }
 
 
