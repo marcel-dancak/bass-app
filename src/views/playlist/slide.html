@@ -34,7 +34,9 @@
           <label
             ng-if="::beat.sectionInfo.bpm"
             class="bpm">
-            <i class="quarter-note"></i>=<br />{{ ::beat.sectionInfo.bpm }}
+            <!-- <i class="quarter-note"></i>=<br />{{ ::beat.sectionInfo.bpm }} -->
+            <i class="{{::Note.map[beat.sectionInfo.timeSignature.bottom]}}"></i>=
+            <br />{{ ::beat.sectionInfo.bpm }}
           </label>
           <label class="section-name">
             {{ ::beat.sectionInfo.name }}

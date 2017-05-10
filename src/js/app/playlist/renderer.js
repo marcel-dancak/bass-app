@@ -126,7 +126,8 @@
               name: sectionFirstsBeat? section.name : ''
             }
             if (!forcedHeader && prevSection) {
-              if (prevSection.bpm === section.bpm) {
+              if (prevSection.bpm === section.bpm &&
+                  prevSection.timeSignature.bottom === section.timeSignature.bottom) {
                 sectionInfo.bpm = '';
               }
               if (prevSection.timeSignature.top === section.timeSignature.top &&

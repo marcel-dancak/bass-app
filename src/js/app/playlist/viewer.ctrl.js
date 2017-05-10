@@ -271,7 +271,10 @@
     function playFromCurrentPosition() {
       console.log('playFromCurrentPosition');
       var firstSlideMeta = slidesMetadata[viewer.swiper.snapIndex];
-      var visibleBeatsMeta = firstSlideMeta.beats.concat(slidesMetadata[viewer.swiper.snapIndex+1].beats);
+      var visibleBeatsMeta = firstSlideMeta.beats;
+      if (slidesMetadata[viewer.swiper.snapIndex+1]) {
+        visibleBeatsMeta = visibleBeatsMeta.concat(slidesMetadata[viewer.swiper.snapIndex+1].beats);
+      }
 
       playbackState.section = firstSlideMeta.playlistSectionIndex;
       playbackState.bar = firstSlideMeta.beats[0].bar;

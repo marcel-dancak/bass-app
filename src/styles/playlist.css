@@ -196,6 +196,7 @@
 .bass-sheet .swiper-slide .beat.with-header .section-label .bpm {
   left: -48px;
   top: -1px;
+  text-align: center;
 }
 .bass-sheet .swiper-slide .beat:not(.with-header) .section-label.with-tempo {
   left: 22px;
