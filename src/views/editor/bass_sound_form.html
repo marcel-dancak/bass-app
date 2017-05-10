@@ -215,14 +215,15 @@
       <svg
         class="graph">
         <line class="border" x1="-4%" y1="0" x2="104%" y2="0" />
+        <line class="border" x1="-4%" y1="50%" x2="104%" y2="50%" opacity="0.5"/>
         <line class="border" x1="-4%" y1="100%" x2="104%" y2="100%" />
         <line
           ng-repeat="point in sound.note.bend track by $index"
           ng-if="!$last"
           ng-attr-x1="{{ 100 * $index / (sound.note.bend.length-1) }}%"
-          ng-attr-y1="{{ 100 * (1 - sound.note.bend[$index]) }}%"
+          ng-attr-y1="{{ 100 * (1 - sound.note.bend[$index]/2) }}%"
           ng-attr-x2="{{ 100 * ($index + 1) / (sound.note.bend.length-1) }}%"
-          ng-attr-y2="{{ 100 * (1 - sound.note.bend[$index+1]) }}%" />
+          ng-attr-y2="{{ 100 * (1 - sound.note.bend[$index+1]/2) }}%" />
       </svg>
       <rzslider
         ng-repeat-start="node in sound.note.bend track by $index"
@@ -231,7 +232,7 @@
         rz-slider-options="{
           vertical: true,
           floor: 0,
-          ceil: 1,
+          ceil: 2,
           step: 0.01,
           precision: 2,
           hideLimitLabels: true,

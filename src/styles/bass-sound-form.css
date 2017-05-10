@@ -96,7 +96,7 @@
 
 
 .line-editor {
-  height: 50px;
+  height: 60px;
   position: relative;
   margin-left: 4px;
   margin-right: 8px;
@@ -162,7 +162,7 @@
 }
 
 md-input-container.line-editor-field {
-  margin-bottom: 12px;
+  margin-bottom: 22px;
 }
 
 
