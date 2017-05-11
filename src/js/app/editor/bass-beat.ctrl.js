@@ -66,7 +66,7 @@
     };
 
     $scope.soundLengthChanged = function(sound) {
-      sound.end = sound.start + workspace.track.soundDuration(sound);
+      sound.end = sound.start + workspace.trackSection.soundDuration(sound);
     };
 
     $scope.noteTypeChanged = function() {

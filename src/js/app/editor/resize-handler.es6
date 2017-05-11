@@ -59,6 +59,9 @@
       }, {
         length: 16,
         dotted: true
+      }, {
+        length: 32,
+        dotted: false
       }
     ];
 

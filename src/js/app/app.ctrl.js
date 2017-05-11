@@ -36,6 +36,11 @@
         label: 'SIXTEENTH',
         symbol: 'sixteenth-note',
         value: 16
+      },
+      ThirtySecond: {
+        label: 'THIRTYSECOND',
+        symbol: 'thirty-second-note',
+        value: 32
       }
     })
     .run(function($mdDialog) {

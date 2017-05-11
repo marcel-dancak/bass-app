@@ -31,9 +31,9 @@
 @font-face {
   font-family: 'Musica';
   src:
-    url('fonts/Musica.ttf?turfvi') format('truetype'),
-    url('fonts/Musica.woff?turfvi') format('woff'),
-    url('fonts/Musica.svg?turfvi#musica') format('svg');
+    url('fonts/Musica.ttf?evno0n') format('truetype'),
+    url('fonts/Musica.woff?evno0n') format('woff'),
+    url('fonts/Musica.svg?evno0n#Musica') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -67,4 +67,14 @@ i {
 }
 .sixteenth-note:before {
   content: "\e904";
+}
+.thirty-second-note:before {
+  content: "\e907";
+}
+i.dotted:after {
+  content: ".";
+  font-size: 150%;
+  line-height: 100%;
+  left: -12px;
+  position: relative;
 }
