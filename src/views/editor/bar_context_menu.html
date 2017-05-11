@@ -46,7 +46,8 @@
             type="radio"
             class="md-indent"
             ng-model="contextMenu.beat.subdivision"
-            ng-value="4">
+            ng-value="4"
+            ng-change="contextMenu.beat.grid = contextMenu.beat.grid? contextMenu.beat.subdivision*2 : undefined">
             <md-icon md-svg-icon="check"></md-icon>
             <md-button
               aria-label="Standard"
@@ -58,11 +59,24 @@
             type="radio"
             class="md-indent"
             ng-model="contextMenu.beat.subdivision"
-            ng-value="3">
+            ng-value="3"
+            ng-change="contextMenu.beat.grid = contextMenu.beat.grid? contextMenu.beat.subdivision*2 : undefined">
             <md-icon md-svg-icon="check"></md-icon>
             <md-button
               aria-label="Triplet"
               translate="SUBDIVISION_TRIPLET">
+            </md-button>
+          </md-menu-item>
+
+          <md-divider></md-divider>
+          <md-menu-item
+            type="checkbox"
+            class="md-indent"
+            ng-click="contextMenu.beat.grid = contextMenu.beat.grid? undefined : contextMenu.beat.subdivision*2">
+            <md-icon md-svg-icon="check" ng-show="contextMenu.beat.grid"></md-icon>
+            <md-button
+              aria-label="Triplet"
+              translate="DOUBLE_GRID">
             </md-button>
           </md-menu-item>
 

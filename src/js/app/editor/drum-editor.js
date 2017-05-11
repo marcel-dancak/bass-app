@@ -71,13 +71,13 @@
       var x = evt.clientX - box.left;
       var y = evt.clientY - box.top;
 
-      var subbeat = 1 + parseInt((x * beat.subdivision) / box.width);
+      var subbeat = 1 + parseInt((x * (beat.grid||beat.subdivision)) / box.width);
       var drumIndex = parseInt(y / 48);
       var drum = workspace.track.instrument[drumIndex].name;
       
       return {
         subbeat: subbeat,
-        start: (subbeat - 1) / beat.subdivision,
+        start: (subbeat - 1) / (beat.grid||beat.subdivision),
         drum: drum,
         drumIndex: drumIndex,
         containerElem: container
@@ -118,7 +118,7 @@
         var grid = getSoundGrid(evt, beat);
         var beatBox = grid.containerElem.getBoundingClientRect();
 
-        var subbeatWidth = beatBox.width / beat.subdivision;
+        var subbeatWidth = beatBox.width / (beat.grid||beat.subdivision);
         var offset = subbeatWidth / 2 -17;
         dropBox.setPxStyles({
           left: beatBox.left + (grid.subbeat - 1) * subbeatWidth + offset,

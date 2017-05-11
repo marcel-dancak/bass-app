@@ -26,6 +26,10 @@
     // var workspaceElem = document.querySelector('.instrument-grid');
     document.body.appendChild(dragBox.elem);
 
+    function beatGrid(beat) {
+      return beat.grid || beat.subdivision;
+    }
+
     var instrumentSoundHandler = {
       dragElem: null,
       onDragStart: function(evt, dragSound) {
@@ -49,10 +53,10 @@
       },
       onDrop: function(evt, mainHandler, dragSound, beat, position) {
         var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
+        var cell = evt.target.offsetWidth / beatGrid(beat);
         var sound = angular.copy(dragSound);
         mainHandler.updateDropSound(sound, beat, position);
-        sound.start = parseInt(evt.offsetX / grid) / beat.subdivision;
+        sound.start = parseInt(evt.offsetX / cell) / beatGrid(beat);
         workspace.trackSection.addSound(beat, sound);
         return sound;
       },
@@ -84,9 +88,9 @@
       },
       onDrop: function(evt, mainHandler, dragSound, beat, position) {
         var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
+        var cell = evt.target.offsetWidth / beatGrid(beat);
         var sound = angular.copy(dragSound);
-        sound.start = parseInt(evt.offsetX / grid) / beat.subdivision;
+        sound.start = parseInt(evt.offsetX / cell) / beatGrid(beat);
 
         mainHandler.updateDropSound(sound, beat, position);
 
@@ -165,9 +169,9 @@
       },
       onDrop: function(evt, mainHandler, dragSound, beat, position) {
         var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
+        var cell = evt.target.offsetWidth / beatGrid(beat);
         var sound = angular.copy(dragSound);
-        var start = parseInt(evt.offsetX / grid) / beat.subdivision;
+        var start = parseInt(evt.offsetX / cell) / beatGrid(beat);
 
         var createdSounds = [];
         this.sounds.forEach(function(sound) {
@@ -242,11 +246,11 @@
       onDragOver(evt, beat, position) {
         // console.log('onDragOver');
         var box = evt.target.getBoundingClientRect();
-        var grid = evt.target.offsetWidth / beat.subdivision;
-        var x = parseInt(evt.offsetX / grid);
+        var cell = evt.target.offsetWidth / beatGrid(beat);
+        var x = parseInt(evt.offsetX / cell);
 
         dragBox.setPxStyles({
-          left: box.left + x * grid,
+          left: box.left + x * cell,
           top: box.top-1,
           width: dragWidth+2,
           height: box.height+2

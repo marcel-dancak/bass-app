@@ -40,27 +40,14 @@
   overflow: hidden;
 }
 
-.drum-sound-box .drum-sound {
-  width: 32px;
-  height: 32px;
-  margin: 4px 0;
-  display: inline-block;
-  border-radius: 16px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  outline: none;
-}
 .volume-meter {
   xbackground-color: #ff5722;
   background-color: rgb(255, 152, 0);
+  max-width: 100%;
   width: 32px;
   height: 32px;
   border-radius: 16px;
   transition: transform 0.3s ease 0s;
-}
-
-.drum-sound.on-drag-hover {
-  border: 2px solid rgb(63,81,181);
 }
 
 
@@ -78,14 +65,14 @@
   width: 100%;
   outline: none;
 }
-.drum-sound2 {
+.drum-sound {
   position: absolute;
   text-align: center;
   margin: 8px 0;
   height: 32px;
   /*background-color: blue;*/
 }
-.drum-sound2 .volume-meter {
+.drum-sound .volume-meter {
   display: inline-block;
   content: "";
 }
@@ -102,16 +89,16 @@
 
 /** Add/Remove animations */
 
-.drum-sound2.ng-enter .volume-meter {
+.drum-sound.ng-enter .volume-meter {
   transform: scale(0, 0)!important;
 }
 
-.drum-sound2.ng-leave {
+.drum-sound.ng-leave {
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   transition-property: opacity;
 }
 
-.drum-sound2.ng-leave.ng-leave-active .volume-meter {
+.drum-sound.ng-leave.ng-leave-active .volume-meter {
   transform: scale(0, 0)!important;
 }
 

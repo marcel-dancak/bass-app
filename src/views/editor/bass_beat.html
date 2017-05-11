@@ -17,7 +17,7 @@
 
     <div
       class="bass-grid"
-      ng-switch="beat.subdivision">
+      ng-switch="beat.grid || beat.subdivision">
       <svg width="100%" height="100%" ng-switch-when="4">
         <defs>
           <pattern id="grid-4" x="12.5%" y="0" width="25%" height="36" patternUnits="userSpaceOnUse">
@@ -46,6 +46,38 @@
           class="grid-3"
           transform="translate(-17, 0)"
           fill="url(#grid-3)"
+          width="110%"
+          height="100%"
+        />
+      </svg>
+      <svg width="100%" height="100%" ng-switch-when="6">
+        <defs>
+          <pattern id="grid-6" x="8.33%" y="0" width="16.66%" height="36" patternUnits="userSpaceOnUse">
+            <circle cx="17" cy="18" r="11" fill="#fff" stroke="#ddd"/>
+            <line x1="13" y1="18.5" x2="22" y2="18.5" stroke="#ddd"/>
+            <line x1="17.5" y1="14" x2="17.5" y2="23" stroke="#ddd"/>
+          </pattern>
+        </defs>
+        <rect
+          class="grid-6"
+          transform="translate(-17, 0)"
+          fill="url(#grid-6)"
+          width="110%"
+          height="100%"
+        />
+      </svg>
+      <svg width="100%" height="100%" ng-switch-when="8">
+        <defs>
+          <pattern id="grid-8" x="6.25%" y="0" width="12.5%" height="36" patternUnits="userSpaceOnUse">
+            <circle cx="17" cy="18" r="11" fill="#fff" stroke="#ddd"/>
+            <line x1="13" y1="18.5" x2="22" y2="18.5" stroke="#ddd"/>
+            <line x1="17.5" y1="14" x2="17.5" y2="23" stroke="#ddd"/>
+          </pattern>
+        </defs>
+        <rect
+          class="grid-8"
+          transform="translate(-17, 0)"
+          fill="url(#grid-8)"
           width="110%"
           height="100%"
         />
