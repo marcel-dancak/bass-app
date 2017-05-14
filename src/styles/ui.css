@@ -8,6 +8,60 @@ body {
   overflow: hidden;
 }
 
+body[zoom="85"] > div[ng-include] {
+  transform: scale(0.85, 0.85) translate(-8.825%, -8.825%);
+  width: 117.65%;
+  height: 117.65%;
+}
+body[zoom="85"] .md-select-menu-container,
+body[zoom="85"] .md-open-menu-container,
+body[zoom="85"] .md-panel {
+  transform-origin: 0 0;
+  transform: scale(0.85, 0.85);
+}
+body[zoom="85"] .drag-sound {
+  zoom: 0.85;
+}
+body[zoom="85"] .resize-container {
+  zoom: 117.65%;
+}
+
+body[zoom="90"] > div[ng-include] {
+  transform: scale(0.9, 0.9) translate(-5.555%, -5.555%);
+  width: 111.11%;
+  height: 111.11%;
+}
+body[zoom="90"] .md-select-menu-container,
+body[zoom="90"] .md-open-menu-container,
+body[zoom="90"] .md-panel {
+  transform-origin: 0 0;
+  transform: scale(0.9, 0.9);
+}
+body[zoom="90"] .drag-sound {
+  zoom: 0.9;
+}
+body[zoom="90"] .resize-container {
+  zoom: 111.11%;
+}
+
+body[zoom="95"] > div[ng-include] {
+  transform: scale(0.95, 0.95) translate(-2.63%, -2.63%);
+  width: 105.26%;
+  height: 105.26%;
+}
+body[zoom="95"] .md-select-menu-container,
+body[zoom="95"] .md-open-menu-container,
+body[zoom="95"] .md-panel {
+  transform-origin: 0 0;
+  transform: scale(0.95, 0.95);
+}
+body[zoom="95"] .drag-sound {
+  zoom: 0.95;
+}
+body[zoom="95"] .resize-container {
+  zoom: 105.26%;
+}
+
 /*body > div {
   overflow: hidden;
 }*/

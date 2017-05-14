@@ -86,7 +86,7 @@
 .bass-string:before {
   content: "";
   position: absolute;
-  height: 1px;
+  height: 1.15px;
   width: 100%;
   top: 50%;
   left: 0;
@@ -558,8 +558,6 @@ md-input-container.slide-field > span {
 .drag-sound {
   position: fixed;
   top: -200px;
-  xtop: 100px;
-  left: 100px;
   z-index: 200;
 }
 

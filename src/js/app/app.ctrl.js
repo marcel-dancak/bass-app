@@ -76,7 +76,7 @@
     }
   }
 
-  function AppController($scope, $q, $translate, $mdDialog, $location, context,
+  function AppController($scope, $q, $timeout, $translate, $mdDialog, $location, context,
       settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
     $scope.Note = Note;
     $scope.settings = settings;
@@ -95,7 +95,19 @@
     $scope.ui = {
       selectTrack: angular.noop,
       playlist: {},
+      zoom: 100,
+      scale: 1
     };
+    $scope.setAppZoom = function(zoom) {
+      document.body.parentElement.setAttribute('zoom', zoom);
+      document.body.setAttribute('zoom', zoom);
+      $scope.ui.scale = 100/zoom;
+      $scope.ui.zoom = zoom;
+      window.scale = 100/zoom;
+      localStorage.setItem('preferences.zoom', zoom);
+    };
+    $scope.setAppZoom(localStorage.getItem('preferences.zoom') || 100);
+
     $scope.player = {
       mode: $location.hash()? 1 : 0,
       playing: false,

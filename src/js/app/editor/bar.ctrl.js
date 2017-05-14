@@ -20,15 +20,15 @@
         $scope.contextMenu.element = document.querySelector('.beat-menu');
       }
       $scope.contextMenu.beat = $scope.slides[index].beat;
-      console.log($scope.contextMenu);
 
       var parentBox = evt.target.getBoundingClientRect();
 
       $scope.contextMenu.element.style.position = 'fixed';
-      $scope.contextMenu.element.style.left = parentBox.left+'px';
-      $scope.contextMenu.element.style.top = parentBox.top+'px';
-      $scope.contextMenu.element.style.width = parentBox.width+'px';
-      $scope.contextMenu.element.style.height = parentBox.height+'px';
+      var scale = (window.scale || 1);
+      $scope.contextMenu.element.style.left = scale * parentBox.left+'px';
+      $scope.contextMenu.element.style.top = scale * parentBox.top+'px';
+      $scope.contextMenu.element.style.width = scale * parentBox.width+'px';
+      $scope.contextMenu.element.style.height = scale * parentBox.height+'px';
 
       var offsetElem = $scope.contextMenu.element.getElementsByTagName("offset")[0];
       offsetElem.style.left = (evt.clientX-parentBox.left)+'px';

@@ -3,6 +3,7 @@
   font-size: 15px;
   max-height: 400px;
   min-height: 250px;
+  transform: translateY(4px);
   /*z-index: 300;*/
 }
 

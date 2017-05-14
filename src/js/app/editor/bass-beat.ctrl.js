@@ -22,6 +22,7 @@
 
   function BassFormController($scope, $timeout, Note, sound, string, bass, audioPlayer, basicHandler, mdPanelRef) {
     $scope.Note = Note;
+    $scope.ui = {scale: window.scale || 1};
     $scope.keyPressed = function(evt) {
       basicHandler.keyPressed(evt);
       if (evt.keyCode === 46) {
@@ -166,7 +167,6 @@
           .addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.BELOW)
           .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ABOVE)
           .addPanelPosition($mdPanel.xPosition.ALIGN_END, $mdPanel.yPosition.ABOVE)
-          .withOffsetY('4px');
           
         var animation = $mdPanel.newPanelAnimation()
           .withAnimation($mdPanel.animation.FADE);
@@ -192,6 +192,7 @@
             targetEvent: evt,
             position: position,
             animation: animation,
+            attachTo: document.body,
             controller: 'BassFormController',
             locals: {
               sound: sound,

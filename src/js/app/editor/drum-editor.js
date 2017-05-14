@@ -70,9 +70,10 @@
       var box = container.getBoundingClientRect();
       var x = evt.clientX - box.left;
       var y = evt.clientY - box.top;
+      var cellHeight = box.height / workspace.track.instrument.length;
 
       var subbeat = 1 + parseInt((x * (beat.grid||beat.subdivision)) / box.width);
-      var drumIndex = parseInt(y / 48);
+      var drumIndex = parseInt(y / cellHeight);
       var drum = workspace.track.instrument[drumIndex].name;
       
       return {
@@ -117,13 +118,16 @@
       onDragOver: function(evt, beat) {
         var grid = getSoundGrid(evt, beat);
         var beatBox = grid.containerElem.getBoundingClientRect();
+        var cellHeight = beatBox.height / workspace.track.instrument.length;
 
         var subbeatWidth = beatBox.width / (beat.grid||beat.subdivision);
-        var offset = subbeatWidth / 2 -17;
+        var offset = subbeatWidth / 2 -17/(window.scale||1);
+
         dropBox.setPxStyles({
           left: beatBox.left + (grid.subbeat - 1) * subbeatWidth + offset,
-          top: beatBox.top + grid.drumIndex * 48 + 7
+          top: beatBox.top + grid.drumIndex * cellHeight + 7
         });
+        // dropBox.elem.style.transform = 'translate('+beatBox.left+'px,'+beatBox.top+'px)';
       },
       onDragEnter: function(evt, beat) {
         // dropBox.elem.style.opacity = 1;
