@@ -44,6 +44,24 @@
       }
     })
     .run(function($mdDialog) {
+      if(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        function adjustScale() {
+          var ww = Math.min(window.innerWidth, window.screen.width); //get proper width
+          // ww = window.screen.width;
+          var mw = 1048; // required min width
+          var ratio =  ww / mw;
+          if( ww < mw) {
+            var metaEl = document.head.querySelector('meta[name="viewport"]');
+            metaEl.setAttribute('content', 'initial-scale=' + ratio + ', maximum-scale=' + 1 + ', minimum-scale=' + ratio + ', width=' + ww);
+          }
+        }
+        window.addEventListener("orientationchange", adjustScale);
+        window.addEventListener("resize", function() {
+          document.body.style.minHeight = window.innerHeight+'px';
+        })
+        setTimeout(adjustScale, 500);
+      }
+
       if (!window.chrome) {
         var alert = $mdDialog.alert()
         .title('Warning')

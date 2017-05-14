@@ -40,7 +40,7 @@
       $scope.$root.viewer = {
         beatsPerSlide: 8,
         layouts: layouts,
-        layout: layouts[0],
+        layout: layouts[window.innerHeight > 680? 0 : 1],
         swiper: null
       }
     }
