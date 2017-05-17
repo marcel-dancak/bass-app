@@ -82,6 +82,10 @@
     };
   }
 
+  function roundFloat(value) {
+    return parseFloat((value).toFixed(2))
+  }
+
   function basicHandler(workspace, swiperControl, Notes) {
 
     return {
@@ -245,12 +249,10 @@
               }
               break;
             case 109: // -
-              sound.volume -= 0.1;
-              console.log(sound.volume);
+              sound.volume = Math.max(0, roundFloat(sound.volume-0.05));
               break;
             case 107: // +
-              sound.volume += 0.1;
-              console.log(sound.volume);
+              sound.volume = Math.min(1.0, roundFloat(sound.volume+0.05));
               break;
             case 76: // l
               if (sound.note.name.endsWith('♯')) {

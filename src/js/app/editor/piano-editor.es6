@@ -68,11 +68,11 @@
               sound.note.staccato = !sound.note.staccato;
               break;
             case 109: // -
-              sound.volume = parseFloat((sound.volume-0.05).toFixed(2));
+              sound.volume = Math.max(0, parseFloat((sound.volume-0.05).toFixed(2)));
               console.log(sound.volume);
               break;
             case 107: // +
-              sound.volume = parseFloat((sound.volume+0.05).toFixed(2));
+              sound.volume = Math.min(1.0, parseFloat((sound.volume+0.05).toFixed(2)));
               console.log(sound.volume);
               break;
 
