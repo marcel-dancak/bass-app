@@ -279,22 +279,21 @@
         track._volume = track.volume.value;
       }
 
-      var compressor = compressors[track.type];
-      if (!compressor && track.type !== 'drums') {
-        compressor = context.createDynamicsCompressor();
+      if (track.type !== 'drums') {
+        var compressor = context.createDynamicsCompressor();
         compressor.threshold.value = -35;
         compressor.knee.value = 40;
         compressor.ratio.value = 12;
         compressor.attack.value = 0;
         // compressor.release.value = 0.25;
         compressors[track.type] = compressor;
+        compressor.connect(context.destination);
 
         // avoid initial fade-in caused by compressor by playing
         // a short inaudible audio through it
         var oscillator = context.createOscillator();
         oscillator.frequency.value = 22050;
         oscillator.connect(compressor);
-        compressor.connect(context.destination);
         oscillator.start();
         setTimeout(function() {
           oscillator.stop();
