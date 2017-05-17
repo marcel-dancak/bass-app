@@ -1,14 +1,14 @@
-function BufferLoader(context, serverUrl, localSoundsUrl) {
+function BufferLoader(context, serverUrl) {
   this.context = context;
-  this.remoteServerUrl = serverUrl;
-  this.localSoundsUrl = localSoundsUrl;
-  this.serverUrl = localSoundsUrl || serverUrl;
+  this.serverUrl = serverUrl;
   this.format = 'ogg';
 
   this.loadedResources = {};
   this.loadingResources = [];
 }
 
+
+BufferLoader.prototype.onError = function() {};
 
 BufferLoader.prototype.loadResource = function(url, callback, errorCallback) {
   if (angular.isDefined(this.loadedResources[url])) {
@@ -28,7 +28,10 @@ BufferLoader.prototype.loadResource = function(url, callback, errorCallback) {
   request.open("GET", this.serverUrl+url+'.'+this.format, true);
   request.responseType = "arraybuffer";
 
-  request.onload = function() {
+  request.onload = function(e) {
+    if (e.target.status === 404) {
+      return e.target.onerror(e.target);
+    }
     // Asynchronously decode the audio file data in request.response
     loader.context.decodeAudioData(
       request.response,
@@ -62,14 +65,13 @@ BufferLoader.prototype.loadResource = function(url, callback, errorCallback) {
   }
 
   request.onerror = function(response) {
-    if (this.serverUrl !== this.remoteServerUrl) {
-      this.serverUrl = this.remoteServerUrl;
-      this.loadResource(url, callback, errorCallback)
-    }
-
+    this.onError(response);
     var index = loader.loadingResources.indexOf(url);
     if (index !== -1) {
       loader.loadingResources.splice(index, 1);
+    }
+    if (errorCallback) {
+      errorCallback(response);
     }
   }.bind(this)
 

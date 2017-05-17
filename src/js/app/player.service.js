@@ -11,8 +11,7 @@
   }
 
 
-  function audioPlayer($timeout, $q,
-        context, localSoundsUrl, soundsUrl, Observable, AudioComposer, Notes) { //Midi
+  function audioPlayer($timeout, $q, context, Observable, AudioComposer, Notes) { //Midi
     // Midi();
     // var notes = new Notes('A0', 'C7');
     // function playMidi(track, sound, startTime, duration) {
@@ -75,7 +74,7 @@
       this.countdown = false;
       this.setBpm(60);
       this.setPlaybackSpeed(1);
-      this.bufferLoader = new BufferLoader(context, soundsUrl, localSoundsUrl);
+      // this.bufferLoader = new BufferLoader(context, soundsUrl);
       this.scheduledSounds = [];
 
       this.input = {
@@ -84,7 +83,6 @@
       };
       // this.drums.audio.gain.value = 0.65;
       this.input.audio.gain.value = 0.001;
-      this.bufferLoader.loadResource('sounds/drums/drumstick');
 
       var _this = this;
       this.soundHandlers = [

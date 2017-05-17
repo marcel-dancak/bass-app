@@ -94,8 +94,9 @@
     }
   }
 
-  function AppController($scope, $q, $timeout, $translate, $mdDialog, $location, context,
-      settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, dataUrl, Note) {
+  function AppController($scope, $q, $timeout, $translate, $mdToast, $mdDialog, $location, context,
+      settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note,
+      dataUrl, localSoundsUrl, soundsUrl) {
     $scope.Note = Note;
     $scope.settings = settings;
 
@@ -154,6 +155,27 @@
       return label;
       // return '({0}) {1}'.format(value, label);
     };
+
+    function handleSoundSampleError() {
+      audioPlayer.bufferLoader.onError = function() {
+        $mdToast.show(
+          $mdToast.simple()
+            .toastClass('error')
+            .textContent('Failed to load sound sample!')
+            .position('bottom center')
+        );
+      };
+    }
+    // check local sounds server and switch to public server when unavailable
+    audioPlayer.bufferLoader = new BufferLoader(context, localSoundsUrl);
+    audioPlayer.bufferLoader.loadResource(
+      'sounds/drums/drumstick',
+      handleSoundSampleError,
+      function() {
+        audioPlayer.bufferLoader.serverUrl = soundsUrl;
+        handleSoundSampleError()
+      }
+    );
 
     audioPlayer.fetchResourcesWithProgress = function(resources) {
       var task = $q.defer();
