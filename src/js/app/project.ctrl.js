@@ -283,9 +283,8 @@
 
     var projectParam = $location.hash();
     if (projectParam) {
-      // $http.get(dataUrl+projectParam+'.json')
       $http({
-        url: dataUrl+projectParam+'.json',
+        url: dataUrl+projectParam,
         method: 'GET',
         transformResponse: [function (data) {
           if (data[0] !== '{') {
@@ -335,7 +334,7 @@
         {type: "application/json;charset=utf-8"}
       );
 
-      saveAs(blob, projectManager.project.name+'.json');
+      saveAs(blob, projectManager.project.name);
     };
 
     $scope.uploadProject = function() {
@@ -432,7 +431,7 @@
           [projectManager.serializeSection(projectManager.section)],
           {type: "application/json;charset=utf-8"}
         );
-        saveAs(blob, projectManager.section.name+'.json');
+        saveAs(blob, projectManager.section.name);
       }
     }
 
