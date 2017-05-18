@@ -892,6 +892,7 @@
         var nextSound = bassSound;
         while (nextSound.next) {
           nextSound = track.nextSound(nextSound);
+          if (!nextSound) break;
           var nextResources = this._getSoundHandler(nextSound).getResources(track, nextSound);
           nextResources.forEach(function(resource) {
             if (resources.indexOf(resource) === -1) {

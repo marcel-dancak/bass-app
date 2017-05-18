@@ -170,6 +170,31 @@
           this.initializeSound(sound);
         }, this);
       }, this);
+
+      // fix references with prev and next beat
+      var firstBeat = this.beat(beats[0].bar, beats[0].beat);
+      firstBeat.data.forEach(function(sound) {
+        if (sound.prev && sound.start === 0) {
+          var prev = this.prevSound(sound);
+          if (prev) {
+            prev.next = true;
+          } else {
+            sound.prev = false;
+          }
+        }
+      }, this);
+      var lastBeat = beats[beats.length-1];
+      lastBeat = this.beat(lastBeat.bar, lastBeat.beat)
+      lastBeat.data.forEach(function(sound) {
+        if (sound.next && sound.end === 1) {
+          var next = this.nextSound(sound);
+          if (next) {
+            next.prev = true;
+          } else {
+            sound.next = false;
+          }
+        }
+      }, this);
     }
 
     forEachBeat(callback, obj) {

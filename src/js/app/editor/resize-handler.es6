@@ -80,6 +80,7 @@
         var s = sound;
         while (s.next) {
           s = workspace.trackSection.nextSound(s);
+          if (!s) break;
           dependencies.push(s);
         }
         sound.note.length = resizeLength.length;

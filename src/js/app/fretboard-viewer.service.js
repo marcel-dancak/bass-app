@@ -311,7 +311,7 @@
           selectors.add(fretboardSelector(sound.string, sound.note));
         }
         if (sound.note.type === 'slide') {
-          selectors.add(fretboardSelector(sound.string, sound.note.slide.endNote));
+          selectors.add(fretboardSelector(sound.string, sound.endNote));
         }
       });
       var query = Array.from(selectors).join(',');
