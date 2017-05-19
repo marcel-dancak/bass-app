@@ -19,9 +19,13 @@
           ]);
           $mdIconProvider
             .defaultIconSet('app/styles/icons.svg', 32)
+            .iconSet('drums', 'app/styles/drums.svg', 512)
+            .icon('basscloud', 'app/styles/basscloud.svg')
         })
+        .constant('localSoundsUrl', 'http://127.0.0.1:8887/')
         .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/')
-        .constant('dataUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/data/');
+        .constant('dataUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/data/')
+        .constant('uploadUrl', 'https://basscloud.net/')
     </script>
   </head>
   <body
