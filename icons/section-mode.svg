@@ -45,28 +45,34 @@
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:zoom="5.6568546"
-     inkscape:cx="26.601443"
-     inkscape:cy="9.3856285"
-     inkscape:window-x="556"
-     inkscape:window-y="128"
+     inkscape:zoom="5.6568543"
+     inkscape:cx="20.134489"
+     inkscape:cy="11.211361"
+     inkscape:window-x="560"
+     inkscape:window-y="260"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <path
+     style="fill:#444444;fill-opacity:1"
+     d="m 2.65625,28 0,2.65625 26.6875,0 0,-2.65625 -6.28512,0 -3.635463,2.479902 -2.330067,0.0036 L 15.881282,28 z"
+     id="path2991"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccccccccc" />
+  <path
      style="fill:#444444"
-     d="m 6.9834017,6.2247637 0,8.0769863 c 3.46e-4,1.123952 0.566862,0.716402 0.926437,0.422142 l 4.6844103,-4.052564 c 0.24656,-0.209624 0.24656,-0.606518 0,-0.816143 L 7.9098387,5.8026207 C 7.4299177,5.4339189 6.9907747,5.3695552 6.9834017,6.2247637 z"
-     id="path2994"
+     d="m 6.983402,6.224398 0,8.076986 c 3.46e-4,1.123952 0.566862,0.716402 0.926437,0.422142 l 4.68441,-4.052564 c 0.24656,-0.209624 0.24656,-0.606518 0,-0.816143 L 7.909839,5.802255 C 7.429918,5.433553 6.990775,5.369189 6.983402,6.224398 z"
+     id="path2994-3"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="ccccccc" />
   <path
-     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.73816228;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
-     d="M 9.0045387,2.3582889 C 4.5941557,2.3582889 1,5.9524444 1,10.362828 c 0,4.410382 3.5941557,8.004538 8.0045387,8.004538 4.4103823,0 8.0045373,-3.594156 8.0045373,-8.004538 0,-4.4103836 -3.594155,-8.0045391 -8.0045373,-8.0045391 z m 0,1.3420782 c 3.6899753,0 6.6624593,2.972484 6.6624593,6.6624609 0,3.689976 -2.972484,6.662459 -6.6624593,6.662459 -3.689977,0 -6.662461,-2.972483 -6.662461,-6.662459 0,-3.6899769 2.972484,-6.6624609 6.662461,-6.6624609 z"
-     id="path3784"
+     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#444444;fill-opacity:1;stroke:none;stroke-width:1.73816228;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+     d="M 9.004539,2.3579227 C 4.594156,2.3579227 1,5.952079 1,10.362462 1,14.772844 4.594156,18.367 9.004539,18.367 c 4.410382,0 8.004537,-3.594156 8.004537,-8.004538 0,-4.410383 -3.594155,-8.0045393 -8.004537,-8.0045393 z m 0,1.3420783 c 3.689975,0 6.662459,2.972484 6.662459,6.662461 0,3.689976 -2.972484,6.662459 -6.662459,6.662459 -3.689977,0 -6.662461,-2.972483 -6.662461,-6.662459 0,-3.689977 2.972484,-6.662461 6.662461,-6.662461 z"
+     id="path3784-6"
      inkscape:connector-curvature="0" />
   <path
-     sodipodi:nodetypes="ccccc"
+     d="m 22.936027,12.677018 -4.564808,9.142328 4.626644,2.231071 4.513563,-9.167042 z m 2.792721,-3.0254139 c -0.610051,-0.294186 -1.298985,-0.1041142 -1.55401,0.4202039 l -0.826182,1.698644 4.626645,2.231072 0.826183,-1.698643 c 0.255007,-0.524293 -0.02239,-1.180359 -0.632438,-1.474542 z m -3.181136,15.4288309 -4.521881,-2.184161 0.633398,4.245378 z"
+     id="path4"
      inkscape:connector-curvature="0"
-     d="m 2.666,27.336 0,2.666 c 8.889334,0 17.778668,0 26.668,0 l 0,-2.666 c -8.889332,0 -17.778666,0 -26.668,0 z"
-     style="fill:#444444;fill-opacity:1"
-     id="path2991" />
+     style="fill:#444444"
+     sodipodi:nodetypes="cccccssccssscccc" />
 </svg>

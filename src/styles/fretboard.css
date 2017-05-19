@@ -181,9 +181,9 @@ md-input-container.input-inline-label label {
   xbackground-color: #e53935;
 }
 .fret-diagram .fret-box label.root {
-  xbackground-color: #800;
-  xfont-weight: bold;
-  xborder: 1px solid #f44336;
+  border: 1px solid #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.75);
+  box-sizing: border-box;
   border-radius: 3px;
 }
 .fret-diagram .fret-box label.highlight {

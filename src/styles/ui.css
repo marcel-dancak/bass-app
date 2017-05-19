@@ -336,9 +336,6 @@ md-menu-item.right md-icon {
   background-color: transparent;
 }
 
-.toggle-button.active md-icon {
-  fill: #2196F3;
-}
 
 .md-select-menu-container.sections-list md-content {
   overflow-x: hidden;
@@ -540,11 +537,6 @@ md-option md-icon {
   fill: #2196F3;
 }
 
-
-md-checkbox.md-checked .md-icon {
-  background-color: #2196F3;
-}
-
 md-input-container:not(.md-input-invalid).md-input-focused label {
   color: #2196F3!important;
 }
@@ -562,16 +554,6 @@ md-menu-content .md-button.md-focused:not([disabled]) */{
 }
 md-menu-item .md-button.md-focused:not([disabled]) {
   background-color: #ffffe0;
-}
-
-md-select-menu md-content md-option[selected],
-md-select-menu md-content md-option[selected]:focus {
-  color: #2196F3;
-}
-
-md-input-container:not(.md-input-invalid).md-input-focused .md-input,
-md-select:not([disabled]):focus .md-select-value {
-  border-color: #2196F3;
 }
 
 md-menu-item ._md-nested-menu {
@@ -782,11 +764,6 @@ md-toast.player.md-top {
   opacity: 0.5;
 }
 
-md-input-container:not(.md-input-invalid).md-input-focused label,
-md-input-container:not(.md-input-invalid).md-input-focused md-icon {
-  color: #2196F3;
-}
-
 footer {
   opacity: 0.6;
   position: absolute;
@@ -950,12 +927,6 @@ md-input-container label.md-no-float {
 
 .md-chip-input-container {
   height: 32px;
-}
-md-chips .md-chips.md-focused {
-  box-shadow: 0 2px #2196f3;
-}
-md-chips md-chip.md-focused {
-  background: #2196f3;
 }
 
 .upload-project-dialog .layout-row md-input-container {
