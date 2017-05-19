@@ -25,10 +25,21 @@
         <label class="md-no-float">Artist</label>
         <input ng-model="project.artist">
       </md-input-container>
-      <md-input-container class="md-block">
+
+      <md-input-container class="md-block" ng-class="{'md-input-focused': editorFocused}">
+        <label class="md-no-float">Description</label>
+        <div
+          class="markdown-editor"
+          ng-bind-html="descriptionHtml"
+          ng-focus="editorFocused=true"
+          ng-blur="editorFocused=false;updateEditor()">
+        </div>
+      </md-input-container>
+
+<!--       <md-input-container class="md-block">
         <label class="md-no-float">Description</label>
         <textarea ng-model="project.description"></textarea>
-      </md-input-container>
+      </md-input-container> -->
 
       <div layout="row">
         <md-input-container class="md-block" flex="50">

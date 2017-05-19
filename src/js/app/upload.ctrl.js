@@ -6,9 +6,9 @@
     .controller('UploadController', UploadController);
 
 
-  function UploadController($scope, $http, $mdDialog, projectManager, uploadUrl) {
+  function UploadController($scope, $http, $sce, $mdDialog, projectManager, uploadUrl) {
     console.log('-- UploadController --')
-    if (projectManager.store)
+    // if (projectManager.store)
 
     $scope.close = $mdDialog.hide;
     $scope.showLogin = false;
@@ -21,7 +21,7 @@
       console.log('transformChip')
     };
     var genres = [
-      'Funk', 'Rock', 'Pop', 'Jazz', 'Soul', 'RnB', 'Disco', 'Blues',
+      'Funk', 'Rock', 'Pop', 'Jazz', 'Acid Jazz', 'Soul', 'RnB', 'Disco', 'Blues',
       'Punk', 'Ska', 'House', 'Reggae', 'Hip hop', 'Trance', 'Gospel',
       'Country', 'Folk', 'Indie', 'Alternative', 'Metal', 'Techno', 'Rock and Roll',
       'Merengue', 'Salsa'
@@ -117,10 +117,10 @@
           delete resp.data.playing_styles;
           delete resp.data.tracks;
           // update form with fetched data
-          console.log(resp.data)
           for (var key in resp.data) {
             $scope.project[key] = resp.data[key];
           }
+          $scope.descriptionHtml = $sce.trustAsHtml(marked(resp.data.description));
         }, function(resp) {
 
         })
@@ -154,6 +154,22 @@
           }
         })
     }
+
+    var editor;
+    $scope.updateEditor = function() {
+      var md = editor.toMd();
+      $scope.descriptionHtml = $sce.trustAsHtml(marked(md));
+      $scope.project.description = md;
+    }
+
+    setTimeout(function() {
+      editor = new Pen({
+        class: 'description',
+        editor: document.querySelector('.markdown-editor'),
+        list: ['h1', 'h2', 'bold', 'italic', 'underline', 'insertorderedlist',
+              'insertunorderedlist', 'superscript', 'subscript', 'createlink']
+      });
+    }, 200);
   }
 
 })();

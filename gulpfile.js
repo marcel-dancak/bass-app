@@ -147,7 +147,8 @@ gulp.task('uglify', function() {
         'bower_components/angular-mousewheel/mousewheel.js',
         'bower_components/angularjs-slider/dist/rzslider.min.js',
         'bower_components/file-saver/FileSaver.min.js',
-        "bower_components/angular-scroll/angular-scroll.min.js",
+        'bower_components/angular-scroll/angular-scroll.min.js',
+        'bower_components/marked/marked.min.js',
 
 
         '!src/js/mobile/**/*.js',
@@ -197,6 +198,7 @@ gulp.task('csss', function() {
       'bower_components/angular-resizable/src/angular-resizable.css',
       'bower_components/swiper/dist/css/swiper.min.css',
       'bower_components/angularjs-slider/dist/rzslider.css',
+      'src/lib/pen/pen.css',
 
       '!src/styles/mobile/**/*.css',
       '!src/styles/screenshot.css',
@@ -214,6 +216,9 @@ gulp.task('csss', function() {
       .pipe(gulp.dest(TARGET)),
 
     gulp.src('src/styles/fonts/*')
+      .pipe(gulp.dest(TARGET + 'styles/fonts')),
+
+    gulp.src('src/lib/pen/fonts/*')
       .pipe(gulp.dest(TARGET + 'styles/fonts'))
   );
 });
