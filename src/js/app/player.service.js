@@ -751,6 +751,17 @@
       var bar = start.bar;
       var beat = start.beat;
       this.playBeat(bar, beat, context.currentTime, true);
+      if (options.audioTrack) {
+        console.log('AudioTrack playing');
+        var playbackOffset = ((bar-1)*this.section.timeSignature.top + beat -1) * (60/this.bpm);
+
+        var source = context.createBufferSource();
+        source.buffer = options.audioTrack.data;
+        source.connect(options.audioTrack.audio);
+        var start = options.audioTrack.start;
+        source.start(context.currentTime, playbackOffset + start[0] * 60 + start[1] + start[2]/1000);
+        this.audioTrack = source;
+      }
     };
 
     AudioPlayer.prototype.setBpm = function(bpm) {
@@ -872,9 +883,12 @@
             console.log('Error');
           }
         });
-        if (this.backingTrack) {
-          this.backingTrack.audio.pause();
-        }
+        // if (this.backingTrack) {
+        //   this.backingTrack.audio.pause();
+        // }
+      }
+      if (this.audioTrack) {
+        this.audioTrack.stop();
       }
 
       /*

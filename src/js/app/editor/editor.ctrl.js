@@ -270,6 +270,7 @@
     }
 
     var timeline;
+    var playbackOpts;
     $scope.player.play = function() {
       if ($scope.player.graphEnabled) {
         audioVisualiser.clear();
@@ -293,15 +294,18 @@
       timeline.start();
 
       swiperControl.lastRequestedIndex = swiperControl.barSwiper.snapIndex;
-      var options = {
+      playbackOpts = {
         countdown: $scope.player.countdown,
         start: start
       }
-      if (projectManager.project.backingTrack && Number.isFinite(workspace.section.backingTrackStart)) {
-        options.backingTrack = {
-          audio: projectManager.project.backingTrack,
-          start: workspace.section.backingTrackStart
-        }
+      // if (projectManager.project.backingTrack && Number.isFinite(workspace.section.backingTrackStart)) {
+      //   playbackOpts.backingTrack = {
+      //     audio: projectManager.project.backingTrack,
+      //     start: workspace.section.backingTrackStart
+      //   }
+      // }
+      if (projectManager.project.audioTrack) {
+        playbackOpts.audioTrack = projectManager.project.audioTrack;
       }
       audioPlayer.fetchResourcesWithProgress(workspace.section)
         .then(
@@ -310,7 +314,7 @@
             workspace.section,
             beatPrepared,
             playbackStopped,
-            options
+            playbackOpts
           ),
           function() {$scope.player.playing = false}
         );
@@ -341,8 +345,13 @@
         if (!swiperControl.loopMode && !$scope.player.visibleBeatsOnly && isLoopNeeded()) {
           swiperControl.createLoop();
           swiperControl.reset();
+        } else if ($scope.player.countdown) {
+          swiperControl.slideTo(0);
         }
-        audioPlayer.play(workspace.section, beatPrepared, playbackStopped);
+        // update playback options
+        playbackOpts.countdown = $scope.player.countdown;
+        delete playbackOpts.start;
+        audioPlayer.play(workspace.section, beatPrepared, playbackStopped, playbackOpts);
         return;
       }
       if (swiperControl.loopMode) {
@@ -501,6 +510,9 @@
       audioVisualiser.clear();
       audioVisualiser.reinitialize();
       console.log('sectionLoaded');
+      if (projectManager.project.audioTrack && section.audioTrackStart) {
+        projectManager.project.audioTrack.start = section.audioTrackStart.split(":").map(Number);
+      }
       console.log(section);
 
       workspace.section = section;

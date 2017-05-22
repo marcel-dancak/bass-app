@@ -6,6 +6,7 @@
     .directive('bdTextarea', bdTextarea)
     .directive('ngRightClick', contextMenu)
     .directive('bdFileDrop', bdFileDrop)
+    .directive('bdBinaryFileDrop', bdBinaryFileDrop)
     .directive('bdDisableStepValidator', bdDisableStepValidator)
 
 
@@ -92,4 +93,40 @@
     };
   }
 
+  function bdBinaryFileDrop($parse) {
+    return function(scope, iElem, iAttrs) {
+      var dropCallback = $parse(iAttrs.bdBinaryFileDrop);
+
+      function handleFileDrop(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        var files = evt.dataTransfer.files;
+        var file = files[0];
+        var reader = new FileReader();
+        reader.onload = function(evt) {
+          scope.$apply(function() {
+              var args = {
+                $file: {
+                  filename: file.name,
+                  content: reader.result
+                }
+              };
+              dropCallback(scope, args);
+          });
+        };
+        reader.readAsArrayBuffer(file)
+      }
+
+      function handleDragOver(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        // Explicitly show this is a copy.
+        evt.dataTransfer.dropEffect = 'copy';
+      }
+
+      iElem.on('dragover', handleDragOver);
+      iElem.on('drop', handleFileDrop);
+    };
+  }
 })();

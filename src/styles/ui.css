@@ -153,10 +153,42 @@ md-list-item.volume-field {
   height: 52px;
 }
 
+md-list-item.volume-field.audio-track {
+  height: 100px;
+  align-items: flex-start;
+}
+
 md-list-item.volume-field .rzslider {
   margin-top: 30px;
 }
+.volume-field .drop-area {
+  opacity: 0.3;
+  text-align: right;
+  padding-right: 16px;
+}
+.volume-field .time-field {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 0;
+}
 
+.preferences .time-field md-input-container {
+  margin: 0px 0px 4px 0;
+  height: 44px;
+  font-size: 14px;
+}
+.preferences .time-field md-input-container input {
+  margin-top: 8px;
+}
+
+.time-field span {
+  height: 15px;
+  min-width: 10px;
+  vertical-align: bottom;
+  display: inline-block;
+  align-self: center;
+}
 
 md-backdrop.md-select-backdrop {
   z-index: 100;

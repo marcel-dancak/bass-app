@@ -94,7 +94,7 @@
     }
   }
 
-  function AppController($scope, $q, $timeout, $translate, $mdToast, $mdDialog, $location, context,
+  function AppController($scope, $q, $timeout, $translate, $mdUtil, $mdToast, $mdDialog, $location, context,
       settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note,
       dataUrl, localSoundsUrl, soundsUrl) {
     $scope.Note = Note;
@@ -286,6 +286,28 @@
           // audioVisualiser.setInputSource(context, input.audio);
         }
       }
+    };
+
+    $scope.addAudioTrack = function(file) {
+      var gain = context.createGain();
+      gain.connect(context.destination);
+      $mdUtil.nextTick(function() {
+        $scope.$broadcast('rzSliderForceRender');
+      });
+      // use saved 'start' value if exists
+      var savedStart;
+      if ($scope.player.mode === 0 && workspace.section.audioTrackStart) {
+        savedStart = workspace.section.audioTrackStart.split(":").map(Number);
+      }
+      projectManager.project.audioTrack = {
+        data: null,
+        audio: gain,
+        start: savedStart || [0,0,0]
+      };
+      context.decodeAudioData(file.content, function(buffer) {
+        projectManager.project.audioTrack.data = buffer
+      });
+
     };
 
     $scope.slidesSizeChanged = function() {

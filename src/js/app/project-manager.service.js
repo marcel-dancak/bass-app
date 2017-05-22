@@ -432,6 +432,7 @@
         bpm: section.bpm,
         meta: section.meta,
         barSubdivision: section.barSubdivision,
+        audioTrackStart: section.audioTrackStart,
         tracks: {}
       }
       this.project.tracks.forEach(function(track) {
