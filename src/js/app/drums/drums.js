@@ -61,22 +61,30 @@
           label: 'Cabasa',
           filename: 'sounds/percussion/shaker_002'
         }, {
+          name: 'cowbell',
+          label: 'Cowbell',
+          filename: 'sounds/percussion/cowbell'
+        }, {
+          name: 'claves',
+          label: 'Claves',
+          filename: 'sounds/percussion/claves'
+        }, {
           name: 'bongo',
           label: 'Bongo',
-          filename: 'sounds/percussion/bongo_001d'
-        }, {
+          filename: 'sounds/percussion/bongo_005a'
+        }, /*{
           name: 'djembe',
           label: 'Djembe',
           filename: 'sounds/percussion/bongo_005d'
-        }, {
+        }, */{
           name: 'conga',
           label: 'Conga',
-          filename: 'sounds/percussion/bongo_006r'
-        }, {
+          filename: 'sounds/percussion/bongo_002c'
+        }/*, {
           name: 'cajon',
           label: 'Cajon',
           filename: 'sounds/percussion/bongo_002c'
-        }
+        }*/
       ]
     };
 
