@@ -294,25 +294,7 @@ md-dialog.help-dialog.md-transition-in {
   margin: auto;
   transform: translate3d(0, -4px, 0);
 }
-.help-container p md-icon.md-fab {
-  width: 32px;
-  height: 18px;
-  transform: translate3d(0, 4px, 0);
-}
-.help-container p md-icon.md-fab svg {
-  height: 20px;
-  width: 20px;
-}
-.help-container p md-icon.md-fab:before {
-  content: "";
-  width: 28px;
-  height: 28px;
-  position: absolute;
-  left: 1px;
-  top: -8px;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-  border-radius: 50%;
-}
+
 .help-container p.md-indent {
   position: relative;
   border-top: 1px solid #eee;

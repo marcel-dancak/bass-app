@@ -9,15 +9,6 @@
     drums backing tracks, or bass covers.
   </p>
 
-  <h5>Features:</h5>
-  <ul>
-    <li>various playback options to adjust playback speed, playback selection, repeating</li>
-    <li>multiple tracks (instruments) support with separate volume control</li>
-    <li>customizable bass sound labels (fret numbers, note names, ...)</li>
-    <li>easy to use user interface</li>
-    <li>pure HTML 5 application, can be served online or run locally</li>
-  </ul>
-
   <h5>Before you start</h5>
 
   <p>
@@ -39,6 +30,11 @@
     local storage</a> for saving projects, so be careful with clearing browser's data. It also means that each browser has
     independent workspace for storing data, and this workspace also depends on url used to serve this application. To move
     projects between different workspaces, use Export/Import functions to write/read project files.
+  </p>
+
+  <p>
+    It is highly recommended to frequently save changes during editing. Also be aware, that save function is not applied to the whole project, but only to current section, and switching to other section without save
+    will results in loosing of last changes!
   </p>
 </section>
 
@@ -112,15 +108,12 @@
   </div>
   <p>
     Allows to select active, configure and manage all instruments in the project. It also contains
-    a menu with volume preferences of all instruments (tracks) as well as input audio channel
-    volume when using microphone input.
+    a menu with volume preferences of all instruments (tracks), volume control for <em>Input Channel</em>
+    (when using microphone input), and special <em>Audio Track</em> channel.
   </p>
-  <p class="md-indent">
-    <md-icon md-svg-icon="tip"></md-icon><em>Tip: &nbsp;</em>
-    Use it to customize visual appearance of bass sound symbols
+  <p>
+    <em>Audio Track</em> is useful in transcription process, to play original audio in the "background" synchronized with Section playback. 
   </p>
-
-  <p></p>
 </section>
 <section id="section-3">
   <h4>{{ ::item.sections[2] }}</h4>
