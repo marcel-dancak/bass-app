@@ -1,7 +1,7 @@
-The main purpose of this application is to help starting bass players with their learing process.
-Application is highly focused on rhythm aspect of the music by using easy to understand timeline
-representation with labels for proper counting. It can be used to create various rhythmic excercises,
-backing tracks, or bass covers.
+Main purpose of this application is to help starting bass players in their learing process.
+It is highly focused on rhythm aspect of the music by using easy to understand timeline
+representation with labels for proper counting. It can be used to create various rhythmic
+excercises, backing tracks, or bass covers.
 
 
 It is highly recommended to use Blink/Webkit based browser. Application may not work properly in other browsers.
@@ -13,10 +13,7 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 * Opera
 
 
-### [Open Application](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html)
-
-### More information including screenshots and examples of created projects can be found [HERE](https://marcel-dancak.github.io/bass-app/)
-
+More information, including **screenshots** and **examples** of created projects can be found [HERE](https://marcel-dancak.github.io/bass-app/)
 
 
 <a href="https://basscloud.net">
@@ -30,8 +27,12 @@ BassCloud will be a new online hosting service for projects created with this ap
 
 * Configurable bass strings tunning
 * Improve percussions (more configurability, sound samples, ...)
-* Backing track playback (external audio)
 * Undo/Redo function for editor
 * Build desktop application (Electron)
 * Migrate code from Angular to Vue 2
 * Musical score view
+
+
+#### [Open Application](https://marcel-dancak.github.io/bass-app/app.html)
+
+<small>If you have created some projects in app available on previous URL, you can still access it [here](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html)</small>
