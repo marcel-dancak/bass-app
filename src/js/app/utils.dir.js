@@ -3,7 +3,7 @@
 
   angular
     .module('bd.app')
-    .directive('bdTextarea', bdTextarea)
+    // .directive('bdTextarea', bdTextarea)
     .directive('ngRightClick', contextMenu)
     .directive('bdFileDrop', bdFileDrop)
     .directive('bdBinaryFileDrop', bdBinaryFileDrop)
@@ -30,9 +30,9 @@
           fn(scope, {$event:event});
         });
       });
-    };
+    }
   }
-
+/*
   function bdTextarea($timeout) {
     return {
       scope: {
@@ -55,78 +55,60 @@
       }
     };
   }
+*/
+  function setupDragAndDrop(scope, iElem, dropCallback, binary) {
+    function handleFileDrop(evt) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      iElem.removeClass('dragover');
+
+      var files = evt.dataTransfer.files;
+      var file = files[0];
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        scope.$apply(function() {
+            var args = {
+              $file: {
+                filename: file.name,
+                content: reader.result
+              }
+            };
+            dropCallback(scope, args);
+        });
+      };
+      if (binary) {
+        reader.readAsArrayBuffer(file)
+      } else {
+        reader.readAsText(file)
+      }
+    }
+
+    function handleDragOver(evt) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      iElem.addClass('dragover');
+      // Explicitly show this is a copy.
+      evt.dataTransfer.dropEffect = 'copy';
+    }
+    function handleDragLeave(evt) {
+      iElem.removeClass('dragover');
+    }
+
+    iElem.on('dragover', handleDragOver);
+    iElem.on('dragleave', handleDragLeave);
+    iElem.on('drop', handleFileDrop);
+  }
 
   function bdFileDrop($parse) {
     return function(scope, iElem, iAttrs) {
-      var dropCallback = $parse(iAttrs.bdFileDrop);
-
-      function handleFileDrop(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-
-        var files = evt.dataTransfer.files;
-        var file = files[0];
-        var reader = new FileReader();
-        reader.onload = function(evt) {
-          scope.$apply(function() {
-              var args = {
-                $file: {
-                  filename: file.name,
-                  content: reader.result
-                }
-              };
-              dropCallback(scope, args);
-          });
-        };
-        reader.readAsText(file)
-      }
-
-      function handleDragOver(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        // Explicitly show this is a copy.
-        evt.dataTransfer.dropEffect = 'copy';
-      }
-
-      iElem.on('dragover', handleDragOver);
-      iElem.on('drop', handleFileDrop);
-    };
+      setupDragAndDrop(scope, iElem, $parse(iAttrs.bdFileDrop));
+    }
   }
 
   function bdBinaryFileDrop($parse) {
     return function(scope, iElem, iAttrs) {
-      var dropCallback = $parse(iAttrs.bdBinaryFileDrop);
-
-      function handleFileDrop(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-
-        var files = evt.dataTransfer.files;
-        var file = files[0];
-        var reader = new FileReader();
-        reader.onload = function(evt) {
-          scope.$apply(function() {
-              var args = {
-                $file: {
-                  filename: file.name,
-                  content: reader.result
-                }
-              };
-              dropCallback(scope, args);
-          });
-        };
-        reader.readAsArrayBuffer(file)
-      }
-
-      function handleDragOver(evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-        // Explicitly show this is a copy.
-        evt.dataTransfer.dropEffect = 'copy';
-      }
-
-      iElem.on('dragover', handleDragOver);
-      iElem.on('drop', handleFileDrop);
-    };
+      setupDragAndDrop(scope, iElem, $parse(iAttrs.bdBinaryFileDrop), true);
+    }
   }
+
 })();

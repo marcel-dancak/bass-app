@@ -166,6 +166,10 @@ md-list-item.volume-field .rzslider {
   text-align: right;
   padding-right: 16px;
 }
+.volume-field.dragover {
+  background-color: rgba(33, 152, 243, 0.1);
+}
+
 .volume-field .time-field {
   position: absolute;
   bottom: 0;
@@ -685,6 +689,9 @@ md-tooltip md-divider {
 }
 .select-list md-list-item.selected md-icon {
   fill: #2196F3;
+}
+.select-list.dragover {
+  background-color: rgba(33, 152, 243, 0.1);
 }
 
 /** Dialog windows */

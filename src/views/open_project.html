@@ -12,7 +12,7 @@
 
   <div layout="column">
     <small class="note text-center" translate="IMPORT_PROJECT_DESC"></small>
-    <md-dialog-content bd-file-drop="importProjectFile($file)">
+    <md-dialog-content>
       <md-list
         md-no-ink
         ng-init="
@@ -20,7 +20,8 @@
             selected: -1
           }
         "
-        class="select-list">
+        class="select-list"
+        bd-file-drop="importProjectFile($file)">
         <md-list-item
           ng-repeat="project in projects"
           ng-class="{
