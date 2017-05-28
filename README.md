@@ -13,14 +13,18 @@ It is highly recommended to use Blink/Webkit based browser. Application may not 
 * Opera
 
 
-More information, including **screenshots** and **examples** of created projects can be found [HERE](https://marcel-dancak.github.io/bass-app/)
+More information, including **screenshots** and **examples** of created projects can be found
+[HERE](https://marcel-dancak.github.io/bass-app/).
+Or check out a quick [video tutorial created by MannyBass](https://www.youtube.com/watch?v=JLsOd2502jM).
 
 
 <a href="https://basscloud.net">
   <img src="https://cdn.rawgit.com/marcel-dancak/drums-and-bass/master/docs/basscloud.svg" height="44">
 </a>
 
-BassCloud will be a new online hosting service for projects created with this application. It is still under development, but it should be working fine most of the time. You can check it [HERE](https://basscloud.net)
+BassCloud will be a new online hosting service for projects created with this application.
+It is still under development, but it should be working fine most of the time.
+You can check it [HERE](https://basscloud.net)
 
 
 **Future plans:**
@@ -33,6 +37,7 @@ BassCloud will be a new online hosting service for projects created with this ap
 * Musical score view
 
 
-#### [Open Application](https://marcel-dancak.github.io/bass-app/app.html)
+### [Open Application](https://marcel-dancak.github.io/bass-app/app.html)
 
-<small>If you have created some projects in app available on previous URL, you can still access it [here](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html)</small>
+<small>If you have created some projects in app available on previous URL, you can still access it
+[here](http://rawgit.com/marcel-dancak/drums-and-bass/master/dist/latest/index.html)</small>
