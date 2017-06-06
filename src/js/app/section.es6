@@ -145,6 +145,7 @@
     addSound(beat, sound) {
       Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
       sound.beat = beat
+      delete sound.offset;
       this.initializeSound(sound);
       beat.data.push(sound);
     }
@@ -336,6 +337,23 @@
       while (beat.data.length) {
         this.deleteSound(beat.data[0]);
       }
+    }
+
+    offsetSound(sound, offset) {
+      sound.offset = parseFloat(((sound.offset || 0) + offset).toFixed(2));
+      if (sound.offset === 0) delete sound.offset;
+
+      // sound.start = parseFloat((sound.start + offset ).toFixed(2));
+      // collect chained sounds before applying offset (important)
+      // var sounds = [sound];
+      // while (sound.next) {
+      //   sound = workspace.trackSection.nextSound(sound);
+      //   sounds.push(sound);
+      // }
+      // sounds.forEach(function(s) {
+      //   s.start = parseFloat((s.start + offset).toFixed(2));
+      //   s.end = parseFloat((s.end + offset).toFixed(2));
+      // });
     }
   }
 

@@ -65,7 +65,7 @@
       if (sound.note.staccato) {
         duration = 0.95*duration-(beatTime/4)*0.2;
       }
-      return duration;
+      return duration-(sound.offset || 0);
     }
 
     function AudioPlayer() {
@@ -566,6 +566,7 @@
     AudioPlayer.prototype._bassSoundScheduled = function(trackId, sound) {};
 
     AudioPlayer.prototype._playSound = function(trackId, track, beat, sound, startTime, beatTime) {
+      startTime += sound.offset || 0;
       var duration = noteRealDuration(sound, beatTime);
       var audio;
       if (sound.prev) {
@@ -600,6 +601,7 @@
       if (sound.prev) {
         return;
       }
+      startTime += sound.offset || 0;
       var stack = this._getSoundHandler(sound).prepareForPlayback(track, sound, startTime, beatTime);
 
       var audio = stack[0];
@@ -752,12 +754,11 @@
       var beat = start.beat;
       this.playBeat(bar, beat, context.currentTime, true);
       if (options.audioTrack) {
-        console.log('AudioTrack playing');
-        var playbackOffset = ((bar-1)*this.section.timeSignature.top + beat -1) * (60/this.bpm);
-
         var source = context.createBufferSource();
         source.buffer = options.audioTrack.data;
         source.connect(options.audioTrack.audio);
+
+        var playbackOffset = ((bar-1)*this.section.timeSignature.top + beat-1)*(60/this.bpm);
         var start = options.audioTrack.start;
         source.start(context.currentTime, playbackOffset + start[0] * 60 + start[1] + start[2]/1000);
         this.audioTrack = source;

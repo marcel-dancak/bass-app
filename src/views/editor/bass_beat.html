@@ -98,8 +98,8 @@
     ]"
     ng-attr-octave="{{ sound.note.octave }}"
     ng-style="{
-      left: (100*sound.start)+'%',
-      width: (100*(sound.end - sound.start))+'%'
+      left: (100*(sound.start+sound.offset))+'%',
+      width: (100*(sound.end - sound.start-sound.offset))+'%'
     }"
 
     ui-draggable="true"

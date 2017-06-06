@@ -254,6 +254,12 @@
             case 107: // +
               sound.volume = Math.min(1.0, roundFloat(sound.volume+0.05));
               break;
+            case 37: // left
+              workspace.trackSection.offsetSound(sound, -0.01);
+              break;
+            case 39: // right
+              workspace.trackSection.offsetSound(sound, 0.01);
+              break;
             case 76: // l
               if (sound.note.name.endsWith('♯')) {
                 sound.note.name = Notes.toFlat(sound.note.name);

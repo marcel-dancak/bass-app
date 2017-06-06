@@ -75,6 +75,12 @@
               sound.volume = Math.min(1.0, parseFloat((sound.volume+0.05).toFixed(2)));
               console.log(sound.volume);
               break;
+            case 37: // left
+              workspace.trackSection.offsetSound(sound, -0.01);
+              break;
+            case 39: // right
+              workspace.trackSection.offsetSound(sound, 0.01);
+              break;
 
             // just for debugging
             case 78: // n
