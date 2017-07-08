@@ -20,6 +20,10 @@
     note.name = scale[index];
   }
 
+  function floatsEqual(a, b) {
+    return Math.abs(a - b) <= 0.01;
+  }
+
   class BaseTrackSection {
     constructor(section, data) {
       this.section = section;
@@ -281,7 +285,7 @@
       var start = position.start;
       for (var i = 0; i < position.beat.data.length; i++) {
         var s = position.beat.data[i];
-        if (s.string === sound.string && s.start === start) {
+        if (s.string === sound.string && floatsEqual(s.start, start)) {
           return s;
         }
       }
@@ -302,7 +306,7 @@
           var stop = false;
           if (s.string === sound.string) {
             var end = sectionTime(beat, s.end);
-            if (end === absEnd) {
+            if (floatsEqual(end, absEnd)) {
               return s;
             }
             if (end < absEnd) {
