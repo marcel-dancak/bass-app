@@ -146,6 +146,12 @@
       return beat.data;
     }
 
+    orderedBeatSounds(beat) {
+      return beat.data.sort(function(a, b) {
+        return a.start - b.start;
+      });
+    }
+
     addSound(beat, sound) {
       Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
       sound.beat = beat

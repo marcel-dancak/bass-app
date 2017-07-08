@@ -80,6 +80,13 @@
         .primaryPalette('blue')
         .accentPalette('blue-grey');
     })
+    // Support for loading of AngularJS components after application has been bootstrapped
+    .config(function($controllerProvider, $provide, $compileProvider) {
+      angular.module('bd.app').controller = function(name, constructor) {
+        $controllerProvider.register(name, constructor);
+        return(this);
+      };
+    })
 
   function prettyScrollbar() {
     return {
@@ -94,7 +101,7 @@
     }
   }
 
-  function AppController($scope, $q, $timeout, $translate, $mdUtil, $mdToast, $mdDialog, $location, context,
+  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdToast, $mdDialog, $location, context,
       settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note,
       dataUrl, localSoundsUrl, soundsUrl) {
     $scope.Note = Note;
@@ -357,6 +364,76 @@
     window.oncontextmenu = function() {
       return false;
     }
+
+
+    function loadScript(ngTempl) {
+
+      var scope = $scope.$new(true);
+
+      var template = angular.element('<div>'+ngTempl+'</div>');
+
+      var dependenciesLoaded = $q.when();
+
+      // fetch list of already loaded JS scripts
+      var currentScripts = Array.from(
+          document.querySelectorAll('script[src]')
+        ).map(function(elem) {
+          return elem.src;
+        });
+
+      // JavaScript Dependencies (filter only not loaded yet)
+      var scriptElems = Array.from(
+          template[0].querySelectorAll('script[src]')
+        ).filter(function(elem) {
+          return currentScripts.indexOf(elem.src) === -1;
+        });
+
+      if (scriptElems.length) {
+        var loading = $q.defer();
+        dependenciesLoaded = loading.promise;
+        var loaded = 0;
+        scriptElems.forEach(function(scriptElem) {
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = scriptElem.src;
+          script.onload = function() {
+            console.log('loaded: '+script.src)
+            if (++loaded === scriptElems.length) {
+              loading.resolve();
+            }
+          }
+          document.body.appendChild(script);
+        });
+      }
+      var scriptElems = template[0].querySelectorAll('script:not([src])');
+      Array.from(scriptElems).forEach(function(scriptTempl, index) {
+        var scriptEl = document.createElement('script');
+        scriptEl.type = 'text/javascript';
+        if (index === 0) {
+          scriptEl.innerHTML = '(function() {{ angular.module("bd.app").controller("ScriptCtrl", {0}) }})()'
+          .format(scriptTempl.text);
+        } else {
+          scriptEl.innerHTML = scriptTempl.text;
+        }
+        document.body.appendChild(scriptEl);
+      });
+      document.body.appendChild(template.find('style')[0]);
+
+      dependenciesLoaded.then(function() {
+        $controller('ScriptCtrl', {'$scope': $scope.$new(true), 'template': template});
+      });
+    }
+
+    projectManager.on('projectLoaded', function(project) {
+
+      // $http.get('intervals.html').then(function(resp) {
+      //   loadScript(resp.data);
+      //   projectManager.store.project.script = resp.data;
+      // });
+      if (project.script) {
+        loadScript(project.script);
+      }
+    });
 
   }
 })();

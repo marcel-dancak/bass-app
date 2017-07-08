@@ -19,7 +19,8 @@
       name: this.projectData.name,
       tracks: this.projectData.tracks,
       sections: this.projectData.index,
-      playlists: this.projectData.playlists || []
+      playlists: this.projectData.playlists || [],
+      script: this.projectData.script
     };
   }
 
@@ -82,14 +83,14 @@
   ProjectLocalStore.prototype.getProject = function(projectId) {
     var projectConfig = this.read(projectKey(projectId));
     var playlists = this.read(playlistsKey(projectId), []);
-
     this.project = {
       id: projectId,
       upload_id: projectConfig.upload_id || '',
       name: projectConfig.name,
       sections: projectConfig.sections,
       tracks: projectConfig.tracks,
-      playlists: playlists
+      playlists: playlists,
+      script: projectConfig.script
     };
     this._updateProjectsOrder(projectId);
     return this.project;
@@ -216,8 +217,11 @@
       index: projectConfig.sections,
       tracks: projectConfig.tracks,
       playlists: playlists,
-      sections: sections
+      sections: sections,
     };
+    if (projectConfig.script) {
+      data.script = projectConfig.script;
+    }
     return data;
   }
 
@@ -236,8 +240,7 @@
     }
   }
 
-  function projectManager($http, $timeout, $q, Observable, context,
-      Bass, Drums, Piano, DrumTrackSection, TrackSection) {
+  function projectManager(Observable, context, Bass, Drums, Piano, DrumTrackSection, TrackSection) {
 
     var idCouter = {};
     var compressors = {};
@@ -353,7 +356,8 @@
         sections: angular.copy(projectData.sections),
         tracks: [],
         tracksMap: {},
-        playlists: []
+        playlists: [],
+        script: projectData.script
       };
       projectData.tracks.forEach(this.addTrack.bind(this));
 
