@@ -53,7 +53,6 @@
 
 
     function updateSlide(slideIndex, position, count) {
-      console.log('updating slide');
       var slideMeta = slidesMetadata[slideIndex];
       var slideWrapper = viewer.swiper.slides[slideIndex];
       if (!slideMeta || !slideWrapper || !slideWrapper.firstChild) {
@@ -259,17 +258,17 @@
         countdown: $scope.player.countdown && (angular.isDefined(start) || playbackState.section === 0),
         start: start || { bar: 1, beat: 1 }
       }
-      if (playbackState.section === 0 && projectManager.project.backingTrack && Number.isFinite(workspace.playlist.backingTrackStart)) {
-        options.backingTrack = {
-          audio: projectManager.project.backingTrack,
-          start: workspace.playlist.backingTrackStart
+      if (projectManager.project.audioTrack && section.audioTrackStart) {
+        options.audioTrack = {
+          data: projectManager.project.audioTrack.data,
+          audio: projectManager.project.audioTrack.audio,
+          start: section.audioTrackStart.split(":").map(Number)
         }
       }
       audioPlayer.play(section, beatSync, playbackStopped, options);
     }
 
     function playFromCurrentPosition() {
-      console.log('playFromCurrentPosition');
       var firstSlideMeta = slidesMetadata[viewer.swiper.snapIndex];
       var visibleBeatsMeta = firstSlideMeta.beats;
       if (slidesMetadata[viewer.swiper.snapIndex+1]) {
