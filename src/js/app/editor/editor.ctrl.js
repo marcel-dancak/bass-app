@@ -556,6 +556,7 @@
       workspace.section.tracks[track.id] = trackSection;
       return trackSection;
     }
+    workspace.initializeNewTrackSection = initializeNewTrackSection;
 
     $scope.ui.selectTrack = function(trackId) {
       console.log('selectTrack: '+trackId);

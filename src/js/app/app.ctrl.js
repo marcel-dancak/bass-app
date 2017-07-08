@@ -345,6 +345,14 @@
     window.pm = projectManager;
     window.av = audioVisualiser;
 
+    window.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.key === 'i') {
+        $mdDialog.show({
+          templateUrl: 'views/editor/gp_import.html',
+        });
+      }
+    });
+
     // Prevent default context menu
     window.oncontextmenu = function() {
       return false;

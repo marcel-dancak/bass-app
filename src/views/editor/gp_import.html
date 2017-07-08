@@ -1,0 +1,61 @@
+<md-dialog xclass="upload-project-dialog" style="min-width: 400px" ng-controller="GpImportController">
+  <div class="dialog-header">
+    <span>Import GP file</span>
+    <md-button
+      md-no-ink
+      aria-label="Close"
+      class="dialog-close icon-hover"
+      ng-click="close()">
+      <md-icon md-svg-icon="x"></md-icon>
+    </md-button>
+  </div>
+
+  <md-dialog-content layout-padding>
+    <div layout="column">
+      <md-input-container>
+        <label class="md-no-float">File</label>
+        <md-select
+          flex
+          md-no-ink
+          ng-model="gp.file"
+          md-on-close="getInfo(gp.file)">
+          <md-option
+            ng-repeat="file in files"
+            ng-value="::file">{{ ::file }}
+          </md-option>
+        </md-select>
+      </md-input-container>
+
+      <md-input-container>
+        <label class="md-no-float">Tracks</label>
+        <md-select
+          flex
+          md-no-ink
+          multiple
+          ng-model="gp.tracks">
+          <md-option
+            ng-repeat="track in tracks track by $index"
+            ng-value="$index">{{ track }}
+          </md-option>
+        </md-select>
+      </md-input-container>
+
+      <md-input-container>
+        <label class="md-no-float">Range</label>
+        <input ng-model="gp.range">
+      </md-input-container>
+      <md-button
+        md-no-ink
+        class="md-raised md-primary"
+        ng-click="import()">
+        Import
+      </md-button>
+<!--       <md-list>
+        <md-list-item ng-repeat="track in tracks">
+          <md-checkbox ng-model="track.selected"></md-checkbox>
+          <span>{{ track }}</span>
+        </md-list-item>
+      </md-list> -->
+    </div>
+  </md-dialog-content>
+</md-dialog>
