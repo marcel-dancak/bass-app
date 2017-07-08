@@ -26,11 +26,13 @@
         NEW: 'New',
         OPEN: 'Open',
         EXPORT: 'Export',
+        UPLOAD: 'Upload',
+        UPDATE: 'Update',
         SAVE: 'Save',
         SAVE_AS: 'Save As...',
         DELETE: 'Delete',
         REMOVE: 'Remove',
-        INPUT_VOLUME: 'Input Volume',
+        INPUT_VOLUME: 'Input Channel',
         COUNTDOWN: 'Countdown',
         REPEAT: 'Repeat mode',
         SCREEN_PLAYBACK: 'Visible screen playback',
@@ -64,12 +66,16 @@
         /** Piano instrument preferences **/
         RANGE: 'Range',
 
+        /** Other preferences */
+        ZOOM: 'Zoom',
+
         /** Section preferences **/
         TIME_SIGNATURE: 'Time signature',
         BARS: 'Numer of bars',
         BEATS_PER_SCREEN: 'Beats on screen',
         BEATS_PER_SLIDE: 'Beats per slide',
         BEATS_COUNTING: 'Beats counting',
+        CHORDS_EDITOR: 'Chords Editor',
 
         /** Barline context menu **/
         BEAT: 'Beat',
@@ -77,9 +83,11 @@
         SUBDIVISION: 'Subdivision',
         SUBDIVISION_STANDARD: 'Standard',
         SUBDIVISION_TRIPLET: 'Triplet',
+        DOUBLE_GRID: 'Double Grid',
         COPY: 'Copy',
         PASTE: 'Paste',
         CLEAR: 'Clear',
+        COMMENT: 'Comment',
 
         /** Bass Sound Properties **/
         PLAYING_STYLE: 'Style',
@@ -88,7 +96,7 @@
         NOTE_LENGTH: 'Length',
         DOTTED_NOTE: 'Dotted',
         STACCATO_NOTE: 'Staccato',
-        SLIDE_TO: 'Slide to',
+        END_PITCH: 'End pitch',
         SLIDE_TIMING: 'Slide timing',
         BEND_GRAPH: 'Bend graph',
         VOLUME: 'Volume',
@@ -103,7 +111,7 @@
         TAP: 'Tap',
         HAMMER_ON: 'Hammer-On',
         PULL_OFF: 'Pull-Off',
-        LET_RING: 'Let ring',
+        LET_RING: 'Let ring (Tie)',
         HARMONICS: 'Harmonics',
 
         /** Note types **/
@@ -119,6 +127,7 @@
         QUARTER: 'Quarter',
         EIGHTH: 'Eighth',
         SIXTEENTH: 'Sixteenth',
+        THIRTYSECOND: 'Thirty-second',
 
         /** Metadata **/
         METADATA: 'Metadata',
@@ -126,6 +135,7 @@
         CHORD: 'Chord',
         STRING: 'String',
         ROOT_NOTE: 'Root note',
+        BASS_NOTE: 'Bass note',
         TYPE: 'Type',
 
         FRETBOARD: 'Fretboard',
