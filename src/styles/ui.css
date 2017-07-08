@@ -62,6 +62,10 @@ body[zoom="95"] .resize-container {
   zoom: 105.26%;
 }
 
+.md-panel._md-panel-backdrop {
+  transform: none!important;
+}
+
 /*body > div {
   overflow: hidden;
 }*/
@@ -285,7 +289,6 @@ md-backdrop.md-select-backdrop {
   white-space: nowrap;
 }
 
-input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-inner-spin-button {
   margin-left: 6px;
   left: 10px;

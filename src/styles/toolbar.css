@@ -273,7 +273,11 @@ md-select-menu md-content,
 md-menu-content.preferences {
   max-height: 360px;
 }
-
+@media (min-height: 600px) {
+  md-menu-content.preferences {
+    max-height: 560px;
+  }
+}
 
 .dialog-header {
   text-align: center;

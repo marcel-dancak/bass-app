@@ -89,6 +89,7 @@
             // console.log('HIGHLIGHT NOTE');
             var qs = fretboardSelector(sound.string, sound.note);
             var elem = diagramElem.querySelector(qs);
+            if (!elem) return;
 
             setTimeout(function(elem) {
               if (stringsMap[sound.string] && stringsMap[sound.string].elem === elem) {
