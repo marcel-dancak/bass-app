@@ -616,8 +616,11 @@
       this.dispatchEvent('sectionLoaded', this.section);
     };
 
-    ProjectManager.prototype.loadPlaylist = function(playlistId) {
-      this.playlist = this.project.playlists.find(byId(playlistId));
+    ProjectManager.prototype.loadPlaylist = function(playlist) {
+      if (Number.isInteger(playlist)) {
+        playlist = this.project.playlists.find(byId(playlist));
+      }
+      this.playlist = playlist;
       this.dispatchEvent('playlistLoaded', this.playlist);
     };
 

@@ -101,7 +101,8 @@
           style="
             left: {{ ::100*sound.start }}%;
             width: {{ ::100 * (sound.end - sound.start) }}%;"
-          ng-attr-octave="{{ ::sound.note.octave }}">
+          ng-attr-octave="{{ ::sound.note.octave }}"
+          ng-attrs="::soundAttrs(sound)">
           <div
             class="top-label">
           </div>

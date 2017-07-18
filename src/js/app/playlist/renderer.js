@@ -3,8 +3,15 @@
 
   angular
     .module('bd.app')
-    .factory('slidesCompiler', slidesCompiler);
-
+    .factory('slidesCompiler', slidesCompiler)
+    .directive('ngAttrs', function() {
+      return {
+        link: function(scope, element, attrs) {
+          var attrs = scope.$eval(attrs.ngAttrs);
+          element.attr(attrs);
+        }
+      };
+    });
 
   function slidesCompiler($timeout, $q, $templateRequest, $compile, projectManager) {
 
@@ -22,7 +29,7 @@
     };
 
     var template;
-
+    var EMPTY_OBJ = {};
     return {
       setTemplate: function(templateUrl) {
         if (template) return $q.when();
@@ -30,8 +37,8 @@
           template = html;
         });
       },
+      soundAttrs: function(sound) { return EMPTY_OBJ; },
       updateSlide: function(scope, element, slideData, viewerTrackId) {
-        console.log('updating slide');
         element.firstChild.remove();
 
         var section = {id: -1};
@@ -53,6 +60,7 @@
         newScope.Note = scope.Note;
         newScope.beats = slideData.beats;
         newScope.emptyBeats = slideData.emptyBeats;
+        newScope.soundAttrs = this.soundAttrs;
 
         var contentEl = angular.element(template);
         $compile(contentEl)(newScope);
@@ -67,6 +75,7 @@
         newScope.track = scope.workspace.track;
         newScope.barLabels = scope.barLabels;
         newScope.Note = scope.Note;
+        newScope.soundAttrs = this.soundAttrs;
 
         var slideData = {
           playlistSectionIndex: position.section,

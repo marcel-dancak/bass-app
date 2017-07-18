@@ -361,6 +361,9 @@
     }
 
     function playbackStopped(evt) {
+      if (workspace.playlist.onPlaybackEnd) {
+        workspace.playlist.onPlaybackEnd(evt);
+      }
       playbackState.section++;
       if ($scope.player.playing && playbackState.section < playlist.length) {
         // continue in playlist
