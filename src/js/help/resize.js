@@ -6,7 +6,7 @@
     .controller('ResizeSlideshow', ResizeSlideshow);
 
 
-  function ResizeSlideshow($scope, $element, $timeout, basicHandler, bassResizeHandler) {
+  function ResizeSlideshow($scope, $element, $timeout, basicHandler, bassResizeHandler, workspace) {
 
     var editSound, editElem;
 
@@ -17,6 +17,10 @@
 
       basicHandler.selectSound({target: soundElem}, editSound);
       editElem.addClass('hover');
+      // this should be redesigned somehow
+      if (!workspace.trackSection) {
+        workspace.trackSection = $scope.workspace.trackSection;
+      }
       bassResizeHandler.onResizeStart(
         editSound,
         {element: editElem, width: editElem[0].offsetWidth}

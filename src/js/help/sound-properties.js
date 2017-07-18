@@ -80,7 +80,7 @@
         // formScope = angular.element(document.querySelector('.bass-sound-form')).scope();
         editSound.note.dotted = true;
         // formScope.soundLengthChanged(editSound);
-        editSound.end = editSound.start + workspace.trackSection.soundDuration(editSound);
+        editSound.end = editSound.start + $scope.workspace.trackSection.soundDuration(editSound);
       },
       function() {
         editSound.note.staccato = true;
