@@ -83,14 +83,14 @@
   height: 100%;
   /*width: calc(100% - 8px);*/
   width: 100%;
-  padding-left: 7px;
-  padding-right: 10px;
-  padding-top: 10px;
+  padding-left: 0.438em;
+  padding-right: 0.625em;
+  padding-top: 0.625em;
 }
 
 .playlist-swiper .bar-beat {
-  height: 44px;
-  margin-bottom: 10px;
+  height: 2.75em;
+  margin-bottom: 0.625em;
 }
 /*.playlist-swiper .bar-beat {
   min-height: 44px;
@@ -101,7 +101,7 @@
 
 .bass-sheet .swiper-slide .chord-label {
   position: absolute;
-  bottom: 10px;
+  bottom: 0.625em;
   color: #777;
   text-align: center;
   white-space: nowrap;
@@ -113,13 +113,13 @@
 }
 
 .bass-sheet .swiper-slide .header {
-  height: 56px;
+  height: 3.5em;
   position: relative;
 }
 
 
 .swiper-slide .header .bar-label {
-  top: 27px;
+  top: 2.063em;
 }
 
 .bass-sheet .swiper-slide .section-info .bar-beat::before,
@@ -131,12 +131,13 @@
 .bass-sheet .swiper-slide > div:last-child .bar-beat::after {
   position: absolute;
   top: 0;
-  right: -3px;
+  right: -2px;
   content: "";
-  width: 3px;
+  width: 2px;
   height: 100%;
   background-color: #aaa;
   z-index: 200;
+  xdisplay: none;
 }
 
 .bass-sheet .beat.first .bass-board:before {
@@ -161,15 +162,15 @@
 }
 
 .bass-sheet .beat.with-header {
-  padding-left: 36px;
+  padding-left: 2.25em;
   position: relative;
 }
 .bass-sheet .section-header {
   position: absolute;
   bottom: 0;
-  top: 56px;
+  top: 3.5em;
   left: 0px;
-  width: 36px;
+  width: 2.25em;
   text-align: center;
 }
 .bass-sheet .section-header .strings-labels {
@@ -177,24 +178,24 @@
   bottom: 0;
   top: auto;
   font-weight: 400;
-  width: 36px;
+  width: 2.25em;
 }
 
 .bass-sheet .swiper-slide .time-signature {
-  font-size: 20px;
+  font-size: 1.25em;
   top: 0;
 }
 
 .bass-sheet .swiper-slide .beat .section-label .bpm {
-  font-size: 15px;
+  font-size: 0.938em;
   color: #aaa;
-  line-height: 15px;
+  line-height: 0.938em;
   position: absolute;
   left: -30px;
   top: -8px;
 }
 .bass-sheet .swiper-slide .beat.with-header .section-label .bpm {
-  left: -48px;
+  left: -3em;
   top: -1px;
   text-align: center;
 }
@@ -203,7 +204,7 @@
 }
 
 .section-label i {
-  font-size: 17px;
+  font-size: 1.063em;
   width: 13px;
   line-height: 15px;
   display: inline-block;
@@ -213,11 +214,11 @@
 .section-label {
   position: absolute;
   top: 0;
-  left: 14px;
+  left: 0.8em;
   width: 200%;
 }
 .section-label .section-name {
-  font-size: 15px;
+  font-size: 0.938em;
   color: #555;
   font-weight: bold;
 }
@@ -260,7 +261,7 @@
 .playlist-editor .info-note {
   padding: 4px 0;
   text-align: center;
-  font-size: 13px;
+  font-size: 0.813em;
   color: #777;
 }
 
@@ -293,7 +294,7 @@
   bottom: 0;
   transform: translate3d(0, 100%, 0);
   color: #777;
-  font-size: 15px;
+  font-size: 0.938em;
 }
 
 .playlist-swiper.swiper-container-horizontal {

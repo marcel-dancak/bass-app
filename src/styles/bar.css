@@ -14,7 +14,7 @@
 }
 .bar-slide .chord {
   position: absolute;
-  top: -30px;
+  top: -1.875em;
   text-align: center;
   cursor: pointer;
   color: #777;
@@ -55,13 +55,13 @@
   left: 0;
   background-color: #ccc;
   content: "";
-  width: 1.15px;
+  width: 1px;
   height: 65%;
 }
 
 .bar-beat .subbeat:first-child label {
   font-weight: bold;
-  font-size: 20px;
+  font-size: 1.125em;
   color: #333;
 }
 
@@ -89,8 +89,8 @@
 
 .bar-beat {
   height: 7vh;
-  max-height: 60px;
-  min-height: 46px;
+  max-height: 3.75em;
+  min-height: 2.875em;
   position: relative;
 }
 
@@ -103,25 +103,25 @@
 
 .bar.swiper-container,
 .bar-swiper {
-  padding-top: 32px;
-  padding-left: 8px;
-  padding-right: 8px;
+  padding-top: 2em;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
   overflow: hidden;
 }
 .bar-label {
   position: absolute;
-  left: -8px;
-  top: -32px;
+  left: -0.57em;
+  top: -2.15em;
   z-index: 500;
   font-weight: bold;
-  font-size: 13px;
+  font-size: 0.813em;
   background-color: #555;
   color: #fff;
   text-align: center;
-  min-width: 20px;
-  height: 20px;
-  line-height: 20px;
-  border-radius: 10px;
+  min-width: 1.5em;
+  height: 1.5em;
+  line-height: 1.6em;
+  border-radius: 50%;
 }
 
 /*.bar-slide .chord-label {
@@ -144,13 +144,13 @@
 }*/
 
 .bar.swiper-container {
-  padding-right: 4px;
-  padding-bottom: 20px;
+  padding-right: 0.25em;
+  padding-bottom: 1.25em;
 }
 
 .bar-container {
   position: relative;
-  margin: 0 18px 1vh 48px;
+  margin: 0 1.125em 1vh 3em;
   transition: width 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
 }
 
@@ -176,9 +176,9 @@
 
 .bar-toolbar {
   position: absolute;
-  left: -44px;
-  top: 32px;
-  width: 44px;
+  left: -2.75em;
+  top: 2em;
+  width: 2.75em;
 }
 
 .section-preferences .md-menu {
@@ -191,13 +191,13 @@
 }
 
 .time-signature-button.md-button {
-  min-width: 36px;
-  min-height: 48px;
+  min-width: 2.25em;
+  min-height: 2.75em;
+  height: 2.75em;
   width: 100%;
-  height: 100%;
   margin: 0;
   padding: 0;
-  font-size: 20px;
+  font-size: 1.25em;
   position: relative;
   border-radius: 0;
   border-bottom: 2px solid transparent;
@@ -206,7 +206,7 @@
 
 .time-signature-button.md-button p {
   margin: 0;
-  line-height: 24px;
+  line-height: 1.2em;
 }
 /*.time-signature-button.md-button:hover {
   color: #2196F3;

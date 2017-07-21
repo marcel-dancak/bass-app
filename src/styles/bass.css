@@ -29,10 +29,10 @@
 }
 
 .strings-4 .bass-board {
-  height: 145px;
+  height: 9em;
 }
 .strings-5 .bass-board {
-  height: 181px;
+  height: 11.25em;
 }
 /*
 .bass-tunning-button {
@@ -55,17 +55,17 @@
   top: 34px;
   text-align: center;
   left: 0;
-  width: 42px;
-  font-weight: 500;
-  font-size: 20px;
+  width: 2.625em;
   -webkit-user-select: none;
   user-select: none;
 }
 
 .strings-labels p {
   margin: 0;
-  height: 36px;
-  line-height: 36px;
+  font-size: 1.25em;
+  font-weight: 400;
+  height: 1.8em;
+  line-height: 2em;
 }
 
 .string-container {
@@ -78,7 +78,7 @@
 }
 
 .bass-string {
-  height: 36px;
+  height: 2.25em;
   width: 100%;
   opacity: 0.8;
   position: relative;
@@ -86,7 +86,7 @@
 .bass-string:before {
   content: "";
   position: absolute;
-  height: 1.15px;
+  height: 1px;
   width: 100%;
   top: 50%;
   left: 0;
@@ -123,36 +123,9 @@
   opacity: 1;
 }*/
 
-
-.bass-button {
-  position: absolute;
-  left: 5px;
-  top: 2px;
-  min-width: 32px;
-  min-height: 32px;
-  width: 32px;
-  height: 32px;
-  line-height: 30px;
-  margin: 0;
-  padding: 0 2px;
-  text-align: center;
-  text-transform: none;
-  color: #e2e2e2;
-  background-color: #fff;
-  border-radius: 16px;
-  border: 1px solid #e2e2e2;
-  font-size: 20px;
-  font-weight: 300;
-  box-sizing: border-box;
-  outline: 3px solid white;
-  opacity: 0.001;
-  z-index: -1;
-  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-}
-
 .sound-container {
   top: 0;
-  height: 34px;
+  height: 2.125em;
   text-align: center;
   z-index: 200;
   overflow: visible;
@@ -165,7 +138,7 @@
   border: 1px solid #777;
   box-sizing: border-box;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-  line-height: 34px;
+  line-height: 2.125em;
   pointer-events: auto;
   transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   transition-property: none;
@@ -189,12 +162,12 @@
 .name-and-fret .sound-container .label-wrapper .ring,
 .name-and-fret .ring:not(.slide) .sound-container .label-wrapper,
 .sound-container .label-wrapper {
-  line-height: 32px;
-  font-size: 16px;
+  line-height: 2em;
+  font-size: 1em;
 }
 
 .name-and-fret .sound-container .label-wrapper {
-  font-size: 13px;
+  font-size: 0.813em;
   line-height: normal!important;
 }
 .name-and-fret .sound-container .label-wrapper label {
@@ -212,8 +185,8 @@
 .name-and-fret .sound-container label.note,
 .name-and-fret .sound-container label.fret {
   display: block;
-  height: 16px;
-  line-height: 15px;
+  height: 1.2em;
+  line-height: 1.2em;
 }
 .name-and-fret .sound-container label.note {
   top: 0;
@@ -229,7 +202,7 @@
 
 .sound-container.ring:not(.slide) .label-wrapper > div:before {
   content: "⏝";
-  line-height: 32px;
+  line-height: 2em;
   position: absolute;
 }
 
@@ -266,8 +239,8 @@
   background-color: #ddd;
 }
 .ghost.sound-container p {
-  line-height: 32px;
-  font-size: 16px;
+  line-height: 2em;
+  font-size: 1.3em;
   margin: 0;
 }
 
@@ -279,8 +252,8 @@
   border: 2px solid #333!important;
   margin: 0 1px 0 1px;
   border-radius: 4px;
-  line-height: 32px;
-  height: 36px;
+  line-height: 2em;
+  height: 2.25em;
   transition-property: width, opacity;
   z-index: 201;
 }
@@ -318,16 +291,6 @@
 .workspace {
   min-height: 410px!important;
 }
-.workspace:hover .bass-button {
-  opacity: 0.99;
-  transition-delay: 0.1s;
-  transition: z-index 0.4s step-end;
-  z-index: 1;
-}
-
-.bass-button:hover:not([disabled]) {
-  background-color: #fff;
-}
 
 
 .musical-tab-char {
@@ -349,15 +312,15 @@
 
 .octave-index {
   opacity: 0.25;
-  font-size: 14px;
+  font-size: 0.750em;
 }
 
 .bass .sound-container p {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  height: 32px;
-  line-height: 36px;
+  height: 2em;
+  line-height: 2.25em;
   vertical-align: bottom;
 }
 
@@ -374,7 +337,7 @@
 .resize-box,
 .drag-box {
   position: fixed;
-  height: 36px;
+  height: 2.125em;
   padding: 0;
   border: 2px solid rgb(33,150,243);
   border-radius: 4px;
@@ -393,12 +356,12 @@
 .resize-box i {
   position: absolute;
   right: 0;
-  top: -30px;
-  font-size: 19px;
+  top: -1.875em;
+  font-size: 1em;
   width: 26px;
-  height: 26px;
+  height: 1.625em;
   text-align: left;
-  line-height: 28px;
+  line-height: 1.75em;
   background-color: rgba(33,150,243, 0.75);
   border-radius: 5px;
   xletter-spacing: -2px;
@@ -412,7 +375,7 @@
   border-radius: 4px;
   top: 0;
   left: 0;
-  height: 32px;
+  height: 2em;
   right: 0;
 }
 
@@ -431,14 +394,15 @@
   display: block;
   width: 10px;
   top: 0;
+  bottom: 0;
   right: 0;
-  padding: 4px 0;
+  padding: 0.2em 0;
   transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   pointer-events: auto;
   opacity: 0;
   color: #333;
-  font-size: 13px;
-  line-height: 11px;
+  font-size: 0.85em;
+  line-height: 0.9em;
 }
 /** Can't hide whole resize-container, because right click menu hack (with backdrop) will not work */
 .ghost.sound-container .resize-handler,
@@ -462,10 +426,6 @@
 .drag-move-element {
   pointer-events: none;
   opacity: 0.4;
-}
-
-.hidden .bass-button {
-  display: none;
 }
 
 .buttons-spinner .md-button.md-focused:not(:hover) {
@@ -499,11 +459,11 @@ md-input-container.slide-field > span {
 
 .slide .slide-slash {
   padding: 0 4px;
-  width: 10px!important;
-  line-height: 32px;
+  width: 0.625em!important;
+  line-height: 2em;
   vertical-align: top;
-  max-height: 32px;
-  font-size: 20px;
+  max-height: 2em;
+  font-size: 1.125em;
   font-weight: 300;
   transform: rotateZ(55deg);
 }
@@ -518,7 +478,7 @@ md-input-container.slide-field > span {
   height: 100%;
 }
 .sound-container .label-wrapper .slide {
-  height: 32px;
+  height: 100%;
 }
 
 .bass-board-container.name .sound-container .label-wrapper .fret {
@@ -546,12 +506,12 @@ md-input-container.slide-field > span {
 
 
 .sound-container .grace {
-  font-size: 11px;
+  font-size: 0.7em;
   padding-right: 3px;
 }
 
 .name-and-fret .sound-container .grace {
-  font-size: 9px;
+  font-size: 0.8em;
 }
 
 
@@ -606,7 +566,7 @@ md-input-container.slide-field > span {
   position: absolute;
   top: 5px;
   left: 11px;
-  font-size: 20px;
+  font-size: 1.250em;
   transform-origin: 50%  51%; /* to avoid blury text */
   transform: rotateZ(-90deg);
 }
@@ -614,7 +574,7 @@ md-input-container.slide-field > span {
   position: absolute;
   top: -5px;
   left: 10px;
-  font-size: 14px;
+  font-size: 0.875em;
 }
 .sound-container.hammer .hammer-on-label:after {
   content: "H";
@@ -634,8 +594,8 @@ md-input-container.slide-field > span {
   z-index: 201;
   text-align: center;
   width: 100%;
-  font-size: 14px;
-  line-height: 36px;
+  font-size: 0.875em;
+  line-height: 2.5em;
 }
 
 .staccato .top-label:before {
@@ -643,6 +603,7 @@ md-input-container.slide-field > span {
   position: absolute;
   top: 0;
   padding-left: 2px;
+  line-height: 0.656em;
   line-height: 12px;
 }
 
@@ -663,19 +624,19 @@ md-input-container.slide-field > span {
 }
 
 .string-5 .top-label {
-  top: -176px;
+  transform: translateY(-12.57em);
 }
 .string-4 .top-label {
-  top: -140px;
+  transform: translateY(-10em);
 }
 .string-3 .top-label {
-  top: -104px;
+  transform: translateY(-7.43em);
 }
 .string-2 .top-label {
-  top: -68px;
+  transform: translateY(-4.86em);
 }
 .string-1 .top-label {
-  top: -32px;
+  transform: translateY(-2.28em);
 }
 
 
@@ -688,22 +649,23 @@ md-input-container.slide-field > span {
 
 .display-note-length .bottom-label i {
   display: inline-block;
+  font-size: 1.25em;
 }
 
 .string-1 .bottom-label {
-  top: 136px;
+  transform: translateY(10.2em);
 }
 .string-2 .bottom-label {
-  top: 100px;
+  transform: translateY(7.65em);
 }
 .string-3 .bottom-label {
-  top: 64px;
+  transform: translateY(5.05em);
 }
 .string-4 .bottom-label {
-  top: 28px;
+  transform: translateY(2.5em);
 }
 .string-5 .bottom-label {
-  top: -8px;
+  transform: translateY(-0.6em);
 }
 
 .strings-5 .bottom-label {
@@ -711,16 +673,16 @@ md-input-container.slide-field > span {
 }
 
 .string-2.sound-container {
-  top: 36px;
+  transform: translateY(2.25em);
 }
 .string-3.sound-container {
-  top: 72px;
+  transform: translateY(4.5em);
 }
 .string-4.sound-container {
-  top: 108px;
+  transform: translateY(6.75em);
 }
 .string-5.sound-container {
-  top: 144px;
+  transform: translateY(9em);
 }
 
 
@@ -741,12 +703,6 @@ md-input-container.slide-field > span {
   width: 66.666%;
 }
 .beat[subdivision="3"] .subbeats-container:last-child {
-  display: none;
-}
-
-/* string-container is the first child, so count subbeats-container with +1 */
-.beat[subdivision="4"][visible-subbeats="2"] .bass > .subbeats-container:nth-child(3) .bass-button,
-.beat[subdivision="4"][visible-subbeats="2"] .bass > .subbeats-container:nth-child(5) .bass-button {
   display: none;
 }
 

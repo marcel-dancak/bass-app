@@ -1,5 +1,7 @@
 html {
   overflow-y: hidden!important;
+  font-size: 1em;
+  xfont-size: 0.75em;
 }
 body {
   background-color: #fff;
@@ -119,7 +121,7 @@ md-icon {
 }
 
 .md-button.icon-hover:not([disabled]):not(.active) {
-  opacity: 0.7;
+  opacity: 0.75;
 }
 .md-button.icon-hover:hover:not([disabled]) {
   opacity: 1;
@@ -138,8 +140,8 @@ md-select-value {
 }
 
 md-input-container.input-inline-label {
-  margin: 6px 0;
-  line-height: 46px;
+  margin: 0.375em 0;
+  line-height: 2.875em;
 }
 md-input-container.input-inline-label label {
   bottom: auto;
@@ -505,14 +507,14 @@ md-option {
 }
 
 .workspace .instrument-grid {
-  margin: 0 18px 0 48px;
+  margin: 0 1.125em 0 3em;
   position: relative;
   xoverflow: hidden;
 }
 
 .workspace .swiper-container {
-  padding-left: 8px;
-  padding-right: 4px;
+  padding-left: 0.5em;
+  padding-right: 0.25em;
 }
 
 .beat-container {
@@ -554,7 +556,7 @@ md-option {
 .instrument-left-panel {
   position: absolute;
   top: 0;
-  left: -42px;
+  left: -2.625em;
   bottom: 0;
 }
 
@@ -840,7 +842,7 @@ footer .separator {
 }
 
 md-input-container label.md-no-float {
-  font-size: 11px;
+  font-size: 0.688em;
 }
 
 .bottom-note {

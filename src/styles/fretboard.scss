@@ -1,0 +1,320 @@
+
+.fretboard-settings {
+  height: 2.750em;
+  line-height: 0;
+
+  md-input-container {
+    margin: 2px 1em 2px 5px;
+    .md-no-float {
+      height: 100%;
+    }
+  }
+  .style-selectbox {
+    min-width: 120px;
+  }
+
+  md-select-value {
+    height: 2em;
+    min-height: 2em;
+    > span {
+      line-height: 2em;
+    }
+    i {
+      font-size: 1.188em;
+    }
+  }
+  input {
+    padding-top: 6px;
+    height: 2.125em;
+    width: 80px;
+  }
+  md-checkbox {
+    line-height: 2em;
+
+/*    .md-icon {
+      width: 1.25em;
+      height: 1.25em;
+    }*/
+    &.md-checked .md-icon {
+      background-color: #777;
+    }
+  }
+}
+
+
+md-input-container.input-inline-label label {
+  bottom: 3px;
+  left: 0;
+  position: relative;
+}
+
+
+
+.fret-diagram,
+.fretboard {
+  padding: 0 10px 0 6px;
+  position: relative;
+}
+
+.fretboard-scroller {
+  overflow-x: auto;
+}
+
+.fret-box {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  outline: none;
+  line-height: 2.063em;
+  text-align: center;
+  color: #333;
+  position: relative;
+
+  &.ghost-note {
+    min-width: 4em;
+    max-width: 4em;
+    background-color: #ccc;
+    text-align: center;
+    border-bottom: 1px solid #fff;
+    border-left: 1px solid #fff;
+    label {
+      margin: 0;
+      font-size: 1em;
+      display: block;
+      border-radius: 0;
+      outline: none;
+    }
+  }
+  label {
+    display: inline-block;
+    font-size: 0.875em;
+    max-height: 1.938em;
+  }
+  label:hover {
+    font-weight: bold;
+  }
+}
+
+
+.fret-box.flex {
+  min-width: 4em;
+}
+
+.fretboard {
+  .fret-box {
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+
+    label {
+      width: 100%;
+
+      &:nth-child(2):before {
+        content: "/";
+        color: #333;
+        font-weight: normal;
+        position: absolute;
+        top: 0;
+        left: calc(50% - 2px);
+      }
+    }
+    &.dual-label label {
+      width: 50%;
+    }
+    &:hover {
+      opacity: 0.92;
+      color: #222;
+    }
+    &.ghost-note:hover {
+      background-color: #d3d3d3;
+    }
+  }
+}
+
+.fret-diagram {
+  .string {
+    height: 2.125em;
+    position: relative;
+    z-index: 1;
+  }
+  .fret-box {
+    text-align: center;
+    border-right: 3px solid #ccc;
+    line-height: 1.85em;
+    height: 2.125em;
+
+    /* string line (must be for every fret-box because of scrolling) */
+    &:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      transform: translate3d(0, 0.938em, 0);
+      background-color: #ccc;
+      height: 1px;
+      z-index: -1;
+    }
+    &.ghost-note {
+      border-bottom: none;
+      height: calc(100% - 1px);
+      color: #fff;
+      label {
+        width: 100%;
+      }
+    }
+    label {
+      background-color: #cccccc;
+      color: #fff;
+      width: 1.858em;
+      height: 1.858em;
+      line-height: 1.858em;
+      border-radius: 50%;
+      margin: 1px 1px;
+      position: relative;
+      &.active {
+        background-color: #444;
+        /*background-color: #e53935;*/
+      }
+      &.root {
+        border: 1px solid #f44336;
+        border: 1px solid rgba(244, 67, 54, 0.75);
+        box-sizing: border-box;
+        border-radius: 3px;
+      }
+      &.highlight {
+        /*background-color: #2196F3;*/
+        background-color: #e53935!important;
+      }
+      &.highlight.x:after {
+        content: "X";
+        font-size: 13px;
+        position: absolute;
+        text-align: center;
+        background-color: #e53935;
+        left: 0;
+        right: 0;
+        border-radius: 50%;
+      }
+    }
+  }
+}
+
+
+.fretboard .fret-box.octave-0,
+.drag.fret-box.octave-0 {
+  background-color: #f44336;
+}
+.fretboard .fret-box.octave-1,
+.drag.fret-box.octave-1 {
+  background-color: #ff5722;
+}
+.fretboard .fret-box.octave-2,
+.drag.fret-box.octave-2 {
+  background-color: #ff9800;
+}
+.fretboard .fret-box.octave-3,
+.drag.fret-box.octave-3 {
+  background-color: #ffc107;
+}
+.fretboard .fret-box.octave-4,
+.drag.fret-box.octave-4 {
+  background-color: #ffeb3b;
+}
+
+.drag.fret-box.ghost-note {
+  background-color: #ddd;
+}
+
+
+/** Borders **/
+
+.drag.fret-box {
+  border: 2px solid #555!important;
+  border-radius: 3px;
+}
+
+.fret-box:first-child {
+  border-left: 2px solid #999;
+  max-width: 3.375em;
+  min-width: 3.375em;
+  background-color: rgba(230,230,230,0.33);
+  font-weight: bold;
+}
+.fret-box:last-child {
+  border-right: 2px solid #999;
+}
+
+.fretboard .strings:before,
+.fret-diagram .strings:before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 10px;
+  height: 2px;
+  background-color: #999;
+  transform: translate3d(0, -2px, 0);
+}
+.fretboard .strings:after,
+.fret-diagram .strings:after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 10px;
+  height: 2px;
+  background-color: #999;
+  transform: translate3d(0, -2px, 0);
+  z-index: 10;
+}
+
+
+/** Fretboard labels **/
+
+.fretboard .frets-labels,
+.fret-diagram .frets-labels {
+  padding-right: 4em;
+  line-height: 20px;
+  height: 23px;
+}
+
+.fretboard .frets-labels label,
+.fret-diagram .frets-labels label {
+  display: inline-block;
+  font-size: 12px;
+  color: #999;
+  position: relative;
+  min-width: 4em;
+  text-align: center;
+}
+.frets-labels label[fret="0"] {
+  min-width: 3.125em;
+  max-width: 3.125em;
+  color: #fff;
+}
+.frets-labels label[fret="3"]:before,
+.frets-labels label[fret="5"]:before,
+.frets-labels label[fret="7"]:before,
+.frets-labels label[fret="9"]:before,
+.frets-labels label[fret="15"]:before,
+.frets-labels label[fret="17"]:before,
+.frets-labels label[fret="19"]:before,
+.frets-labels label[fret="21"]:before {
+  content: "\e905";
+  font-size: 20px;
+  line-height: 12px;
+  transform: translate3d(-2px, 4px, 0);
+  width: 12px;
+  display: inline-block;
+  font-family: 'Musica' !important;
+  -webkit-font-smoothing: antialiased;
+}
+.frets-labels label[fret="12"]:before,
+.frets-labels label[fret="24"]:before {
+  content: "\e906";
+  font-size: 20px;
+  position: relative;
+  line-height: 12px;
+  transform: translate3d(-2px, 4px, 0);
+  width: 12px;
+  display: inline-block;
+  font-family: 'Musica' !important;
+  -webkit-font-smoothing: antialiased;
+}
