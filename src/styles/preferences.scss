@@ -1,0 +1,143 @@
+.preferences {
+  md-list {
+    padding: 2px 10px;
+  }
+
+  md-list-item {
+    margin-top: 4px;
+
+    label {
+      position: absolute;
+      color: #777;
+      top: 0;
+      left: 0;
+      font-size: 0.813em;
+      md-icon {
+        width: 1.846em;
+        height: 1.846em;
+      }
+    }
+    md-icon {
+      fill: #555;
+      width: 1.5em;
+      height: 1.5em;
+    }
+  }
+
+  md-input-container {
+    margin: 16px 0 8px 0;
+    padding: 0;
+    width: 100%;
+
+    input {
+      padding-top: 8px;
+      height: 34px;
+      text-align: right;
+      &[type="text"] {
+        padding-right: 24px;
+      }
+    }
+
+    .md-errors-spacer {
+      max-height: 0;
+      min-height: 0;
+    }
+  }
+  .volume-field {
+    .md-button {
+      font-size: 1em;
+    }
+  }
+  .bottom-border {
+    border-bottom: 1px solid #eee;
+  }
+}
+
+
+.preferences .volume-field .md-button {
+  min-width: 48px;
+  margin: 0 5px;
+  padding: 12px 0 0 0;
+  background-color: transparent;
+}
+.preferences .volume-field .md-button.active md-icon {
+  fill: #2196F3;
+}
+
+
+.preferences md-select md-select-value {
+  text-align: right;
+}
+.preferences md-input-container.slash {
+  margin-left: 10px;
+}
+.preferences md-input-container.slash:before {
+  content: "/";
+  color: #999;
+  position: absolute;
+  bottom: 2px;
+  left: -8px;
+}
+
+.preferences .checkbox-item {
+  text-align: right;
+}
+
+.preferences .checkbox-item .md-label {
+  position: absolute;
+  right: 40px;
+  bottom: 0;
+  white-space: nowrap;
+}
+
+
+md-list-item.volume-field {
+  min-height: 2.75em;
+  height: 3.25em;
+}
+
+md-list-item.volume-field.audio-track {
+  height: 100px;
+  align-items: flex-start;
+}
+
+md-list-item.volume-field .rzslider {
+  margin-top: 30px;
+}
+.volume-field .drop-area {
+  opacity: 0.3;
+  text-align: right;
+  padding-right: 16px;
+}
+.volume-field.dragover {
+  background-color: rgba(33, 152, 243, 0.1);
+}
+
+.volume-field .time-field {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 0;
+}
+
+
+.preferences .time-field md-input-container {
+  margin: 0px 0px 4px 0;
+  height: 44px;
+  font-size: 14px;
+}
+.preferences .time-field md-input-container input {
+  margin-top: 8px;
+}
+
+.time-field span {
+  height: 15px;
+  min-width: 10px;
+  vertical-align: bottom;
+  display: inline-block;
+  align-self: center;
+}
+
+.preferences .volume-field .rzslider {
+  margin-left: 10px;
+}

@@ -154,52 +154,6 @@ md-input-container.input-inline-label label {
 }
 
 
-md-list-item.volume-field {
-  min-height: 44px;
-  height: 52px;
-}
-
-md-list-item.volume-field.audio-track {
-  height: 100px;
-  align-items: flex-start;
-}
-
-md-list-item.volume-field .rzslider {
-  margin-top: 30px;
-}
-.volume-field .drop-area {
-  opacity: 0.3;
-  text-align: right;
-  padding-right: 16px;
-}
-.volume-field.dragover {
-  background-color: rgba(33, 152, 243, 0.1);
-}
-
-.volume-field .time-field {
-  position: absolute;
-  bottom: 0;
-  left: 10px;
-  right: 0;
-}
-
-.preferences .time-field md-input-container {
-  margin: 0px 0px 4px 0;
-  height: 44px;
-  font-size: 14px;
-}
-.preferences .time-field md-input-container input {
-  margin-top: 8px;
-}
-
-.time-field span {
-  height: 15px;
-  min-width: 10px;
-  vertical-align: bottom;
-  display: inline-block;
-  align-self: center;
-}
-
 md-backdrop.md-select-backdrop {
   z-index: 100;
 }
@@ -207,89 +161,7 @@ md-backdrop.md-select-backdrop {
   z-index: 101;
 }
 
-.preferences md-icon {
-  fill: #555;
-}
-.preferences md-list {
-  padding: 2px 10px;
-}
-.preferences md-list-item label {
-  position: absolute;
-  font-size: 13px;
-  color: #777;
-  top: 0;
-  left: 0;
-}
 
-.preferences .volume-field .md-button {
-  min-width: 48px;
-  margin: 0 5px;
-  padding: 12px 0 0 0;
-  background-color: transparent;
-}
-.preferences .volume-field .md-button.active md-icon {
-  fill: #2196F3;
-}
-
-.preferences md-list-item {
-  margin-top: 4px;
-}
-
-.preferences .bottom-border {
-  border-bottom: 1px solid #eee;
-}
-.preferences md-input-container {
-  margin: 16px 0 8px 0;
-  padding: 0;
-  width: 100%;
-}
-
-.preferences md-input-container .md-errors-spacer {
-  max-height: 0;
-  min-height: 0;
-}
-.preferences md-input-container input {
-  padding-top: 8px;
-  height: 34px;
-  text-align: right;
-}
-.preferences md-input-container input[type="text"] {
-  padding-right: 24px;
-}
-.preferences md-select md-select-value {
-  text-align: right;
-}
-.preferences md-input-container.slash {
-  margin-left: 10px;
-}
-.preferences md-input-container.slash:before {
-  content: "/";
-  color: #999;
-  position: absolute;
-  bottom: 2px;
-  left: -8px;
-}
-
-/*.preferences.md-select-menu-container {
-  margin-top: 50px;
-  xtransform: translate3d(50px, 100px, 0);
-}*/
-
-/*.preferences md-option .md-text {
-  text-align: right;
-  width: 100%;
-}*/
-
-.preferences .checkbox-item {
-  text-align: right;
-}
-
-.preferences .checkbox-item .md-label {
-  position: absolute;
-  right: 40px;
-  bottom: 0;
-  white-space: nowrap;
-}
 
 input[type=number]::-webkit-inner-spin-button {
   margin-left: 6px;
@@ -303,6 +175,10 @@ input[type=number]::-webkit-inner-spin-button {
     0px 6px 30px 5px rgba(0, 0, 0, 0.12);
 }
 
+md-menu-item {
+  min-height: 3em;
+  height: 3em;
+}
 md-menu-item md-icon {
   position: absolute;
   padding: 11px 4px;
@@ -311,6 +187,10 @@ md-menu-item md-icon {
 }
 md-menu-item.md-indent .md-button {
   padding-left: 44px;
+}
+
+md-menu-item > .md-button {
+  font-size: 90%;
 }
 
 md-select-menu md-checkbox {
@@ -480,10 +360,6 @@ md-option {
 }
 .rzslider.rz-vertical .rz-pointer {
   left: -11px !important;
-}
-
-.preferences .volume-field .rzslider {
-  margin-left: 10px;
 }
 
 

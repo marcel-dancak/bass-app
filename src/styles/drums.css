@@ -2,29 +2,29 @@
 .drums-labels-container {
   position: absolute;
   left: 0;
-  width: 65px;
+  width: 4.063em;
   padding: 0 2px 0 5px;
   top: 0;
 }
 
 .drums-labels-container md-icon {
-  height: 48px;
-  width: 48px;
+  height: 3em;
+  width: 3em;
   margin: 0;
   outline: none;
   cursor: pointer;
 }
 
-.drums-labels-container .md-button {
+/*.drums-labels-container .md-button {
   text-transform: none;
   margin: 0;
-  padding: 0 8px;
+  padding: 0 0.5em;
   min-width: 60px;
-  min-height: 44px;
-  height: 44px;
-  line-height: 44px;
+  min-height: 2.75em;
+  height: 2.75em;
+  line-height: 2.75em;
   text-align: right;
-}
+}*/
 
 .drum-sound-box {
   min-height: 40px;
@@ -44,9 +44,9 @@
   xbackground-color: #ff5722;
   background-color: rgb(255, 152, 0);
   max-width: 100%;
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
+  width: 2em;
+  height: 2em;
+  border-radius: 1em;
   transition: transform 0.3s ease 0s;
 }
 
@@ -68,8 +68,8 @@
 .drum-sound {
   position: absolute;
   text-align: center;
-  margin: 8px 0;
-  height: 32px;
+  margin: 0.5em 0;
+  height: 2em;
   /*background-color: blue;*/
 }
 .drum-sound .volume-meter {
