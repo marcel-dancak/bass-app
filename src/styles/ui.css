@@ -80,7 +80,7 @@ body[zoom="95"] .resize-container {
 
 .editor, .viewer-container {
   position: absolute;
-  top: 50px;
+  top: 3.125em;
   bottom: 40px;
   left: 0;
   width: 100%;
@@ -108,8 +108,18 @@ md-icon {
   min-height: 16px;
 }
 
+.md-button {
+  min-height: 2.25em;
+  line-height: 2.25em;
+  font-size: 1em;
+}
+.md-button span {
+  font-size: 0.875em;
+}
 .md-button md-icon {
   color: #444;
+  width: 1.5em;
+  height: 1.5em;
 }
 
 .md-button.icon-hover,
@@ -582,18 +592,27 @@ md-tooltip md-divider {
   -webkit-justify-content: flex-start;
 }*/
 
+.dialog-header {
+  text-align: center;
+  height: 2.25em;
+  line-height: 2.25em;
+  background-color: #455A64;
+  color: #fff;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
 .dialog-close {
   position: absolute;
   right: 0;
-  line-height: 36px;
   margin: 0;
   padding: 0;
-  min-width: 48px;
+  min-width: 3em;
 }
 .dialog-close md-icon {
   fill: #fff;
-  width: 22px;
-  height: 22px;
+  width: 1.375em;
+  height: 1.375em;
 }
 
 .open-project-dialog,

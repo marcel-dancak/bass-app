@@ -6,7 +6,7 @@
   height: 3.125em;
   width: 100%;
   color: #fff;
-  z-index: 90;
+  z-index: 50;
 
   md-icon {
     fill: #fff;
@@ -27,10 +27,10 @@
       font-size: 1em;
       min-height: 2em;
       width: 42px;
-      line-height: 2em;
+      /*line-height: 2.25em;*/
       padding: 0;
       border-radius: 0;
-      margin: 0.5em 0;
+      margin: 0.375em 0;
       text-align: center;
       position: relative;
 
@@ -46,9 +46,9 @@
       }
     }
     &.secondary {
-      margin-left: 0;
-      margin-right: 0;
+      margin: 0.375em 0;
       min-width: 42px;
+      /*line-height: 2.25em;*/
     }
     &.play-stop-button {
       margin: 2px;
@@ -165,6 +165,9 @@
     .md-button {
       margin-top: 1px;
     }
+  }
+  form .md-button {
+    line-height: 1.85em;
   }
 }
 
@@ -285,24 +288,12 @@ md-menu-content.preferences {
   }
 }
 
-.dialog-header {
-  text-align: center;
-  height: 36px;
-  line-height: 36px;
-  background-color: #455A64;
-  color: #fff;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-}
-
 .md-subheader {
   background-color: transparent;
 }
 .md-subheader .md-subheader-inner {
   padding: 16px 16px 8px 16px;
 }
-
-
 
 
 .select-text-container {
@@ -346,7 +337,7 @@ md-menu-content.preferences {
 
 .toolbar-button {
   min-width: 32px;
-  margin: 6px 2px 5px 2px;
+  margin: 6px 2px 6px 2px;
 }
 
 .playback-range-menu md-icon {

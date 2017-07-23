@@ -53,11 +53,11 @@
 
 .playlist-panel .toolbar {
   background-color: #455A64;
-  height: 44px;
+  height: 2.858em;
   color: #fff;
   font-weight: bold;
-  font-size: 14px;
-  line-height: 44px;
+  font-size: 0.875em;
+  line-height: 2.858em;
   padding: 0 4px;
   text-align: center;
 }
@@ -175,7 +175,7 @@
 }
 .bass-sheet .section-header .strings-labels {
   position: absolute;
-  bottom: 0;
+  bottom: 1.5em;
   top: auto;
   font-weight: 400;
   width: 2.25em;
@@ -200,13 +200,13 @@
   text-align: center;
 }
 .bass-sheet .swiper-slide .beat:not(.with-header) .section-label.with-tempo {
-  left: 22px;
+  /*left: 22px;*/
 }
 
 .section-label i {
   font-size: 1.063em;
   width: 13px;
-  line-height: 15px;
+  line-height: 1.25em;
   display: inline-block;
 }
 
@@ -224,16 +224,17 @@
 }
 
 .playlist-editor {
-  padding-top: 35px;
+  padding-top: 2.188em;
   position: absolute;
   right: 0;
-  top: 20px;
+  top: 1.25em;
   bottom: 0;
   background-color: #fff;
   z-index: 2;
 }
 .playlist-editor > div {
   height: 100%;
+  position: relative;
 }
 /*.playlist-editor .info-note {
   position: absolute;
@@ -246,20 +247,21 @@
   position: absolute;
   right: 0;
   top: 0;
-  min-width: 36px;
+  min-width: 2.25em;
   margin: 3px 2px;
 }
 
 .playlist-editor .top-toolbar {
   position: absolute;
-  top: -3px;
+  top: -2.35em;
   left: 0;
   right: 0;
-  margin: 0 16px;
+  margin: 0 1em;
 }
 
 .playlist-editor .info-note {
   padding: 4px 0;
+  margin: 0.65em 0;
   text-align: center;
   font-size: 0.813em;
   color: #777;
