@@ -30,11 +30,11 @@
     width: 100%;
 
     input {
-      padding-top: 8px;
-      height: 34px;
+      padding-top: 0.5em;
+      height: 2.125em;
       text-align: right;
       &[type="text"] {
-        padding-right: 24px;
+        padding-right: 22px;
       }
     }
 

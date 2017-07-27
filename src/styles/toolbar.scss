@@ -67,19 +67,20 @@
       md-progress-circular {
         display: none;
         position: absolute;
-        top: 7px;
-        left: 4px;
+        top: 0.438em;
+        left: 0.375em;
         &:after {
           content: "Loading";
           position: absolute;
-          font-size: 11px;
+          font-size: 80%;
           font-weight: 500;
           text-transform: none;
           background-color: #3b4d55;
           left: 32px;
           top: 0;
-          padding-left: 4px;
-          line-height: 36px;
+          bottom: 0;
+          padding-left: 0.25em;
+          line-height: 31px;
         }
         svg path {
           stroke: #3b4d55;
@@ -465,56 +466,54 @@ md-menu-content.playback-range {
   left: 22px;
   right: 22px;
   width: auto;
-  bottom: -7px;
-  height: 16px;
-  margin: 4px 0;
+  bottom: -0.438em;
+  height: 1em;
+  margin: 0.25em 0;
   z-index: 2;
+
+  .rz-bar-wrapper {
+    padding-top: 0;
+    margin-top: 0;
+    height: 2em;
+
+    .rz-bar {
+      margin: 0;
+      width: 100%;
+      top: 0.875em;
+    }
+  }
+  .rz-ticks {
+    .rz-tick {
+      height: 0.438em;
+      width: 2px;
+      border: solid transparent;
+      border-width: 4px 2px;
+      top: 0.625em;
+      margin-left: -2px;
+      opacity: 0.01;
+      background-clip: padding-box;
+      transition: opacity 0.35s cubic-bezier(0.35, 0, 0.25, 1);
+    }
+    .rz-tick-legend {
+      color: #000;
+      font-size: 12px;
+      top: 21px;
+      opacity: 0.01;
+      transition: opacity 0.25s cubic-bezier(0.35, 0, 0.25, 1);
+      pointer-events: none;
+      white-space: nowrap;
+      background-color: #fff;
+      border-radius: 2px;
+    }
+  }
+  .rz-pointer.rz-pointer-min {
+    display: none;
+  }
 }
-.playback-slider.rzslider .rz-bar-wrapper {
-  padding-top: 0;
-  margin-top: 0;
-  height: 32px;
-}
-.playback-slider.rzslider .rz-bar-wrapper .rz-bar {
-  margin: 0;
-  width: 100%;
-  top: 14px;
-}
-.playback-slider.rzslider .rz-ticks .rz-tick {
-  height: 6px;
-  width: 2px;
-  border: solid transparent;
-  border-width: 4px 2px;
-  top: 10px;
-  margin-left: -2px;
-  opacity: 0.01;
-  background-clip: padding-box;
-  transition: opacity 0.35s cubic-bezier(0.35, 0, 0.25, 1);
-}
+
 .playback-slider.rzslider:hover .rz-ticks .rz-tick {
   opacity: 0.5;
 }
-.playback-slider.rzslider .rz-ticks .rz-tick .rz-tick-legend {
-  color: #000;
-  font-size: 12px;
-  top: 21px;
-  opacity: 0.01;
-  transition: opacity 0.25s cubic-bezier(0.35, 0, 0.25, 1);
-  pointer-events: none;
-  white-space: nowrap;
-  background-color: #fff;
-  border-radius: 2px;
-}
 .playback-slider.rzslider .rz-ticks .rz-tick:hover .rz-tick-legend {
   opacity: 1;
-}
-
-.playback-slider.rzslider .rz-pointer.rz-pointer-min {
-  width: 8px;
-  height: 8px;
-  top: -2px;
-  display: none;
-}
-.playback-slider.rzslider .rz-pointer.rz-pointer-min:after {
-  display: none;
 }

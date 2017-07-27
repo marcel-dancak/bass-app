@@ -736,9 +736,6 @@ footer .separator {
   padding-right: 0;
 }
 
-md-input-container label.md-no-float {
-  font-size: 0.688em;
-}
 
 .bottom-note {
   /*
@@ -805,12 +802,14 @@ md-input-container label.md-no-float {
 }
 
 
-.section-dialog md-input-container {
-  margin-right: 10px;
-  margin-top: 32px;
+.section-dialog .preferences md-input-container {
+  margin-right: 0.625em;
+  margin-top: 2em;
 }
-.section-dialog .md-no-float {
-  top: -10px;
+
+.section-dialog label.md-no-float {
+  top: -1em;
+  font-size: 0.688em;
 }
 .section-dialog .left-panel md-icon {
   width: 16px;
@@ -820,7 +819,7 @@ md-input-container label.md-no-float {
 .section-dialog .left-panel .md-button {
   text-transform: none;
   text-align: left;
-  min-height: 43px;
+  min-height: 2.688em;
 }
 .section-dialog .select-list {
   max-height: 500px;

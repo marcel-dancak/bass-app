@@ -238,14 +238,16 @@ div[bd-sound-label] {
 .ghost.sound-container {
   background-color: #ddd;
 }
-.ghost.sound-container p {
-  line-height: 2em;
-  font-size: 1.3em;
-  margin: 0;
+.ghost.sound-container .label-wrapper {
+  font-size: 1.2em;
+}
+.bass .ghost.sound-container p {
+  line-height: 1.6em;
+  height: 100%;
 }
 
 .ghost.sound-container {
-  min-width: 25%;
+  min-width: 16.6%;
   max-width: 25%;
 }
 .sound-container.selected {

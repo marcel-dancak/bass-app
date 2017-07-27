@@ -60,7 +60,7 @@
   position: absolute;
   left: 4px;
   top: 5px;
-  width: 50px;
+  width: 3.125em;
   border: 1px solid #aaa;
   border-width: 1px 0 0 1px;
   background-color: #fff;
@@ -102,6 +102,15 @@
 }
 .piano-key.black[key="C♯"]:after {
   top: -5px;
+}
+.piano-key.black[key="C♯"]:before {
+  content: "C";
+  position: absolute;
+  font-size: 12px;
+  display: block;
+  top: 8px;
+  left: 2px;
+  color: #777;
 }
 .piano-keys-container .piano-key.black:hover:after {
   background-color: #F57F17;
