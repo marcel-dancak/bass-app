@@ -16,7 +16,7 @@
       type="{{ ::track.type }}"
       ng-value="track.id">
       <md-icon md-svg-icon="{{ ::track.instrument.icon || track.type }}"></md-icon>
-      {{ track.name }}
+      <span>{{ track.name }}</span>
     </md-option>
 
     <md-divider></md-divider>
@@ -41,6 +41,7 @@
 </md-input-container>
 
 <md-menu
+  ng-if="::runtime.desktop"
   md-offset="0 10"
   ng-init="instrument = null">
   <md-button
@@ -137,8 +138,7 @@
             hideLimitLabels: true,
             hidePointerLabels: true,
             showSelectionBar: true,
-            disabled: track.muted,
-            scale: ui.scale
+            disabled: track.muted
           }">
         </rzslider>
         <md-button
@@ -169,8 +169,7 @@
             hideLimitLabels: true,
             hidePointerLabels: true,
             showSelectionBar: true,
-            disabled: project.audioTrack.muted,
-            scale: ui.scale
+            disabled: project.audioTrack.muted
           }">
         </rzslider>
         <md-button
@@ -234,8 +233,7 @@
             hideLimitLabels: true,
             hidePointerLabels: true,
             showSelectionBar: true,
-            disabled: player.input.muted,
-            scale: ui.scale
+            disabled: player.input.muted
           }">
         </rzslider>
         <md-button

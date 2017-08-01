@@ -3,7 +3,7 @@
   aria-label="Fretboard"
   class="toggle-button icon-hover"
   ng-class="{ active: viewer.fretboardVisible }"
-  ng-click="setFretboardVisible(!viewer.fretboardVisible)">
+  ng-click="viewer.setFretboardVisible(!viewer.fretboardVisible)">
   <md-icon md-svg-icon="fretboard"></md-icon>
   <md-tooltip
     md-delay="1500"
@@ -38,61 +38,12 @@
   </md-button>
   <md-menu-content
     class="preferences editor-layout md-whiteframe-16dp">
-
-    <md-list>
-
-      <md-list-item>
-        <label translate="LAYOUT"></label>
-        <md-input-container>
-          <md-select
-            md-no-ink
-            aria-label="Layout"
-            md-container-class="preferences"
-            ng-model="viewer.layout"
-            ng-change="
-              setLayout(viewer.layout)
-            ">
-            <md-option
-              ng-repeat="layout in ::viewer.layouts track by layout.name"
-              ng-value="layout">
-              <span ng-attr-translate="{{ ::layout.name | uppercase }}_LAYOUT"></span>
-            </md-option>
-          </md-select>
-        </md-input-container>
-      </md-list-item>
-
-      <md-list-item class="disabled-on-playback">
-        <label translate="BEATS_PER_SLIDE"></label>
-        <md-input-container>
-          <input
-            aria-label="Beats"
-            type="number"
-            min="6"
-            max="16"
-            step="1"
-            ng-model="viewer.beatsPerSlide"
-            ng-change="setLayout(viewer.layout)">
-        </md-input-container>
-      </md-list-item>
-
-      <md-list-item>
-        <label translate="SCROLL_ANIMATION"></label>
-        <md-input-container>
-          <input
-            aria-label="Duration"
-            type="number"
-            min="0"
-            max="1500"
-            step="50"
-            ng-model="viewer.layout.animation">
-        </md-input-container>
-      </md-list-item>
-
+    <md-list ng-include="'views/playlist/layout_options.html'">
     </md-list>
   </md-menu-content>
 </md-menu>
 
-<md-input-container>
+<!-- <md-input-container>
   <label
     class="md-label md-no-float"
     translate="ZOOM">
@@ -107,7 +58,7 @@
     <md-option value="95">95%</md-option>
     <md-option value="100">100%</md-option>
   </md-select>
-</md-input-container>
+</md-input-container> -->
 
 <md-divider></md-divider>
 

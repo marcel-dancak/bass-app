@@ -1,4 +1,4 @@
-<div class="mode-switch disabled-on-playback">
+<div ng-if="::runtime.desktop" class="mode-switch disabled-on-playback">
   <label translate="MODE"></label>
   <md-button
     md-no-ink
@@ -50,7 +50,7 @@
   layout="row"
   class="project-toolbar disabled-on-playback"
   bd-file-drop="importSectionFromFile($file)">
-  <form ng-if="player.mode === 0">
+  <form ng-if="player.mode === 0 && runtime.desktop">
 
     <div class="select-text-container">
       <md-input-container>
@@ -102,7 +102,7 @@
     </md-button>
   </form>
 
-  <form ng-if="player.mode === 1">
+  <form ng-if="player.mode === 1 && runtime.desktop">
     <div class="select-text-container">
       <md-input-container class="md-input-has-value">
         <md-select
@@ -166,6 +166,7 @@
   </form>
 
   <md-menu
+    ng-if="::runtime.desktop"
     md-position-mode="target-right target">
     <md-button
       md-no-ink
@@ -182,6 +183,15 @@
       width="3"
       class="big md-whiteframe-16dp">
 
+      <md-menu-item ng-if="::runtime.mobile">
+        <md-button
+          md-no-ink
+          aria-label="FullScreen"
+          ng-click="fullScreen.toggle()"
+          xtranslate="NEW">Full Screen
+          <!-- <md-icon md-svg-icon="check"></md-icon> -->
+        </md-button>
+      </md-menu-item>
 
       <md-menu-item class="menu-group-item">
         <md-divider></md-divider>
@@ -307,3 +317,13 @@
     </md-menu-content>
   </md-menu>
 </div>
+
+<md-button
+  ng-if="::runtime.mobile"
+  md-no-ink
+  class="icon-hover"
+  xng-click="openSideMenu()"
+  ng-click="sideMenu.open()">
+  <md-icon md-svg-icon="menu-dots"></md-icon>
+</md-button>
+

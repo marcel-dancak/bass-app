@@ -1,0 +1,204 @@
+<md-sidenav
+  class="md-sidenav-right md-whiteframe-4dp"
+  md-component-id="menu"
+  md-whiteframe="4">
+
+<!--   <md-toolbar class="md-theme-indigo">
+    <h1 class="md-toolbar-tools">Sidenav Left</h1>
+  </md-toolbar> -->
+  <md-content>
+    <md-list>
+      <md-list-item md-no-ink ng-click="fullScreen.toggle()">
+        Full Screen
+      </md-list-item>
+
+<!--       <md-list-item ng-click="showHelp()">
+        Help
+      </md-list-item> -->
+
+      <md-menu-item class="menu-group-item">
+        <md-divider></md-divider>
+        <div layout="row">
+          <span flex></span>
+          <span
+            flex="none"
+            class="group-item-title">Notation
+          </span>
+          <span flex="5"></span>
+        </div>
+      </md-menu-item>
+
+      <md-list-item
+        ng-init="
+          notations = {'name-and-fret': 'NAME_AND_FRET', 'name': 'NOTE_NAME', 'fret': 'FRET'};
+          keys = ['name-and-fret', 'name', 'fret']
+        ">
+        <span ng-attr-translate="{{ notations[bass.settings.label] }}"></span>
+        <md-button
+          md-no-ink
+          class="md-secondary icon-hover"
+          ng-click="bass.settings.label = keys[(keys.indexOf(bass.settings.label)+1) % 3]">
+          <md-icon md-svg-icon="arrow-right"></md-icon>
+        </md-button>
+      </md-list-item>
+      <md-list-item md-no-ink>
+        <p>Length symbols</p>
+        <md-checkbox ng-model="bass.settings.noteLengthLabels"></md-checkbox>
+      </md-list-item>
+
+      <md-list-item md-no-ink>
+        <p>Colors</p>
+        <md-checkbox ng-model="bass.settings.colors"></md-checkbox>
+      </md-list-item>
+
+
+      <md-menu-item class="menu-group-item">
+        <md-divider></md-divider>
+        <div layout="row">
+          <span flex></span>
+          <span
+            flex="none"
+            class="group-item-title">Content
+          </span>
+          <span flex="5"></span>
+        </div>
+      </md-menu-item>
+
+<!--       <md-list-item class="xswitch-buttons md-no-proxy">
+        <md-button
+          flex="50"
+          md-no-ink
+          xclass="md-raised"
+          ng-class="{'md-primary': player.mode === 0}"
+          ng-click="player.mode = 0">Section</md-button>
+        <md-button
+          flex="50"
+          md-no-ink
+          xclass="md-raised"
+          ng-class="{'md-primary': player.mode === 1}"
+          ng-click="player.mode = 1">Playlist</md-button>
+      </md-list-item> -->
+
+      <md-list-item
+        ng-if-start="player.mode === 0"
+        md-no-ink
+        class="strong"
+        ng-click="player.mode = 1">
+        SECTION
+        <md-icon md-svg-icon="arrow-right"></md-icon>
+      </md-list-item>
+      <md-list-item
+        ng-if-end
+        md-no-ink
+        ng-click="sideMenu.selectMenu.open({
+          items: projectManager.project.sections,
+          label: 'name',
+          value: 'id',
+          onSelect: projectManager.loadSection.bind(projectManager)
+        })">
+        {{ workspace.section.name }}
+        <md-icon md-svg-icon="arrow-down"></md-icon>
+      </md-list-item>
+
+      <md-list-item
+        ng-if-start="player.mode === 1"
+        md-no-ink
+        class="strong"
+        ng-click="player.mode = 0">
+        PLAYLIST
+        <md-icon md-svg-icon="arrow-right"></md-icon>
+      </md-list-item>
+      <md-list-item
+        ng-if-end
+        md-no-ink
+        ng-click="nestedSideMenu({
+          items: projectManager.project.playlists,
+          label: 'name',
+          onSelect: projectManager.loadPlaylist.bind(projectManager)
+        })">
+      {{ workspace.playlist.name }}
+        <md-icon md-svg-icon="arrow-down"></md-icon>
+      </md-list-item>
+
+      <md-menu-item class="menu-group-item">
+        <md-divider></md-divider>
+        <div layout="row">
+          <span flex></span>
+          <span
+            flex="none"
+            class="group-item-title">Layout
+          </span>
+          <span flex="5"></span>
+        </div>
+      </md-menu-item>
+
+      <md-list-item md-no-ink ng-if-start="player.mode === 0">
+        <p>Fretboard</p>
+        <md-checkbox ng-model="editor.fretboardVisible"></md-checkbox>
+      </md-list-item>
+      <md-list-item md-no-ink>
+        <p>Audio Visualization</p>
+        <md-checkbox ng-model="player.graphEnabled"></md-checkbox>
+      </md-list-item>
+
+      <div
+        ng-if-end
+        style="padding-left: 16px"
+        class="preferences editor-layout"
+        ng-include="'views/editor/layout_options.html'"
+        ng-init="initSliders()">
+      </div>
+
+      <md-list-item md-no-ink ng-if-start="player.mode === 1">
+        <p>Fretboard</p>
+        <md-checkbox
+          ng-init="tmp.fretboardVisible = viewer.fretboardVisible"
+          ng-model="tmp.fretboardVisible"
+          ng-change="viewer.setFretboardVisible(!viewer.fretboardVisible)">
+        </md-checkbox>
+      </md-list-item>
+      <div
+        ng-if-end
+        style="padding-left: 16px"
+        class="preferences editor-layout"
+        ng-include="'views/playlist/layout_options.html'"
+        ng-init="initSliders()">
+      </div>
+
+    </md-list>
+<!--     <md-button ng-click="close()" class="md-primary" xhide-gt-md>
+      Close Sidenav Left
+    </md-button>
+    <p hide show-gt-md>
+      This sidenav is locked open on your device. To go back to the default behavior,
+      narrow your display.
+    </p> -->
+
+<!--     <md-list class="nested">
+    </md-list> -->
+  </md-content>
+
+</md-sidenav>
+
+<!-- Nested Select Menu -->
+<md-sidenav
+  class="md-sidenav-right md-whiteframe-4dp"
+  md-component-id="menu-select"
+  md-disable-backdrop
+  md-whiteframe="4">
+
+  <md-toolbar class="md-theme-indigo">
+    <md-button style="text-align: left;" ng-click="sideMenu.selectMenu.widget.close()">
+      <md-icon md-svg-icon="arrow-left"></md-icon>&nbsp;&nbsp;Back
+    </md-button>
+  </md-toolbar>
+  <md-content>
+    <md-list ng-if="sideMenu.selectMenu.items">
+      <md-list-item
+        ng-repeat="item in sideMenu.selectMenu.items track by $index"
+        md-no-ink ng-click="sideMenu.selectMenu.callback($index)">
+        {{ item }}
+      </md-list-item>
+    </md-list>
+  </md-content>
+</md-sidenav>

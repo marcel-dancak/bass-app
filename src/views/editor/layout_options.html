@@ -1,0 +1,48 @@
+
+  <md-list-item
+    class="layout-slider"
+    layout="column">
+    <label translate="BEATS_PER_SCREEN"></label>
+    <rzslider
+      class="zoom-slider"
+      rz-slider-model="editor.beatsPerView"
+      rz-slider-options="{
+        floor: 1,
+        ceil: 12,
+        step: 1,
+        minLimit: 4,
+        showTicks: true,
+        showTicksValues: false,
+        hideLimitLabels: true,
+        getLegend: editor.layoutLegend,
+        onChange: editor.updateBeatsPerView
+      }">
+    </rzslider>
+    <rzslider
+      class="animation-slider"
+      rz-slider-model="editor.slideOnBeat"
+      rz-slider-options="{
+        floor: 1,
+        ceil: 12,
+        step: 1,
+        maxLimit: editor.beatsPerView,
+        showTicks: false,
+        showTicksValues: false,
+        hideLimitLabels: true,
+        translate: editor.animationLabel
+      }">
+    </rzslider>
+  </md-list-item>
+
+  <md-list-item>
+    <label translate="SCROLL_ANIMATION"></label>
+    <md-input-container>
+      <input
+        aria-label="Duration"
+        type="number"
+        min="0"
+        max="1500"
+        step="50"
+        ng-model="editor.animationDuration">
+    </md-input-container>
+  </md-list-item>

@@ -44,23 +44,12 @@
       }
     })
     .run(function($mdDialog) {
-      if(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
-        function adjustScale() {
-          var ww = Math.min(window.innerWidth, window.screen.width); //get proper width
-          // ww = window.screen.width;
-          var mw = 1048; // required min width
-          var ratio =  ww / mw;
-          if( ww < mw) {
-            var metaEl = document.head.querySelector('meta[name="viewport"]');
-            metaEl.setAttribute('content', 'initial-scale=' + ratio + ', maximum-scale=' + 1 + ', minimum-scale=' + ratio + ', width=' + ww);
-          }
-        }
-        window.addEventListener("orientationchange", adjustScale);
-        window.addEventListener("resize", function() {
-          document.body.style.minHeight = window.innerHeight+'px';
-        })
-        setTimeout(adjustScale, 500);
-      }
+      window.runtime = {};
+      window.runtime.mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+      // window.runtime.mobile = true;
+      window.runtime.desktop = !window.runtime.mobile;
+      // window.addEventListener("orientationchange", adjustScale);
+      // window.addEventListener("resize", function() {});
 
       if (!window.chrome) {
         var alert = $mdDialog.alert()
@@ -101,7 +90,7 @@
     }
   }
 
-  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdToast, $mdDialog, $location, context,
+  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdToast, $mdDialog,  $mdSidenav, $location, context,
       settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note,
       dataUrl, localSoundsUrl, soundsUrl) {
     $scope.Note = Note;
@@ -118,21 +107,26 @@
       $scope.setLanguage(lang);
     }
 
+    $scope.runtime = window.runtime;
     $scope.ui = {
       selectTrack: angular.noop,
-      playlist: {},
-      zoom: 100,
-      scale: 1
+      playlist: {}
     };
-    $scope.setAppZoom = function(zoom) {
-      document.body.parentElement.setAttribute('zoom', zoom);
-      document.body.setAttribute('zoom', zoom);
-      $scope.ui.scale = 100/zoom;
-      $scope.ui.zoom = zoom;
-      window.scale = 100/zoom;
-      localStorage.setItem('preferences.zoom', zoom);
+
+    $scope.fullScreen = {
+      active: false,
+      toggle: function() {
+        var isFullscreen = window.fullScreen || document.webkitFullscreenElement;
+        if (isFullscreen) {
+          var exitFn = document.mozFullScreen !== undefined? 'mozCancelFullScreen' : 'webkitCancelFullScreen';
+          document[exitFn]();
+        } else {
+          var enterFn = document.mozFullScreen !== undefined? 'mozRequestFullScreen' : 'webkitRequestFullscreen';
+          document.body[enterFn]();
+          // setTimeout(window.adjustScale, 500);
+        }
+      }
     };
-    $scope.setAppZoom(localStorage.getItem('preferences.zoom') || 100);
 
     $scope.player = {
       mode: $location.hash()? 1 : 0,
@@ -243,6 +237,9 @@
       3: ['trip', 'let'],
       4: ['e', 'and', 'a']
     };
+    if (window.runtime.mobile) {
+      $scope.barLabels[4][1] = '&';
+    }
 
     Object.defineProperty(Note, 'map', {value: 'static', writable: true});
     Note.map = {};
@@ -434,6 +431,44 @@
         loadScript(project.script);
       }
     });
+
+
+    function SideMenu() {
+      var that = {
+        selectMenu: {
+          widget: null,
+          items: [],
+          open: function(opts) {
+            that.selectMenu.items = opts.items.map(function(item) {
+              return item[opts.label];
+            });
+            that.selectMenu.callback = function(index) {
+              if (opts.onSelect) {
+                var value = opts.items[index];
+                if (opts.value) {
+                  value = value[opts.value];
+                }
+                return opts.onSelect(value);
+              }
+            };
+            that.selectMenu.widget = $mdSidenav('menu-select');
+            that.selectMenu.widget.toggle();
+          }
+        },
+        open: function() {
+          var sidenav = $mdSidenav('menu');
+          sidenav.toggle().then($scope.initSliders);
+          sidenav.onClose(function() {
+            if (that.selectMenu.widget) {
+              that.selectMenu.widget.close();
+              that.selectMenu.widget = null;
+            }
+          });
+        }
+      };
+      return that;
+    }
+    $scope.sideMenu = SideMenu();
 
   }
 })();

@@ -1,0 +1,46 @@
+<md-list-item>
+  <label translate="LAYOUT"></label>
+  <md-input-container>
+    <md-select
+      md-no-ink
+      aria-label="Layout"
+      md-container-class="preferences"
+      ng-model="viewer.layout"
+      ng-change="
+        viewer.updateLayout()
+      ">
+      <md-option
+        ng-repeat="layout in ::viewer.layouts track by layout.name"
+        ng-value="layout">
+        <span ng-attr-translate="{{ ::layout.name | uppercase }}_LAYOUT"></span>
+      </md-option>
+    </md-select>
+  </md-input-container>
+</md-list-item>
+
+<md-list-item class="disabled-on-playback">
+  <label translate="BEATS_PER_SLIDE"></label>
+  <md-input-container>
+    <input
+      aria-label="Beats"
+      type="number"
+      min="6"
+      max="16"
+      step="1"
+      ng-model="viewer.beatsPerSlide"
+      ng-change="viewer.updateLayout()">
+  </md-input-container>
+</md-list-item>
+
+<md-list-item>
+  <label translate="SCROLL_ANIMATION"></label>
+  <md-input-container>
+    <input
+      aria-label="Duration"
+      type="number"
+      min="0"
+      max="1500"
+      step="50"
+      ng-model="viewer.layout.animation">
+  </md-input-container>
+</md-list-item>

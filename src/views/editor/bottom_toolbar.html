@@ -57,62 +57,12 @@
   <md-menu-content
     class="preferences editor-layout md-whiteframe-16dp">
 
-    <md-list>
-
-      <md-list-item
-        class="layout-slider"
-        layout="column">
-        <label translate="BEATS_PER_SCREEN"></label>
-        <rzslider
-          class="zoom-slider"
-          rz-slider-model="editor.beatsPerView"
-          rz-slider-options="{
-            floor: 1,
-            ceil: 12,
-            step: 1,
-            minLimit: 4,
-            showTicks: true,
-            showTicksValues: false,
-            hideLimitLabels: true,
-            getLegend: editor.layoutLegend,
-            onChange: updateBeatsPerView,
-            scale: ui.scale
-          }">
-        </rzslider>
-        <rzslider
-          class="animation-slider"
-          rz-slider-model="editor.slideOnBeat"
-          rz-slider-options="{
-            floor: 1,
-            ceil: 12,
-            step: 1,
-            maxLimit: editor.beatsPerView,
-            showTicks: false,
-            showTicksValues: false,
-            hideLimitLabels: true,
-            translate: editor.animationLabel,
-            scale: ui.scale
-          }">
-        </rzslider>
-      </md-list-item>
-
-      <md-list-item>
-        <label translate="SCROLL_ANIMATION"></label>
-        <md-input-container>
-          <input
-            aria-label="Duration"
-            type="number"
-            min="0"
-            max="1500"
-            step="50"
-            ng-model="editor.animationDuration">
-        </md-input-container>
-      </md-list-item>
+    <md-list ng-include="'views/editor/layout_options.html'">
 
     </md-list>
   </md-menu-content>
 </md-menu>
-<md-input-container>
+<!-- <md-input-container>
   <label
     class="md-label md-no-float"
     translate="ZOOM">
@@ -128,7 +78,7 @@
     <md-option value="95">95%</md-option>
     <md-option value="100">100%</md-option>
   </md-select>
-</md-input-container>
+</md-input-container> -->
 
 <md-divider></md-divider>
 

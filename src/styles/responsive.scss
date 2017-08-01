@@ -15,10 +15,6 @@
     transform: scale(0.7, 0.7);
     transform-origin: 0 0;
   }
-  .instruments-toolbar .track,
-  .project-toolbar form {
-    display: none;
-  }
 
   footer, /* filter in template*/
   .bottom.toolbar {
@@ -31,5 +27,22 @@
   .slide .slide-slash {
     padding: 0 2px;
   }
+}
 
+@media (max-height: 500px) {
+  html {
+    xfont-size: 0.6em;
+  }
+}
+
+@media (max-width: 900px) {
+  .control-panel md-input-container.track {
+    min-width: 1em;
+    .md-select-value {
+      min-width: 2em;
+      .md-text > span {
+        display: none;
+      }
+    }
+  }
 }

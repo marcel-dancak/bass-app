@@ -40,7 +40,7 @@
       $scope.$root.viewer = {
         beatsPerSlide: 8,
         layouts: layouts,
-        layout: layouts[window.innerHeight > 680? 0 : 1],
+        layout: layouts[window.innerHeight >= 680? 0 : 1],
         swiper: null
       }
     }
@@ -183,6 +183,7 @@
         slideBeatCounter: -1,
         beatCounter: -1
       };
+      // window.playbackState = playbackState;
 
       if (viewer.swiper) {
         viewer.swiper.slideTo(0, 0, false);
@@ -394,7 +395,6 @@
     $scope.ui.selectTrack = function(trackId) {
       workspace.track = projectManager.project.tracksMap[trackId];
       viewerTrackId = trackId;
-
       if (slidesMetadata) {
         updateSlide(viewer.swiper.snapIndex);
         updateSlide(viewer.swiper.snapIndex+1);
@@ -531,9 +531,8 @@
       }
     });
 
-    $scope.setLayout = function(layout) {
+    viewer.updateLayout = function() {
       var position = $scope.player.progress.value;
-      viewer.layout = layout;
       var slideIndex = viewer.swiper.snapIndex;
       viewer.swiper.removeAllSlides();
       viewer.swiper.container.removeClass('swiper-container-' + viewer.swiper.params.direction);
@@ -551,7 +550,7 @@
       // }
     }
 
-    $scope.setFretboardVisible = function(visible) {
+    viewer.setFretboardVisible = function(visible) {
       viewer.fretboardVisible = visible;
       $mdUtil.nextTick(function() {
         viewer.swiper.onResize();
@@ -559,6 +558,7 @@
         fretboardViewer.activate(visible? elem : null);
       });
     }
+
     if (viewer.fretboardVisible) {
       $scope.setFretboardVisible(true);
     }

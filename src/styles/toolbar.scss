@@ -107,6 +107,7 @@
       color: #bbb;
     }
     label {
+      color: #bbb;
       &.md-no-float {
         font-size: 0.625em;
         padding: 0;
@@ -151,7 +152,7 @@
     label {
       margin: 0;
       position: absolute;
-      top: -5px;
+      top: -0.35em;
       left: 20px;
       right: 20px;
       line-height: 0.563em;
@@ -187,10 +188,6 @@
   margin-left: 10px;
 }
 
-
-.control-panel .tracks-list {
-  min-width: 100px;
-}
 
 .playlist-mode .tracks-list md-option[type="drums"],
 .playlist-mode .tracks-list md-option[type="piano"] {
@@ -249,9 +246,9 @@
 .bpm-field::after {
   content: "bpm";
   position: absolute;
-  left: 34px;
-  bottom: 8px;
-  font-size: 12px;
+  left: 2.75em;
+  bottom: 0.7em;
+  font-size: 0.75em;
   pointer-events: none;
 }
 .bpm-field::-webkit-validation-bubble-message { display: none; }
@@ -260,7 +257,7 @@
   content: "%";
   position: absolute;
   left: 2.5em;
-  bottom: 0.5em;
+  bottom: 0.55em;
   font-size: 0.9em;
   pointer-events: none;
 }

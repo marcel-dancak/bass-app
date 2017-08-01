@@ -122,13 +122,13 @@
   top: 2.063em;
 }
 
-.bass-sheet .swiper-slide .section-info .bar-beat::before,
-.bass-sheet .swiper-slide .section-info .instrument-slide::before {
+.playlist-swiper .swiper-slide .section-info .bar-beat::before,
+.playlist-swiper .swiper-slide .section-info .instrument-slide::before {
   display: none;
 }
 
-.bass-sheet .beat.first .bar-beat > div:first-child::before,
-.bass-sheet .swiper-slide > div:last-child .bar-beat::after {
+.playlist-swiper .beat.first .bar-beat > div:first-child::before,
+.playlist-swiper .swiper-slide > div:last-child .bar-beat::after {
   position: absolute;
   top: 0;
   right: -2px;
@@ -140,12 +140,13 @@
   xdisplay: none;
 }
 
-.bass-sheet .beat.first .bass-board:before {
+.playlist-swiper .beat.first .instrument-slide:before {
   width: 3px;
   opacity: 1;
   background-color: #bbb;
 }
-.bass-sheet .beat.last .bass-board:after {
+
+.playlist-swiper .beat.last .instrument-slide:after {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -308,4 +309,25 @@
 
 .display-note-length .playlist-swiper {
   padding-bottom: 24px;
+}
+
+.drum-labels md-icon {
+  width: 2.25em;
+  height: 2.25em;
+}
+.playlist-swiper .drum-sound {
+  margin: 0 0;
+  transform: scale(0.75, 0.75);
+}
+.drum-grid .lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.drum-grid .lines > * {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: #eee;
 }

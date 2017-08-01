@@ -24,7 +24,7 @@
   layout="column"
   class="editor"
   ng-controller="EditModeController">
-  <div flex="none" style="height: 5%;max-height: 65px;">&nbsp;</div>
+  <div flex="none" style="height: 5%;max-height: 4em;">&nbsp;</div>
   <div
     class="bar-container"
     ng-controller="BarController"
@@ -159,7 +159,7 @@
       </div>
 
     </div>
-    <div flex style="max-height: 20px;"></div>
+    <!-- <div flex style="max-height: 20px;"></div> -->
 
     <div ng-show="workspace.track.type === 'bass' && editor.fretboardVisible" style="position: relative;">
       <div
@@ -206,6 +206,7 @@
   </div>
 
   <div
+    ng-if="::runtime.desktop"
     class="bottom toolbar"
     layout="row"
     ng-include="'views/editor/bottom_toolbar.html'">
@@ -252,13 +253,14 @@
   </div>
 
   <div
+    ng-if="::runtime.desktop"
     class="bottom toolbar"
     layout="row"
     ng-include="'views/playlist/bottom_toolbar.html'">
   </div>
 </div>
 
-<footer layout="row">
+<footer layout="row" ng-if="::runtime.desktop">
   <a
     class="button"
     ng-click="setLanguage('en')"
@@ -304,3 +306,7 @@
     </md-tooltip>
   </md-button>
 </footer>
+
+<ng-include ng-if="::runtime.mobile" src="'views/sidenav.html'"></ng-include>
+
+</section>

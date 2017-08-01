@@ -213,8 +213,7 @@
           pushRange: true,
           showTicks: false,
           onEnd: player.playbackRangeChanged,
-          showTicksValues: true,
-          scale: ui.scale
+          showTicksValues: true
         }">
       </rzslider>
     </div>
@@ -241,8 +240,7 @@
           showTicks: true,
           onEnd: player.playbackRangeChanged,
           showTicksValues: true,
-          translate: playlistLabel,
-          scale: ui.scale
+          translate: playlistLabel
         }">
       </rzslider>
     </div>
@@ -263,7 +261,6 @@
     hideLimitLabels: true,
     hidePointerLabels: true,
     onChange: player.setProgress,
-    onEnd: player.progressReleased,
-    scale: ui.scale
+    onEnd: player.progressReleased
   }">
 </rzslider>

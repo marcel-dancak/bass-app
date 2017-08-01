@@ -982,3 +982,34 @@ md-list-item .md-button.md-raised:not([disabled]).md-focused:not(:hover) {
 .markdown-editor ol>li>p {
   margin: 0;
 }
+
+md-sidenav {
+  z-index: 100;
+}
+md-sidenav md-list-item, md-sidenav md-list-item .md-list-item-inner {
+  xmin-height: 2.75em;
+  xheight: 2.75em;
+}
+
+md-sidenav md-list-item {
+  font-size: 15px;
+  padding-left: 0;
+}
+
+md-sidenav md-toolbar {
+  min-height: 2.25em;
+  font-size: 1em;
+}
+
+md-sidenav md-list-item.strong .md-list-item-inner {
+  font-weight: 700;
+}
+
+/*.switch-buttons .md-button:first-child {
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+}
+.switch-buttons .md-button:last-child {
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+}*/
