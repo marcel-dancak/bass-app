@@ -76,6 +76,21 @@
         return(this);
       };
     })
+    // Disable tooltips on touch devices
+    .directive('mdTooltip', function() {
+      return {
+        replace: true,
+        template: '<span style="display:none"></span>',
+        scope: {}, //create an isolated scope
+        link: function(scope, element) {
+           element.remove();
+           scope.$destroy();
+        }
+      };
+    })
+    .decorator('mdTooltipDirective',function($delegate) {
+      return [$delegate[window.runtime.mobile? 1 : 0]];
+    });
 
   function prettyScrollbar() {
     return {
