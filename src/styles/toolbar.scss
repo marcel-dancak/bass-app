@@ -238,6 +238,12 @@
 .playback-fields .bpm-field {
   width: 4.875em;
   margin: 1em 5px 0px 5px;
+  md-menu .md-button {
+    margin: 0;
+    padding-left: 0;
+    padding-right: 2em;
+    text-transform: none;
+  }
 }
 .playback-fields md-input-container input[type="number"] {
   text-align: left;

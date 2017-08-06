@@ -75,6 +75,7 @@
     class="bpm-field">
     <label class="md-no-float" translate="SPEED"></label>
     <input
+      ng-if="::runtime.desktop"
       type="number"
       min="30"
       max="250"
@@ -82,13 +83,36 @@
       bd-disable-step-validator
       ng-model="workspace.section.bpm"
       ng-change="ui.bpmChanged(workspace.section.bpm)">
+    <md-menu ng-if="::runtime.mobile">
+      <md-button ng-click="$mdOpenMenu($event)">
+        {{ workspace.section.bpm }}
+      </md-button>
+      <md-menu-content>
+        <rzslider
+          xstyle="height: 175px"
+          style="width: 250px;"
+          rz-slider-model="workspace.section.bpm"
+          rz-slider-options="{
+            xvertical: true,
+            xrightToLeft: true,
+            floor: 20,
+            ceil: 250,
+            step: 1,
+            onEnd: ui.bpmChanged(workspace.section.bpm)
+          }">
+        </rzslider>
+      </md-menu-content>
+    </md-menu>
+
   </md-input-container>
+
 
   <md-input-container
     ng-switch-when="1"
     class="playback-speed-field">
     <label class="md-no-float" translate="SPEED"></label>
     <input
+      ng-if="::runtime.desktop"
       type="number"
       min="20"
       max="300"
@@ -96,6 +120,23 @@
       bd-disable-step-validator
       ng-model="player.speed"
       ng-change="ui.playbackSpeedChanged(player.speed)">
+    <md-menu ng-if="::runtime.mobile">
+      <md-button ng-click="$mdOpenMenu($event)">
+        {{ player.speed }}
+      </md-button>
+      <md-menu-content>
+        <rzslider
+          style="width: 250px;"
+          rz-slider-model="player.speed"
+          rz-slider-options="{
+            floor: 20,
+            ceil: 200,
+            step: 1,
+            onEnd: ui.playbackSpeedChanged(player.speed)
+          }">
+        </rzslider>
+      </md-menu-content>
+    </md-menu>
   </md-input-container>
 </form>
 

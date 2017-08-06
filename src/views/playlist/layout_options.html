@@ -22,6 +22,7 @@
   <label translate="BEATS_PER_SLIDE"></label>
   <md-input-container>
     <input
+      ng-if="::runtime.desktop"
       aria-label="Beats"
       type="number"
       min="6"
@@ -29,6 +30,16 @@
       step="1"
       ng-model="viewer.beatsPerSlide"
       ng-change="viewer.updateLayout()">
+      <rzslider
+        ng-if="::runtime.mobile"
+        rz-slider-model="viewer.beatsPerSlide"
+        rz-slider-options="{
+          floor: 4,
+          ceil: 12,
+          step: 1,
+          onChange: viewer.updateLayout
+        }">
+      </rzslider>
   </md-input-container>
 </md-list-item>
 
@@ -36,11 +47,20 @@
   <label translate="SCROLL_ANIMATION"></label>
   <md-input-container>
     <input
+      ng-if="::runtime.desktop"
       aria-label="Duration"
       type="number"
       min="0"
       max="1500"
       step="50"
       ng-model="viewer.layout.animation">
+    <rzslider ng-if="::runtime.mobile"
+      rz-slider-model="viewer.layout.animation"
+      rz-slider-options="{
+        floor: 0,
+        ceil: 750,
+        step: 25
+      }">
+    </rzslider>
   </md-input-container>
 </md-list-item>

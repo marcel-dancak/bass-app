@@ -38,11 +38,21 @@
     <label translate="SCROLL_ANIMATION"></label>
     <md-input-container>
       <input
+        ng-if="::runtime.desktop"
         aria-label="Duration"
         type="number"
         min="0"
         max="1500"
         step="50"
         ng-model="editor.animationDuration">
+      <rzslider
+        ng-if="::runtime.mobile"
+        rz-slider-model="editor.animationDuration"
+        rz-slider-options="{
+          floor: 0,
+          ceil: 750,
+          step: 25
+        }">
+      </rzslider>
     </md-input-container>
   </md-list-item>
