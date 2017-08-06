@@ -88,7 +88,7 @@
         }
         // console.log('slideIndex: '+slideIndex+' beatIndex: '+beatIndex);
         // console.log('{0} -> {1}/{2}'.format(playbackState.slideBeatCounter, slideIndex, beatIndex));
-        var beatsElems = viewer.swiper.slides[slideIndex].querySelectorAll('.beat');
+        var beatsElems = viewer.swiper.slides[slideIndex].querySelectorAll('.bar-beat');
         var beatElem = beatsElems[beatIndex];
         return beatElem;
       },

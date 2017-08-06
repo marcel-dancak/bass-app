@@ -34,14 +34,10 @@
       var beatElem = this.swiperControl.getBeatElem(evt.bar, evt.beat);
       if (!beatElem) return;
 
-      var subbeatElements = [].slice.call(beatElem.querySelectorAll('.subbeat'))
-        .filter(function(elem) {
-          return elem.offsetWidth > 0;
-        }
-      );
-
-      for (var index = 0; index < subbeatElements.length; index++) {
-        var subbeatDelay = evt.duration*index/subbeatElements.length;
+      var subbeatElems = beatElem.children;
+      var subbeatsCount = subbeatElems.length;
+      for (var index = 0; index < subbeatsCount; index++) {
+        var subbeatDelay = evt.duration*index/subbeatsCount;
 
         var timerKey = window.performance.now().toFixed(2);
         var timerId = setTimeout(function(subbeatElem, key) {
@@ -50,7 +46,7 @@
           this._removeActiveClass();
           subbeatElem.classList.add('active');
 
-        }.bind(this), 1000*(beatDelay+subbeatDelay), subbeatElements[index], timerKey);
+        }.bind(this), 1000*(beatDelay+subbeatDelay), subbeatElems[index], timerKey);
         this.activeTimers[timerKey] = timerId;
       }
     }
