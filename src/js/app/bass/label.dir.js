@@ -13,15 +13,17 @@
         sound: '=sound',
         string: '=string'
       },
-      templateUrl: 'views/bass_sound_label.html'
+      templateUrl: 'views/bass_sound_label.html',
+      // replace: true
     };
   }
 
   function bendLabel() {
     return {
       scope: true,
+      // replace: true,
       template:
-        '<div class="bend-symbol" layout="row">'+
+        '<div class="bend-symbol layout-row">'+
           '<div '+
             'ng-repeat="t in transitions track by $index"'+
             'ng-attr-type="{{ t.type }}"'+
@@ -64,10 +66,6 @@
           $scope.transitions.forEach(function(t) {
             t.flex = '1 1 {0}%'.format(t.size*unitSize);
             if (t.type) {
-              // t.path = "M0 {0} Q 90 {0} 100 {1}".format(
-              //   100*(1-t.from),
-              //   100*(1-t.to)
-              // );
               t.height = (height * (Math.abs(t.to-t.from)))+'px';
               if (t.type === 'up') {
                 t.top = (height*(1-t.to))+'px';

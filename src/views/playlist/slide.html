@@ -1,17 +1,15 @@
-<div ng-cloak>
-  <div flex="none" layout="row">
+<div xng-cloak>
+  <div class="layout-row flex-none">
 
     <!-- Beats with bass sounds (tabs) -->
     <div
       ng-repeat="beat in ::beats"
-      layout="column"
-      class="beat"
+      class="layout-column flex bass beat"
       ng-class="::{
         first: beat.beat === 1,
         last: beat.beat === beat.timeSignature.top,
         'with-header': beat.sectionInfo.timeSignature.top
-      }"
-      flex>
+      }">
 
       <div
         ng-if="::beat.sectionInfo.timeSignature"
@@ -60,20 +58,15 @@
       </div>
 
       <!-- Bar -->
-      <div
-        class="bar-beat"
-        layout="row">
-        <div
-          flex
-          class="subbeat">
+      <div class="bar-beat layout-row">
+        <div class="subbeat flex">
           <label class="subbeat-label {{ ::showTimeSig? 'align-right' : '' }}">
             {{ ::beat.beatLabel }}
           </label>
         </div>
         <div
           ng-repeat="label in ::barLabels[beat.subdivision] track by $index"
-          flex
-          class="subbeat">
+          class="subbeat flex">
           <label class="subbeat-label">
             {{ ::label }}
           </label>
@@ -91,13 +84,9 @@
         </div>
         <div
           ng-repeat="sound in ::beat.sounds"
-          class="
-            sound-container
+          class="sound-container {{ ::sound.style }} {{ ::sound.note.type }}
             string-{{ ::track.instrument.stringIndex[sound.string] }}
-            {{ ::sound.style }}
-            {{ ::sound.note.type }}
-            {{ ::sound.note.staccato? 'staccato' : '' }}
-          "
+            {{ ::sound.note.staccato? 'staccato' : '' }}"
           style="
             left: {{ ::100*sound.start }}%;
             width: {{ ::100 * (sound.end - sound.start) }}%;"
@@ -113,7 +102,6 @@
             </i>
           </div>
 
-
           <bd-sound-label
             sound="sound"
             string="track.instrument.stringByName(sound.string)">
@@ -126,9 +114,8 @@
 
     <div
       ng-repeat="empty in ::emptyBeats track by $index"
-      class="empty"
-      style="position:relative;"
-      flex>
+      class="empty flex"
+      style="position:relative;">
     </div>
   </div>
 </div>
