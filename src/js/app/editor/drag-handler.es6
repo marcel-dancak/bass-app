@@ -265,9 +265,8 @@
       }
     }
 
-    DragHandler.initialize = function(selector) {
+    DragHandler.initialize = function(selector, scope) {
       workspaceElem = document.querySelector(selector);
-      var scope = angular.element(workspaceElem).scope();
       scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
         console.log('ANGULAR_DRAG_START');
         // console.log(data.data)

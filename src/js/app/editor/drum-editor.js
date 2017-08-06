@@ -29,15 +29,13 @@
   };
 
 
-  function drumHandler(workspace, $mdUtil) {
+  function drumHandler(workspace, $mdUtil, $rootScope) {
     var dragSound;
 
     document.body.appendChild(dragBox.elem);
     document.body.appendChild(dropBox.elem);
 
-
-    var scope = angular.element(document.body).scope();
-    scope.$on('ANGULAR_DRAG_START', function(e, evt, channel, data) {
+    $rootScope.$on('ANGULAR_DRAG_START', function(e, evt, channel, data) {
       if (channel === 'drum') {
         dragSound = data.data;
         dragBox.elem.lastChild.style.transform = 'scale({0}, {0})'.format(dragSound.volume);
@@ -50,7 +48,7 @@
         dropBox.elem.style.opacity = 1;
       }
     });
-    scope.$on('ANGULAR_DRAG_END', function(e, evt, channel, data) {
+    $rootScope.$on('ANGULAR_DRAG_END', function(e, evt, channel, data) {
       if (channel === 'drum') {
         if (evt.target) {
           evt.target.classList.remove('drag-move-element');
@@ -104,7 +102,16 @@
         }
       },
       volumeScroll: function(evt, beat, step) {
-        var sound = angular.element(evt.target).scope().sound;
+        var grid = getSoundGrid(evt.originalEvent, beat);
+        var sound = workspace.trackSection.sound(beat, {start: grid.start, drum: grid.drum});
+        if (!sound && step > 0) {
+          sound = {
+            start: grid.start,
+            drum: grid.drum,
+            volume: 0
+          }
+          workspace.trackSection.addSound(beat, sound);
+        }
         if (sound) {
           sound.volume += step;
           if (sound.volume < 0.05) {

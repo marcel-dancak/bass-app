@@ -93,7 +93,7 @@
   function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
               projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer, DragHandler) {
 
-    DragHandler.initialize('.instrument-grid');
+    DragHandler.initialize('.instrument-grid', $scope);
     audioPlayer.setPlaybackSpeed(1);
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
