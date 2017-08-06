@@ -1,0 +1,197 @@
+{{##def.bend:sound:
+<div class="bend-symbol layout-row">
+  {{~it.bends(sound) :t }}
+  <div
+    type="{{= t.type }}"
+    style="flex: {{= t.flex }}; height: {{= t.height }}; top: {{= t.top}}">
+    {{? t.type }}
+    <md-icon class="ng-scope" md-svg-icon="arrow-{{= t.type }}"></md-icon>
+    <svg
+      class="curve"
+      viewBox="0 0 100 100" preserveAspectRatio="none">
+      <path d="{{= t.path }}" />
+    </svg>
+    {{?}}
+  </div>
+  {{~}}
+</div>
+#}}
+
+{{##def.basslabel:sound:
+<div
+  class="label-wrapper">
+  {{? sound.note.type === 'regular' || sound.note.type === 'bend' || sound.note.type === 'harmonics'}}
+  <label class="note">
+    {{= sound.note.name }}<sub>{{= sound.note.octave }}</sub>
+  </label>
+  <label class="fret">
+    {{= sound.note.fret }}
+  </label>
+  {{?? sound.note.type === 'ghost'}}
+  <p>x</p>
+  {{?? sound.note.type === 'slide'}}
+  <div
+    class="slide octave-{{= sound.endNote.octave }} {{? sound.endNote.fret < sound.note.fret}}down{{?}}">
+    {{? sound.style !== 'ring'}}
+    <div>
+      <label class="note">
+        {{= sound.note.name }}<sub>{{= sound.note.octave }}</sub>
+      </label>
+      <label class="fret">
+        {{= sound.note.fret }}
+      </label>
+    </div>
+    {{?}}
+    <div
+      class="slide-slash">|</div>
+    <div>
+      <label class="note">
+        {{= sound.endNote.name }}<sub>{{= sound.endNote.octave }}</sub>
+      </label>
+      <label class="fret">
+        {{= sound.endNote.fret }}
+      </label>
+    </div>
+  </div>
+  {{?? sound.note.type === 'grace'}}
+  <label class="note">
+    <span class="grace">
+      {{= sound.note.name }}
+      <sub>{{= sound.note.octave }}</sub>
+    </span>
+    {{= sound.endNote.name }}<sub>{{= sound.endNote.octave }}</sub>
+  </label>
+  <label class="fret">
+    <span class="grace">
+      {{= sound.note.fret }}
+    </span>
+    {{= sound.endNote.fret }}
+  </label>
+  {{??}}
+  {{?}}
+  {{? sound.note.type === 'bend'}}
+  <!-- <bd-bend height="25" class=".ng-scope"></bd-bend> -->
+    {{#def.bend:sound }}
+  {{?}}
+  <div class="hammer-on-label"></div>
+</div>
+#}}
+
+
+<div>
+  <div class="layout-row flex-none">
+    <!-- Beats with bass sounds (tabs) -->
+    {{~it.beats :beat:bindex}}
+    <div
+      class="layout-column flex bass beat
+      {{? beat.beat === 1 }}first{{?}}
+      {{? beat.beat === beat.timeSignature.top}}last{{?}}
+      {{? beat.sectionInfo && beat.sectionInfo.timeSignature}}with-header{{?}}
+      ">
+
+      {{? beat.sectionInfo && beat.sectionInfo.timeSignature }}
+      <div class="section-header">
+        <div class="time-signature">
+          <div>{{= beat.timeSignature.top }}</div>
+          <div>{{= beat.timeSignature.bottom }}</div>
+        </div>
+        <div class="strings-labels instrument-slide">
+        {{~it.track.instrument.strings.slice().reverse() :string}}
+          <p>
+            {{= string.label }}<sub class="octave-index">{{= string.octave }}</sub><br>
+          </p>
+        {{~}}
+        </div>
+      </div>
+      {{?}}
+
+      <div class="header">
+        {{? beat.sectionInfo}}
+        <div class="section-label {{? beat.sectionInfo.bpm}}with-tempo{{?}}">
+          {{? beat.sectionInfo.bpm}}
+          <label
+            class="bpm">
+            <i class="{{= it.Note.map[beat.sectionInfo.timeSignature.bottom] }}"></i>=
+            <br />{{= beat.sectionInfo.bpm }}
+          </label>
+          {{?}}
+          <label class="section-name">
+            {{= beat.sectionInfo.name }}
+          </label>
+        </div>
+        {{?}}
+
+        <label class="bar-label">
+          {{= beat.bar }}
+        </label>
+
+        {{~beat.chordLabels :chord}}
+        <span
+          class="chord-label {{? beat.beat === 1 && chord.subbeat === 1}}bar{{?}}"
+          style="
+            left: {{= 100*(chord.subbeat-1)/beat.subdivision }}%;
+            width: {{= 100/beat.subdivision }}%;
+          ">
+          {{= chord.label }}
+        </span>
+        {{~}}
+      </div>
+
+      <!-- Bar -->
+      <div class="bar-beat layout-row">
+        <div class="subbeat flex">
+          <label class="subbeat-label {{? it.showTimeSig }} align-right {{?}}">
+            {{= beat.beatLabel }}
+          </label>
+        </div>
+        {{~it.barLabels[beat.subdivision] :label}}
+        <div class="subbeat flex">
+          <label class="subbeat-label">
+            {{= label }}
+          </label>
+        </div>
+        {{~}}
+      </div>
+
+      <!-- Instrument -->
+      <div
+        class="beat-container bass-board instrument-slide {{? bindex === it.beats.length && it.emptyBeats.length }} last {{?}}">
+        <div class="string-container">
+          {{~it.track.instrument.strings :string}}
+          <div class="bass-string"></div>
+          {{~}}
+        </div>
+
+        {{~beat.sounds :sound}}
+        <div
+          class="sound-container {{= sound.style }} {{= sound.note.type }}
+            string-{{= it.track.instrument.stringIndex[sound.string] }}
+            {{? sound.note.staccato }} staccato {{?}}"
+          style="
+            left: {{= 100 * sound.start }}%;
+            width: {{= 100 * (sound.end - sound.start) }}%;"
+          octave="{{= sound.note.octave }}"
+          {{~ Object.entries(it.soundAttrs(sound)) :item}}
+          {{= item[0] }}="{{= item[1] }}"
+          {{~}}>
+          <div class="top-label"></div>
+          <div class="bottom-label">
+            <i class="{{? sound.note.dotted }} dotted {{?}} it.Note.map[sound.note.length]"></i>
+          </div>
+
+          {{#def.basslabel:sound }}
+
+        </div>
+        {{~}}
+      </div>
+
+    </div>
+    {{~}}
+    {{~it.emptyBeats :i }}
+    <div
+      class="empty flex"
+      style="position:relative;">
+    </div>
+    {{~}}
+  </div>
+</div>

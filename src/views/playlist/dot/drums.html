@@ -1,0 +1,105 @@
+<div>
+  <div class="layout-row flex-none">
+    <!-- Beats with bass sounds (tabs) -->
+    {{~it.beats :beat:bindex}}
+    <div
+      class="layout-column flex bass beat
+      {{? beat.beat === 1 }}first{{?}}
+      {{? beat.beat === beat.timeSignature.top}}last{{?}}
+      {{? beat.sectionInfo && beat.sectionInfo.timeSignature}}with-header{{?}}
+      ">
+
+      {{? beat.sectionInfo && beat.sectionInfo.timeSignature }}
+      <div class="section-header">
+        <div class="time-signature">
+          <div>{{= beat.timeSignature.top }}</div>
+          <div>{{= beat.timeSignature.bottom }}</div>
+        </div>
+
+        <div class="layout-column drum-labels ng-scope">
+          {{~it.track.instrument :drum}}
+          <md-icon md-svg-icon="drums:{{= drum.name }}"></md-icon>
+          {{~}}
+        </div>
+      </div>
+      {{?}}
+
+      <div class="header">
+        {{? beat.sectionInfo}}
+        <div class="section-label {{? beat.sectionInfo.bpm}}with-tempo{{?}}">
+          {{? beat.sectionInfo.bpm}}
+          <label
+            class="bpm">
+            <i class="{{= it.Note.map[beat.sectionInfo.timeSignature.bottom] }}"></i>=
+            <br />{{= beat.sectionInfo.bpm }}
+          </label>
+          {{?}}
+          <label class="section-name">
+            {{= beat.sectionInfo.name }}
+          </label>
+        </div>
+        {{?}}
+
+        <label class="bar-label">
+          {{= beat.bar }}
+        </label>
+
+        {{~beat.chordLabels :chord}}
+        <span
+          class="chord-label {{? beat.beat === 1 && chord.subbeat === 1}}bar{{?}}"
+          style="
+            left: {{= 100*(chord.subbeat-1)/beat.subdivision }}%;
+            width: {{= 100/beat.subdivision }}%;
+          ">
+          {{= chord.label }}
+        </span>
+        {{~}}
+      </div>
+
+      <!-- Bar -->
+      <div class="bar-beat layout-row">
+        <div class="subbeat flex">
+          <label class="subbeat-label {{? it.showTimeSig }} align-right {{?}}">
+            {{= beat.beatLabel }}
+          </label>
+        </div>
+        {{~it.barLabels[beat.subdivision] :label}}
+        <div class="subbeat flex">
+          <label class="subbeat-label">
+            {{= label }}
+          </label>
+        </div>
+        {{~}}
+      </div>
+
+      <!-- Instrument -->
+      <div
+        class="beat-container drum-grid instrument-slide {{? bindex === it.beats.length && it.emptyBeats.length }} last {{?}}"
+        style="height: {{= it.track.instrument.length * 2.25 }}em">
+        <div class="lines">
+          {{~[].constructor((beat.grid || beat.subdivision) - 1) :i:index}}
+          <div
+            style="left: {{= (100 * (index + 1) / (beat.grid || beat.subdivision)) }}%">
+          </div>
+          {{~}}
+        </div>
+
+        {{~beat.sounds :sound}}
+        <div
+          class="drum-sound"
+          style="
+            left: {{= 100*sound.start }}%;
+            width: {{= 100/(beat.grid||beat.subdivision) }}%;
+            top: {{= it.track.instrument.index[sound.drum] * 2.25 }}em">
+          <div
+            class="volume-meter"
+            style="transform: {{= 'scale('+sound.volume+','+sound.volume+')' }}">
+          </div>
+        </div>
+        {{~}}
+      </div>
+
+    </div>
+    {{~}}
+  </div>
+</div>
