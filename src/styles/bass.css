@@ -53,7 +53,7 @@
 
 .strings-labels {
   position: absolute;
-  top: 34px;
+  top: 2.25em;
   text-align: center;
   left: 0;
   width: 2.625em;
@@ -64,7 +64,7 @@
 .strings-labels p {
   margin: 0;
   font-size: 1.25em;
-  font-weight: 400;
+  font-weight: 500;
   height: 1.8em;
   line-height: 2em;
 }
@@ -735,7 +735,8 @@ md-input-container.slide-field > span {
   position: absolute;
   left: 0;
   right: 0;
-  top: -30px;
+  top: -1.875rem;
+  height: 1.875rem;
   pointer-events: none;
 }
 

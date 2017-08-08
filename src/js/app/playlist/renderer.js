@@ -11,9 +11,9 @@
           element.attr(attrs);
         }
       };
-    });
+    })
 
-  function slidesCompiler($timeout, $q, $templateRequest, $compile, projectManager) {
+  function slidesCompiler($timeout, $q, $templateRequest, $compile, $mdIcon, $mdUtil, projectManager, noteBendEffect) {
 
     var EMPTY_TRACK = {
       beat: function(bar, beat) {
@@ -29,17 +29,45 @@
     };
 
     var template;
+    var templateEl;
+    var drumDoT;
+    var bassDoT;
+    var drumTemplateEl;
+    var beatEl;
     var EMPTY_OBJ = {};
     return {
       setTemplate: function(templateUrl) {
         if (template) return $q.when();
+
+        $templateRequest('views/playlist/dot/drums.html').then(function(html) {
+          drumDoT = doT.template(html);
+        });
+        $templateRequest('views/playlist/dot/bass.html').then(function(html) {
+          bassDoT = doT.template(html);
+        });
+        $templateRequest('views/playlist/drums.html').then(function(html) {
+          drumTemplateEl = angular.element(html);
+        });
+
         return $templateRequest(templateUrl).then(function(html) {
           template = html;
+          templateEl = angular.element(template);
         });
       },
-      soundAttrs: function(sound) { return EMPTY_OBJ; },
+      soundAttrs: function(sound) { return EMPTY_OBJ },
+      trackTemplate: function(trackId) {
+        if (trackId.startsWith('drum')) {
+          return drumTemplateEl.clone();
+        }
+        return templateEl.clone();
+      },
+      trackTemplateUrl: function(trackId) {
+        if (trackId.startsWith('drum')) {
+          return 'views/playlist/drums.html';
+        }
+        return 'views/playlist/slide.html';
+      },
       updateSlide: function(scope, element, slideData, viewerTrackId) {
-        element.firstChild.remove();
 
         var section = {id: -1};
         var track;
@@ -51,9 +79,11 @@
           var trackBeat = track.beat(beat.bar, beat.beat)
           beat.sounds = track.beatSounds(trackBeat);
           beat.subdivision = trackBeat.subdivision;
+          beat.grid = trackBeat.grid;
         });
         slideData.track = viewerTrackId;
 
+        /*
         var newScope = scope.$new(true);
         newScope.track = scope.workspace.track;
         newScope.barLabels = scope.barLabels;
@@ -62,12 +92,37 @@
         newScope.emptyBeats = slideData.emptyBeats;
         newScope.soundAttrs = this.soundAttrs;
 
-        var contentEl = angular.element(template);
+        // while (element.firstChild !== null) {
+        //   element.firstChild.remove();
+        // }
+        element.lastChild.remove();
+        var contentEl = this.trackTemplate(viewerTrackId);
         $compile(contentEl)(newScope);
         element.appendChild(contentEl[0]);
         $timeout(function() {
           newScope.$destroy();
         });
+        */
+
+        var context = {
+          beats: slideData.beats,
+          emptyBeats: slideData.emptyBeats,
+          track: scope.workspace.track,
+          barLabels: scope.barLabels,
+          Note: scope.Note,
+          bends: noteBendEffect,
+          soundAttrs: this.soundAttrs
+        };
+
+        var template = viewerTrackId.startsWith('drum')? drumDoT : bassDoT;
+        var html = template(context);
+        element.innerHTML = html;
+
+        if (html.indexOf('ng-scope') !== -1) {
+          Array.from(element.querySelectorAll('.ng-scope')).forEach(function(el) {
+            $compile(el)(scope);
+          });
+        }
       },
 
       generateSlide: function(scope, playlist, position, count, viewerTrackId, options) {
@@ -113,6 +168,7 @@
             bar: position.bar,
             beat: position.beat,
             subdivision: trackBeat.subdivision,
+            grid: trackBeat.grid,
             timeSignature: section.timeSignature,
             chordLabels: chordLabels,
             beatLabel: beatLabels[position.beat],
@@ -126,6 +182,7 @@
           // var forcedHeader = beats.length === 1 &&
           //     (options.initialHeaderOn === 'all' ||
           //     (options.initialHeaderOn === 'first' && prevSection));
+          // options.initialHeaderOn = 'all'
           var forcedHeader = beats.length === 1 && options.initialHeaderOn === 'all';
 
           if (forcedHeader || sectionFirstsBeat) {
@@ -166,14 +223,59 @@
         slideData.emptyBeats = emptyBeats;
         newScope.beats = beats;
         newScope.emptyBeats = emptyBeats;
+        var wrapperElem = angular.element('<div class="swiper-slide"> </div>');
 
-        var wrapperElem = angular.element('<div class="swiper-slide"></div>');
-        var element = angular.element(template);
-        $compile(element)(newScope);
-        wrapperElem.append(element);
-        $timeout(function() {
-          newScope.$destroy();
-        });
+        if (scope.workspace.track) {
+          var context = {
+            beats: beats,
+            emptyBeats: emptyBeats,
+            track: scope.workspace.track,
+            barLabels: scope.barLabels,
+            Note: scope.Note,
+            bends: noteBendEffect,
+            soundAttrs: this.soundAttrs
+          };
+
+          var template = viewerTrackId.startsWith('drum')? drumDoT : bassDoT;
+          var html = template(context);
+          wrapperElem[0].innerHTML = html;
+
+          // if (html.indexOf('<md-icon') !== -1) {
+          //   var icons = wrapperElem[0].querySelectorAll('md-icon');
+          //   Array.from(icons).forEach(function(iconEl) {
+          //     $compile(iconEl)(scope);
+          //   });
+          // }
+          if (html.indexOf('ng-scope') !== -1) {
+            Array.from(wrapperElem[0].querySelectorAll('.ng-scope')).forEach(function(el) {
+              $compile(el)(scope);
+            });
+          }
+        }
+
+        // $timeout(function() {
+        //   wrapperElem.append(element);
+        //   $mdUtil.nextTick(function() {
+        //     newScope.$destroy();
+        //   });
+        // }, 100);
+
+        // var wrapperElem = angular.element('<div class="swiper-slide"></div>');
+        // var content = angular.element('<div ng-include="\''+this.trackTemplateUrl(viewerTrackId)+'\'" onload="loaded()"></div>');
+        // newScope.loaded = function() {
+        //   $mdUtil.nextTick(function() {
+        //     newScope.$destroy();
+        //   });
+        // }
+        // wrapperElem.append(content);
+        // $compile(content)(newScope);
+
+        // var contentEl = this.trackTemplate(viewerTrackId);
+        // $compile(contentEl)(newScope);
+        // wrapperElem.append(contentEl);
+        // $timeout(function() {
+        //   newScope.$destroy();
+        // });
         return {
           elem: wrapperElem,
           data: slideData

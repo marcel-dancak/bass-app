@@ -3,7 +3,7 @@
   {{~it.bends(sound) :t }}
   <div
     type="{{= t.type }}"
-    style="flex: {{= t.flex }}; height: {{= t.height }}; top: {{= t.top}}">
+    style="flex: {{= t.flex }}; {{? t.type }}height: {{= t.height }}; top: {{= t.top}}{{?}}">
     {{? t.type }}
     <md-icon class="ng-scope" md-svg-icon="arrow-{{= t.type }}"></md-icon>
     <svg
