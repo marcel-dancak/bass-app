@@ -117,6 +117,9 @@
   position: relative;
 }
 
+.playlist-swiper .swiper-slide:not(.swiper-slide-visible) > div {
+  display: none;
+}
 
 .swiper-slide .header .bar-label {
   top: 2.063em;

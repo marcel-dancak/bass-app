@@ -29,7 +29,7 @@
           name: 'horizontal',
           // swiper config
           direction: 'horizontal',
-          slidesPerView: 1.0,
+          slidesPerView: 1.004,
           slidesPerColumn: 1,
           animation: 0,
           render: {
@@ -107,7 +107,8 @@
         slidesPerColumn: viewer.layout.slidesPerColumn,
         initialSlide: 0,
         roundLengths: true,
-        mousewheelControl: true
+        mousewheelControl: true,
+        watchSlidesVisibility: true
       }, options);
       viewer.swiper = new Swiper(swiperElem, params);
 
