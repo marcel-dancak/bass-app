@@ -105,9 +105,10 @@
     }
   }
 
-  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdToast, $mdDialog,  $mdSidenav, $location, context,
+  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdToast, $mdDialog,  $mdSidenav, $mdPanel, $location, context,
       settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note,
       dataUrl, localSoundsUrl, soundsUrl) {
+    $scope.runtime = window.runtime;
     $scope.Note = Note;
     $scope.settings = settings;
 
@@ -122,7 +123,6 @@
       $scope.setLanguage(lang);
     }
 
-    $scope.runtime = window.runtime;
     $scope.ui = {
       selectTrack: angular.noop,
       playlist: {}
@@ -147,7 +147,6 @@
       mode: $location.hash()? 1 : 0,
       playing: false,
       play: angular.noop,
-      input: audioPlayer.input,
       countdown: false,
       loop: true,
       speed: 100,
@@ -263,71 +262,6 @@
       Note.map[note.value] = note.symbol;
     }
     $scope.Note = Note;
-
-    $scope.toggleVolumeMute = function(instrument) {
-      if (!instrument.muted) {
-        instrument._volume = instrument.audio.gain.value;
-        // zero gain value would cause invalid drawing of audio signal
-        instrument.audio.gain.value = 0.0001;
-      } else {
-        instrument.audio.gain.value = instrument._volume || instrument.audio.gain.value;
-      }
-      instrument.muted = !instrument.muted;
-    };
-
-    $scope.toggleInputMute = function(input) {
-      $scope.toggleVolumeMute(input);
-      if (input.muted) {
-        console.log('mute microphone');
-        // input.stream.removeTrack(input.stream.getAudioTracks()[0]);
-        // input.source.disconnect();
-        // audioVisualiser.deactivate();
-        // audioVisualiser.activate(workspace.track.audio);
-      } else {
-        if (!input.source) {
-          var gotStream = function(stream) {
-            input.stream = stream;
-            // Create an AudioNode from the stream.
-            input.source = context.createMediaStreamSource(stream);
-            input.source.connect(input.audio);
-            audioVisualiser.activate(input.audio);
-            input.audio.connect(context.destination);
-          }
-
-          var error = function() {
-            alert('Stream generation failed.');
-          }
-
-          navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-          navigator.getUserMedia({ audio: true }, gotStream, error);
-        } else {
-          // input.source.connect(input.audio);
-          // audioVisualiser.setInputSource(context, input.audio);
-        }
-      }
-    };
-
-    $scope.addAudioTrack = function(file) {
-      var gain = context.createGain();
-      gain.connect(context.destination);
-      $mdUtil.nextTick(function() {
-        $scope.$broadcast('rzSliderForceRender');
-      });
-      // use saved 'start' value if exists
-      var savedStart;
-      if ($scope.player.mode === 0 && workspace.section.audioTrackStart) {
-        savedStart = workspace.section.audioTrackStart.split(":").map(Number);
-      }
-      projectManager.project.audioTrack = {
-        data: null,
-        audio: gain,
-        start: savedStart || [0,0,0]
-      };
-      context.decodeAudioData(file.content, function(buffer) {
-        projectManager.project.audioTrack.data = buffer
-      });
-
-    };
 
     $scope.slidesSizeChanged = function() {
       audioVisualiser.updateSize();
@@ -485,5 +419,38 @@
     }
     $scope.sideMenu = SideMenu();
 
+
+    function panelMenu(template, evt, opts) {
+      var position = $mdPanel.newPanelPosition()
+        .relativeTo(evt.target)
+        .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_TOPS)
+
+      var animation = $mdPanel.newPanelAnimation()
+        .openFrom(evt.target)
+        .closeTo(evt.target)
+        .withAnimation({
+            open: 'menu-animation-enter',
+            close: 'menu-animation-leave'
+          })
+
+      $mdPanel.open({
+        attachTo: document.body,
+        templateUrl: template,
+        // controller: 'TracksController',
+        position: position,
+        animation: animation,
+        targetEvent: evt,
+        panelClass: 'menu md-whiteframe-16dp',
+        clickOutsideToClose: true,
+        // onCloseSuccess
+        onDomRemoved: function(arg) {
+          arg[0].destroy();
+        }
+      });
+    }
+
+    $scope.openVolumePreferences = function(evt) {
+      panelMenu('views/volume_preferences.html', evt);
+    }
   }
 })();

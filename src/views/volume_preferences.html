@@ -1,0 +1,138 @@
+<md-list
+  class="tracks-mixer preferences"
+  ng-controller="TracksController">
+
+  <md-list-item
+    ng-repeat="track in project.tracks track by track.id"
+    class="volume-field bottom-border">
+    <label>
+      <md-icon
+        style="padding-right: 8px;"
+        md-svg-icon="{{ ::track.instrument.icon || track.type }}">
+      </md-icon>
+      {{ track.name }}
+    </label>
+    <rzslider
+      rz-slider-model="track.audio.gain.value"
+      rz-slider-options="{
+        floor: 0,
+        ceil: 1,
+        step: 0.01,
+        precision: 2,
+        hideLimitLabels: true,
+        hidePointerLabels: true,
+        showSelectionBar: true,
+        disabled: track.muted
+      }">
+    </rzslider>
+    <md-button
+      md-no-ink
+      aria-label="Mute"
+      class="mute-button"
+      ng-class="{active: !track.muted}"
+      md-prevent-menu-close
+      ng-click="toggleVolumeMute(track)">
+      <md-icon
+        md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
+      </md-icon>
+    </md-button>
+  </md-list-item>
+
+  <md-list-item
+    ng-if-start="::runtime.desktop"
+    class="volume-field bottom-border"
+    ng-class="{ 'audio-track': project.audioTrack }"
+    bd-binary-file-drop="addAudioTrack($file)">
+    <label>Audio Track</label>
+    <rzslider ng-if-start="project.audioTrack"
+      rz-slider-model="project.audioTrack.audio.gain.value"
+      rz-slider-options="{
+        floor: 0,
+        ceil: 1,
+        step: 0.01,
+        precision: 2,
+        hideLimitLabels: true,
+        hidePointerLabels: true,
+        showSelectionBar: true,
+        disabled: project.audioTrack.muted
+      }">
+    </rzslider>
+    <md-button
+      md-no-ink
+      aria-label="Mute"
+      class="mute-button"
+      ng-class="{active: !project.audioTrack.muted}"
+      md-prevent-menu-close
+      ng-click="toggleVolumeMute(project.audioTrack)">
+      <md-icon
+        md-svg-icon="{{ project.audioTrack.muted? 'volume-mute' : 'volume-medium' }}">
+      </md-icon>
+    </md-button>
+    <div
+      ng-if-end
+      layout="row"
+      class="time-field">
+      <md-input-container>
+        <label class="md-no-float">Minute</label>
+        <input
+          type="number"
+          min="0"
+          ng-model="project.audioTrack.start[0]">
+      </md-input-container>
+      <span> : </span>
+      <md-input-container>
+        <label class="md-no-float">Second</label>
+        <input
+          type="number"
+          min="0"
+          ng-model="project.audioTrack.start[1]">
+      </md-input-container>
+      <span>:</span>
+      <md-input-container>
+        <label class="md-no-float">Milisecond</label>
+        <input
+          type="number"
+          min="0"
+          step="10"
+          ng-model="project.audioTrack.start[2]"
+          bd-disable-step-validator>
+      </md-input-container>
+    </div>
+    <p
+      ng-if="!project.audioTrack"
+      class="drop-area">
+      <small>Drag audio file</small>
+    </p>
+  </md-list-item>
+
+  <md-list-item
+    ng-if-end
+    class="volume-field bottom-border">
+    <label translate="INPUT_VOLUME"></label>
+    <rzslider
+      rz-slider-model="input.audio.gain.value"
+      rz-slider-options="{
+        floor: 0,
+        ceil: 1,
+        step: 0.01,
+        precision: 2,
+        hideLimitLabels: true,
+        hidePointerLabels: true,
+        showSelectionBar: true,
+        disabled: input.muted
+      }">
+    </rzslider>
+    <md-button
+      md-no-ink
+      aria-label="Mute"
+      class="mute-button"
+      ng-class="{active: !input.muted}"
+      md-prevent-menu-close
+      ng-click="toggleInputMute(input)">
+      <md-icon
+        md-svg-icon="{{ input.muted? 'volume-mute' : 'volume-medium' }}">
+      </md-icon>
+    </md-button>
+  </md-list-item>
+
+</md-list>
