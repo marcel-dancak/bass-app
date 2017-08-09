@@ -424,6 +424,22 @@
       } else {
         initPlaylistSlides();
       }
+      // adjust layout by available screen space
+      if (viewer.swiper.slides.length) {
+        var updateLayout = false;
+        var slideHeight = viewer.swiper.slides[viewer.swiper.snapIndex].lastChild.offsetHeight;
+        if (slideHeight > viewer.swiper.size / viewer.layout.slidesPerView) {
+          viewer.swiper.params.slidesPerView = viewer.swiper.size / (slideHeight+20);
+          updateLayout = true;
+        } else if (viewer.swiper.params.slidesPerView !== viewer.layout.slidesPerView) {
+          viewer.swiper.params.slidesPerView = viewer.layout.slidesPerView;
+          updateLayout = true;
+        }
+        if (updateLayout) {
+          viewer.swiper.updateSlidesSize();
+          viewer.swiper.slideTo(viewer.swiper.snapIndex, 0, false);
+        }
+      }
     }
 
     function updatePlaylistRange() {
@@ -485,7 +501,6 @@
 
       // var slide = Math.round(value / viewer.beatsPerSlide);
       var slide = parseInt(value / viewer.beatsPerSlide);
-      console.log(slide+' of '+viewer.swiper.slides.length);
 
       var missingSlides = slide + Math.round(viewer.layout.slidesPerView) - viewer.swiper.slides.length;
       if (missingSlides > 0) {
