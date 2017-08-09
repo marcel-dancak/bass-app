@@ -54,7 +54,8 @@
       margin: 2px;
       padding: 0;
       line-height: 2.85em;
-      min-width: 2.85em;
+      height: 2.75em;
+      min-width: 2.75em;
       overflow: visible;
       z-index: 1;
 
@@ -189,7 +190,6 @@
 }
 
 
-.playlist-mode .tracks-list md-option[type="drums"],
 .playlist-mode .tracks-list md-option[type="piano"] {
   pointer-events: none;
   opacity: 0.5;

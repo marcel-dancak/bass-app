@@ -99,7 +99,6 @@
     $scope.slides = [];
 
     if (!$scope.editor) {
-      console.log('Initializing editor')
       $scope.$root.editor = {
         beatsPerView: 8,
         slideOnBeat: 1,
@@ -110,6 +109,9 @@
         },
         animationLabel: function(value, sliderId, label) {
           return "scroll after {0} beats".format(value);
+        },
+        updateBeatsPerView: function() {
+          $scope.editor.beatsPerView = swiperControl.setBeatsPerView($scope.editor.beatsPerView);
         }
       }
       if (!workspace.section && projectManager.section) {
@@ -240,7 +242,7 @@
       }
 
       if (!audioVisualiser.enabled && $scope.player.graphEnabled) {
-        var audio = $scope.player.input.muted? workspace.track.audio : $scope.player.input.audio;
+        var audio = audioPlayer.input.muted? workspace.track.audio : audioPlayer.input.audio;
         console.log('activating track visualization');
         audioVisualiser.activate(audio);
       }
@@ -513,7 +515,6 @@
       if (projectManager.project.audioTrack && section.audioTrackStart) {
         projectManager.project.audioTrack.start = section.audioTrackStart.split(":").map(Number);
       }
-      console.log(section);
 
       workspace.section = section;
       $scope.player.playbackRange.start = 1;
@@ -644,6 +645,32 @@
       // audioPlayer.un('playbackStopped', playbackStopped);
     });
     window.sw = swiperControl;
+
+    // Some useful utilities
+    window.nextStart = function() {
+      var section = workspace.section;
+      var beats = section.length * section.timeSignature.top;
+      var duration = beats * (60 / section.bpm);
+      var time = section.audioTrackStart.split(":").map(Number);
+
+      var sec = parseInt(duration);
+      var mili = Math.round(1000 * (duration - sec));
+      time[1] += sec;
+      time[2] += mili;
+      if (time[2] >= 1000) {
+        time[1]++;
+        time[2] -= 1000;
+      }
+      console.log(time)
+    }
+
+    window.setStyle = function(style) {
+      workspace.trackSection.forEachSound(function(s) {
+        if (s.style === 'finger') {
+          s.style = style;
+        }
+      });
+    }
 
   }
 })();
