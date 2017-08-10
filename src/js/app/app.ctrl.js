@@ -70,7 +70,11 @@
         .accentPalette('blue-grey');
     })
     // Support for loading of AngularJS components after application has been bootstrapped
-    .config(function($controllerProvider, $provide, $compileProvider) {
+    .config(function($controllerProvider, $provide, $compileProvider, $translateProvider) {
+      $compileProvider.commentDirectivesEnabled(false);
+      $compileProvider.cssClassDirectivesEnabled(false);
+      // $compileProvider.debugInfoEnabled(false);
+      $translateProvider.useSanitizeValueStrategy('escape');
       angular.module('bd.app').controller = function(name, constructor) {
         $controllerProvider.register(name, constructor);
         return(this);
@@ -143,8 +147,9 @@
       }
     };
 
+    var mode = $location.search().mode? parseInt($location.search().mode) : $location.hash()? 1 : 0;
     $scope.player = {
-      mode: $location.hash()? 1 : 0,
+      mode: mode,
       playing: false,
       play: angular.noop,
       countdown: false,
@@ -343,7 +348,6 @@
           script.type = 'text/javascript';
           script.src = scriptElem.src;
           script.onload = function() {
-            console.log('loaded: '+script.src)
             if (++loaded === scriptElems.length) {
               loading.resolve();
             }
@@ -363,7 +367,10 @@
         }
         document.body.appendChild(scriptEl);
       });
-      document.body.appendChild(template.find('style')[0]);
+
+      Array.from(template.find('style')).forEach(function(script) {
+        document.body.appendChild(script);
+      });
 
       dependenciesLoaded.then(function() {
         $controller('ScriptCtrl', {'$scope': $scope.$new(true), 'template': template});
