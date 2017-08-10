@@ -65,6 +65,9 @@
       this.audioProcessor = context.createScriptProcessor(512, 1, 1);
       this.saveRate = 8;
 
+      // var counter = 0;
+      // var pitch = new PitchAnalyzer(44100);
+
       this.audioProcessor.onaudioprocess = function(audioProcessingEvent) {
         // console.log('onaudioprocess');
         var currentTime = audioProcessingEvent.playbackTime-0.0117;
@@ -73,8 +76,28 @@
           if (!beat || !beat.startTime || (audioProcessingEvent.playbackTime-beat.startTime) < 0) {
             return;
           };
-
+          // console.log('sample');
           var inputData = audioProcessingEvent.inputBuffer.getChannelData(0);
+
+          /* Copy samples to the internal buffer */
+          /*
+          pitch.input(inputData);
+          counter++;
+          if (counter === 8) {
+            pitch.process();
+            var tone = pitch.findTone(25, 600);
+            if (tone) {
+              var f = Math.min.apply(null, pitch.tones.map(function(tone) {
+                return tone.freq;
+              }));
+              if (f < 25) {
+                console.log(pitch.tones);
+              }
+              // console.log(tone);
+            }
+            counter = 0;
+          }
+          */
           var beatDataSize = inputData.length;
           var beatTime = beat.endTime - beat.startTime;
 
@@ -275,6 +298,63 @@
       ctx.stroke();
     };
 
+    /*
+    AudioVisualiser.prototype.drawVector = function(beat) {
+      if (beat.lastFrame === 0) {
+        return '';
+      }
+
+      var points = [];
+      var lastValue = -1;
+      function valueAt(offset) {
+        var value = points[points.length-1+offset];
+        if (value) {
+          return value.split(',')[1];
+        }
+      }
+      function addPoint(x, y) {
+        if (y === lastValue && valueAt(-2) === y.toString()) {
+          points.pop();
+        }
+        points.push(x+','+y);
+        lastValue = y;
+      }
+
+      var prevBeat = this.beats[beat.index-1];
+      if (prevBeat && prevBeat.complete === 1) {
+        addPoint(0, prevBeat.y);
+      } else {
+        addPoint(0, beat.height/2);
+      }
+
+      var records = beat.lastFrame;
+      var graphEnd = parseInt(beat.width * beat.complete);
+      for (var i = 1; i <= graphEnd; i++) {
+        var recordIndex = parseInt(i*(records/graphEnd));
+        var v = 1.0 - beat.data[recordIndex] / 256.0;
+        beat.y = v * beat.height;
+        addPoint(i, beat.y);
+      }
+
+      var polyline = points.join(' ');
+      return '<polyline fill="none" stroke="rgb(180, 0, 0)" points="'+polyline+'"/>'
+    }
+
+    AudioVisualiser.prototype.drawSvg = function(beat) {
+
+      for (var i = 0; i < this.beats.length; i++) {
+        var beat = this.beats[i];
+        if (beat && beat.canvas) {
+          var graph = this.drawVector(beat);
+          beat.svgCanvas = angular.element(
+            '<svg viewBox="0 0 {0} {1}" width="{0}" height="{1}">{2}</svg>'
+              .format(beat.width, beat.height, graph)
+          )[0];
+          beat.canvas.parentElement.appendChild(beat.svgCanvas);
+        }
+      }
+    }
+    */
     AudioVisualiser.prototype.updateSize = function() {
       for (var i = 0; i < this.beats.length; i++) {
         var beat = this.beats[i];
