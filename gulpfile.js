@@ -8,6 +8,7 @@ var connect = require('gulp-connect');
 var merge = require('merge-stream');
 var path = require('path');
 var babel = require('gulp-babel');
+var sass = require('gulp-sass');
 
 
 var TARGET = 'dist/v21/';
@@ -15,6 +16,7 @@ var TARGET = 'dist/v21/';
 var DEV_JS = ['src/js/**/*.js', 'src/js/**/*.es6'];
 var DEV_HTML = 'src/views/**/*.html';
 var DEV_CSS = 'src/styles/**/*.css';
+var DEV_SCSS = 'src/styles/**/*.scss';
 
 /**
  * Tasks for development
@@ -31,7 +33,7 @@ gulp.task('devserver', function() {
     port = parseInt(process.argv[portArgIndex+1]);
   }
   connect.server({
-    root: ['./', 'src/', devserver.index_dir],
+    root: ['./', 'scripts/', 'src/', devserver.index_dir],
     port: port,
     // livereload: true
     livereload: {
@@ -42,6 +44,13 @@ gulp.task('devserver', function() {
 
 gulp.task('dev-js', function () {
   gulp.src(DEV_JS)
+    .pipe(connect.reload());
+});
+
+gulp.task('dev-scss', function () {
+  return gulp.src(DEV_SCSS)
+    .pipe(sass.sync().on('error', sass.logError))
+    .pipe(gulp.dest('src/styles/css'))
     .pipe(connect.reload());
 });
 
@@ -66,6 +75,7 @@ gulp.task('watch', function () {
   gulp.watch(DEV_JS, ['dev-js']);
   gulp.watch(DEV_HTML, ['dev-templates']);
   gulp.watch(DEV_CSS, ['dev-styles']);
+  gulp.watch(DEV_SCSS, ['dev-scss']);
   gulp.watch(index, ['dev-index']);
 });
 
@@ -76,7 +86,7 @@ gulp.task('watch', function () {
 
 gulp.task('serve', function() {
   devserver.index_dir = 'src/dev/desktop/';
-  gulp.start('devserver', 'watch');
+gulp.start('devserver', 'watch');
 });
 
 gulp.task('serve-mobile', function() {
@@ -91,11 +101,12 @@ gulp.task('uglify', function() {
   var series = require('stream-series');
   var ngAnnotate = require('gulp-ng-annotate');
   var templateCache = require('gulp-angular-templatecache/');
+  var gulpif = require('gulp-if');
 
   return series(
     series(
       gulp.src([
-        'bower_components/swiper/dist/js/swiper.js',
+        'bower_components/swiper/dist/js/swiper.min.js',
         'bower_components/angular/angular.min.js',
         'bower_components/angular-aria/angular-aria.min.js',
         'bower_components/angular-animate/angular-animate.min.js',
@@ -163,7 +174,15 @@ gulp.task('uglify', function() {
     gulp.src('src/views/**/*.html')
       .pipe(templateCache('templateCache.js', {root: 'views/'}))
   )
-    .pipe(uglify())
+    // .pipe(uglify())
+    .pipe(
+      gulpif(
+        function (file) {
+          return !file.path.endsWith("min.js")
+        },
+        uglify()
+      )
+    )
     .pipe(concat('app.min.js'))
     .pipe(gulp.dest(TARGET + 'js/'));
 });
