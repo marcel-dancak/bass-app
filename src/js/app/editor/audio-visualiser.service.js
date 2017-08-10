@@ -80,6 +80,9 @@
 
           if (currentTime >= beat.endTime) {
             var nextBeat = _this.beats[beat.nextBeatIndex];
+            if (nextBeat === undefined) {
+              return; // wait for next beat sync
+            }
             // nextBeat.startTime = beat.endTime;
             // nextBeat.endTime = nextBeat.startTime + beatTime;
 
