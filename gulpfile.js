@@ -160,6 +160,7 @@ gulp.task('uglify', function() {
         'bower_components/file-saver/FileSaver.min.js',
         'bower_components/angular-scroll/angular-scroll.min.js',
         'bower_components/marked/marked.min.js',
+        'bower_components/dot/doT.min.js',
 
 
         '!src/js/mobile/**/*.js',
