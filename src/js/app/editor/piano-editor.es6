@@ -56,7 +56,7 @@
                 prevSound.next = true;
               }
               break;
-            case 9: // Tab
+            case 76: // l
               if (sound.note.name.endsWith('♯')) {
                 sound.note.name = Notes.toFlat(sound.note.name);
               } else if (sound.note.name.endsWith('♭')) {

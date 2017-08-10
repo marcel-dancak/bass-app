@@ -72,8 +72,7 @@
             drop-channel="section"
 
             ng-repeat="section in project.sections track by section.id"
-            ng-value="section.id">
-            <!-- <b>{{ section.id }}</b> --> {{ section.name }}
+            ng-value="::section.id">{{ section.name }}
           </md-option>
         </md-select>
       </md-input-container>

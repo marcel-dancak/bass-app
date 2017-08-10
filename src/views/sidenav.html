@@ -58,7 +58,7 @@
           <span flex></span>
           <span
             flex="none"
-            class="group-item-title">Content
+            class="group-item-title">View
           </span>
           <span flex="5"></span>
         </div>
@@ -111,12 +111,12 @@
       <md-list-item
         ng-if-end
         md-no-ink
-        ng-click="nestedSideMenu({
+        ng-click="sideMenu.selectMenu.open({
           items: projectManager.project.playlists,
           label: 'name',
           onSelect: projectManager.loadPlaylist.bind(projectManager)
         })">
-      {{ workspace.playlist.name }}
+        {{ workspace.playlist.name }}
         <md-icon md-svg-icon="arrow-down"></md-icon>
       </md-list-item>
 

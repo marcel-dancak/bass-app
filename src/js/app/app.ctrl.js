@@ -404,7 +404,9 @@
                 if (opts.value) {
                   value = value[opts.value];
                 }
-                return opts.onSelect(value);
+                opts.onSelect(value);
+                that.selectMenu.widget.close();
+                return;
               }
             };
             that.selectMenu.widget = $mdSidenav('menu-select');
