@@ -1,6 +1,5 @@
 <div
   ng-if="slide.initialized"
-  sly-show="slide.visible"
   class="drums-beat"
   ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)"
   ng-click="editor.click($event, beat)"

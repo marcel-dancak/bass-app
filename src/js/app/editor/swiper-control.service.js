@@ -27,37 +27,70 @@
       }.bind(this);
     }
 
-    SwiperControl.prototype.updateSlidesVisibility = function() {
-      // console.log('updateSlidesVisibility');
-      var playbackRange = this.lastSlide - this.firstSlide + 1;
+    SwiperControl.prototype.updateSlidesVisibility = function(translate) {
+      var s = this.barSwiper;
+      var slideVisibleClass = s.params.slideVisibleClass;
 
-      var visibleIndexes = [];
-      var currentIndex = this.barSwiper.snapIndex;
-      var firstVisible = currentIndex - 1;
-      var lastVisible = currentIndex + this.barSwiper.params.slidesPerView + this.preRenderedSlides;
-      // console.log(
-      //   'currentIndex: {0} firstVisible: {1} lastVisible: {2}'
-      //   .format(currentIndex, firstVisible, lastVisible)
-      // );
-      for (var i = firstVisible; i < lastVisible; i++) {
-        var index = i >= playbackRange? i - playbackRange : i;
-        index += this.firstSlide;
-        if (index >= 0) {
-          visibleIndexes.push(index);
+      if (translate === undefined) {
+        translate = s.translate || 0;
+      }
+      if (s.slides.length === 0) return;
+      // if (s.slides[s.slides.length-1].swiperSlideOffset === undefined) s.updateSlidesOffset();
+
+      var offsetCenter = -translate;
+
+      // Visible Slides
+      // s.slides.removeClass(slideVisibleClass);
+      // this.instrumentSwiper.slides.removeClass(slideVisibleClass);
+      // var visible = [];
+      for (var i = 0; i < s.slides.length; i++) {
+        var slide = s.slides[i];
+        var slideProgress = (offsetCenter + (s.params.centeredSlides ? s.minTranslate() : 0) - slide.swiperSlideOffset) / (slide.swiperSlideSize + s.params.spaceBetween);
+        var slideBefore = -(offsetCenter - slide.swiperSlideOffset);
+        var slideAfter = slideBefore + s.slidesSizesGrid[i];
+
+        // var id = slide.getAttribute('id');
+        var slideModel = this.slides[i];
+        if (slideModel) {
+          var beat = this.slides[i].beat;
+          var sounds = workspace.trackSection.beatSounds(beat);
+          if (sounds.length) {
+            var max = Math.max.apply(null, sounds.map(function(s) {
+              return s.end;
+            }));
+            if (max > 1) {
+              slideAfter = slideBefore + s.slidesSizesGrid[i] * max;
+            }
+          }
+        }
+        var isVisible =
+          (slideBefore >= 0 && slideBefore < s.size) ||
+          (slideAfter > 0 && slideAfter <= s.size) ||
+          (slideBefore <= 0 && slideAfter >= s.size);
+        if (isVisible) {
+          // visible.push(i);
+          // s.slides.eq(i).addClass(slideVisibleClass);
+          // this.instrumentSwiper.slides.eq(i).addClass(slideVisibleClass);
+        }
+        if (slideModel) {
+          if (isVisible && this.slideType && slideModel.type !== this.slideType) {
+            slideModel.type = this.slideType;
+            slideModel.beat = workspace.trackSection.beat(slideModel.beat.bar, slideModel.beat.beat);
+          }
+          slideModel.initialized = isVisible || slideModel.initialized;
+        }
+
+        var hasVisibleClass = slide.classList.contains(slideVisibleClass);
+        if (hasVisibleClass && !isVisible) {
+          slide.classList.remove(slideVisibleClass);
+          this.instrumentSwiper.slides[i].classList.remove(slideVisibleClass);
+        }
+        if (!hasVisibleClass && isVisible) {
+          slide.classList.add(slideVisibleClass);
+          this.instrumentSwiper.slides[i].classList.add(slideVisibleClass);
         }
       }
-      // console.log('visible: '+visibleIndexes);
-      for (var i = 0; i < this.slides.length; i++) {
-        var slide = this.slides[i];
-        var visible = visibleIndexes.indexOf(i) !== -1;
-        if (visible && !slide.loading && slide.obsolete) {
-          slide.type = this.slideType;
-          slide.obsolete = false;
-          slide.beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat);
-        }
-        slide.visible = visible;
-        slide.initialized = visible || slide.initialized;
-      }
+      // console.log(visible);
     };
 
     SwiperControl.prototype.updateSubbeatsVisibility = function() {
@@ -73,6 +106,7 @@
     };
 
     SwiperControl.prototype.setSlides = function(slides, params) {
+      this.slideType = slides[0].type;
       this.slides = slides;
       this.firstSlide = 0;
       this.lastSlide = slides.length - 1;
@@ -88,11 +122,13 @@
     };
 
     SwiperControl.prototype._updateLastSlideClass = function() {
-      var Dom7 = this.barSwiper.$;
-      Dom7(this.barSwiper.wrapper[0].querySelector('.bar-end')).removeClass('bar-end');
-      Dom7(this.instrumentSwiper.wrapper[0].querySelector('.bar-end')).removeClass('bar-end');
-      Dom7(this.barSwiper.slides[this.lastSlide]).addClass('bar-end');
-      Dom7(this.instrumentSwiper.slides[this.lastSlide]).addClass('bar-end');
+      var el = this.barSwiper.wrapper[0].querySelector('.bar-end');
+      if (el) {
+        el.classList.remove('bar-end');
+        this.instrumentSwiper.wrapper[0].querySelector('.bar-end').classList.remove('bar-end');
+      }
+      this.barSwiper.slides[this.lastSlide].classList.add('bar-end');
+      this.instrumentSwiper.slides[this.lastSlide].classList.add('bar-end');
     };
 
     SwiperControl.prototype.reinitialize = function(params) {
@@ -107,18 +143,15 @@
         destroySwiper(this.instrumentSwiper);
       }
       var barParams = angular.copy(params);
-      // angular.extend(barParams, {
-      //   paginationClickable: true,
-      //   pagination: '.swiper-pagination',
-      //   nextButton: '.swiper-button-next',
-      //   prevButton: '.swiper-button-prev'
-      // });
 
       this.barSwiper = new Swiper('.editor .bar.swiper-container', barParams);
       this.instrumentSwiper = new Swiper('.editor .instrument.swiper-container', params);
+
       this.barSwiper.params.control = this.instrumentSwiper;
       this.barSwiper.on('transitionEnd', this.updateVisibleSlides);
       this.barSwiper.on('touchEnd', this.onTouchEnd);
+      this.barSwiper.on('touchMove', $mdUtil.throttle(this.updateVisibleSlides, 200));
+      this.barSwiper.updateSlidesOffset();
       this._updateLastSlideClass();
 
       var inputs = this.barSwiper.$('.swiper-slide input');
@@ -155,6 +188,7 @@
       } else if (!this.barSwiper.params.allowSwipeToNext) {
         this.barSwiper.unlockSwipes();
       }
+      this.barSwiper.updateSlidesOffset();
       this.updateSlidesVisibility();
       this.updateSubbeatsVisibility();
       return slidesPerView;
@@ -184,6 +218,7 @@
           this.barSwiper.unlockSwipes();
         }
         this.barSwiper.update();
+        this.barSwiper.updateSlidesOffset();
         this.instrumentSwiper.update();
         this.updateSlidesVisibility();
         // fix swipers over-sliding position
@@ -207,38 +242,13 @@
         }
         var slide = this.slides[slideIndex];
         var newBeat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat);
-        slide.loading = true;
-        slide.obsolete = false;
 
-        // $timeout(function(slide, newBeat) {
-          slide.loading = false;
-          slide.beat = newBeat;
-          slide.type = type;
-        // }.bind(this, slide, newBeat), i*40);
-        // }, i*20, true, slide, newBeat);
+        slide.beat = newBeat;
+        slide.type = type;
       }
-      var loading = [];
-      var obsolete = [];
-      for (var i = 0; i < this.slides.length; i++) {
-        var slide = this.slides[i];
-        if (slide.loading) {
-          loading.push(i);
-        }
-        if (!slide.loading && slide.type !== type) {
-          slide.obsolete = true;
-          obsolete.push(i);
-        } else {
-          slide.obsolete = false;
-        }
-      }
-      // console.log('loading');
-      // console.log(loading);
-      // console.log('obsolete');
-      // console.log(obsolete);
     };
 
     SwiperControl.prototype.rebuildSlides = function() {
-      console.log('rebuildSlides')
       for (var i = 0; i < this.slides.length; i++) {
         var slide = this.slides[i];
         slide.initialized = false;
@@ -349,7 +359,9 @@
       var clonesCount = this.barSwiper.params.slidesPerView + 2;
       for (var i = 0; i <= clonesCount; i++) {
         this.barSwiper.appendSlide(emptySlide.cloneNode());
-        this.instrumentSwiper.appendSlide(emptySlide.cloneNode());
+        var clone = emptySlide.cloneNode();
+        clone.setAttribute('id', this.instrumentSwiper.slides[i].getAttribute('id'));
+        this.instrumentSwiper.appendSlide(clone);
         loopConfig.onTheirPlace.push(false);
       }
 
@@ -441,21 +453,12 @@
     }
 
     SwiperControl.prototype.getBeatElem = function(bar, beat) {
-      // var beatSelector = '.swiper-slide:not(.swiper-slide-duplicate) #beat_{0}_{1}'.format(bar, beat);
-      // return this.barSwiper.wrapper[0].querySelector(beatSelector);
-
-      var beatSelector = '.swiper-slide #beat_{0}_{1}'.format(bar, beat);
-      var elems = this.barSwiper.wrapper[0].querySelectorAll(beatSelector);
-      // try to find element on visible screen area
-      for (var i = 0; i < elems.length; i++) {
-        var elem = elems[i];
-        var bounds = elem.getBoundingClientRect();
-        if (bounds.left >= 0 && bounds.left < window.innerWidth) {
-          return elem;
+      var slideId = 'beat_{0}_{1}'.format(bar, beat);
+      for (var i = this.instrumentSwiper.snapIndex; i < this.instrumentSwiper.slides.length; i++) {
+        if (this.instrumentSwiper.slides[i].getAttribute('id') === slideId) {
+          return this.barSwiper.slides[i].querySelector('.bar-beat');
         }
       }
-      // fallback to first element
-      return elems[0];
     };
 
     SwiperControl.prototype.getSoundElem = function(sound) {
