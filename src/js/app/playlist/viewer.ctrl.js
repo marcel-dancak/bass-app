@@ -136,10 +136,8 @@
         }
       });
       var updatePlayerProgress = function(s) {
-        $mdUtil.nextTick(function() {
-          s.activeIndex = s.snapIndex;
-          $scope.player.progress.value = s.snapIndex * viewer.beatsPerSlide;
-        });
+        s.activeIndex = s.snapIndex;
+        $scope.player.progress.update(s.snapIndex * viewer.beatsPerSlide);
       }
       viewer.swiper.on('touchEnd', updatePlayerProgress);
       viewer.swiper.on('onScroll', updatePlayerProgress);
@@ -238,9 +236,7 @@
       fretboardViewer.beatSync(evt);
 
       playbackState.beatCounter++;
-      $mdUtil.nextTick(function() {
-        $scope.player.progress.value = playbackState.beatCounter;
-      });
+      $scope.player.progress.update(playbackState.beatCounter);
     }
 
     function playSection(start) {

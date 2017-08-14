@@ -163,7 +163,16 @@
       playbackRangeChanged: angular.noop,
       progress: {
         max: 0,
-        value: 0
+        value: 0,
+        update: function(value) {
+          $scope.player.progress.value = value;
+          // Update Progress Slider without Angular's digest cycle
+          if (!this._progressEl) {
+            this._progressEl = document.querySelector('.playback-slider .rz-bar-wrapper:nth-child(2)');
+          }
+          var w = (100 * value / $scope.player.progress.max).toFixed(2)+'%';
+          this._progressEl.style.width = w;
+        }
       },
       setProgress: angular.noop,
       graphEnabled: false,

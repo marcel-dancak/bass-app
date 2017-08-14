@@ -256,9 +256,7 @@
       timeline.beatSync(evt);
       fretboardViewer.beatSync(evt);
 
-      $mdUtil.nextTick(function() {
-        $scope.player.progress.value = evt.flatIndex - swiperControl.firstSlide + 1;
-      });
+      $scope.player.progress.update(evt.flatIndex - swiperControl.firstSlide + 1);
     }
 
     function updateLockedPlayerRange() {
@@ -635,9 +633,7 @@
     };
 
     swiperControl.onTouchEnd = function(sw) {
-      $mdUtil.nextTick(function() {
-        $scope.player.progress.value = sw.snapIndex * editor.beatsPerSlide;
-      });
+      $scope.player.progress.update(sw.snapIndex);
     }
 
     $scope.$on('$destroy', function() {
