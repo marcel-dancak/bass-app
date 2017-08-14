@@ -259,6 +259,12 @@
       $scope.player.progress.update(evt.flatIndex - swiperControl.firstSlide + 1);
     }
 
+    $scope.setBeatsPerView = function(value) {
+      editor.beatsPerView = swiperControl.setBeatsPerView(value);
+      audioVisualiser.updateSize();
+      swiperControl.setBeatsPerView(editor.beatsPerView);
+    };
+
     function updateLockedPlayerRange() {
       console.log('** updateLockedPlayerRange');
       var position = swiperControl.getPosition();

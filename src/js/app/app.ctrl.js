@@ -277,10 +277,6 @@
     }
     $scope.Note = Note;
 
-    $scope.slidesSizeChanged = function() {
-      audioVisualiser.updateSize();
-    };
-
     $scope.showHelp = function() {
       $mdDialog.show({
         templateUrl: 'views/help/help.html',

@@ -32,8 +32,7 @@
       'graph-enabled': player.graphEnabled
     }"
     msd-wheel="
-      editor.beatsPerView = swiperControl.setBeatsPerView(editor.beatsPerView + $delta);
-      slidesSizeChanged();
+      setBeatsPerView(editor.beatsPerView + $delta);
       $event.preventDefault()
     ">
     <div
