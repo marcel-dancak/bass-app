@@ -9,7 +9,7 @@
   function PlaylistViewer($scope, $timeout, $element, $mdUtil, audioPlayer, projectManager,
         workspace, HighlightTimeline, slidesCompiler, fretboardViewer) {
 
-    var viewerTrackId = workspace.track? workspace.track.id : 'bass_0';
+    var viewerTrackId = workspace.track && workspace.track.type !== 'piano' ? workspace.track.id : 'bass_0';
 
     if (!$scope.viewer) {
       console.log('Initializing viewer')
@@ -390,6 +390,7 @@
 
 
     $scope.ui.selectTrack = function(trackId) {
+      // console.log('## selectTrack '+trackId)
       workspace.track = projectManager.project.tracksMap[trackId];
       viewerTrackId = trackId;
       if (slidesMetadata) {
@@ -472,7 +473,10 @@
         $scope.sectionNames[section.id] = section.name;
       });
 
-      $scope.ui.trackId = 'bass_0';
+      if (workspace.track && workspace.track.type === 'piano') {
+        $scope.ui.trackId = 'bass_0';
+        workspace.track = projectManager.project.tracksMap[viewerTrackId];
+      }
       playlistLoaded(project.playlists[0]);
 
       if (workspace.playlist.items.length === 0) {
