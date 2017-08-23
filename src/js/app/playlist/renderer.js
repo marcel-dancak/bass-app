@@ -12,8 +12,11 @@
         }
       };
     })
+    .run(function(slidesCompiler) {
+      // just to initialize slidesCompiler
+    });
 
-  function slidesCompiler($timeout, $q, $templateRequest, $compile, $mdIcon, $mdUtil, projectManager, noteBendEffect) {
+  function slidesCompiler($timeout, $q, $templateRequest, $compile, $mdIcon, $mdUtil, projectManager, noteBendEffect, workspace) {
 
     var EMPTY_TRACK = {
       beat: function(bar, beat) {
@@ -33,27 +36,23 @@
     var drumDoT;
     var bassDoT;
     var drumTemplateEl;
-    var beatEl;
     var EMPTY_OBJ = {};
+
+    // Initialize Templates
+    $templateRequest('views/playlist/dot/bass.html').then(function(html) {
+      bassDoT = doT.template(html);
+    });
+
+    $templateRequest('views/playlist/dot/drums.html').then(function(html) {
+      drumDoT = doT.template(html);
+    });
+
+    // $templateRequest(templateUrl).then(function(html) {
+    //   template = html;
+    //   templateEl = angular.element(template);
+    // });
+
     return {
-      setTemplate: function(templateUrl) {
-        if (template) return $q.when();
-
-        $templateRequest('views/playlist/dot/drums.html').then(function(html) {
-          drumDoT = doT.template(html);
-        });
-        $templateRequest('views/playlist/dot/bass.html').then(function(html) {
-          bassDoT = doT.template(html);
-        });
-        $templateRequest('views/playlist/drums.html').then(function(html) {
-          drumTemplateEl = angular.element(html);
-        });
-
-        return $templateRequest(templateUrl).then(function(html) {
-          template = html;
-          templateEl = angular.element(template);
-        });
-      },
       soundAttrs: function(sound) { return EMPTY_OBJ },
       trackTemplate: function(trackId) {
         if (trackId.startsWith('drum')) {
@@ -235,7 +234,6 @@
             bends: noteBendEffect,
             soundAttrs: this.soundAttrs
           };
-
           var template = viewerTrackId.startsWith('drum')? drumDoT : bassDoT;
           var html = template(context);
           wrapperElem[0].innerHTML = html;

@@ -431,7 +431,7 @@ var fixture = {
     }
 }
 
-  function ChordsController($scope, $element, $mdUtil, Bass, TrackSection, slidesCompiler, fretboardViewer) {
+  function ChordsController($scope, $element, $mdUtil, Bass, TrackSection, slidesCompiler, fretboardViewer, Note) {
 
     var section = angular.copy(fixture);
     section.beatLabels = function(beat) {
@@ -462,6 +462,7 @@ var fixture = {
       3: ['trip', 'let'],
       4: ['e', 'and', 'a']
     };
+    $scope.Note = Note;
 
     var playlist = [section];
     var position = {
@@ -469,10 +470,8 @@ var fixture = {
       bar: 1,
       beat: 1
     };
-    console.log($scope.workspace);
-    console.log(section.tracks.bass_0);
 
-    slidesCompiler.setTemplate('views/playlist/slide.html').then(function() {
+    $mdUtil.nextTick(function() {
       var slide = slidesCompiler.generateSlide($scope, playlist, position, 5, 'bass_0', {});
       var containerEl = $element[0].querySelector('.bass-sheet');
       containerEl.appendChild(slide.elem[0]);

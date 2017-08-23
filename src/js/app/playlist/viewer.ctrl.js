@@ -540,7 +540,7 @@
     };
 
 
-    slidesCompiler.setTemplate('views/playlist/slide.html').then(function() {
+    $mdUtil.nextTick(function() {
       initializeSwiper();
       if (projectManager.project) {
         $mdUtil.nextTick(projectLoaded.bind(this, projectManager.project));
