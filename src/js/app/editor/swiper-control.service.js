@@ -360,7 +360,7 @@
       for (var i = 0; i <= clonesCount; i++) {
         this.barSwiper.appendSlide(emptySlide.cloneNode());
         var clone = emptySlide.cloneNode();
-        clone.setAttribute('id', this.instrumentSwiper.slides[i].getAttribute('id'));
+        clone.setAttribute('id', this.instrumentSwiper.slides[this.firstSlide+i].getAttribute('id'));
         this.instrumentSwiper.appendSlide(clone);
         loopConfig.onTheirPlace.push(false);
       }
@@ -455,6 +455,11 @@
     SwiperControl.prototype.getBeatElem = function(bar, beat) {
       var slideId = 'beat_{0}_{1}'.format(bar, beat);
       for (var i = this.instrumentSwiper.snapIndex; i < this.instrumentSwiper.slides.length; i++) {
+        if (this.instrumentSwiper.slides[i].getAttribute('id') === slideId) {
+          return this.barSwiper.slides[i].querySelector('.bar-beat');
+        }
+      }
+      for (var i = 0; i < this.instrumentSwiper.snapIndex; i++) {
         if (this.instrumentSwiper.slides[i].getAttribute('id') === slideId) {
           return this.barSwiper.slides[i].querySelector('.bar-beat');
         }
