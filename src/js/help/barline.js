@@ -181,6 +181,7 @@
       pagination: '.swiper-pagination',
       nextButton: '.swiper-button-next',
       prevButton: '.swiper-button-prev',
+      watchSlidesVisibility: true,
       spaceBetween: 0,
       direction: 'horizontal',
       slidesPerView: 3,

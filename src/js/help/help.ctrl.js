@@ -7,7 +7,7 @@
 
 
   function HelpController($scope, $element, $timeout, $mdDialog, duScrollOffset) {
-
+    $scope.runtime = window.runtime;
     $scope.index = {
       activeSection: -1,
       activeStep: -1
