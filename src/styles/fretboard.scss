@@ -54,6 +54,9 @@ md-input-container.input-inline-label label {
 .fretboard {
   padding: 0 10px 0 6px;
   position: relative;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
 
 .fretboard-scroller {
@@ -61,9 +64,6 @@ md-input-container.input-inline-label label {
 }
 
 .fret-box {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
   outline: none;
   line-height: 2.063em;
   text-align: center;

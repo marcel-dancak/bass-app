@@ -187,7 +187,7 @@
 .name-and-fret .sound-container label.fret {
   display: block;
   height: 1.2em;
-  line-height: 1.2em;
+  line-height: 1.36em;
 }
 .name-and-fret .sound-container label.note {
   top: 0;

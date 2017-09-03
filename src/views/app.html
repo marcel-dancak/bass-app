@@ -1,17 +1,14 @@
 <!-- Main Toolbar -->
 <div
-  layout="row"
-  class="control-panel md-whiteframe-3dp"
+  class="layout-row control-panel md-whiteframe-3dp"
   ng-controller="ProjectController">
   <div
-    layout="row"
-    class="instruments-toolbar"
+    class="layout-row instruments-toolbar"
     ng-include="'views/tracks_toolbar.html'">
   </div>
   <div flex></div>
   <div
-    layout="row"
-    class="playback-fields"
+    class="layout-row playback-fields"
     ng-include="'views/playback_toolbar.html'">
   </div>
   <div flex></div>
@@ -20,9 +17,7 @@
 
 <div
   ng-if="player.mode === 0"
-  flex
-  layout="column"
-  class="editor"
+  class="flex layout-column editor"
   ng-controller="EditModeController">
   <div flex="none" style="height: 5%;max-height: 4em;">&nbsp;</div>
   <div
@@ -56,8 +51,7 @@
           </label>
           <div
             id="beat_{{ ::slide.beat.bar }}_{{ ::slide.beat.beat }}"
-            class="bar-beat"
-            layout="row"
+            class="layout-row bar-beat"
             ng-right-click="contextMenu.open($event, $index)"
             ng-include src="'views/editor/bar_beat.html'">
           </div>
@@ -79,9 +73,8 @@
     </div>
 
   </div>
-  <div flex
-    class="workspace" pretty-scrollbar
-    layout="column">
+  <div pretty-scrollbar
+    class="flex layout-column workspace">
     <div flex="none"
       class="instrument-grid"
       ng-class="[
@@ -117,9 +110,7 @@
               first: slide.beat.beat === 1
             }"
             id="beat_{{ ::slide.beat.bar }}_{{ ::slide.beat.beat }}">
-            <div
-              ng-switch="slide.type"
-              ng-class="{obsolete: slide.obsolete}">
+            <div ng-switch="slide.type">
               <div
                 ng-switch-when="bass"
                 class="beat-container"
@@ -135,7 +126,6 @@
                 class="drums-beat-grid">
                 <div
                   class="drums-beat-container"
-                  ng-if="slide.visible"
                   ng-include="'views/editor/drums_beat.html'">
                 </div>
               </div>
@@ -143,9 +133,9 @@
                 ng-switch-when="piano"
                 class="beat-container piano"
                 ng-controller="EditController">
-                  <div
-                    ng-include="'views/editor/piano_beat.html'">
-                  </div>
+                <div
+                  ng-include="'views/editor/piano_beat.html'">
+                </div>
               </div>
               <!-- <md-input-container
                 class="bottom-note"
@@ -169,8 +159,7 @@
 
     <div
       ng-if="workspace.track.type === 'drums'"
-      layout="column"
-      class="drums-labels-container">
+      class="layout-column drums-labels-container">
       <md-icon
         ng-repeat="drum in workspace.track.instrument track by drum.name"
         md-svg-icon="{{ ::'drums:'+ drum.name }}"
@@ -206,8 +195,7 @@
 
   <div
     ng-if="::runtime.desktop"
-    class="bottom toolbar"
-    layout="row"
+    class="layout-row bottom toolbar"
     ng-include="'views/editor/bottom_toolbar.html'">
   </div>
 
@@ -215,10 +203,8 @@
 
 <div
   ng-if="player.mode === 1"
-  flex
-  layout="column"
   ng-controller="PlaylistViewer"
-  class="viewer-container"
+  class="flex layout-column viewer-container"
   ng-class="[
     bass.settings.label,
     {
@@ -253,8 +239,7 @@
 
   <div
     ng-if="::runtime.desktop"
-    class="bottom toolbar"
-    layout="row"
+    class="layout-row bottom toolbar"
     ng-include="'views/playlist/bottom_toolbar.html'">
   </div>
 </div>
