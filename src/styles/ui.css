@@ -1046,3 +1046,25 @@ md-sidenav md-list-item.strong .md-list-item-inner {
   width: 260px;
   padding: 0;
 }
+
+.app-cover {
+  display: none;
+  position: fixed;
+  z-index: 50;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255,255,255,0.85);
+}
+.app-cover h2 {
+  font-weight: 400;
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+  .app-cover {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+}

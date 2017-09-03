@@ -3,9 +3,10 @@
 
   angular
     .module('bd.app')
-    .value('AudioComposer', AudioComposer);
+    .factory('AudioComposer', audioComposer);
 
 
+  function audioComposer(Notes) {
   function AudioComposer(context, player) {
     this.context = context;
     this.player = player;
@@ -73,6 +74,26 @@
 
   function soundWaveLength(sound) {
     return fretWaveLength(sound.string, sound.note.fret);
+  }
+
+  var notesFrequencies = {
+    'C':  16.35,
+    'C♯': 17.32,
+    'D':  18.35,
+    'D♯': 19.45,
+    'E':  20.60,
+    'F':  21.83,
+    'F♯': 23.12,
+    'G':  24.50,
+    'G♯': 25.96,
+    'A':  27.50,
+    'A♯': 29.14,
+    'B':  30.87
+  }
+
+  function noteWaveLength(note) {
+    var name = Notes.toSharp(note.name);
+    return 1 / (notesFrequencies[name] * Math.pow(2, note.octave));
   }
 
   AudioComposer.prototype.join = function(audio1, audio2) {
@@ -148,7 +169,12 @@
     var steps = Math.abs(sound.note.fret - sound.endNote.fret);
     var direction = (sound.note.fret > sound.endNote.fret)? -1 : 1;
 
-    var audio = prevAudio || this.player.createSoundAudio(track, sound, startTime, 0);
+    var audio = prevAudio;
+    if (!audio) {
+      audio = this.player.createSoundAudio(track, sound, startTime, beatTime);
+      audio.duration = 0;
+      audio.endTime = startTime;
+    }
     var buffer = audio.source.buffer.getChannelData(0);
     var waveLength = fretWaveLength(sound.string, sound.note.fret);
     var searchMaxSize = parseInt(1.5*waveLength*44100);
@@ -224,7 +250,9 @@
       // console.log('Waves: {0} Step: {1}'.format(wavesCount, step));
       searchMaxSize = parseInt(1.5*waveLength*44100);
 
-      var nextAudio = this.player.createSoundAudio(track, sound, 0, i+step);
+      var nextAudio = this.player.createSoundAudio(track, sound, 0, beatTime, i+step);
+      nextAudio.duration = 0;
+      nextAudio.endTime = 0;
       // determine next's sound offset
       buffer = nextAudio.source.buffer.getChannelData(0);
       var nextBufferOffset = parseInt(0.45*44100);
@@ -331,5 +359,333 @@
     // console.log('durationOffset: '+durationOffset);
     audio.duration += durationOffset;
   };
+
+  AudioComposer.prototype.findWavePattern = function(note, ab, channel) {
+    var buffer = ab.getChannelData(channel);
+    var sampleRate = ab.sampleRate;
+
+    var maxWaveSize = parseInt(sampleRate * noteWaveLength(note));
+
+    // var sIndex = ab.length - 5*maxWaveSize;
+    var sIndex = 2 * sampleRate;
+    var start = analyzeSignal(buffer, sIndex, parseInt(1.5*maxWaveSize));
+    var end = analyzeSignal(buffer, start.crossIndex + parseInt(maxWaveSize*2.85), parseInt(1.3*maxWaveSize));
+    var sampleSize = end.crossIndex - start.crossIndex;
+    console.log('sample: '+sampleSize);
+    if (sampleSize < 100) {
+      end = analyzeSignal(buffer, start.crossIndex + parseInt(maxWaveSize*1.85), parseInt(1.5*maxWaveSize));
+      sampleSize = end.crossIndex - start.crossIndex;
+      console.log('Retry, sample: '+sampleSize);
+    }
+    var diff = buffer[end.crossIndex] - buffer[start.crossIndex];
+    var diff2 = buffer[end.crossIndex-1] - buffer[start.crossIndex];
+    var diff3 = buffer[end.crossIndex+1] - buffer[start.crossIndex];
+    console.log('{0} to {1} (diff: {2}, (-1): {3} (+1): {4})'.format(
+      buffer[end.crossIndex],
+      buffer[start.crossIndex],
+      diff,
+      diff2,
+      diff3
+    ));
+    if (Math.abs(diff) > Math.abs(diff2)) {
+      diff = diff2;
+      end.crossIndex--;
+    }
+    if (Math.abs(diff) > Math.abs(diff3)) {
+      diff = diff3;
+      end.crossIndex++;
+    }
+
+    var pattern = buffer.slice(start.crossIndex, end.crossIndex);
+
+    // smooth transitions between waves
+    pattern[0] += diff;
+    for (var i = 1; i < 20; i++) {
+      pattern[i] += diff*(1-i/20);
+    }
+
+    // console.log(pattern.slice(0, 5)+'  ...  '+pattern.slice(-5));
+    // console.log([pattern[pattern.length-2], pattern[pattern.length-1], pattern[0], pattern[1]]);
+    // console.log([
+    //   Math.abs(pattern[pattern.length-3] - pattern[pattern.length-2]),
+    //   Math.abs(pattern[pattern.length-2] - pattern[pattern.length-1]),
+    //   Math.abs(pattern[pattern.length-1] - pattern[0]),
+    //   Math.abs(pattern[0] - pattern[1]),
+    //   Math.abs(pattern[1] - pattern[2])
+    // ]);
+    return {
+      data: pattern,
+      startIndex: start.crossIndex,
+      endIndex: end.crossIndex
+    }
+  }
+/*
+  AudioComposer.prototype.findWavePattern2 = function(note, ab, channel) {
+    var buffer = ab.getChannelData(channel);
+    var sampleRate = ab.sampleRate;
+    var maxWaveSize = parseInt(sampleRate * noteWaveLength(note));
+    var start = parseInt(2 * sampleRate);
+    
+    // var max = Math.max.apply(null, buffer.subarray(start, end));
+    // var min = Math.min.apply(null, buffer.subarray(start, end));
+    // console.log('Max: '+max);
+    // console.log('Min: '+min);
+
+    console.log('START: '+start);
+    if (buffer[start] > 0) {
+      while (buffer[--start] > 0) {};
+    } else {
+      while (buffer[--start] < 0) {};
+    }
+    start++;
+    console.log('ALIGNED START: '+start+' /'+(start/sampleRate));
+    console.log(buffer[start-1], buffer[start], buffer[start+1])
+    var end = start + maxWaveSize*1;
+
+    var len = parseInt(maxWaveSize * 0.05);
+    var bestMatch = 1;
+    var bestMatchIndex = end;
+    var diff;
+    console.log('Expected End: '+end+' diff: '+Math.abs(buffer[end]-buffer[start]));
+    for (var i = end-parseInt(len/2); i < end+len; i++) {
+      diff = Math.abs(buffer[i]-buffer[start]);
+      // console.log(diff)
+      if (diff < bestMatch) {
+        bestMatch = diff;
+        bestMatchIndex = i;
+      }
+    }
+
+    // len = Math.round(maxWaveSize * 0.025);
+    // var diff1, diff2;
+    // for (var i = 0; i < len; i++) {
+    //   diff1 = Math.abs(buffer[end-i]-buffer[start]);
+    //   diff2 = Math.abs(buffer[end+i]-buffer[start]);
+    //   if (diff1 < bestMatch) {
+    //     bestMatch = diff1;
+    //     bestMatchIndex = end-i;
+    //   }
+    //   if (diff2 < bestMatch) {
+    //     bestMatch = diff2;
+    //     bestMatchIndex = end+i;
+    //   }
+    //   if (bestMatch < 0.001) {
+    //     console.log('OK, good enough: '+bestMatch);
+    //     break;
+    //   }
+    // }
+    bestMatchIndex += (window.off || 0);
+    console.log('Best End: '+bestMatchIndex+' diff: '+bestMatch);
+    console.log('-- Sample: '+(start/sampleRate)+' - '+(bestMatchIndex/sampleRate));
+    // console.log('Offset: '+(bestMatchIndex-end));
+    // maxWaveSize = bestMatchIndex - start;
+    // end = start + maxWaveSize * 10;
+
+    // bestMatch = 1;
+    // bestMatchIndex = end;
+    // console.log('Expected End #2: '+end+' diff: '+Math.abs(buffer[end]-buffer[start]));
+    // for (var i = end-parseInt(len/2); i < end+len; i++) {
+    //   diff = Math.abs(buffer[i]-buffer[start]);
+    //   if (diff < bestMatch) {
+    //     bestMatch = diff;
+    //     bestMatchIndex = i;
+    //   }
+    // }
+
+    var pattern = buffer.slice(start, bestMatchIndex);
+    // console.log('CLEARING: '+bestMatchIndex+' - '+pattern.length);
+    // pattern.fill(0, bestMatchIndex-start, pattern.length);
+    var diff = buffer[bestMatchIndex]-buffer[start];
+    pattern[0] += diff;
+    for (var i = 1; i < 50; i++) {
+      pattern[i] += diff*(1-i/50);
+    }
+
+
+    for (var i = 1; i < 80; i++) {
+      // pattern[pattern.length-i] += (buffer[start-i] - pattern[pattern.length-i])*(1-i/80);
+    }
+
+    // pattern[0] += diff;
+    for (var i = 1; i < maxWaveSize; i++) {
+      // pattern[i] = (1-i/maxWaveSize)*buffer[bestMatchIndex-maxWaveSize+i] + (i/maxWaveSize)*buffer[start+maxWaveSize+i];
+    }
+
+    // console.log(pattern)
+    return {
+      data: pattern,
+      startIndex: start,
+      endIndex: bestMatchIndex
+    }
+
+
+    var optimalBlock = maxWaveSize / 2;
+    var block, val;
+    var blocks = [];
+
+    function addBlock(block) {
+      var prev = blocks[blocks.length-1];
+      if (prev) {
+        prev.next = block;
+        block.prev = prev;
+      }
+      blocks.push(block);
+    }
+    end = start + parseInt(maxWaveSize*1.1);
+    for (var i = start; i < end; i++) {
+      val = buffer[i];
+      if (block) {
+        if ((val > 0 && block.sum > 0) || (val < 0 && block.sum < 0)) {
+          block.sum += val;
+        } else {
+          block.end = i;
+          addBlock(block);
+          block = null;
+        }
+      }
+      if (!block) {
+        block = {
+          sum: val,
+          polarity: val > 0? 1 : -1,
+          start: i,
+          end: -1
+        }
+      }
+    }
+    if (block) {
+      block.end = end;
+      addBlock(block);
+    }
+    console.log('Start: '+(start/sampleRate)+' End: '+(end/sampleRate))
+    blocks.forEach(function(b, index) {
+      var size = (b.end-b.start)/(end-start);
+      console.log(b.sum.toFixed(2)+' '+(100*size).toFixed(2)+'%');
+      if (size < 0.05) {
+        console.log('Small Fragment')
+      }
+    });
+  }
+  */
+  function waveDiff(buff1, buff2) {
+    var diff = 0;
+    for (var i = 0; i < buff1.length; i++) {
+      diff += buff2[i]-buff1[i];
+    }
+    return diff;
+  }
+  AudioComposer.prototype.findWavePattern3 = function(note, ab, channel) {
+    var buffer = ab.getChannelData(channel);
+    var sampleRate = ab.sampleRate;
+    var waveSize = parseInt(sampleRate * noteWaveLength(note));
+    // var start = parseInt(2.3 * sampleRate);
+    var start = parseInt(ab.length - 5*waveSize);
+
+    // console.log('START: '+(start/sampleRate)+' of '+ab.duration)
+
+    var info = analyzeSignal(buffer, start, parseInt(1.1*waveSize));
+    var endStart = info.positiveIndex+1*waveSize-parseInt(0.04*waveSize);
+    var end = analyzeSignal(buffer, endStart, parseInt(0.08*waveSize));
+
+
+    end.positiveIndex = info.positiveIndex+waveSize;
+
+    // var pattern = buffer.slice(start, start+waveSize);
+    var pattern = buffer.slice(info.positiveIndex, end.positiveIndex);
+
+
+    var len = parseInt(pattern.length * 0.05);
+    // console.log('Smooth '+len)
+    var diff = pattern[0] - pattern[pattern.length-1];
+    // console.log('DIFF: '+diff)
+    // create smooth transition with beginning
+    for (var i = 0; i < len; i++) {
+      pattern[pattern.length-i-1] += diff*(1-i/len);
+    }
+
+    // for (var i = 1; i < waveSize-1; i++) {
+    //   pattern[i] = (pattern[i-1]+pattern[i+1])/2;
+    // }
+
+    // console.log('Wave Diff: '+waveDiff(pattern, buffer.subarray(end.positiveIndex, end.positiveIndex+pattern.length)));
+    // console.log('Alg3: '+(info.positiveIndex/sampleRate)+' - '+(end.positiveIndex/sampleRate));
+    return {
+      data: pattern,
+      startIndex: info.positiveIndex,
+      endIndex: end.positiveIndex
+    }
+  }
+
+
+  AudioComposer.prototype.enlarge = function(note, ab, duration) {
+    var sampleRate = ab.sampleRate;
+    var pattern = [];
+    for (var ch = 0; ch < ab.numberOfChannels; ch++) {
+    // for (var ch = 0; ch < 1; ch++) {
+      pattern.push(this.findWavePattern3(note, ab, ch));
+    }
+    var repeats = Math.ceil((duration*sampleRate - pattern[0].startIndex)/pattern[0].data.length);
+    // console.log('Repeats: '+repeats)
+    var maxLength = Math.max.apply(null, pattern.map(function(p) {
+      return p.startIndex+(repeats*p.data.length);
+    }));
+
+    var output = this.context.createBuffer(ab.numberOfChannels, maxLength, sampleRate);
+
+    for (var ch = 0; ch < ab.numberOfChannels; ch++) {
+      output.getChannelData(ch).set(ab.getChannelData(ch), 0);
+      for (var i = 0, offset = pattern[ch].startIndex; i < repeats; i++) {
+        // output.copyToChannel(pattern[ch].data, ch, offset);
+        output.getChannelData(ch).set(pattern[ch].data, offset);
+        offset += pattern[ch].data.length;
+      }
+      var dest = output.getChannelData(ch).subarray(pattern[ch].endIndex);
+      for (var i = 0; i < dest.length; i++) {
+        dest[i] *= 1-0.4*(i/dest.length)
+      }
+    }
+    // if (ab.numberOfChannels === 2) {
+      // output.getChannelData(1).set(output.getChannelData(0));
+    // }
+
+    // window.save = function() {
+    //   var output2 = this.context.createBuffer(1, output.length, output.sampleRate);
+    //   output2.getChannelData(0).set(output.getChannelData(0));
+    //   var wav = audioBufferToWav(output2);
+    //   var blob = new window.Blob([ new DataView(wav) ], {
+    //     type: 'audio/wav'
+    //   });
+    //   saveAs(blob, 'sound.wav');
+    // }.bind(this);
+    return output;
+  }
+
+  AudioComposer.prototype.letRingSound = function(note, ab, duration) {
+    var pattern = this.findWavePattern(note, ab);
+
+    var repeats = Math.ceil(duration*ab.sampleRate/pattern.data.length);
+    // console.log('repeats: '+repeats);
+    var output = this.context.createBuffer(
+      ab.numberOfChannels,
+      repeats*pattern.data.length,
+      ab.sampleRate
+    );
+    for (var i = 0, offset = 1; i < repeats; i++) {
+      // output.copyToChannel(pattern.data, 0, offset-1);
+      output.getChannelData(0).set(pattern.data, offset-1);
+      offset += pattern.data.length;
+    }
+
+    // var output2 = this.context.createBuffer(1, output.length, output.sampleRate);
+    // output2.getChannelData(0).set(output.getChannelData(0));
+    // var wav = audioBufferToWav(output2);
+    // var blob = new window.Blob([ new DataView(wav) ], {
+    //   type: 'audio/wav'
+    // });
+    // saveAs(blob, 'sound.wav');
+    return output;
+  };
+
+  return AudioComposer;
+  }
 
 })();

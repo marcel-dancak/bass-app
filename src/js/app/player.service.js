@@ -95,12 +95,12 @@
             while (rootSound.prev) {
               rootSound = track.prevSound(rootSound);
             }
-            return ['sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string, sound.note.fret)];
+            return ['bass/{0}/{1}{2}'.format(rootSound.style, sound.string, sound.note.fret)];
           },
           transitionPlayback: function(stack, track, sound, startTime, beatTime) {
             /*
             var prevAudio = stack.pop();
-            var audio = _this.createSoundAudio(track, sound, startTime);
+            var audio = _this.createSoundAudio(track, sound, startTime, beatTime);
             audio = _this.composer.join(prevAudio, audio);
             audio.gain.setValueAtTime(sound.volume, startTime);
             var duration = noteRealDuration(sound, beatTime);
@@ -113,17 +113,14 @@
 
             // var prevAudio = stack.pop();
             var prevAudio = stack[stack.length-1];
-            var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteRealDuration(sound, beatTime);
-            audio.duration = duration;
-            audio.endTime = startTime + duration;
+            var audio = _this.createSoundAudio(track, sound, startTime, beatTime);
             _this.composer.join(prevAudio, audio);
             audio.meta = {
               type: 'single',
               string: sound.string,
               note: sound.note,
               startTime: startTime,
-              duration: duration
+              duration: audio.duration
             };
             stack.push(audio);
           }
@@ -140,7 +137,7 @@
             var outOfRange = sound.endNote.fret + step;
             var resources = [];
             for (var i = sound.note.fret; i !== outOfRange; i += step) {
-              resources.push('sounds/bass/{0}/{1}{2}'.format(rootSound.style, sound.string, i));
+              resources.push('bass/{0}/{1}{2}'.format(rootSound.style, sound.string, i));
             }
             return resources;
           },
@@ -239,7 +236,12 @@
             return sound.style === 'ring';
           },
           getResources: function(track, sound) {
-            return [];
+            // return [];
+            var rootSound = sound;
+            while (rootSound.prev) {
+              rootSound = track.prevSound(rootSound);
+            }
+            return ['bass/{0}/{1}{2}'.format(rootSound.style, sound.string, sound.note.fret)];
           },
           prepareForPlayback: function() {
             // error
@@ -248,10 +250,43 @@
             var prevAudio = stack[stack.length-1];
             // console.log(prevAudio.endTime+' vs '+startTime);
             var duration = noteRealDuration(sound, beatTime);
-            prevAudio.duration += duration;
-            prevAudio.endTime += duration;
-            if (sound.note.type === 'bend') {
-              _this.composer.bend(prevAudio, sound, duration, startTime, beatTime);
+            if (prevAudio.duration + duration > prevAudio.source.buffer.duration) {
+              var resource = this.getResources(track, sound)[0];
+              var ab = _this.bufferLoader.loadResource(resource);
+              if (ab) {
+                // TODO: some sophisticated duraation lookahead
+                ab = _this.composer.letRingSound(sound.note, ab, duration+0.5);
+                var audio = _this.createSoundAudio(track, sound, startTime, beatTime, ab);
+
+                // # Version 1
+                // var overlay = 0.03;
+                // prevAudio.duration += overlay;
+                // prevAudio.endTime += overlay;
+                // prevAudio.gain.setValueAtTime(prevAudio.sound.volume, startTime);
+                // prevAudio.gain.linearRampToValueAtTime(0.00001, startTime+overlay);
+                // audio.gain.setValueAtTime(0, startTime);
+                // audio.gain.linearRampToValueAtTime(sound.volume, startTime+overlay);
+                // return stack.push(audio);
+
+                // # Version 2 - same as hammer-on
+                // TODO: add parameter to join to configure skipping time
+                _this.composer.join(prevAudio, audio);
+                // TODO check if it works
+                // audio.meta = {
+                //   type: 'single',
+                //   string: sound.string,
+                //   note: sound.note,
+                //   startTime: startTime,
+                //   duration: duration
+                // };
+                stack.push(audio);
+              }
+            } else {
+              prevAudio.duration += duration;
+              prevAudio.endTime += duration;
+              if (sound.note.type === 'bend') {
+                _this.composer.bend(prevAudio, sound, duration, startTime, beatTime);
+              }
             }
             if (prevAudio.meta) {
               prevAudio.meta.duration += duration;
@@ -259,7 +294,7 @@
               for (var i = stack.length - 1; i >= 0; i--) {
                 var prevMeta = stack[i].meta;
                 if (prevMeta && prevMeta.notes) {
-                  console.log('found prev meta at: '+i);
+                  // console.log('found prev meta at: '+i);
                   prevMeta.notes[prevMeta.notes.length-1].duration += duration;
                   break;
                 }
@@ -275,15 +310,14 @@
           },
           getResources: function(track, sound) {
             return [
-              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret),
-              'sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.endNote.fret)
+              'bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret),
+              'bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.endNote.fret)
             ];
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
-            console.log('grace sound')
             var graceTime = 0.08;
-            var startAudio = _this.createSoundAudio(track, sound, startTime);
-            var endAudio = _this.createSoundAudio(track, sound, startTime + graceTime, 1);
+            var startAudio = _this.createSoundAudio(track, sound, startTime, beatTime);
+            var endAudio = _this.createSoundAudio(track, sound, startTime + graceTime, beatTime, 1);
 
             var duration = noteRealDuration(sound, beatTime);
             startAudio.duration = graceTime;
@@ -318,20 +352,17 @@
             return sound.note.type === 'bend';
           },
           getResources: function(track, sound) {
-            return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];
+            return ['bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
-            var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteRealDuration(sound, beatTime);
-            audio.duration = duration;
-            audio.endTime = startTime + duration;
-            _this.composer.bend(audio, sound, duration, startTime, beatTime);
+            var audio = _this.createSoundAudio(track, sound, startTime, beatTime);
+            _this.composer.bend(audio, sound, audio.duration, startTime, beatTime);
             audio.meta = {
               type: 'single',
               string: sound.string,
               note: sound.note,
               startTime: startTime,
-              duration: duration
+              duration: audio.duration
             };
             return [audio];
           }
@@ -341,11 +372,12 @@
             return sound.note.type === 'ghost';
           },
           getResources: function(track, sound) {
-            return ['sounds/bass/{0}/{1}X'.format(sound.style, sound.string)];
+            return ['bass/{0}/{1}X'.format(sound.style, sound.string)];
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
-            var audio = _this.createSoundAudio(track, sound, startTime);
-            audio.duration = Math.min(noteRealDuration(sound, beatTime), audio.source.buffer.duration)-0.02;
+            var audio = _this.createSoundAudio(track, sound, startTime, beatTime);
+            // TODO: use Math.min in 'createSoundAudio' for all sounds?
+            audio.duration = Math.min(audio.duration, audio.source.buffer.duration)-0.02;
             audio.endTime = startTime + audio.duration;
             audio.meta = {
               type: 'ghost',
@@ -361,19 +393,16 @@
             return sound.note.type === 'harmonics';
           },
           getResources: function(track, sound) {
-            return ['sounds/bass/{0}/{1}{2}_H'.format(sound.style, sound.string, sound.note.fret)];
+            return ['bass/{0}/{1}{2}_H'.format(sound.style, sound.string, sound.note.fret)];
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
-            var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteRealDuration(sound, beatTime);
-            audio.duration = duration;
-            audio.endTime = startTime + duration;
+            var audio = _this.createSoundAudio(track, sound, startTime, beatTime);
             audio.meta = {
               type: 'single',
               string: sound.string,
               note: sound.note,
               startTime: startTime,
-              duration: duration
+              duration: audio.duration
             };
             return [audio];
           }
@@ -383,19 +412,30 @@
             return sound.note.type === 'regular';
           },
           getResources: function(track, sound) {
-            return ['sounds/bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];
+            return ['bass/{0}/{1}{2}'.format(sound.style, sound.string, sound.note.fret)];
           },
           prepareForPlayback: function(track, sound, startTime, beatTime) {
-            var audio = _this.createSoundAudio(track, sound, startTime);
-            var duration = noteRealDuration(sound, beatTime);
-            audio.duration = duration;
-            audio.endTime = startTime+duration;
+            // var audio;
+            // if (sound.next) {
+            //   var duration = noteRealDuration(sound, beatTime);
+            //   var nextSound = track.nextSound(sound);
+            //   while (nextSound && nextSound.style === 'ring') {
+            //     duration += noteRealDuration(nextSound, beatTime);
+            //     nextSound = nextSound.next? track.nextSound(nextSound) : null;
+            //   }
+            //   audio = _this.createSoundAudio(track, sound, startTime, beatTime, 0, duration+0.5);
+            //   audio.duration = noteRealDuration(sound, beatTime);
+            //   audio.endTime = startTime + audio.duration;
+            // } else {
+            //   audio = _this.createSoundAudio(track, sound, startTime, beatTime);
+            // }
+            var audio = _this.createSoundAudio(track, sound, startTime, beatTime);
             audio.meta = {
               type: 'single',
               string: sound.string,
               note: sound.note,
               startTime: startTime,
-              duration: duration
+              duration: audio.duration
             };
             return [audio];
           }
@@ -405,29 +445,6 @@
       var piano = {
         notes: new Notes('A0', 'C7'),
         playingSounds: {},
-        createSoundAudio: function(track, sound, startTime, resource) {
-          // console.log('createSoundAudio: '+resource)
-          var audioData = _this.bufferLoader.loadResource(resource);
-          if (audioData) {
-            var source = context.createBufferSource();
-            var gain = context.createGain();
-            source.connect(gain);
-            gain.connect(track.audio);
-            source.buffer = audioData;
-            return {
-              sound: sound,
-              source: source,
-              gain: gain.gain,
-              output: gain,
-              startTime: startTime,
-              endTime: startTime,
-              duration: 0,
-              offset: 0
-            }
-          } else {
-            throw new ResourceNotAvailable(resource);
-          }
-        },
         handlers:[
           {
             accepts: function(sound) {
@@ -436,21 +453,40 @@
             getResources: function(track, sound) {
               var preset = track.instrument.preset;
               var sample = piano.samples[preset][Notes.noteValue(sound.note)];
-              return ['sounds/piano/'+preset+'/'+sample.code.replace('♭', 'b')];
+              return ['piano/'+preset+'/'+sample.code.replace('♭', 'b')];
             },
             prepareForPlayback: function(trackId, track, sound, startTime, beatTime) {
               var resources = this.getResources(track, sound);
-              var audio = piano.createSoundAudio(track, sound, startTime, resources[0]);
-              var duration = (sound.end - sound.start) * beatTime;
 
               var sample = piano.samples[track.instrument.preset][Notes.noteValue(sound.note)];
-              // console.log(sample.code+' -> '+sample.shift);
-              if (sample.shift !== 0) {
-                var rate = Math.pow(Math.pow(2, 1/12), sample.shift);
-                audio.source.playbackRate.value = rate;
+              var rate = (sample.shift !== 0)? Math.pow(Math.pow(2, 1/12), sample.shift) : 1;
+
+              var duration = noteRealDuration(sound, beatTime);
+              if (sound.next) {
+                var nextSound = track.nextSound(sound);
+                while (nextSound) {
+                  duration += noteRealDuration(nextSound, beatTime);
+                  nextSound = nextSound.next? track.nextSound(nextSound) : null;
+                }
+                // console.log('Total duration: '+duration);
+                duration *= rate;
+                // var available = audio.source.buffer.duration * rate;
+                // if (available < totalDuration) {
+                //   console.log(available+' / '+totalDuration);
+                //   audioData = this.composer.enlarge(sound.note, audioData, duration);
+                // }
               }
-              audio.duration = duration;
-              audio.endTime = startTime + duration;
+              var opts = {
+                duration: duration,
+                note: {
+                  name: sample.code.substr(0, sample.code.length-1).replace('b', '♭').replace('#', '♯'),
+                  octave: parseInt(sample.code.substr(-1))
+                }
+              };
+              var audio = _this.createSoundAudio(track, sound, startTime, beatTime, resources[0], opts);
+
+              // console.log(sample.code+' -> '+sample.shift);
+              audio.source.playbackRate.value = rate;
               return [audio];
             }
           }
@@ -473,10 +509,18 @@
         'F1 B1 E2 A2 D3 G3 B3 D4 F4 B4 E5 A5 D6 G6 C7'.split(' '), // jRhodes3
         piano.notes
       );
+      var electricGuitarSamples = buildSamplesCache(
+        // Voxline
+        // 'E♭2 F2 A♭2 B♭2 D♭3 E♭3 F3 A♭3 A♭3 B♭3 B3 D♭4 F4 G♭4 B♭4 B4 D♭5 F5 G♭5 A♭5 B5 '.split(' '),
+        // EleG-Clean
+        'E1 G1 C2 E2 G2 C3 E3 G3 C4 E4 G4 C5 E5 G5 C6 E6 G6 C7 E7 G7'.split(' '),
+        piano.notes
+      );
       // 'C2 G♭2 C3 G♭3 C4 G♭4 C5 G♭5 C6 G♭6 C7'.split(' '), // fm-piano
       piano.samples = {
         acoustic: acousticPianoSamples,
-        electric: electricPianoSamples
+        electric: electricPianoSamples,
+        guitar: electricGuitarSamples
       };
       this.piano = piano;
       piano.strings = [
@@ -498,7 +542,7 @@
     AudioPlayer.prototype = Object.create(Observable.prototype);
 
     AudioPlayer.prototype._playDrumStick = function(sound) {
-      var audioData = this.bufferLoader.loadResource('sounds/drums/drumstick');
+      var audioData = this.bufferLoader.loadResource('drums/drumstick');
       var source = context.createBufferSource();
       source.buffer = audioData;
       source.connect(context.destination);
@@ -527,29 +571,47 @@
       }
     };
 
-    AudioPlayer.prototype.createSoundAudio = function(track, sound, startTime, index) {
-      var resources = this._getSoundHandler(sound).getResources(track, sound);
-      var audioData = resources? this.bufferLoader.loadResource(resources[index || 0]) : null;
 
-      if (audioData) {
+    AudioPlayer.prototype.createSoundAudio = function(track, sound, startTime, beatTime, resource, params) {
+      params = params || {};
+      var audioData;
+      switch (typeof resource) {
+        case 'undefined':
+          resource = 0;
+        case 'number':
+          resource = this._getSoundHandler(sound).getResources(track, sound)[resource];
+        case 'string':
+          audioData = this.bufferLoader.loadResource(resource);
+          if (!audioData) {
+            throw new ResourceNotAvailable(resource);
+          }
+          break;
+        default:
+          audioData = resource;
+      }
 
-        var source = context.createBufferSource();
-        var gain = context.createGain();
-        source.connect(gain);
-        gain.connect(track.audio);
-        source.buffer = audioData;
-        return {
-          sound: sound,
-          source: source,
-          gain: gain.gain,
-          output: gain,
-          startTime: startTime,
-          endTime: startTime,
-          duration: 0,
-          offset: 0
-        }
-      } else {
-        throw new ResourceNotAvailable(resources[index || 0]);
+      var duration = noteRealDuration(sound, beatTime);
+
+      var minDuration = Math.max(duration, params.duration || 0);
+      // this.composer.enlarge(sound, audioData, 6);
+      if (audioData.duration < minDuration) {
+        audioData = this.composer.enlarge(params.note || sound.note, audioData, minDuration);
+      }
+
+      var source = context.createBufferSource();
+      var gain = context.createGain();
+      source.connect(gain);
+      gain.connect(track.audio);
+      source.buffer = audioData;
+      return {
+        sound: sound,
+        source: source,
+        gain: gain.gain,
+        output: gain,
+        startTime: startTime,
+        endTime: startTime + duration,
+        duration: duration,
+        offset: 0
       }
     }
 
@@ -591,6 +653,20 @@
       if (!sound.next) {
         audio.gain.setValueAtTime(audio.sound.volume*0.8, audio.endTime-0.05);
         audio.gain.linearRampToValueAtTime(0.0001, audio.endTime+0.2);
+      } else {
+        // var totalDuration = duration;
+        // var nextSound = track.nextSound(sound);
+        // while (nextSound) {
+        //   totalDuration += noteRealDuration(nextSound, beatTime);
+        //   nextSound = nextSound.next? track.nextSound(nextSound) : null;
+        // }
+        // console.log('Total duration: '+totalDuration);
+        // totalDuration *= audio.source.playbackRate.value;
+        // var available = audio.source.buffer.duration * audio.source.playbackRate.value;
+        // if (available < totalDuration) {
+        //   console.log(available+' / '+totalDuration);
+        //   audioData = this.composer.enlarge(sound.note, audioData, duration);
+        // }
       }
       // if (!sound.prev) {
       //   playMidi(track, sound, startTime, audio.duration);
@@ -620,13 +696,13 @@
 
       audio = stack[stack.length-1];
       var endVolume = audio.slide? audio.slide.volume : audio.sound.volume;
-      audio.gain.setValueAtTime(endVolume, audio.endTime-0.015);
-      audio.gain.linearRampToValueAtTime(0.00001, audio.endTime);
-      // audio.duration += 0.01;
+      audio.gain.setValueAtTime(endVolume, audio.endTime-0.016);
+      audio.gain.linearRampToValueAtTime(0.000001, audio.endTime);
 
       for (var i = 0; i < stack.length; i++) {
         var a = stack[i];
-        a.source.start(a.startTime, a.offset, a.duration);
+        // a little longer duration fixes sound cracking at the end in Firefox
+        a.source.start(a.startTime, a.offset, a.duration+0.01);
         this.scheduledSounds.push(a);
         if (a.meta) {
           this._bassSoundScheduled(trackId, a);
@@ -636,10 +712,12 @@
     }
 
     AudioPlayer.prototype.playBeat = function(bar, beat, startTime, initializationBeat) {
+      // console.log('playBeat: '+bar+'/'+beat)
       if (!this.playing) return;
       // console.log('player: bar: {0} beat: {1}'.format(bar, beat));
 
       var playbackStart = bar === this.playbackRange.start.bar && beat === this.playbackRange.start.beat;
+
       var isPlaybackEnd = playbackStart && !initializationBeat;
       var timeSignature = this.section.timeSignature;
       var currentTime = context.currentTime;
@@ -725,8 +803,8 @@
     AudioPlayer.prototype._play = function(options) {
       // setup 'silent' source. It's needed for proper graph
       // visualization when no other source is playing
-      var gain = context.createGain();
-      gain.gain.value = 0.0001;
+      // var gain = context.createGain();
+      // gain.gain.value = 0.0001;
       // gain.gain.value = 0.33;
 
       // TODO: move to visualizer
@@ -827,7 +905,7 @@
           }
         }
       }, this);
-      console.log(resources);
+      // console.log(resources);
       if (resources.length) {
         this.bufferLoader.loadResources(resources, resourcesFetched, task.reject);
       } else {
@@ -897,7 +975,7 @@
       this.oscillator.disconnect();
       this.oscillator.output.disconnect();
       */
-      // this.dispatchEvent('playbackStopped');
+      this.dispatchEvent('playbackStopped');
       this.playbackStoppedCallback();
     };
 
@@ -916,7 +994,7 @@
           });
         }
       }
-      console.log(resources);
+      // console.log(resources);
 
       var player = this;
       if (player.playingBassSample && player.playingBassSample.source.playing) {
@@ -943,13 +1021,24 @@
       this.bufferLoader.loadResources(resources, afterLoad);
     };
 
-    AudioPlayer.prototype.playPianoSample = function(track, sound) {
-      sound.start = 0;
-      sound.end = 0.5;
-      var resources = this.piano.getHandler(sound).getResources(track, sound);
+    AudioPlayer.prototype.playPianoSample = function(track, sounds) {
+      var _this = this;
+      if (!angular.isArray(sounds)) {
+        sounds = [sounds];
+      }
+      var resources = sounds.map(function(sound) {
+        sound.start = 0;
+        sound.end = 1;
+        return _this.piano.getHandler(sound).getResources(track, sound)[0];
+      });
       this.bufferLoader.loadResources(
         resources,
-        this._playSound.bind(this, track.id, track, {subdivision: 4}, sound, context.currentTime, 1)
+        // this._playSound.bind(this, track.id, track, {subdivision: 4}, sounds[0], context.currentTime, 1)
+        function() {
+          sounds.forEach(function(sound) {
+            _this._playSound(track.id, track, {subdivision: 4}, sound, context.currentTime, 1);
+          });
+        }
       );
     };
 
