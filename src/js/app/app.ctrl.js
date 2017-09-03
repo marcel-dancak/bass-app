@@ -1,10 +1,16 @@
 (function() {
   'use strict';
 
+  angular.module("templates").run(function($templateCache) {
+    angular.module("templates").run = function(body) {
+      body[1]($templateCache);
+    }
+  });
+
   angular
     .module('bd.app')
     .controller('AppController', AppController)
-    .value('context', new AudioContext())
+    .value('context', window.AudioContext !== undefined? new AudioContext() : new webkitAudioContext())
     .value('workspace', {})
     .value('settings', {
       fretboard: {
@@ -43,12 +49,30 @@
         value: 32
       }
     })
-    .run(function($mdDialog) {
-      window.runtime = {};
-      window.runtime.mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-      // window.runtime.mobile = true;
-      window.runtime.desktop = !window.runtime.mobile;
-      // window.addEventListener("orientationchange", adjustScale);
+    .run(function($mdDialog, $mdToast, $rootScope, $q, audioPlayer, context, localSoundsUrl, soundsUrl, appModules) {
+      window.rs = $rootScope;
+      var loadedModules = [];
+
+      var runtime = {
+        loadModule: function(module) {
+          if (loadedModules.indexOf(module) !== -1 || !appModules[module]) {
+            return $q.when();
+          }
+          var task = $q.defer();
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = appModules[module];
+          script.onload = function() {
+            loadedModules.push(module);
+            task.resolve();
+          }
+          document.head.appendChild(script);
+          return task.promise;
+        }
+      };
+      runtime.mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+      // runtime.mobile = true;
+      runtime.desktop = !runtime.mobile;
       // window.addEventListener("resize", function() {});
 
       if (!window.chrome) {
@@ -60,8 +84,44 @@
         )
         .ok('Close');
 
-        $mdDialog.show(alert);
+        // $mdDialog.show(alert);
       }
+
+      function initBufferLoader() {
+
+        function setupSamplesErrorHandler() {
+          audioPlayer.bufferLoader.onError = function() {
+            $mdToast.show(
+              $mdToast.simple()
+                .toastClass('error')
+                .textContent('Failed to load sound sample!')
+                .position('bottom center')
+            );
+          };
+        }
+        audioPlayer.bufferLoader = new BufferLoader(context, localSoundsUrl, runtime.oggSupport);
+        // check local sounds server and switch to public server when unavailable
+        audioPlayer.bufferLoader.loadResource(
+          'drums/drumstick',
+          setupSamplesErrorHandler,
+          function() {
+            console.log('faild to load test sample')
+            audioPlayer.bufferLoader.serverUrl = soundsUrl;
+            setupSamplesErrorHandler();
+          }
+        );
+      }
+
+      var audio = document.createElement('audio');
+      runtime.oggSupport = audio.canPlayType('audio/ogg; codecs="vorbis"') === 'probably';
+      // runtime.oggSupport = false;
+      if (!runtime.oggSupport) {
+        runtime.loadModule('oggvorbis').then(initBufferLoader);
+      } else {
+        initBufferLoader();
+      }
+      console.log('OGG Support: '+runtime.oggSupport);
+      window.runtime = runtime;
     })
     .directive('prettyScrollbar', prettyScrollbar)
     .config(function($mdThemingProvider) {
@@ -79,6 +139,44 @@
         $controllerProvider.register(name, constructor);
         return(this);
       };
+
+
+      // redefine module
+      angular._module = angular.module;
+      angular.module = function(name, deps) {
+        var m = angular._module(name, deps);
+        if (name === "templates") {
+          return m;
+        }
+        m.controller = function(name, constructor) {
+          $controllerProvider.register(name, constructor);
+          return(this);
+        };
+        m.value = function(name, value) {
+          $provide.value(name, value);
+          return(this);
+        };
+        m.service = function(name, constructor) {
+          $provide.service(name, constructor);
+          return(this);
+        };
+        m.factory = function(name, factory) {
+          $provide.factory(name, factory);
+          return(this);
+        };
+        m.directive = function(name, factory) {
+          $compileProvider.directive(name, factory);
+          return(this);
+        };
+        m.run = function(args) {
+          var $timeout = angular.element(document).injector().get('$timeout');
+          $timeout(function() {
+            angular.element(document).injector().invoke(args);
+          });
+        }
+        return m;
+      }
+
     })
     // Disable tooltips on touch devices
     .directive('mdTooltip', function() {
@@ -109,9 +207,8 @@
     }
   }
 
-  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdToast, $mdDialog,  $mdSidenav, $mdPanel, $location, context,
-      settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note,
-      dataUrl, localSoundsUrl, soundsUrl) {
+  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdDialog,  $mdSidenav, $mdPanel, $location, context,
+      settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note) {
     $scope.runtime = window.runtime;
     $scope.Note = Note;
     $scope.settings = settings;
@@ -185,27 +282,6 @@
       // return '({0}) {1}'.format(value, label);
     };
 
-    function handleSoundSampleError() {
-      audioPlayer.bufferLoader.onError = function() {
-        $mdToast.show(
-          $mdToast.simple()
-            .toastClass('error')
-            .textContent('Failed to load sound sample!')
-            .position('bottom center')
-        );
-      };
-    }
-    // check local sounds server and switch to public server when unavailable
-    audioPlayer.bufferLoader = new BufferLoader(context, localSoundsUrl);
-    audioPlayer.bufferLoader.loadResource(
-      'sounds/drums/drumstick',
-      handleSoundSampleError,
-      function() {
-        audioPlayer.bufferLoader.serverUrl = soundsUrl;
-        handleSoundSampleError()
-      }
-    );
-
     audioPlayer.fetchResourcesWithProgress = function(resources) {
       var task = $q.defer();
       $scope.player.loading = true;
@@ -278,11 +354,13 @@
     $scope.Note = Note;
 
     $scope.showHelp = function() {
-      $mdDialog.show({
-        templateUrl: 'views/help/help.html',
-        autoWrap: false,
-        clickOutsideToClose: true,
-        propagateContainerEvents: true
+      window.runtime.loadModule('help').then(function() {
+        $mdDialog.show({
+          templateUrl: 'views/help/help.html',
+          autoWrap: false,
+          clickOutsideToClose: true,
+          propagateContainerEvents: true
+        })
       })
     };
 

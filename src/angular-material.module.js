@@ -40,7 +40,7 @@
     // "material.components.radioButton",
     "material.components.select",
     "material.components.showHide",
-    // "material.components.sidenav",
+    "material.components.sidenav",
     // "material.components.slider",
     "material.components.sticky",
     "material.components.content",
