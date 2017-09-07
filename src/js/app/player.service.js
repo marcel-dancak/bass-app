@@ -656,6 +656,7 @@
         audio.gain.setValueAtTime(audio.sound.volume*0.8, audio.endTime-0.05);
         audio.gain.linearRampToValueAtTime(0.0001, audio.endTime+0.2);
       } else {
+        audio.gain.setValueAtTime(audio.sound.volume*0.8, audio.endTime);
         // var totalDuration = duration;
         // var nextSound = track.nextSound(sound);
         // while (nextSound) {
