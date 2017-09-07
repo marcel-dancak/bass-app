@@ -11,6 +11,34 @@
     });
 
 
+  var PLAYLING_STYLES = [
+    {
+      name: 'finger',
+      label: 'FINGER'
+    }, {
+      name: 'slap',
+      label: 'SLAP'
+    }, {
+      name: 'pop',
+      label: 'POP'
+    }, {
+      name: 'pick',
+      label: 'PICK'
+    }, {
+      name: 'tap',
+      label: 'TAP'
+    }, {
+      name: 'hammer',
+      label: 'HAMMER_ON'
+    }, {
+      name: 'pull',
+      label: 'PULL_OFF'
+    }, {
+      name: 'ring',
+      label: 'LET_RING'
+    }
+  ];
+
   function BassBeatController($scope, basicHandler, bassDragHandler, bassResizeHandler, bassSoundForm) {
     $scope.selectSound = basicHandler.selectSound.bind(basicHandler);
     $scope.keyPressed = basicHandler.keyPressed.bind(basicHandler);
@@ -20,7 +48,7 @@
   }
 
 
-  function BassFormController($scope, $timeout, Note, sound, string, bass, audioPlayer, basicHandler, mdPanelRef) {
+  function BassFormController($scope, $timeout, Note, sound, string, audioPlayer, basicHandler, mdPanelRef) {
     $scope.Note = Note;
     $scope.ui = {scale: window.scale || 1};
     $scope.keyPressed = function(evt) {
@@ -117,7 +145,7 @@
     $scope.inlineStringNotes = inlineStringNotes;
 
     $scope.sound = sound;
-    $scope.bass = bass;
+    $scope.playingStyles = PLAYLING_STYLES;
   }
 
   function bassSoundForm($mdUtil, $mdPanel, basicHandler, swiperControl) {
@@ -142,20 +170,20 @@
       
       var scope = angular.element(elem).scope();
       if (scope.sound && scope.sound.note) {
-        menu.open({target: elem}, scope.sound, scope.bass);
+        menu.open({target: elem}, scope.sound);
       }
 
       return false;
     };
 
     var menu = {
-      openNew: function(evt, beat, bass) {
+      openNew: function(evt, beat) {
         var sound = basicHandler.createSound(evt, beat);
         $mdUtil.nextTick(function() {
-          this.open({target: swiperControl.getSoundElem(sound)}, sound, bass);
+          this.open({target: swiperControl.getSoundElem(sound)}, sound);
         }.bind(this));
       },
-      open: function(evt, sound, bass, options) {
+      open: function(evt, sound, options) {
         if (!appContextMenuHandler || window.oncontextmenu !== customContextMenuHandler) {
           appContextMenuHandler = window.oncontextmenu;
         }
@@ -196,8 +224,7 @@
             controller: 'BassFormController',
             locals: {
               sound: sound,
-              string: workspace.track.instrument.strings[sound.string],
-              bass: bass
+              string: workspace.track.instrument.strings[sound.string]
             },
             onRemoving: function() {
               // remove computed code value

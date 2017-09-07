@@ -301,33 +301,6 @@
     audioPlayer.input._volume = 0.75;
 
     $scope.bass = {
-      playingStyles: [
-        {
-          name: 'finger',
-          label: 'FINGER'
-        }, {
-          name: 'slap',
-          label: 'SLAP'
-        }, {
-          name: 'pop',
-          label: 'POP'
-        }, {
-          name: 'pick',
-          label: 'PICK'
-        }, {
-          name: 'tap',
-          label: 'TAP'
-        }, {
-          name: 'hammer',
-          label: 'HAMMER_ON'
-        }, {
-          name: 'pull',
-          label: 'PULL_OFF'
-        }, {
-          name: 'ring',
-          label: 'LET_RING'
-        }
-      ],
       settings: {
         label: 'name-and-fret',
         colors: true

@@ -13,7 +13,7 @@
         ng-model="sound.style"
         md-on-close="soundStyleChanged(sound.style)">
         <md-option
-          ng-repeat="style in ::bass.playingStyles"
+          ng-repeat="style in ::playingStyles"
           ng-value="::style.name"
           ng-attr-translate="{{ ::style.label }}">
         </md-option>

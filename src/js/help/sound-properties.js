@@ -11,36 +11,6 @@
 
     var editSound, editElem, form;
 
-    var bass = {
-      playingStyles: [
-        {
-          name: 'finger',
-          label: 'Finger'
-        }, {
-          name: 'slap',
-          label: 'Slap'
-        }, {
-          name: 'pop',
-          label: 'Pop'
-        }, {
-          name: 'pick',
-          label: 'Pick'
-        }, {
-          name: 'tap',
-          label: 'Tap'
-        }, {
-          name: 'hammer',
-          label: 'Hammer-On'
-        }, {
-          name: 'pull',
-          label: 'Pull-Off'
-        }, {
-          name: 'ring',
-          label: 'Let ring'
-        }
-      ]
-    };
-
     $scope.instructions = [
       /* Create a first sound */
       function() {
@@ -62,11 +32,9 @@
       },
       function() {
         editElem = $element[0].querySelector('.sound-container');
-
         form = bassSoundForm.open(
           {target: editElem},
           editSound,
-          bass,
           {
             clickOutsideToClose: false,
             escapeToClose: false,
