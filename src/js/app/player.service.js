@@ -591,11 +591,13 @@
       }
 
       var duration = noteRealDuration(sound, beatTime);
-
       var minDuration = Math.max(duration, params.duration || 0);
       // this.composer.enlarge(sound, audioData, 6);
       if (audioData.duration < minDuration) {
-        audioData = this.composer.enlarge(params.note || sound.note, audioData, minDuration);
+        var note = params.note || sound.note;
+        if (note && note.name) {
+          audioData = this.composer.enlarge(note, audioData, minDuration);
+        }
       }
 
       var source = context.createBufferSource();

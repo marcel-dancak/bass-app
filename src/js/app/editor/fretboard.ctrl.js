@@ -34,7 +34,7 @@
     $scope.playBassSound = function(bassSound) {
       var sound = angular.extend({
         start: 0,
-        end: 1,
+        end: bassSound.note.type === 'ghost'? 0.25 : 1,
         style: $scope.fretboard.style,
         volume: 0.75
       }, bassSound);
