@@ -224,7 +224,7 @@
         // console.log(slide-$scope.barSwiper.activeIndex);
         // console.log(timeToBeat);
         if (evt.flatIndex < swiperControl.barSwiper.snapIndex) {
-          slide = swiperControl.lastSlide + slide + 1;
+          slide = swiperControl.lastSlide - swiperControl.firstSlide + slide + 1;
         }
         var offset = slide - swiperControl.barSwiper.snapIndex;
         // console.log('slide: {0} offset: {1}'.format(slide, offset));
