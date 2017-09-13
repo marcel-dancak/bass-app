@@ -18,6 +18,7 @@
       id: 1,
       name: this.projectData.name,
       tracks: this.projectData.tracks,
+      audioTrack: this.projectData.audioTrack,
       sections: this.projectData.index,
       playlists: this.projectData.playlists || [],
       script: this.projectData.script
@@ -89,6 +90,7 @@
       name: projectConfig.name,
       sections: projectConfig.sections,
       tracks: projectConfig.tracks,
+      audioTrack: projectConfig.audioTrack,
       playlists: playlists,
       script: projectConfig.script
     };
@@ -130,6 +132,7 @@
         return s.id === record.id;
       });
     }, this);
+
     var data = JSON.stringify(this.project, function(k, v) {
       if (k === 'playlists') {
         return undefined;
@@ -216,6 +219,7 @@
       name: projectConfig.name,
       index: projectConfig.sections,
       tracks: projectConfig.tracks,
+      audioTrack: projectConfig.audioTrack,
       playlists: playlists,
       sections: sections,
     };
@@ -240,7 +244,7 @@
     }
   }
 
-  function projectManager(Observable, context, Bass, Drums, Piano, DrumTrackSection, TrackSection) {
+  function projectManager($http, $q, $mdDialog, $mdToast, Observable, context, Bass, Drums, Piano, DrumTrackSection, TrackSection, Config) {
 
     var idCouter = {};
     var compressors = {};
@@ -326,10 +330,214 @@
       delete this.project.tracksMap[trackId];
     };
 
-    // var backingTrack; // backingTrack = {offset: 6.7, file: 'mgs-o.ogg'}
-    ProjectManager.prototype.addBackingTrack = function(file) {
-      this.project.backingTrack = new Audio([file]);
+    /*
+    ProjectManager.prototype.addFileAudioTrack = function(file) {
+      var gain = context.createGain();
+      gain.connect(context.destination);
+      this.project.audioTrack = {
+        _data: null,
+        audio: gain,
+        play: function(offset) {
+          this._source = context.createBufferSource();
+          this._source.buffer = this._data;
+          this._source.connect(this.audio);
+          this._source.playbackRate.value = this.playbackRate;
+          console.log(this._playbackRate)
+          this._source.start(context.currentTime, offset);
+          return $q.when();
+        },
+        stop: function() {
+          this._source.stop();
+        },
+        playbackRate: 1,
+        setPlaybackRate: function(rate, delay) {
+          if (this._source) {
+            console.log('# Already playing')
+            if (delay) {
+              console.log('# setValueAtTime')
+
+              this._source.playbackRate.setValueAtTime(this.playbackRate, context.currentTime);
+              this._source.playbackRate.setValueAtTime(rate, context.currentTime+delay);
+              // setTimeout(function() {
+              //   this._source.playbackRate.value = rate;
+              // }.bind(this), delay*1000);
+            } else {
+              console.log('# playbackRate')
+              this._source.playbackRate.value = rate;
+            }
+          }
+          this.playbackRate = rate;
+        }
+      };
+      context.decodeAudioData(file.content, function(buffer) {
+        this.project.audioTrack._data = buffer
+      }.bind(this));
     };
+    */
+
+
+    function findBestStream(formats) {
+      // console.log(formats)
+      var formats = formats.filter(function(f) {
+        // return f.vcodec === "none" && f.protocol === 'https';
+        return f.protocol === 'https';
+      });
+
+      if (window.runtime.oggSupport) {
+        var webmFormats = formats.filter(function(f) {
+          return f.ext === 'webm' || f.acodec === 'opus' || f.acodec === 'vorbis';
+        });
+        if (webmFormats.length) {
+          formats = webmFormats;
+        }
+      }
+      var minAbr = window.runtime.mobile? 40 : 60;
+
+      return formats.find(function(f) {
+        return f.abr >= minAbr;
+      })
+      || formats[0];
+    }
+
+    function extractStreamUrl(resource) {
+      var task = $q.defer();
+      $http.get(Config.apiUrl+'online_stream/?url='+encodeURIComponent(resource)).then(function(resp) {
+        var format = findBestStream(resp.data.formats);
+        if (format) {
+          console.log(format)
+          format.extractor = resp.data.extractor;
+          task.resolve(format);
+        } else {
+          task.reject();
+        }
+      }).catch(task.reject);
+      return task.promise;
+    }
+
+    ProjectManager.prototype.addOnlineStreamTrack = function(resource) {
+      var task = $q.defer();
+      extractStreamUrl(resource)
+        .then(function(stream) {
+          var config = {
+            resource: resource,
+            type: stream.extractor
+          };
+
+          if (window.runtime.mobile) {
+
+            var pm = this;
+            var confirm = {
+              template: 
+                '<md-dialog-content class="md-dialog-content">\
+                  <h2 class="md-title">Confirm Online Stream</h2>\
+                  <div class="md-dialog-content-body">\
+                    <p>This composition contains online audio stream. You can disable it to reduce network traffic.</p>\
+                  </div>\
+                </md-dialog-content>\
+                <md-dialog-actions>\
+                  <md-button md-no-ink class="md-raised" ng-click="cancel()">Disable</md-button>\
+                  <md-button md-no-ink class="md-primary md-raised" ng-click="confirm()">Allow</md-button>\
+                </md-dialog-actions>',
+              controller: ['$scope', '$mdDialog', function($scope, $mdDialog) {
+                $scope.confirm = function() {
+                  pm.addUrlStreamTrack(stream.url, config);
+                  pm.project.audioTrack.initialized = false;
+                  pm.project.audioTrack.play().then(function() {
+                    pm.project.audioTrack.stop();
+                    pm.project.audioTrack.initialized = true;
+                  });
+                  task.resolve(pm.project.audioTrack);
+                  $mdDialog.hide();
+                };
+                $scope.cancel = function() {
+                  $mdDialog.hide();
+                  task.reject();
+                };
+              }]
+            };
+            $mdDialog.show(confirm);
+          } else {
+            this.addUrlStreamTrack(stream.url, config);
+            task.resolve(this.project.audioTrack);
+          }
+        }.bind(this))
+        .catch(function() {
+          task.reject();
+          $mdToast.show(
+            $mdToast.simple()
+              .toastClass('error')
+              .textContent('Failed to initialize online stream track!')
+              .position('top center')
+          );
+        })
+      return task.promise;
+    };
+
+    ProjectManager.prototype.addUrlStreamTrack = function(url, config) {
+      var audio = new Audio(url);
+      audio.autoplay = false;
+      audio.preload = 'none';
+      // audio.crossorigin = 'anonymous';
+
+      var gain = {};
+      Object.defineProperty(gain, 'value', {
+        set: function(x) {
+          audio.volume = x;
+          this._value = x;
+        },
+        get: function() {
+          return this._value;
+        }
+      });
+      gain.value = 1;
+      this.project.audioTrack = {
+        _stream: audio,
+        initialized: true,
+        playbackRate: 1,
+        audio: {
+          gain: gain
+        },
+        play: function(offset) {
+          this._stream.currentTime = offset || 0;
+          return this._stream.play();
+        },
+        stop: function() {
+          this._stream.pause();
+        },
+        setPlaybackRate: function(rate, delay) {
+          if (delay) {
+            setTimeout(function() {
+              this.playbackRate = rate;
+              this._stream.playbackRate = rate;
+            }.bind(this), delay*1000)
+          } else {
+            this.playbackRate = rate;
+            this._stream.playbackRate = rate;
+          }
+        }
+      }
+      /*
+      Object.defineProperty(this.project.audioTrack, 'muted', {
+        set: function(val) {
+          if (!val && !this.initialized) {
+            console.log('Enabled')
+            this.initialized = true;
+          }
+          this._value = val;
+        },
+        get: function() {
+          return this._value;
+        }
+      });*/
+      this.project.audioTrack._volume = 1;
+      this.project.audioTrack.source = config;
+    }
+
+    ProjectManager.prototype.removeAudioTrack = function() {
+      this.project.audioTrack = undefined;
+      this.store.project.audioTrack = undefined;
+    }
+
 
     ProjectManager.prototype.createProject = function(tracks) {
       idCouter = {};
@@ -360,6 +568,14 @@
         script: projectData.script
       };
       projectData.tracks.forEach(this.addTrack.bind(this));
+      if (projectData.audioTrack && projectData.audioTrack.source) {
+        var config = projectData.audioTrack;
+        this.addOnlineStreamTrack(config.source.resource, config.source).then(function(audioTrack) {
+          audioTrack.muted = Boolean(config.volume.muted);
+          audioTrack.audio.gain.value =  audioTrack.muted? 0.0001 : config.volume.value;
+          audioTrack._volume = config.volume.value;
+        });
+      }
 
       if (projectData.playlists.length) {
         this.project.playlists = projectData.playlists;
@@ -466,17 +682,21 @@
       if (!this.store.project) {
         return;
       }
+      function trackVolume(track) {
+        var muted = track.audio.gain.value <= 0.001;
+        return {
+          muted: muted,
+          value: muted? track._volume : track.audio.gain.value
+        };
+      }
+
       var trackExcludedProperties = ['id', 'instrument', 'audio', '_volume'];
       var tracks = this.project.tracks.map(function(track) {
         var trackConfig = Object.keys(track).reduce(function(obj, property) {
           if (trackExcludedProperties.indexOf(property) === -1) {
             obj[property] = track[property];
           }
-          var muted = track.audio.gain.value <= 0.001;
-          obj.volume = {
-            muted: muted,
-            value: muted? track._volume : track.audio.gain.value
-          };
+          obj.volume = trackVolume(track);
           return obj;
         }, {});
         // Currently not needed
@@ -485,6 +705,17 @@
         // }
         return trackConfig;
       });
+
+      if (this.project.audioTrack) {
+        if (this.project.audioTrack.source) {
+          this.store.project.audioTrack = {
+            source: this.project.audioTrack.source,
+            volume: trackVolume(this.project.audioTrack),
+          };
+        } else {
+          delete this.store.project.audioTrack;
+        }
+      }
 
       var sectionsIndex = this.project.sections.map(function(section) {
         return {
@@ -604,6 +835,11 @@
       if (storedSection) {
         this._filterProjectTracks(storedSection);
         section = this.loadSectionData(storedSection);
+
+        // backward compatibility
+        if (typeof section.audioTrackStart === 'string') {
+          section.audioTrackStart = section.audioTrackStart.split(":").map(Number);
+        }
       }
       wrapSection(section);
       return section;

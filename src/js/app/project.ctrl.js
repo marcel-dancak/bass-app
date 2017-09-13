@@ -220,11 +220,7 @@
             showSaveNotification(workspace.section.name);
           }
         });
-
       } else {
-        if (projectManager.project.audioTrack) {
-          workspace.section.audioTrackStart = projectManager.project.audioTrack.start.join(":");
-        }
         projectManager.saveSection();
         showSaveNotification(workspace.section.name);
       }

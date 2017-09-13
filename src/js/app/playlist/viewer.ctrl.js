@@ -258,9 +258,8 @@
       }
       if (projectManager.project.audioTrack && section.audioTrackStart) {
         options.audioTrack = {
-          data: projectManager.project.audioTrack.data,
-          audio: projectManager.project.audioTrack.audio,
-          start: section.audioTrackStart.split(":").map(Number)
+          track: projectManager.project.audioTrack,
+          start: section.audioTrackStart
         }
       }
       audioPlayer.play(section, beatSync, playbackStopped, options);

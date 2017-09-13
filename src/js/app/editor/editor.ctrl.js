@@ -304,14 +304,12 @@
         countdown: $scope.player.countdown,
         start: start
       }
-      // if (projectManager.project.backingTrack && Number.isFinite(workspace.section.backingTrackStart)) {
-      //   playbackOpts.backingTrack = {
-      //     audio: projectManager.project.backingTrack,
-      //     start: workspace.section.backingTrackStart
-      //   }
-      // }
+
       if (projectManager.project.audioTrack) {
-        playbackOpts.audioTrack = projectManager.project.audioTrack;
+        playbackOpts.audioTrack = {
+          track: projectManager.project.audioTrack,
+          start: workspace.section.audioTrackStart
+        }
       }
       audioPlayer.fetchResourcesWithProgress(workspace.section)
         .then(
@@ -516,9 +514,6 @@
       audioVisualiser.clear();
       audioVisualiser.reinitialize();
       console.log('sectionLoaded');
-      if (projectManager.project.audioTrack && section.audioTrackStart) {
-        projectManager.project.audioTrack.start = section.audioTrackStart.split(":").map(Number);
-      }
 
       workspace.section = section;
       $scope.player.playbackRange.start = 1;
@@ -653,7 +648,7 @@
       var section = workspace.section;
       var beats = section.length * section.timeSignature.top;
       var duration = beats * (60 / section.bpm);
-      var time = section.audioTrackStart.split(":").map(Number);
+      var time = section.audioTrackStart.slice();
 
       var sec = parseInt(duration);
       var mili = Math.round(1000 * (duration - sec));

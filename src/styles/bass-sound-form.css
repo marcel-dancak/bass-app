@@ -51,6 +51,10 @@
   display: none;
 }
 
+.bass-sound-form md-input-container label.md-no-float {
+  font-size: 0.75rem;
+}
+
 .bass-sound-form .volume-slider {
   margin-left: 4px;
   margin-right: 4px;

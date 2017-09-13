@@ -7,6 +7,7 @@
     .directive('ngRightClick', contextMenu)
     .directive('bdFileDrop', bdFileDrop)
     .directive('bdBinaryFileDrop', bdBinaryFileDrop)
+    .directive('bdDataUrlFileDrop', bdDataUrlFileDrop)
     .directive('bdDisableStepValidator', bdDisableStepValidator)
 
 
@@ -56,7 +57,7 @@
     };
   }
 */
-  function setupDragAndDrop(scope, iElem, dropCallback, binary) {
+  function setupDragAndDrop(scope, iElem, dropCallback, type) {
     function handleFileDrop(evt) {
       evt.stopPropagation();
       evt.preventDefault();
@@ -66,6 +67,7 @@
       var file = files[0];
       var reader = new FileReader();
       reader.onload = function(evt) {
+        console.log('onload')
         scope.$apply(function() {
             var args = {
               $file: {
@@ -76,10 +78,13 @@
             dropCallback(scope, args);
         });
       };
-      if (binary) {
-        reader.readAsArrayBuffer(file)
-      } else {
-        reader.readAsText(file)
+      switch (type) {
+        case 'binary':
+          return reader.readAsArrayBuffer(file);
+        case 'url':
+          return reader.readAsDataURL(file);
+        default:
+          reader.readAsText(file)
       }
     }
 
@@ -97,6 +102,16 @@
     iElem.on('dragover', handleDragOver);
     iElem.on('dragleave', handleDragLeave);
     iElem.on('drop', handleFileDrop);
+
+    scope.$$postDigest(function() {
+      var inputEl = iElem.find('input');
+      inputEl.on('change', function(evt) {
+        if (evt.target.files) {
+          evt.dataTransfer = {files: evt.target.files}
+          handleFileDrop(evt);
+        }
+      });
+    });
   }
 
   function bdFileDrop($parse) {
@@ -107,7 +122,13 @@
 
   function bdBinaryFileDrop($parse) {
     return function(scope, iElem, iAttrs) {
-      setupDragAndDrop(scope, iElem, $parse(iAttrs.bdBinaryFileDrop), true);
+      setupDragAndDrop(scope, iElem, $parse(iAttrs.bdBinaryFileDrop), 'binary');
+    }
+  }
+
+  function bdDataUrlFileDrop($parse) {
+    return function(scope, iElem, iAttrs) {
+      setupDragAndDrop(scope, iElem, $parse(iAttrs.bdDataUrlFileDrop), 'url');
     }
   }
 

@@ -74,7 +74,6 @@
       this.countdown = false;
       this.setBpm(60);
       this.setPlaybackSpeed(1);
-      // this.bufferLoader = new BufferLoader(context, soundsUrl);
       this.scheduledSounds = [];
 
       this.input = {
@@ -764,6 +763,9 @@
           playbackActive: !isPlaybackEnd,
           playbackStart: playbackStart
         });
+        if (this.audioTrack && this.audioTrack.track.playbackRate !== this.playbackSpeed) {
+          this.audioTrack.track.setPlaybackRate(this.playbackSpeed, startTime-currentTime);
+        }
       }
 
       if (this.scheduledSounds.length) {
@@ -821,28 +823,32 @@
 
       oscillator.start();
       */
-      if (options.backingTrack) {
-        options.backingTrack.audio.addEventListener('playing', function() {
-          console.log('backingTrack playing');
-        });
-        options.backingTrack.audio.currentTime = options.backingTrack.start || 0;
-        options.backingTrack.audio.play();
-        this.backingTrack = options.backingTrack;
-      }
+
       this.piano.playingSounds = {};
       var start = options.start || this.playbackRange.start;
       var bar = start.bar;
       var beat = start.beat;
-      this.playBeat(bar, beat, context.currentTime, true);
-      if (options.audioTrack) {
-        var source = context.createBufferSource();
-        source.buffer = options.audioTrack.data;
-        source.connect(options.audioTrack.audio);
 
-        var playbackOffset = ((bar-1)*this.section.timeSignature.top + beat-1)*(60/this.bpm);
-        var start = options.audioTrack.start;
-        source.start(context.currentTime, playbackOffset + start[0] * 60 + start[1] + start[2]/1000);
-        this.audioTrack = source;
+      if (options.audioTrack && options.audioTrack.track.initialized) {
+        var playbackStart = ((bar-1)*this.section.timeSignature.top + beat-1)*(60/this.bpm);
+        if (options.audioTrack.start) {
+          var offset = options.audioTrack.start;
+          playbackStart += offset[0] * 60 + offset[1] + offset[2]/1000;
+        }
+
+        options.audioTrack.track.setPlaybackRate(this.playbackSpeed);
+
+        // var delta = Math.abs(options.audioTrack.track._stream.currentTime - playbackStart);
+        options.audioTrack.track.play(playbackStart)
+          .then(function() {
+            this.playBeat(bar, beat, context.currentTime, true);
+            this.audioTrack = options.audioTrack;
+          }.bind(this))
+          .catch(function(error) {
+            // Report notification
+          })
+      } else {
+        this.playBeat(bar, beat, context.currentTime, true);
       }
     };
 
@@ -970,7 +976,7 @@
         // }
       }
       if (this.audioTrack) {
-        this.audioTrack.stop();
+        this.audioTrack.track.stop();
       }
 
       /*

@@ -6,9 +6,11 @@
     .controller('TracksController', TracksController);
 
 
-  function TracksController($scope, $mdUtil, context, workspace, audioPlayer, audioVisualiser, projectManager) {
+  function TracksController($scope, $mdUtil, $mdDialog, context, workspace, audioPlayer, audioVisualiser, projectManager, player) {
     $scope.runtime = window.runtime;
+    $scope.player = player;
     $scope.project = projectManager.project;
+    $scope.workspace = workspace;
     $scope.input = audioPlayer.input;
 
     $scope.toggleVolumeMute = function(instrument) {
@@ -54,25 +56,45 @@
       }
     };
 
-    $scope.addAudioTrack = function(file) {
-      var gain = context.createGain();
-      gain.connect(context.destination);
+    $scope.addFileAudioTrack = function(file) {
+      if (!workspace.section.audioTrackStart) {
+        workspace.section.audioTrackStart = [0, 0, 0];
+      }
       $mdUtil.nextTick(function() {
         $scope.$broadcast('rzSliderForceRender');
       });
-      // use saved 'start' value if exists
-      var savedStart;
-      if (workspace.section.audioTrackStart) {
-        savedStart = workspace.section.audioTrackStart.split(":").map(Number);
-      }
-      projectManager.project.audioTrack = {
-        data: null,
-        audio: gain,
-        start: savedStart || [0,0,0]
-      };
-      context.decodeAudioData(file.content, function(buffer) {
-        projectManager.project.audioTrack.data = buffer
-      });
+      projectManager.addUrlStreamTrack(file.content);
     };
+
+    $scope.addYoutubeTrack = function(file) {
+      var prompt = $mdDialog.prompt()
+        .title('Online Stream')
+        .textContent('Enter Youtube video or other supported online stream resource')
+        .placeholder('Youtube video, SoundCloud track, ...')
+        .ok('OK')
+        .cancel('Cancel');
+
+      $mdDialog.show(prompt)
+        .then(function(resource) {
+          if (resource.startsWith('https://www.youtube.com')) {
+            resource = new URL(resource).searchParams.get('v');
+          }
+          if (!resource.startsWith('http')) {
+            resource = 'https://www.youtube.com/watch?v='+resource;
+          }
+          projectManager.addOnlineStreamTrack(resource);
+          if (!workspace.section.audioTrackStart) {
+            workspace.section.audioTrackStart = [0, 0, 0];
+          }
+        })
+        .catch(angular.noop);
+    };
+
+    $scope.removeAudioTrack = projectManager.removeAudioTrack.bind(projectManager);
+
+    // initialize audioTrackStart model
+    if (workspace.section && !workspace.section.audioTrackStart) {
+      workspace.section.audioTrackStart = [0, 0, 0];
+    }
   }
 })();
