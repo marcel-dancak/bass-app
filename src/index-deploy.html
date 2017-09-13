@@ -6,9 +6,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Drums and Bass</title>
+    <title>Bass App</title>
     <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="styles/styles.min.css">
+    <link rel="stylesheet" type="text/css" href="styles/styles.css">
 
     <script src="js/app.js"></script>
     <script type="text/javascript">
@@ -19,14 +19,16 @@
             .iconSet('drums', 'styles/drums.svg', 512)
             .icon('basscloud', 'styles/basscloud.svg')
         })
-        .constant('localSoundsUrl', 'http://127.0.0.1:8887/sounds2/')
-        .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/sounds/')
-        .constant('uploadUrl', 'https://basscloud.net/api/')
-        .constant('dataUrl', '/app/')
-        .constant('appModules', {
-          'help': 'js/help.js',
-          'upload': 'js/upload.js',
-          'oggvorbis': 'js/oggvorbis.js'
+        .constant('Config', {
+          localSoundsUrl: 'http://127.0.0.1:8887/sounds2/',
+          soundsUrl: 'https://s3.eu-central-1.amazonaws.com/bass-app/sounds/',
+          apiUrl: 'https://basscloud.net/api/',
+          dataUrl: '/app/',
+          modules: {
+            'help': 'js/help.js',
+            'upload': 'js/upload.js',
+            'oggvorbis': 'js/oggvorbis.js'
+          }
         })
     </script>
   </head>

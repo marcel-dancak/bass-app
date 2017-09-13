@@ -43,19 +43,19 @@
         value: 32
       }
     })
-    .run(function($mdDialog, $mdToast, $rootScope, $q, audioPlayer, context, localSoundsUrl, soundsUrl, appModules) {
+    .run(function($mdDialog, $mdToast, $rootScope, $q, audioPlayer, context, Config) {
       window.rs = $rootScope;
       var loadedModules = [];
 
       var runtime = {
         loadModule: function(module) {
-          if (loadedModules.indexOf(module) !== -1 || !appModules[module]) {
+          if (loadedModules.indexOf(module) !== -1 || !Config.modules[module]) {
             return $q.when();
           }
           var task = $q.defer();
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          script.src = appModules[module];
+          script.src = Config.modules[module];
           script.onload = function() {
             loadedModules.push(module);
             task.resolve();
@@ -93,14 +93,14 @@
             );
           };
         }
-        audioPlayer.bufferLoader = new BufferLoader(context, localSoundsUrl, runtime.oggSupport);
+        audioPlayer.bufferLoader = new BufferLoader(context, Config.localSoundsUrl, runtime.oggSupport);
         // check local sounds server and switch to public server when unavailable
         audioPlayer.bufferLoader.loadResource(
           'drums/drumstick',
           setupSamplesErrorHandler,
           function() {
             console.log('faild to load test sample')
-            audioPlayer.bufferLoader.serverUrl = soundsUrl;
+            audioPlayer.bufferLoader.serverUrl = Config.soundsUrl;
             setupSamplesErrorHandler();
           }
         );

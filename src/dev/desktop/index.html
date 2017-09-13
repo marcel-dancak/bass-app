@@ -4,9 +4,10 @@
     <meta charset="utf-8">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=medium-dpi">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=medium-dpi"> -->
 
-    <title>Bass and Drums</title>
+    <title>Bass App</title>
 
     <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
     <link rel="stylesheet" type="text/css" href="bower_components/angular-material/angular-material.css"/>
@@ -17,28 +18,35 @@
 
     <link rel="stylesheet" type="text/css" href="styles/fonts.css">
     <link rel="stylesheet" type="text/css" href="styles/ui.css">
-    <link rel="stylesheet" type="text/css" href="styles/toolbar.css">
+    <link rel="stylesheet" type="text/css" href="styles/css/toolbar.css">
+    <link rel="stylesheet" type="text/css" href="styles/css/preferences.css">
     <link rel="stylesheet" type="text/css" href="styles/bottom-toolbar.css">
     <link rel="stylesheet" type="text/css" href="styles/bar.css">
     <link rel="stylesheet" type="text/css" href="styles/bass.css">
     <link rel="stylesheet" type="text/css" href="styles/bass-sound-form.css">
     <link rel="stylesheet" type="text/css" href="styles/drums.css">
-    <link rel="stylesheet" type="text/css" href="styles/fretboard.css">
+    <link rel="stylesheet" type="text/css" href="styles/css/fretboard.css">
     <link rel="stylesheet" type="text/css" href="styles/piano.css">
     <link rel="stylesheet" type="text/css" href="styles/playlist.css">
     <link rel="stylesheet" type="text/css" href="styles/help.css">
+    <link rel="stylesheet" type="text/css" href="lib/pen/pen.css">
+
+    <link rel="stylesheet" type="text/css" href="styles/css/responsive.css">
     <!-- <link rel="stylesheet" type="text/css" href="styles/screenshot.css"> -->
 
-    <!-- <script type="text/javascript" src="bower_components/swiper/dist/js/swiper.js"></script> -->
-    <script type="text/javascript" src="bower_components/swiper/dist/js/swiper_3.4.min.js"></script>
+    <script type="text/javascript" src="bower_components/swiper/dist/js/swiper.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.5/angular.min.js"></script> -->
+
     <script type="text/javascript" src="bower_components/angular-animate/angular-animate.js"></script>
     <script type="text/javascript" src="bower_components/angular-material/angular-material.js"></script>
     <script type="text/javascript" src="bower_components/angular-aria/angular-aria.js"></script>
 
-    <script type="text/javascript" src="lib/scalyr.js"></script>
+    <!-- <script type="text/javascript" src="lib/scalyr.js"></script> -->
     <script type="text/javascript" src="lib/angular-native-dragdrop/draganddrop.js"></script>
-    <script type="text/javascript" src="bower_components/angular-resizable/src/angular-resizable.js"></script>
+    <!-- <script type="text/javascript" src="bower_components/angular-resizable/src/angular-resizable.js"></script> -->
+    <script type="text/javascript" src="bower_components.old/angular-resizable/src/angular-resizable.js"></script>
+
     <script type="text/javascript" src="bower_components/hamsterjs/hamster.js"></script>
     <script type="text/javascript" src="bower_components/angular-mousewheel/mousewheel.js"></script>
 
@@ -46,29 +54,33 @@
     <script type="text/javascript" src="bower_components/file-saver/FileSaver.min.js"></script>
     <script type="text/javascript" src="bower_components/angular-scroll/angular-scroll.min.js"></script>
     <script type="text/javascript" src="bower_components/angular-translate/angular-translate.min.js"></script>
-    <script type="text/javascript" src="lib/lz-string.min.js"></script>
-    <!-- <script type="text/javascript" src="lib/base64-string.js"></script> -->
-    <!-- <script type="text/javascript" src="lib/lz-string_1.3.7.min.js"></script> -->
-    <!-- <script type="text/javascript" src="lib/lz-string.js"></script> -->
+    <script type="text/javascript" src="bower_components/dot/doT.min.js"></script>
+    <script type="text/javascript" src="bower_components/lz-string/libs/lz-string.min.js"></script>
+    <script type="text/javascript" src="bower_components/marked/marked.min.js"></script>
+    <script type="text/javascript" src="lib/pen/pen.js"></script>
 
+    <!-- <script type="text/javascript" src="lib/oggvorbis.js"></script> -->
+    <!-- <script type="text/javascript" src="lib/oggvorbis-backups/oggvorbis1.js"></script> -->
 
+    <script src="lib/polyfills.js"></script>
     <script src="lib/string-format.js"></script>
     <script src="lib/buffer-loader.js"></script>
     <script src="lib/audiobuffer-to-wav.js"></script>
-    <script src="lib/fft/complex.js"></script>
-    <script src="lib/fft/pitch.js"></script>
+<!--     <script src="lib/fft/complex.js"></script>
+    <script src="lib/fft/pitch.js"></script> -->
     <script src="lib/bezier-easing.min.js"></script>
-    <script src="lib/midi/base64-binary.js"></script>
+<!--     <script src="lib/midi/base64-binary.js"></script>
     <script src="lib/midi/stream.js"></script>
     <script src="lib/midi/midifile.js"></script>
     <script src="lib/midi/replayer.js"></script>
-    <script src="lib/midi/MIDI.js"></script>
+    <script src="lib/midi/MIDI.js"></script> -->
     <script src="lib/simple-scrollbar.min.js"></script>
 
     <script src="js/app/app.module.js"></script>
     <script src="js/app/observable.js"></script>
     <script src="js/app/utils.dir.js"></script>
     <script src="js/app/app.ctrl.js"></script>
+    <script src="js/app/tracks.ctrl.js"></script>
     <script src="js/app/project.ctrl.js"></script>
     <script src="js/app/section.es6"></script>
     <script src="js/app/audio-composer.js"></script>
@@ -97,6 +109,7 @@
     <script src="js/app/editor/fretboard.ctrl.js"></script>
     <script src="js/app/editor/piano-editor.es6"></script>
     <script src="js/app/editor/drum-editor.js"></script>
+    <script src="js/app/editor/gp-import.ctrl.js"></script>
 
     <!-- Playlist Mode -->
     <script src="js/app/playlist/renderer.js"></script>
@@ -121,18 +134,27 @@
     <script src="js/help/chords.js"></script>
 
     <script type="text/javascript">
+      angular.module('bd.app').requires.push('bd.help');
       angular.module('bd.app')
         .config(function($mdIconProvider) {
           $mdIconProvider
             .defaultIconSet('styles/icons.svg', 32)
             .iconSet('drums', 'styles/drums.svg', 512)
+            .icon('basscloud', 'styles/basscloud.svg')
         })
-        .constant('soundsUrl', '/')
-        // .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/')
-        .constant('localSoundsUrl', 'http://127.0.0.1:8887/')
-        .constant('uploadUrl', 'http://localhost:8000/')
-        // .constant('uploadUrl', 'https://basscloud.net/')
-        .constant('dataUrl', '/');
+        .constant('Config', {
+          soundsUrl: '/sounds/',
+          // soundsUrl: 'https://s3.eu-central-1.amazonaws.com/bass-app/',
+          // localSoundsUrl: 'http://127.0.0.1:8887/sounds/',
+          localSoundsUrl: '/samples/',
+          // apiUrl: 'https://basscloud.net/api/',
+          apiUrl: 'http://192.168.0.151:8000/api/',
+          // apiUrl: 'http://localhost:8000/api/',
+          dataUrl: '/',
+          modules: {
+            'oggvorbis': 'lib/oggvorbis.js'
+          }
+        })
     </script>
   </head>
 

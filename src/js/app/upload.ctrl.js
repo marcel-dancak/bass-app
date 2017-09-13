@@ -6,7 +6,7 @@
     .controller('UploadController', UploadController);
 
 
-  function UploadController($scope, $http, $sce, $mdDialog, projectManager, uploadUrl) {
+  function UploadController($scope, $http, $sce, $mdDialog, projectManager, Config) {
     console.log('-- UploadController --')
     // if (projectManager.store)
 
@@ -111,7 +111,7 @@
     $scope.newUpload = !Boolean(uploadId);
     if (uploadId) {
       $scope.fetching = true;
-      $http.get(uploadUrl+'project/', { params: {id: uploadId} })
+      $http.get(Config.apiUrl+'project/', { params: {id: uploadId} })
         .then(function(resp) {
           // do not override playing_styles
           delete resp.data.playing_styles;
@@ -131,14 +131,14 @@
     
     $scope.login = function() {
       $scope.loginFailed = false;
-      $http.post(uploadUrl+'login/', $scope.user, {withCredentials: true})
+      $http.post(Config.apiUrl+'login/', $scope.user, {withCredentials: true})
         .then($scope.upload, function(resp) {
           $scope.loginFailed = true;
         })
     };
 
     $scope.upload = function() {
-      $http.post(uploadUrl+'project/', $scope.project, {withCredentials: true})
+      $http.post(Config.apiUrl+'project/', $scope.project, {withCredentials: true})
         .then(function(resp) {
           projectManager.store.project.upload_id = resp.data;
           projectManager.saveProjectConfig();
@@ -147,7 +147,7 @@
         }, function(resp) {
           if (resp.status === 401 || resp.status === 403) {
             if (resp.status === 403) {
-              $http.get(uploadUrl+'logout/', {withCredentials: true});
+              $http.get(Config.apiUrl+'logout/', {withCredentials: true});
             }
             $scope.showLogin = true;
             $scope.form = "login";

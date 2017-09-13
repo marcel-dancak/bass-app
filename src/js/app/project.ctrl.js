@@ -14,7 +14,7 @@
 
 
   function ProjectController($scope, $timeout, $controller, $http, $window, $location, $mdToast, $mdDialog,
-        projectManager, workspace, ReadOnlyStore, ProjectLocalStore, dataUrl) {
+        projectManager, workspace, ReadOnlyStore, ProjectLocalStore, Config) {
 
     function showNotification(htmlContent) {
       $mdToast.show({
@@ -287,7 +287,7 @@
     var projectParam = $location.hash();
     if (projectParam) {
       $http({
-        url: dataUrl+projectParam,
+        url: Config.dataUrl+projectParam,
         method: 'GET',
         transformResponse: [function (data) {
           if (data[0] !== '{') {
