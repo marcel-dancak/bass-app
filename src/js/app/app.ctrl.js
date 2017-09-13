@@ -1,12 +1,6 @@
 (function() {
   'use strict';
 
-  angular.module("templates").run(function($templateCache) {
-    angular.module("templates").run = function(body) {
-      body[1]($templateCache);
-    }
-  });
-
   angular
     .module('bd.app')
     .controller('AppController', AppController)
@@ -175,6 +169,10 @@
           });
         }
         return m;
+      }
+
+      angular.module("templates").run = function(args) {
+        angular.element(document).injector().invoke(args);
       }
 
     })
@@ -484,8 +482,7 @@
     }
     $scope.sideMenu = SideMenu();
 
-
-    function panelMenu(template, evt, opts) {
+    function panelMenu(params, evt) {
       var position = $mdPanel.newPanelPosition()
         .relativeTo(evt.target)
         .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_TOPS)
@@ -498,24 +495,30 @@
             close: 'menu-animation-leave'
           })
 
-      $mdPanel.open({
+      $mdPanel.open(angular.extend({
         attachTo: document.body,
-        templateUrl: template,
-        // controller: 'TracksController',
         position: position,
         animation: animation,
         targetEvent: evt,
         panelClass: 'menu md-whiteframe-16dp',
         clickOutsideToClose: true,
+        locals: {
+          player: $scope.player
+        },
+        bindToController: false,
         // onCloseSuccess
         onDomRemoved: function(arg) {
+          // free angular's bindings
           arg[0].destroy();
         }
-      });
+      }, params));
     }
 
     $scope.openVolumePreferences = function(evt) {
-      panelMenu('views/volume_preferences.html', evt);
+      panelMenu({
+        templateUrl: 'views/volume_preferences.html',
+        controller: 'TracksController'
+      }, evt);
     }
   }
 })();
