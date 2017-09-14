@@ -41,7 +41,6 @@
         noteElem.className = 'sound-container selected '+(dragSound.note.type || '');
         noteElem.style.width = evt.target.clientWidth+'px';
         noteElem.style.height = evt.target.clientHeight+'px';
-        noteElem.style.top = '';
         noteElem.setAttribute('octave', dragSound.note.octave);
         var label = dragSound.note.name || evt.target.textContent;
         noteElem.appendChild(document.createTextNode(label));
@@ -70,8 +69,6 @@
         dragWidth = evt.target.clientWidth+2;
         var dragElem = this.mainHandler.createDragWrapperElement();
         var clone = evt.target.cloneNode(true);
-        clone.style.top = '0';
-        clone.style.left = '0';
         clone.style.width = evt.target.offsetWidth+'px';
         clone.style.height = evt.target.offsetHeight+'px';
         dragElem.appendChild(clone);
@@ -133,25 +130,21 @@
         var dragElem = this.mainHandler.createDragWrapperElement();
         var srcDragElems = [];
         dragWidth = 0;
-        sounds.forEach(function(sound) {
+        sounds.forEach(function(sound, i) {
           var elem = swiperControl.getSoundElem(sound);
           var clone = elem.cloneNode(true);
           dragWidth += elem.clientWidth + 2;
-          clone.style.position = 'relative';
           clone.style.width = elem.offsetWidth+'px';
           clone.style.height = elem.offsetHeight+'px';
-          clone.style.top = '0';
-          clone.style.bottom = '';
-          clone.style.left = '';
-          clone.style.display = 'inline-block';
           dragElem.appendChild(clone);
           srcDragElems.push(elem);
         });
         this.srcDragElems = srcDragElems;
 
         var dragElemHeight = srcDragElems[0].offsetHeight;
-        // dragElem.style.height = dragElemHeight+'px';
+        dragElem.style.height = dragElemHeight+'px';
         dragElem.style.paddingTop = '32px';
+
         workspaceElem.appendChild(dragElem);
 
         evt.dataTransfer.setDragImage(dragElem, 10, 32+dragElemHeight/2);
@@ -191,7 +184,7 @@
         return createdSounds[0];
       },
       onDragEnd: function(evt) {
-        this.dragElem.remove();
+        // this.dragElem.remove();
         this.srcDragElems.forEach(function(elem) {
           elem.classList.remove('drag-move-element');
         });
@@ -210,7 +203,6 @@
       createDragWrapperElement() {
         var dragElem = document.createElement('div');
         dragElem.className = 'drag-sound '+this.type;
-        console.log(this.type)
         return dragElem;
       }
 
