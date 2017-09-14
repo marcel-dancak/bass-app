@@ -964,16 +964,14 @@
               sound.source.stop();
             } else {
               sound.gain.cancelScheduledValues(currentTime);
-              sound.gain.setValueAtTime(sound.gain.value, currentTime);
-              sound.gain.linearRampToValueAtTime(0.0001, currentTime+0.05);
+              sound.gain.setValueAtTime(sound.gain.value, currentTime+0.01);
+              sound.gain.linearRampToValueAtTime(0.00001, currentTime+0.05);
             }
           } catch (ex) {
             console.log('Error');
           }
         });
-        // if (this.backingTrack) {
-        //   this.backingTrack.audio.pause();
-        // }
+        this.scheduledSounds = [];
       }
       if (this.audioTrack) {
         this.audioTrack.track.stop();
