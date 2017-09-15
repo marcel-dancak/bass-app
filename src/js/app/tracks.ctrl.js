@@ -56,10 +56,15 @@
       }
     };
 
-    $scope.addFileAudioTrack = function(file) {
-      if (!workspace.section.audioTrackStart) {
+    function initializeSectionStart() {
+      // initialize audioTrackStart model
+      if (workspace.section && !workspace.section.audioTrackStart) {
         workspace.section.audioTrackStart = [0, 0, 0];
       }
+    }
+
+    $scope.addFileAudioTrack = function(file) {
+      initializeSectionStart();
       $mdUtil.nextTick(function() {
         $scope.$broadcast('rzSliderForceRender');
       });
@@ -83,18 +88,12 @@
             resource = 'https://www.youtube.com/watch?v='+resource;
           }
           projectManager.addOnlineStreamTrack(resource);
-          if (!workspace.section.audioTrackStart) {
-            workspace.section.audioTrackStart = [0, 0, 0];
-          }
+          initializeSectionStart();
         })
         .catch(angular.noop);
     };
 
     $scope.removeAudioTrack = projectManager.removeAudioTrack.bind(projectManager);
-
-    // initialize audioTrackStart model
-    if (workspace.section && !workspace.section.audioTrackStart) {
-      workspace.section.audioTrackStart = [0, 0, 0];
-    }
+    initializeSectionStart();
   }
 })();
