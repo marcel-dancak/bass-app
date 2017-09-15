@@ -1,3 +1,4 @@
+@import 'colors.scss';
 
 .fretboard-settings {
   height: 2.750em;
@@ -198,26 +199,25 @@ md-input-container.input-inline-label label {
   }
 }
 
-
 .fretboard .fret-box.octave-0,
 .drag.fret-box.octave-0 {
-  background-color: #f44336;
+  background-color: $octave0;
 }
 .fretboard .fret-box.octave-1,
 .drag.fret-box.octave-1 {
-  background-color: #ff5722;
+  background-color: $octave1;
 }
 .fretboard .fret-box.octave-2,
 .drag.fret-box.octave-2 {
-  background-color: #ff9800;
+  background-color: $octave2;
 }
 .fretboard .fret-box.octave-3,
 .drag.fret-box.octave-3 {
-  background-color: #ffc107;
+  background-color: $octave3;
 }
 .fretboard .fret-box.octave-4,
 .drag.fret-box.octave-4 {
-  background-color: #ffeb3b;
+  background-color: $octave4;
 }
 
 .drag.fret-box.ghost-note {
