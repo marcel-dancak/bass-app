@@ -131,11 +131,11 @@
               </div>
               <div
                 ng-switch-when="piano"
-                class="beat-container piano"
-                ng-controller="EditController">
-                <div
-                  ng-include="'views/editor/piano_beat.html'">
-                </div>
+                class="beat-container piano">
+                <piano-beat
+                  ng-if="slide.initialized"
+                  beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
+                </piano-beat>
               </div>
               <!-- <md-input-container
                 class="bottom-note"

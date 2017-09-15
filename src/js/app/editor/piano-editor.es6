@@ -7,8 +7,16 @@
     .factory('eventHandler', eventHandler)
     .factory('pianoDragHandler', pianoDragHandler)
     .factory('pianoResizeHandler', pianoResizeHandler)
-    .controller('EditController', EditController);
+    .controller('PianoController', PianoController)
 
+    .component('pianoBeat', {
+      scope: false,
+      templateUrl: 'views/editor/piano_beat.html',
+      bindings: {
+        beat: '<'
+      },
+      controller: 'PianoController as vm'
+    });
 
   /***************** Private helper functions ******************/
 
@@ -146,7 +154,8 @@
     return new PianoDragHandler('piano');
   }
 
-  function EditController($scope, eventHandler, pianoDragHandler, pianoResizeHandler) {
+  function PianoController($scope, workspace, eventHandler, pianoDragHandler, pianoResizeHandler) {
+    $scope.workspace = workspace;
     $scope.eventHandler = eventHandler;
     $scope.dragHandler = pianoDragHandler;
     $scope.resizeHandler = pianoResizeHandler;
