@@ -1,22 +1,20 @@
 <div
-  ng-if="slide.initialized"
   class="bass sounds-container"
-  ng-keyup="keyPressed($event)"
-  ng-init="beat = workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
+  ng-keyup="keyPressed($event)">
   <div class="string-container"
-    ng-click="bassForm.openNew($event, beat, bass)">
+    ng-click="bassForm.openNew($event, vm.beat, bass)">
     <div
       ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
       class="bass-string"
       drop-channel="bass.instrument,bass.editor"
-      ui-on-drag-enter="dragHandler.onDragEnter($event, beat, string)"
-      ui-on-drag-over="dragHandler.onDragOver($event, beat, string)"
-      ui-on-drop="dragHandler.onDrop($event, beat, string)">
+      ui-on-drag-enter="dragHandler.onDragEnter($event, vm.beat, string)"
+      ui-on-drag-over="dragHandler.onDragOver($event, vm.beat, string)"
+      ui-on-drop="dragHandler.onDrop($event, vm.beat, string)">
     </div>
 
     <div
       class="bass-grid"
-      ng-switch="beat.grid || beat.subdivision">
+      ng-switch="vm.beat.grid || vm.beat.subdivision">
       <svg width="100%" height="100%" ng-switch-when="4">
         <defs>
           <pattern id="grid-4" x="12.5%" y="0" width="25%" height="2.25em" patternUnits="userSpaceOnUse">
@@ -86,7 +84,7 @@
   </div>
 
   <div
-    ng-repeat="sound in beat.data track by (sound.string + sound.start)"
+    ng-repeat="sound in vm.beat.data track by (sound.string + sound.start)"
     class="sound-container"
     ng-class="[{
         staccato: sound.note.staccato

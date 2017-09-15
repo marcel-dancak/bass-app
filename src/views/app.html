@@ -113,21 +113,21 @@
             <div ng-switch="slide.type">
               <div
                 ng-switch-when="bass"
-                class="beat-container"
-                ng-controller="BassBeatController">
-                  <div class="bass-board"
-                    ng-include="'views/editor/bass_beat.html'">
-                  </div>
+                class="beat-container">
+                <bass-beat
+                  class="bass-board"
+                  ng-if="slide.initialized"
+                  beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
+                </bass-beat>
               </div>
               <div
                 ng-switch-when="drums"
-                class="beat-container"
-                ng-controller="DrumController"
-                class="drums-beat-grid">
-                <div
+                class="beat-container">
+                <drum-beat
                   class="drums-beat-container"
-                  ng-include="'views/editor/drums_beat.html'">
-                </div>
+                  ng-if="slide.initialized"
+                  beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
+                </drum-beat>
               </div>
               <div
                 ng-switch-when="piano"

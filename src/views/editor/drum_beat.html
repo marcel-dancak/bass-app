@@ -1,0 +1,73 @@
+<div
+  class="drums-beat"
+  ng-click="editor.click($event, vm.beat)"
+  msd-wheel="editor.volumeScroll($event, vm.beat, $delta/10)"
+  style="height: {{ :: 3 * workspace.trackSection.instrument.length }}em;"
+  drop-channel="drum"
+  ui-on-drag-over="editor.onDragOver($event, vm.beat)"
+  xxui-on-drag-enter="editor.onDragEnter($event, vm.beat)"
+  xxui-on-drag-leave="editor.onDragLeave($event, vm.beat)"
+  ui-on-drop="editor.onDrop($event, vm.beat, $data)">
+  <div class="drum-grid" ng-switch="vm.beat.grid || vm.beat.subdivision">
+    <svg width="100%" height="100%" ng-switch-when="3">
+      <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]"
+        style="transform: translate(0, {{ ::y * 3 }}em)">
+        <circle cx="16.67%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="50%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="83.33%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+      </g>
+    </svg>
+    <svg width="100%" height="100%" ng-switch-when="4">
+      <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]"
+        style="transform: translate(0, {{ ::y * 3 }}em)">
+        <circle cx="12.5%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="37.5%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="62.5%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="87.5%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+      </g>
+    </svg>
+    <svg width="100%" height="100%" ng-switch-when="6">
+      <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]"
+        style="transform: translate(0, {{ ::y * 3 }}em)">
+        <circle cx="8.33%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="25%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="41.66%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="58.33%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="75%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="91.66%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+      </g>
+    </svg>
+    <svg width="100%" height="100%" ng-switch-when="8">
+      <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]"
+        style="transform: translate(0, {{ ::y * 3 }}em)">
+        <circle cx="6.25%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="18.75%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="31.25%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="43.75%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="56.25%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="68.75%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="81.25%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+        <circle cx="93.75%" cy="1.5em" r="1em" fill="none" stroke="#ccc"/>
+      </g>
+    </svg>
+  </div>
+
+  <div
+    ng-repeat="sound in vm.beat.data track by (sound.drum + sound.start)"
+    class="drum-sound"
+    ng-style="{
+      left: (100*sound.start)+'%',
+      width: (100/(vm.beat.grid||vm.beat.subdivision))+'%'
+    }"
+    style="top: {{ ::workspace.trackSection.instrument.index[sound.drum] * 3 }}em;"
+    ui-draggable="true"
+    drag-channel="drum"
+    drag="sound">
+    <div
+      class="volume-meter"
+      ng-style="{
+        transform: 'scale('+sound.volume+','+sound.volume+')'
+      }">
+    </div>
+  </div>
+</div>

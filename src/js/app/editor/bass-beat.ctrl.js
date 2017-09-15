@@ -8,6 +8,14 @@
     .factory('bassSoundForm', bassSoundForm)
     .run(function(workspace, basicHandler) {
       workspace.selected = basicHandler.selected;
+    })
+    .component('bassBeat', {
+      scope: false,
+      templateUrl: 'views/editor/bass_beat.html',
+      bindings: {
+        beat: '<'
+      },
+      controller: 'BassBeatController as vm'
     });
 
 
@@ -39,7 +47,9 @@
     }
   ];
 
-  function BassBeatController($scope, basicHandler, bassDragHandler, bassResizeHandler, bassSoundForm) {
+  function BassBeatController($scope, workspace, basicHandler, bassDragHandler, bassResizeHandler, bassSoundForm, Note) {
+    $scope.workspace = workspace;
+    $scope.Note = Note;
     $scope.selectSound = basicHandler.selectSound.bind(basicHandler);
     $scope.keyPressed = basicHandler.keyPressed.bind(basicHandler);
     $scope.dragHandler = bassDragHandler;

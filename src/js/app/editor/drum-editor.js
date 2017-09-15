@@ -5,8 +5,16 @@
     .module('bd.app')
 
     .factory('drumHandler', drumHandler)
-    .controller('DrumController', DrumController);
+    .controller('DrumController', DrumController)
 
+    .component('drumBeat', {
+      scope: false,
+      templateUrl: 'views/editor/drum_beat.html',
+      bindings: {
+        beat: '<'
+      },
+      controller: 'DrumController as vm'
+    });
 
   /***************** Private helper functions ******************/
 
@@ -169,8 +177,9 @@
   }
 
 
-  function DrumController($scope, drumHandler) {
+  function DrumController($scope, workspace, drumHandler) {
     $scope.editor = drumHandler;
+    $scope.workspace = workspace;
   }
 
 })();
