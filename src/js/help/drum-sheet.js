@@ -10,13 +10,21 @@
     var sheetTemplate = 
       '<div class="help-drum-sheet">'+
         '<div layout="column" class="drums-labels-container">'+
-          '<img ng-repeat="drum in workspace.trackSection.instrument track by drum.name" ng-src="{{ ::drum.image }}">'+
+
+          '<md-icon '+
+            'ng-repeat="drum in workspace.trackSection.instrument track by drum.name" '+
+            'md-svg-icon="{{ ::\'drums:\'+ drum.name }}">'+
+          '</md-icon>'+
+
         '</div>'+
         '<div layout="row">'+
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
-            'ng-include="\'views/editor/drums_beat.html\'" '+
             'class="beat-container beat instrument-slide">'+
+            '<drum-beat '+
+              'instrument="workspace.trackSection.instrument" '+
+              'beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">'+
+            '</drum-beat>'+
           '</div>'+
         '</div>'+
       '</div>';
@@ -31,8 +39,6 @@
         function createSlide(beat) {
           return {
             id: beat,
-            initialized: true,
-            visible: true,
             beat: $scope.workspace.trackSection.beat(1, beat),
             type: 'drums'
           }
@@ -52,6 +58,8 @@
               length: config.length || 1
             }
           };
+          $scope.workspace2 = $scope.workspace;
+
           $scope.workspace.trackSection = new DrumTrackSection($scope.workspace.section, []);
           $scope.workspace.trackSection.instrument = drumKit;
           $scope.workspace.beatSlides = [createSlide(1), createSlide(2)];

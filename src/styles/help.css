@@ -44,15 +44,19 @@ md-dialog.help-dialog.md-transition-in {
 
 .help-bass-sheet .beats-container {
   margin-left: 48px;
-  padding-top: 28px;
+  margin-top: 24px;
   height: 100%;
   position: relative;
   overflow: hidden;
+}
+.help-bass-sheet .beat-container:before {
+  top: 2.25em;
 }
 .help-bass-sheet .beat,
 .help-drum-sheet .beat {
   position: relative;
   max-width: 300px;
+  pointer-events: none;
 }
 .help-bass-sheet .beat:last-child,
 .help-drum-sheet .beat:last-child {
@@ -224,11 +228,15 @@ md-dialog.help-dialog.md-transition-in {
 }
 .help-container div.bass-button {
   position: static;
-  min-width: 26px;
-  width: 26px;
-  min-height: 26px;
-  height: 26px;
-  line-height: 24px;
+  min-width: 1.625rem;
+  width: 1.625rem;
+  min-height: 1.625rem;
+  height: 1.625rem;
+  line-height: 1.625rem;
+  text-align: center;
+  color: #777;
+  border: 1px solid #ccc;
+  border-radius: 50%;
 }
 
 .help-drum-sheet {

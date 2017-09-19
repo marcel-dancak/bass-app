@@ -8,17 +8,20 @@
   function bassSheet() {
 
     var sheetTemplate = 
-      '<div class="help-bass-sheet strings-{{ ::workspace.track.instrument.strings.length }} name">'+
+      '<div class="help-bass-sheet strings-{{ ::workspace.trackSection.instrument.strings.length }} name">'+
         '<div class="strings-labels">'+
-          '<p ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:\'-\' track by string.index">'+
+          '<p ng-repeat="string in workspace.trackSection.instrument.strings | orderBy:string.index:\'-\' track by string.index">'+
             '{{ ::string.label }}<sub class="octave-index">{{ ::string.octave }}</sub><br>'+
           '</p>'+
         '</div>'+
         '<div class="beats-container" layout="row">'+
           '<div flex '+
             'ng-repeat="slide in workspace.beatSlides" '+
-            'ng-include="\'views/editor/bass_beat.html\'" '+
             'class="beat-container beat instrument-slide">'+
+            '<bass-beat class="bass-board" '+
+              'instrument="workspace.trackSection.instrument" '+
+              'beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">'+
+            '</bass-beat>'+
           '</div>'+
         '</div>'+
       '</div>';
@@ -33,8 +36,6 @@
         function createSlide(beat) {
           return {
             id: beat,
-            initialized: true,
-            visible: true,
             beat: $scope.workspace.trackSection.beat(1, beat),
             type: 'bass'
           }
@@ -51,12 +52,10 @@
             section: {
               timeSignature: timeSignature,
               length: config.length || 1
-            },
-            track: {
-              instrument: new Bass({strings: config.strings || 'EADG'})
             }
           };
           $scope.workspace.trackSection = new TrackSection($scope.workspace.section, []);
+          $scope.workspace.trackSection.instrument = new Bass({strings: config.strings || 'EADG'});
           $scope.workspace.beatSlides = [];
           for (var i = 1; i <= (config.size || 2); i++) {
             $scope.workspace.beatSlides.push(createSlide(i));
