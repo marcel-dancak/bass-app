@@ -8,9 +8,9 @@
 
     <title>BassApp</title>
     <link rel="icon" type="image/png" href="app/favicon-16x16.png" sizes="16x16">
-    <link rel="stylesheet" type="text/css" href="app/styles/styles.css?010917">
+    <link rel="stylesheet" type="text/css" href="app/styles/styles.css?19092017">
 
-    <script src="app/js/app.js?010917"></script>
+    <script src="app/js/app.js?19092017"></script>
     <script type="text/javascript">
       angular.module('bd.app')
         .config(function($mdIconProvider, $sceDelegateProvider) {
@@ -23,14 +23,16 @@
             .iconSet('drums', 'app/styles/drums.svg', 512)
             .icon('basscloud', 'app/styles/basscloud.svg')
         })
-        .constant('dataUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/data/')
-        .constant('uploadUrl', 'https://basscloud.net/api/')
-        .constant('localSoundsUrl', 'http://127.0.0.1:8887/samples/')
-        .constant('soundsUrl', 'https://s3.eu-central-1.amazonaws.com/bass-app/samples/')
-        .constant('appModules', {
-          'help': 'app/js/help.js',
-          'upload': 'app/js/upload.js',
-          'oggvorbis': 'app/js/oggvorbis.js'
+        .constant('Config', {
+          localSoundsUrl: 'http://127.0.0.1:8887/samples/',
+          soundsUrl: 'https://s3.eu-central-1.amazonaws.com/bass-app/samples/',
+          apiUrl: 'https://basscloud.net/api/',
+          dataUrl: '/app/',
+          modules: {
+            'help': '/static/app/js/help.js',
+            'upload': '/static/app/js/upload.js',
+            'oggvorbis': '/static/app/js/oggvorbis.js'
+          }
         })
     </script>
   </head>
