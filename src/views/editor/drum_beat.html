@@ -2,12 +2,13 @@
   class="drums-beat"
   ng-click="editor.click($event, vm.beat)"
   msd-wheel="editor.volumeScroll($event, vm.beat, $delta/10)"
-  style="height: {{ :: 3 * workspace.trackSection.instrument.length }}em;"
+  style="height: {{ :: 3 * vm.instrument.length }}em;"
   drop-channel="drum"
   ui-on-drag-over="editor.onDragOver($event, vm.beat)"
   xxui-on-drag-enter="editor.onDragEnter($event, vm.beat)"
   xxui-on-drag-leave="editor.onDragLeave($event, vm.beat)"
   ui-on-drop="editor.onDrop($event, vm.beat, $data)">
+
   <div class="drum-grid" ng-switch="vm.beat.grid || vm.beat.subdivision">
     <svg width="100%" height="100%" ng-switch-when="3">
       <g ng-repeat="y in ::[0,1,2,3,4,5,6,7,8]"
@@ -59,7 +60,7 @@
       left: (100*sound.start)+'%',
       width: (100/(vm.beat.grid||vm.beat.subdivision))+'%'
     }"
-    style="top: {{ ::workspace.trackSection.instrument.index[sound.drum] * 3 }}em;"
+    style="top: {{ ::vm.instrument.index[sound.drum] * 3 }}em;"
     ui-draggable="true"
     drag-channel="drum"
     drag="sound">

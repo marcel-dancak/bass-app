@@ -117,6 +117,7 @@
                 <bass-beat
                   class="bass-board"
                   ng-if="slide.initialized"
+                  instrument="workspace.trackSection.instrument"
                   beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
                 </bass-beat>
               </div>
@@ -126,6 +127,7 @@
                 <drum-beat
                   class="drums-beat-container"
                   ng-if="slide.initialized"
+                  instrument="workspace.trackSection.instrument"
                   beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
                 </drum-beat>
               </div>
@@ -134,6 +136,7 @@
                 class="beat-container piano">
                 <piano-beat
                   ng-if="slide.initialized"
+                  instrument="workspace.trackSection.instrument"
                   beat="workspace.trackSection.beat(slide.beat.bar, slide.beat.beat)">
                 </piano-beat>
               </div>

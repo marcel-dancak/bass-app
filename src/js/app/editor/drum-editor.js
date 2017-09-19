@@ -11,7 +11,8 @@
       scope: false,
       templateUrl: 'views/editor/drum_beat.html',
       bindings: {
-        beat: '<'
+        beat: '<',
+        instrument: '<'
       },
       controller: 'DrumController as vm'
     });
@@ -177,9 +178,8 @@
   }
 
 
-  function DrumController($scope, workspace, drumHandler) {
+  function DrumController($scope, drumHandler) {
     $scope.editor = drumHandler;
-    $scope.workspace = workspace;
   }
 
 })();

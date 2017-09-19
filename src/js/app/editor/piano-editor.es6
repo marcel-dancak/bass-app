@@ -13,7 +13,8 @@
       scope: false,
       templateUrl: 'views/editor/piano_beat.html',
       bindings: {
-        beat: '<'
+        beat: '<',
+        instrument: '<'
       },
       controller: 'PianoController as vm'
     });
@@ -154,8 +155,7 @@
     return new PianoDragHandler('piano');
   }
 
-  function PianoController($scope, workspace, eventHandler, pianoDragHandler, pianoResizeHandler) {
-    $scope.workspace = workspace;
+  function PianoController($scope, eventHandler, pianoDragHandler, pianoResizeHandler) {
     $scope.eventHandler = eventHandler;
     $scope.dragHandler = pianoDragHandler;
     $scope.resizeHandler = pianoResizeHandler;

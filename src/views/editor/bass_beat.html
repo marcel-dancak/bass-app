@@ -4,7 +4,7 @@
   <div class="string-container"
     ng-click="bassForm.openNew($event, vm.beat, bass)">
     <div
-      ng-repeat="string in workspace.track.instrument.strings | orderBy:string.index:'-' track by string.index"
+      ng-repeat="string in vm.instrument.strings | orderBy:string.index:'-' track by string.index"
       class="bass-string"
       drop-channel="bass.instrument,bass.editor"
       ui-on-drag-enter="dragHandler.onDragEnter($event, vm.beat, string)"
@@ -91,7 +91,7 @@
       },
       sound.note.type,
       sound.style,
-      'string-'+workspace.track.instrument.stringIndex[sound.string]
+      'string-'+vm.instrument.stringIndex[sound.string]
     ]"
     ng-attr-octave="{{ sound.note.octave }}"
     ng-style="{
@@ -116,7 +116,7 @@
       </i>
     </div>
 
-    <bd-sound-label sound="sound" string="workspace.track.instrument.strings[sound.string]"></bd-sound-label>
+    <bd-sound-label sound="sound" string="vm.instrument.strings[sound.string]"></bd-sound-label>
 
     <div
       class="resize-container"
