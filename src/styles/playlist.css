@@ -300,7 +300,7 @@
   bottom: 0;
   transform: translate3d(0, 100%, 0);
   color: #777;
-  font-size: 0.938em;
+  font-size: 0.875em;
 }
 
 .playlist-swiper.swiper-container-horizontal {
