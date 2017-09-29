@@ -69,8 +69,10 @@
         dragWidth = evt.target.clientWidth+2;
         var dragElem = this.mainHandler.createDragWrapperElement();
         var clone = evt.target.cloneNode(true);
-        clone.style.width = evt.target.offsetWidth+'px';
-        clone.style.height = evt.target.offsetHeight+'px';
+
+        var scale = window.scale || 1;
+        clone.style.width = scale*evt.target.offsetWidth+'px';
+        clone.style.height = scale*evt.target.offsetHeight+'px';
         dragElem.appendChild(clone);
         workspaceElem.appendChild(dragElem);
         evt.dataTransfer.setDragImage(dragElem, 10, evt.target.clientHeight/2);
@@ -240,10 +242,10 @@
         var x = parseInt(evt.offsetX / cell);
 
         dragBox.setPxStyles({
-          left: box.left + x * cell / (window.scale || 1),
-          top: box.top-1,
-          width: (dragWidth+2)/(window.scale || 1),
-          height: box.height+2
+          left: box.left + x * cell,
+          top: box.top - 1,
+          width: dragWidth + 2,
+          height: box.height + 2
         });
       }
 

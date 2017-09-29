@@ -125,7 +125,6 @@
       }
 
       onResize(sound, info) {
-        info.width *= (window.scale||1)
         var delta, closestWidth;
         var minDelta = notesWidths[0];
         notesWidths.forEach(function(width, index) {

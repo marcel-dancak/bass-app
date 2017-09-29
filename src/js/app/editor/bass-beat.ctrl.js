@@ -60,7 +60,6 @@
 
   function BassFormController($scope, $timeout, Note, sound, string, audioPlayer, basicHandler, mdPanelRef) {
     $scope.Note = Note;
-    $scope.ui = {scale: window.scale || 1};
     $scope.keyPressed = function(evt) {
       basicHandler.keyPressed(evt);
       if (evt.keyCode === 46) {
