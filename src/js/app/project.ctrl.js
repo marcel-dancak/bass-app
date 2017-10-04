@@ -338,17 +338,19 @@
 
     $scope.uploadProject = function() {
       // var UploadController = $controller('UploadController', {'$scope': $scope.$new(true)}).constructor;
-      $mdDialog.show({
-        templateUrl: 'views/upload_form.html',
-        controller: 'UploadController',
-        autoWrap: false
-        // clickOutsideToClose: true
-        // targetEvent: evt
-      }).then(function(success) {
-        if (success) {
-          showUploadNotification();
-        }
-      });
+      window.runtime.loadModule('upload').then(function() {
+        $mdDialog.show({
+          templateUrl: 'views/upload_form.html',
+          controller: 'UploadController',
+          autoWrap: false
+          // clickOutsideToClose: true
+          // targetEvent: evt
+        }).then(function(success) {
+          if (success) {
+            showUploadNotification();
+          }
+        });
+      })
     };
 
     workspace.importProject = function() {
