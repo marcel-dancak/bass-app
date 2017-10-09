@@ -2,7 +2,7 @@
   role="dialog"
   class="section-dialog md-whiteframe-16dp"
   layout="column">
-  <div class="dialog-header">
+  <div class="dialog-header dragable">
     <span translate="CHORDS_EDITOR"></span>
     <md-button
       md-no-ink
@@ -46,7 +46,7 @@
       flex="70"
       ng-if="form.chord"
       class="preferences">
-      <md-list-item layput="row">
+      <md-list-item class="layout-row group-field">
         <label translate="CHORD"></label>
 
         <md-input-container>
@@ -89,7 +89,7 @@
 
       </md-list-item>
 
-      <md-list-item layout="row">
+      <md-list-item class="layout-row group-field">
         <label>Position:</label>
         <md-input-container flex>
           <label class="md-no-float" translate="BAR"></label>

@@ -91,7 +91,7 @@
 
 
   function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
-              projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer, DragHandler) {
+              projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer, DragHandler, dragablePanel) {
 
     DragHandler.initialize('.instrument-grid', $scope);
     audioPlayer.setPlaybackSpeed(1);
@@ -604,33 +604,23 @@
     workspace.metadataEditor = function() {
       var position = $mdPanel.newPanelPosition()
         .absolute()
-        .centerHorizontally()
-        .bottom('7%')
+        .center()
 
       var animation = $mdPanel.newPanelAnimation()
-        // .withAnimation($mdPanel.animation.FADE);
-        .openFrom({top: window.innerHeight/2, left: window.innerWidth/2-400})
-        .closeTo({top: window.innerHeight/2, left: window.innerWidth/2-400})
-        .withAnimation($mdPanel.animation.SCALE)
+        .withAnimation($mdPanel.animation.FADE);
 
-      var dialog = $mdPanel.open({
+      dragablePanel.open({
+        id: 'chords',
+        attachTo: document.body,
         templateUrl: 'views/editor/section_chords.html',
         controller: 'MetadataController',
-        locals: {
-          updateChordLabels: updateChordLabels
-        },
-        autoWrap: false,
-        hasBackdrop: false,
-        disableParentScroll: false,
-        clickOutsideToClose: false,
         position: position,
         animation: animation,
         panelClass: 'metadata',
-        onOpenComplete: function(args) {
-          var containerEl = args[0].panelEl.parent();
-          containerEl.css('pointerEvents', 'none');
+        locals: {
+          updateChordLabels: updateChordLabels
         }
-      });
+      })
     };
 
     swiperControl.onTouchEnd = function(sw) {

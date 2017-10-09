@@ -593,14 +593,21 @@ md-tooltip md-divider {
   -webkit-justify-content: flex-start;
 }*/
 
+.md-dialog {
+  border-radius: 4px;
+  background-color: #fff;
+}
 .dialog-header {
   text-align: center;
   height: 2.25em;
   line-height: 2.25em;
-  background-color: #455A64;
+  background-color: #263238;
   color: #fff;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
+}
+.dialog-header.dragable {
+  cursor: move;
 }
 
 .dialog-close {
@@ -709,7 +716,7 @@ footer {
   position: absolute;
   bottom: 0;
   right: 12px;
-  z-index: 100;
+  /*z-index: 100;*/
 }
 footer span, a.button {
   color: #555;
@@ -803,15 +810,7 @@ footer .separator {
 }
 
 
-.section-dialog .preferences md-input-container {
-  margin-right: 0.625em;
-  margin-top: 2em;
-}
 
-.section-dialog label.md-no-float {
-  top: -1em;
-  font-size: 0.688em;
-}
 .section-dialog .left-panel md-icon {
   width: 16px;
   height: 16px;
@@ -923,6 +922,9 @@ md-dialog a[href]:not(.md-button) {
 }
 .text-center {
   text-align: center;
+}
+.text-right {
+  text-align: right;
 }
 
 md-dialog small {

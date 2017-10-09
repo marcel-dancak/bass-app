@@ -4,8 +4,7 @@
   }
 
   md-list-item {
-    margin-top: 4px;
-
+    padding: 0;
     label {
       position: absolute;
       color: #777;
@@ -22,8 +21,39 @@
       width: 1.5em;
       height: 1.5em;
     }
+    .md-list-item-inner {
+      min-height: 0;
+      padding: 0 0 0 1rem;
+    }
+    md-checkbox {
+      margin-top: 0.5rem;
+      margin-bottom: 0;
+    }
+    .md-button {
+      min-width: 2.25rem;
+      margin: 0 0.313rem;
+      padding: 0;
+    }
   }
 
+  .group-field {
+    padding-left: 1rem;
+    md-input-container {
+      margin-right: 0.625em;
+      margin-top: 2em;
+      label.md-no-float {
+        top: -1em;
+        font-size: 0.688em;
+      }
+    }
+    &.no-label md-input-container {
+      margin-top: 0.4rem;
+    }
+    > span {
+      padding: 0 4px 0.75rem 0;
+      align-self: flex-end;
+    }
+  }
   md-input-container {
     margin: 16px 0 8px 0;
     padding: 0;
