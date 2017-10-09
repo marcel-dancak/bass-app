@@ -70,6 +70,11 @@
   min-height: 25px;
   width: 100%;
   box-sizing: border-box;
+  text-align: right;
+  color: #aaa;
+  line-height: 24px;
+  padding-right: 2px;
+  outline: none;
 }
 .piano-keys-container .piano-key:hover {
   background-color: #FFF9C4;
@@ -80,6 +85,9 @@
   background-color: #ccc;
   position: relative;
 }
+.piano-keys-container .piano-key.black label {
+  display: none;
+}
 .piano-keys-container .piano-key.black:after {
   position: absolute;
   background-color: #555;
@@ -88,8 +96,8 @@
   top: -6px;
   height: 13px;
   width: 60%;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 .piano-key.black[key="A♯"]:after {
   top: -8px;
@@ -103,15 +111,7 @@
 .piano-key.black[key="C♯"]:after {
   top: -5px;
 }
-.piano-key.black[key="C♯"]:before {
-  content: "C";
-  position: absolute;
-  font-size: 12px;
-  display: block;
-  top: 8px;
-  left: 2px;
-  color: #777;
-}
+
 .piano-keys-container .piano-key.black:hover:after {
   background-color: #F57F17;
   background-color: #ae5507;
