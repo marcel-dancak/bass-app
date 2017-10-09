@@ -39,8 +39,9 @@
 
         var noteElem = document.createElement('div');
         noteElem.className = 'sound-container selected '+(dragSound.note.type || '');
-        noteElem.style.width = evt.target.clientWidth+'px';
-        noteElem.style.height = evt.target.clientHeight+'px';
+        noteElem.style.transform = 'scale3d({0}, {0}, 1)'.format(window.scale || 1);
+        noteElem.style.width = evt.target.clientWidth + 'px';
+        noteElem.style.height = evt.target.clientHeight + 'px';
         noteElem.setAttribute('octave', dragSound.note.octave);
         var label = dragSound.note.name || evt.target.textContent;
         noteElem.appendChild(document.createTextNode(label));
@@ -70,12 +71,13 @@
         var dragElem = this.mainHandler.createDragWrapperElement();
         var clone = evt.target.cloneNode(true);
 
-        var scale = window.scale || 1;
-        clone.style.width = scale*evt.target.offsetWidth+'px';
-        clone.style.height = scale*evt.target.offsetHeight+'px';
+        clone.style.transform = 'scale3d({0}, {0}, 1)'.format(window.scale || 1);
+        clone.style.width = evt.target.offsetWidth + 'px';
+        clone.style.height = evt.target.offsetHeight + 'px';
         dragElem.appendChild(clone);
         workspaceElem.appendChild(dragElem);
         evt.dataTransfer.setDragImage(dragElem, 10, evt.target.clientHeight/2);
+
         this.dragElem = dragElem;
         if (!evt.ctrlKey) {
           setTimeout(function() {
@@ -132,15 +134,26 @@
         var dragElem = this.mainHandler.createDragWrapperElement();
         var srcDragElems = [];
         dragWidth = 0;
+
+        var container = document.createDocumentFragment();
         sounds.forEach(function(sound, i) {
           var elem = swiperControl.getSoundElem(sound);
           var clone = elem.cloneNode(true);
           dragWidth += elem.clientWidth + 2;
-          clone.style.width = elem.offsetWidth+'px';
-          clone.style.height = elem.offsetHeight+'px';
-          dragElem.appendChild(clone);
+          clone.style.width = elem.offsetWidth + 'px';
+          clone.style.height = elem.offsetHeight + 'px';
+          clone.style.transform = 'none';
+          container.appendChild(clone);
           srcDragElems.push(elem);
         });
+        if (window.scale && window.scale !== 1) {
+          var wrapper = document.createElement('div');
+          wrapper.style.display = 'flex';
+          wrapper.style.transform = 'scale3d({0}, {0}, 1)'.format(window.scale);
+          wrapper.appendChild(container);
+          container = wrapper;
+        }
+        dragElem.appendChild(container);
         this.srcDragElems = srcDragElems;
 
         var dragElemHeight = srcDragElems[0].offsetHeight;
