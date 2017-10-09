@@ -62,14 +62,17 @@ md-input-container.input-inline-label label {
 
 .fretboard-scroller {
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .fret-box {
   outline: none;
   line-height: 2.063em;
+  height: 2.188rem;
   text-align: center;
   color: #333;
   position: relative;
+  /*box-sizing: border-box;*/
 
   &.ghost-note {
     min-width: 4em;
@@ -77,7 +80,8 @@ md-input-container.input-inline-label label {
     background-color: #ccc;
     text-align: center;
     border-bottom: 1px solid #fff;
-    border-left: 1px solid #fff;
+    /* not needed default box-sizing in .fret-box */
+    /* border-left: 1px solid #fff; */
     label {
       margin: 0;
       font-size: 1em;
@@ -89,7 +93,7 @@ md-input-container.input-inline-label label {
   label {
     display: inline-block;
     font-size: 0.875em;
-    max-height: 1.938em;
+    height: 100%;
   }
   label:hover {
     font-weight: bold;
@@ -104,7 +108,7 @@ md-input-container.input-inline-label label {
 .fretboard {
   .fret-box {
     border-right: 1px solid #fff;
-    border-bottom: 1px solid #fff;
+    /*border-bottom: 1px solid #fff;*/
 
     label {
       width: 100%;

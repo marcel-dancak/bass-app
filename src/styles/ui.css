@@ -1070,3 +1070,11 @@ md-sidenav md-list-item.strong .md-list-item-inner {
     justify-content: center;
   }
 }
+
+::-webkit-file-upload-button {
+  cursor: pointer;
+}
+
+input[type=number] {
+  -moz-appearance: textfield!important;
+}

@@ -28,7 +28,6 @@
       aria-label="Mute"
       class="mute-button"
       ng-class="{active: !track.muted}"
-      md-prevent-menu-close
       ng-click="toggleVolumeMute(track)">
       <md-icon
         md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
@@ -76,7 +75,6 @@
         aria-label="Mute"
         class="mute-button"
         ng-class="{active: !project.audioTrack.muted}"
-        md-prevent-menu-close
         ng-click="toggleVolumeMute(project.audioTrack)">
         <md-icon
           md-svg-icon="{{ project.audioTrack.muted? 'volume-mute' : 'volume-medium' }}">
@@ -196,7 +194,6 @@
       aria-label="Mute"
       class="mute-button"
       ng-class="{active: !input.muted}"
-      md-prevent-menu-close
       ng-click="toggleInputMute(input)">
       <md-icon
         md-svg-icon="{{ input.muted? 'volume-mute' : 'volume-medium' }}">

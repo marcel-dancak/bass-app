@@ -424,6 +424,7 @@ div[bd-sound-label] {
   right: 0;
   padding: 0.2em 0;
   transition: opacity 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+  will-change: opacity;
   pointer-events: auto;
   opacity: 0;
   color: #333;
@@ -570,7 +571,7 @@ md-input-container.slide-field > span {
 }
 .drag-sound .sound-container {
   position: relative!important;
-  transform: none!important;
+  xtransform: none!important;
   left: 0!important;
   top: 0!important;
 }
@@ -815,12 +816,14 @@ md-input-container.slide-field > span {
   left: 0;
   height: 100%;
   width: 100%;
-  opacity: 0;
   transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   pointer-events: none;
+  svg {
+    opacity: 0;
+  }
 }
 
-.workspace:hover .bass-grid {
+.workspace:hover .bass-grid svg {
   opacity: 1;
 }
 

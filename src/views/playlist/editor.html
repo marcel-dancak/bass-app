@@ -20,25 +20,21 @@
 
   <div layout="column">
     <div
-      flex
-      layout="column"
-      class="playlist-panel md-whiteframe-6dp">
+      class="flex layout-column playlist-panel md-whiteframe-6dp">
       <div class="toolbar">
         <label translate="PLAYLIST"></label>
       </div>
       <md-list
-        flex
-        class="playlist"
+        class="flex playlist"
         ng-keyup="playlistKeyPressed($event)"
         ui-on-drop="dropPlaylistSection($event, workspace.playlist.items, $data, workspace.playlist.items.length)"
         drop-channel="playlist">
         <div
           md-no-ink
           ng-repeat="item in workspace.playlist.items track by $index"
-          class="playlist-item"
+          class="layout-row playlist-item"
           ng-class="{selected: selected.item === item}"
           ng-click="selected.item = item"
-          layout="row"
           ui-draggable="true"
           drag="{
             index: $index,
@@ -73,20 +69,16 @@
 
   <div layout="column">
     <div
-      flex
-      layout="column"
-      class="playlist-panel md-whiteframe-6dp">
+      class="flex layout-column playlist-panel md-whiteframe-6dp">
       <div class="toolbar">
         <label translate="SECTIONS"></label>
       </div>
       <md-list
-        flex
-        class="playlist">
+        class="flex playlist">
         <div
           md-no-ink
           ng-repeat="item in availableSections track by item.section"
-          class="playlist-item"
-          layout="row"
+          class="playlist-item layout-row"
           ui-draggable="true"
           drag="{data: item}"
           drag-channel="playlist">

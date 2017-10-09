@@ -4,6 +4,7 @@
   max-height: 400px;
   min-height: 250px;
   transform: translateY(4px);
+  outline: none;
   /*z-index: 300;*/
 }
 

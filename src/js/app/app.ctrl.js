@@ -46,7 +46,6 @@
     .run(function($mdDialog, $mdToast, $rootScope, $q, audioPlayer, context, Config) {
       window.rs = $rootScope;
       var loadedModules = [];
-
       var runtime = {
         loadModule: function(module) {
           if (loadedModules.indexOf(module) !== -1 || !Config.modules[module]) {
@@ -116,6 +115,7 @@
       }
       console.log('OGG Support: '+runtime.oggSupport);
       window.runtime = runtime;
+      $rootScope.runtime = runtime;
     })
     .directive('prettyScrollbar', prettyScrollbar)
     .config(function($mdThemingProvider) {
@@ -205,8 +205,9 @@
     }
   }
 
-  function AppController($scope, $q, $timeout, $translate, $http, $controller, $mdUtil, $mdDialog,  $mdSidenav, $mdPanel, $location, context,
-      settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note) {
+  function AppController($scope, $q, $timeout, $location, $translate, $http, $controller,
+      $mdUtil, $mdDialog,  $mdSidenav, $mdPanel,
+      context, settings, workspace, audioPlayer, audioVisualiser, projectManager, Drums, Note) {
     $scope.runtime = window.runtime;
     $scope.Note = Note;
     $scope.settings = settings;
@@ -501,6 +502,7 @@
         animation: animation,
         targetEvent: evt,
         panelClass: 'menu md-whiteframe-16dp',
+        escapeToClose: true,
         clickOutsideToClose: true,
         locals: {
           player: $scope.player

@@ -11,7 +11,6 @@
         'angularResizable',
         'monospaced.mousewheel',
         'rzModule',
-        // 'bd.help',
         'bd.lang'
     ]);
 })();
