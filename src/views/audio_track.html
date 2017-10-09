@@ -1,0 +1,310 @@
+<div md-whiteframe="16" class="md-dialog" style="pointer-events: auto; width:22rem;"> 
+  <div class="dialog-header dragable">
+    <span>Audio Track</span>
+    <md-button
+      md-no-ink
+      aria-label="Close"
+      class="dialog-close icon-hover"
+      ng-click="close()">
+      <md-icon md-svg-icon="x"></md-icon>
+    </md-button>
+  </div>
+
+  <md-list
+    class="preferences layout-padding"
+    ng-if-start="project.audioTrack && player.mode === 0">
+    <md-list-item
+      class="group-field layout-row">
+      <label>Section start</label>
+      <md-input-container>
+        <label class="md-no-float">Minute</label>
+        <input
+          type="number"
+          min="0"
+          ng-model="workspace.section.audioTrack.start[0]">
+      </md-input-container>
+      <span> : </span>
+      <md-input-container>
+        <label class="md-no-float">Second</label>
+        <input
+          type="number"
+          min="0"
+          ng-model="workspace.section.audioTrack.start[1]">
+      </md-input-container>
+      <span>:</span>
+      <md-input-container>
+        <label class="md-no-float">Milisecond</label>
+        <input
+          type="number"
+          min="0"
+          step="10"
+          ng-model="workspace.section.audioTrack.start[2]"
+          bd-disable-step-validator>
+      </md-input-container>
+    </md-list-item>
+
+    <md-list-item
+      md-no-ink
+      ng-init="
+        data = {
+          bpmEnabled: workspace.section.audioTrack.bpm? true : false,
+          bpm: workspace.section.audioTrack.bpm || workspace.section.bpm
+        }">
+      <label>Playback bpm</label>
+      <md-input-container>
+        <!-- ngIf inside checkbox prevents state toggling inside whole list item -->
+        <md-checkbox
+          ng-if="true"
+          class="md-primary"
+          ng-model="data.bpmEnabled"
+          ng-change="workspace.section.audioTrack.bpm = data.bpmEnabled? data.bpm : undefined">Enable
+        </md-checkbox>
+      </md-input-container>
+      <md-input-container>
+        <!-- <label class="md-no-float">bpm</label> -->
+        <input
+          type="number"
+          min="10"
+          step="0.1"
+          aria-label="bpm"
+          ng-model="data.bpm"
+          ng-change="workspace.section.audioTrack.bpm = data.bpmEnabled? data.bpm : undefined"
+          ng-disabled="!data.bpmEnabled"
+          bd-disable-step-validator>
+      </md-input-container>
+    </md-list-item>
+
+<!--     <md-list-item style="border-top: 1px solid #ccc;opacity:0.5; text-align: right">
+      <p style="margin: 0;text-align: right"><small>Beat:</small> {{ beatDuration() }}s &nbsp; <small>Section:</small> {{ sectionDuration() }}s</p>
+    </md-list-item> -->
+
+<!--     <md-list-item style="border-top: 1px solid #ccc">
+      <div style="opacity:0.5" class="layout-column">
+        <span>Beat duration: {{ beatDuration() }}</span>
+        <span>Section duration: {{ sectionDuration() }}</span>
+      </div>
+    </md-list-item> -->
+
+<!--     <md-list-item>
+      <md-input-container>
+        <label class="md-no-float">Track bpm</label>
+        <input
+          type="number"
+          min="0"
+          step="10"
+          ng-model="workspace.section.audioTrack.bpm"
+          bd-disable-step-validator>
+      </md-input-container>
+    </md-list-item> -->
+
+  </md-list>
+  <div ng-if-end
+    style="background-color: #eee; padding: 5px 1rem 3px 1rem; border-top: 1px solid #ccc">
+    <p style="margin: 0;text-align: right; color: #777;font-size: 0.938rem;">
+      <small>Beat:</small> {{ beatDuration() }}s &nbsp;
+      <small>Section:</small> {{ sectionDuration() }}s &nbsp;
+      <small>End: </small> {{ sectionEnd() }}
+    </p>
+  </div>
+
+<!--   <p ng-if="player.mode === 1" class="layout-padding text-center">
+    Not available in Playlist mode
+  </p> -->
+
+<!--   <sync-timeline class="sync-timeline">
+  </sync-timeline> -->
+
+  <div
+    class="preferences layout-padding"
+    style="max-height: 400px; overflow-y: auto;"
+    ng-if="project.audioTrack && player.mode === 1"
+    ng-init="list = {editing: null}"
+    ng-click="$event.target.tagName !== 'INPUT' ? list.editing = null : null">
+
+    <table class="sync-timeline" xng-if="xx">
+      <tbody ng-repeat="item in workspace.playlist.items track by $index">
+        <tr
+          ng-repeat-start="time in workspace.playlist.syncAudioTrack[$index] track by $index"
+          ng-if="time.prevEnd && ($parent.$index > 0 || $index > 0)"
+          class="x animate-if">
+          <td></td>
+          <td class="line">
+            <div class="a"></div>
+            <div class="b"></div>
+            <span
+              class="x"
+              ng-click="removeGap(item, $index, time)">x</span>
+          </td>
+          <td class="time"><span>{{ formatTime(time.prevEnd) }}</span></td>
+        </tr>
+        <tr
+          ng-repeat-end
+          ng-class="{
+            active: list.editing === time,
+            first: $first,
+            disconnected: time.prevEnd
+          }">
+          <td class="label" ng-if="$index === 0"><span>{{ sectionsNames[item.section] }}</span></td>
+          <td class="label" ng-if="$index > 0">{{ $index + 1}}x</td>
+          <td class="line">
+            <div class="a"></div>
+            <div class="b"></div>
+            <span class="point"></span>
+          </td>
+          <td class="time">
+            <md-button
+              ng-if="list.editing !== time"
+              md-no-ink
+              ng-click="list.editing = time; $event.stopPropagation()">
+              {{ formatTime(time.start) }}
+              <span class="bpm" ng-if="time.bpm">({{ time.bpm }} bpm)</span>
+            </md-button>
+            <div
+              ng-if="list.editing === time"
+              class="layout-column edit"
+              ng-click="$event.stopPropagation()">
+              <div layout="row">
+                <md-input-container ng-click="$event.stopPropagation()">
+                  <!-- <label class="md-no-float">min</label> -->
+                  <input
+                    aria-label="Minute"
+                    type="number"
+                    min="0"
+                    ng-model="time.start[0]"
+                    ng-change="updatePlayistItemTime(item, $index, time)">
+                </md-input-container>
+                <span> : </span>
+                <md-input-container ng-click="$event.stopPropagation()">
+                  <!-- <label class="md-no-float">sec</label> -->
+                  <input
+                    aria-label="Second"
+                    type="number"
+                    min="0"
+                    ng-model="time.start[1]"
+                    ng-change="updatePlayistItemTime(item, $index, time)">
+                </md-input-container>
+                <span>:</span>
+                <md-input-container>
+                  <!-- <label class="md-no-float">ms</label> -->
+                  <input
+                    aria-label="Milisecond"
+                    type="number"
+                    min="0"
+                    step="10"
+                    ng-model="time.start[2]"
+                    ng-change="updatePlayistItemTime(item, $index, time)"
+                    bd-disable-step-validator>
+                </md-input-container>
+              </div>
+              <md-input-container class="bpm layout-row layout-align-center-end">
+                <label>Playback bpm</label>
+                <span flex></span>
+                <input
+                  aria-label="Bpm"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  placeholder="{{ time.originalBpm }}"
+                  ng-model="time.bpm"
+                  ng-change="updatePlayistItemBpm(item, $index, time)"
+                  ng-focus="initializePlayistItemBpm(item, $index, time)"
+                  ng-blur="validatePlayistItemBpm(item, $index, time)"
+                  bd-disable-step-validator>
+              </md-input-container>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <md-list class="sync-table" ng-if="xx">
+      <div
+        ng-repeat="item in workspace.playlist.items track by $index"
+        layout="column">
+        <label>{{ sectionsNames[item.section] }}</label>
+        <md-list-item
+          md-no-ink
+          ng-repeat="time in workspace.playlist.syncAudioTrack[$index] track by $index"
+          class="group-field no-label layout-row"
+          ng-class="{computed: time.start.computed}"
+          ng-click="list.editing = time;$event.stopPropagation()">
+          <!-- <label ng-if="$index === 0">{{ sectionsNames[item.section] }}</label> -->
+          <!-- <label ng-if="$index !== 0">({{ $index+1 }})</label> -->
+          <!-- <label ng-if="item.repeats > 1">({{ $index+1 }})</label> -->
+          <span ng-if="item.repeats > 1" style="opacity: 0.5">({{ $index+1 }})</span>
+          &nbsp;
+          <!-- <span ng-if="item.repeats === 1">{{ sectionsNames[item.section] }}</span> -->
+          <label
+            class="inline"
+            ng-if-start="list.editing === time">Start
+          </label>
+          <md-input-container>
+            <!-- <label class="md-no-float">min</label> -->
+            <input
+              aria-label="Minute"
+              type="number"
+              min="0"
+              ng-model="time.start[0]"
+              ng-change="updatePlayistItemTime(item, $index, time)">
+          </md-input-container>
+          <span> : </span>
+          <md-input-container>
+            <!-- <label class="md-no-float">sec</label> -->
+            <input
+              aria-label="Second"
+              type="number"
+              min="0"
+              ng-model="time.start[1]"
+              ng-change="updatePlayistItemTime(item, $index, time)">
+          </md-input-container>
+          <span>:</span>
+          <md-input-container>
+            <!-- <label class="md-no-float">ms</label> -->
+            <input
+              aria-label="Milisecond"
+              type="number"
+              min="0"
+              step="10"
+              ng-model="time.start[2]"
+              ng-change="updatePlayistItemTime(item, $index, time)"
+              bd-disable-step-validator>
+          </md-input-container>
+          <label class="inline">bpm</label>
+          <md-input-container ng-if-end>
+            <input
+              aria-label="Milisecond"
+              type="number"
+              min="0"
+              step="0.1"
+              ng-model="time.bpm"
+              ng-change="updatePlayistItemTime(item, $index, time)"
+              bd-disable-step-validator>
+          </md-input-container>
+<!--           <md-button ng-if-end
+            md-no-ink
+            aria-label="Clear"
+            class="icon-hover"
+            ng-click="time.set = false; time.edit = false">
+            <md-icon md-svg-icon="x"></md-icon>
+          </md-button> -->
+
+          <span 
+            ng-if-start="list.editing !== time"
+            class="flex text-right">{{ formatTime(time.start) }} &nbsp; -</span>
+          <span
+            ng-if-end
+            style="transform: scale(0.85, 0.85); opacity:0.5">{{ formatTime(time.end) }}</span>
+<!--           <md-button
+            md-no-ink
+            aria-label="Edit"
+            class="icon-hover"
+            ng-click="time.edit = !time.edit">
+            <md-icon md-svg-icon="pen"></md-icon>
+          </md-button> -->
+        </md-list-item>
+      </div>
+    </md-list>
+  </div>
+
+</div>

@@ -85,6 +85,36 @@
     </div>
 
     <div
+      class="extra-fields layout-row"
+      ng-if="runtime.desktop && project.audioTrack">
+      <md-button
+        md-no-ink
+        class="icon-hover"
+        ng-click="openSyncPreferences($event)">
+        <md-icon md-svg-icon="watch"></md-icon>
+        <md-tooltip md-delay="1500" md-direction="top">
+          <span xtranslate="SYNCHRONIZE">Synchronize timing</span>
+        </md-tooltip>
+      </md-button>
+      <small
+        ng-if-start="player.mode === 0"
+        style="opacity: 0.5;padding-bottom: 0.3rem">{{ ::syncInfo() }}
+      </small>
+      <span ng-if-end flex></span>
+      <md-button
+        md-no-ink
+        style="padding:0"
+        class="icon-hover"
+        aria-label="Remove"
+        ng-click="removeAudioTrack()">
+        <md-icon md-svg-icon="trash"></md-icon>
+        <md-tooltip md-delay="1500" md-direction="top">
+          <span xtranslate="SYNCHRONIZE">Remove Track</span>
+        </md-tooltip>
+      </md-button>
+    </div>
+
+<!--     <div
       ng-if="runtime.desktop && project.audioTrack && player.mode === 0"
       layout="row"
       class="time-field">
@@ -93,7 +123,7 @@
         <input
           type="number"
           min="0"
-          ng-model="workspace.section.audioTrackStart[0]">
+          ng-model="workspace.section.audioTrack.start[0]">
       </md-input-container>
       <span> : </span>
       <md-input-container>
@@ -101,7 +131,7 @@
         <input
           type="number"
           min="0"
-          ng-model="workspace.section.audioTrackStart[1]">
+          ng-model="workspace.section.audioTrack.start[1]">
       </md-input-container>
       <span>:</span>
       <md-input-container>
@@ -110,7 +140,7 @@
           type="number"
           min="0"
           step="10"
-          ng-model="workspace.section.audioTrackStart[2]"
+          ng-model="workspace.section.audioTrack.start[2]"
           bd-disable-step-validator>
       </md-input-container>
       <md-button
@@ -121,34 +151,18 @@
         ng-click="removeAudioTrack()">
         <md-icon md-svg-icon="x"></md-icon>
       </md-button>
-    </div>
+    </div> -->
+
     <p
       ng-if="!project.audioTrack"
       class="drop-area">
-<!--       <span style="position: relative">
-        <input type="file" name="file" placeholder="open file"
-          style="max-width: 100px;max-height: 30px;opacity:0.01" />
-        <small
-          style="position: absolute; left:0; right: 0; top:0; bottom: 0;pointer-events: none;"
-          xstyle="max-width: 60px; display:inline-block;text-align: center">Drag audio file</small>
-      </span> -->
-
-<!--       <span style="position: relative">
-        <input type="file" name="file" placeholder="open file"
-          style="display: inline-block;max-width: 1.85em;max-height: 1.85em;opacity:0.01;overflow: hidden;" />
+      <span style="position: relative; display:inline-block; width:1.85rem; height:1.85rem; line-height: 1.6rem;">
         <md-icon
-          style="fill:#000;width:1.85em;height:1.85em;cursor:pointer;position: absolute; left:0; right: 0; top:0; bottom: 0;pointer-events: none;"
-          md-svg-icon="audio-file">
-        </md-icon>
-      </span> -->
-
-      <span style="position: relative; display:inline-block; width:1.85rem; height:1.85rem;">
-        <input type="file" name="file" placeholder="open file"
-          style="position: absolute; left:0; top: 0; width:100%; bottom: 0;opacity:0.01; overflow: hidden;" />
-        <md-icon
-          style="fill:#000; width: 100%; height: 100%; cursor:pointer; pointer-events: none;"
+          style="fill:#000; width: 100%; height: 100%;"
           md-svg-icon="audio-file2">
         </md-icon>
+        <input type="file" name="file" placeholder="open file"
+          style="position: absolute; left:0; top: 0; width:100%; height: 100%; opacity:0.01; cursor:pointer; overflow: hidden;" />
       </span>
 
       &nbsp;/&nbsp;

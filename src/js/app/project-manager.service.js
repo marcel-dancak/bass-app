@@ -494,14 +494,20 @@
         _stream: audio,
         initialized: true,
         playbackRate: 1,
+        playing: false,
         audio: {
           gain: gain
         },
         play: function(offset) {
-          this._stream.currentTime = offset || 0;
-          return this._stream.play();
+          if (!this.playing) {
+            this.playing = true;
+            this._stream.currentTime = offset || 0;
+            return this._stream.play();
+          }
+          return $q.when();
         },
         stop: function() {
+          this.playing = false;
           this._stream.pause();
         },
         setPlaybackRate: function(rate, delay) {
@@ -652,7 +658,7 @@
         bpm: section.bpm,
         meta: section.meta,
         barSubdivision: section.barSubdivision,
-        audioTrackStart: section.audioTrackStart,
+        audioTrack: section.audioTrack,
         tracks: {}
       }
       this.project.tracks.forEach(function(track) {
@@ -840,6 +846,13 @@
         if (typeof section.audioTrackStart === 'string') {
           section.audioTrackStart = section.audioTrackStart.split(":").map(Number);
         }
+        if (section.audioTrackStart) {
+          section.audioTrack = {
+            start: section.audioTrackStart
+          };
+          delete section.audioTrackStart;
+        }
+
       }
       wrapSection(section);
       return section;

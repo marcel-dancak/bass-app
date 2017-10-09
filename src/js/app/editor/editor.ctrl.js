@@ -306,10 +306,10 @@
       }
 
       if (projectManager.project.audioTrack) {
-        playbackOpts.audioTrack = {
-          track: projectManager.project.audioTrack,
-          start: workspace.section.audioTrackStart
-        }
+        playbackOpts.audioTrack = Object.assign({
+            track: projectManager.project.audioTrack
+          }, workspace.section.audioTrack
+        );
       }
       audioPlayer.fetchResourcesWithProgress(workspace.section)
         .then(
@@ -344,6 +344,10 @@
     };
 
     function playbackStopped() {
+      if (projectManager.project.audioTrack) {
+        projectManager.project.audioTrack.stop();
+      }
+
       if ($scope.player.playing && $scope.player.loop) {
         // loop mode
         if (!swiperControl.loopMode && !$scope.player.visibleBeatsOnly && isLoopNeeded()) {
@@ -634,23 +638,6 @@
     window.sw = swiperControl;
 
     // Some useful utilities
-    window.nextStart = function() {
-      var section = workspace.section;
-      var beats = section.length * section.timeSignature.top;
-      var duration = beats * (60 / section.bpm);
-      var time = section.audioTrackStart.slice();
-
-      var sec = parseInt(duration);
-      var mili = Math.round(1000 * (duration - sec));
-      time[1] += sec;
-      time[2] += mili;
-      if (time[2] >= 1000) {
-        time[1]++;
-        time[2] -= 1000;
-      }
-      console.log(time)
-    }
-
     window.setStyle = function(style) {
       workspace.trackSection.forEachSound(function(s) {
         if (s.style === 'finger') {

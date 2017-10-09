@@ -75,6 +75,15 @@
       this.setBpm(60);
       this.setPlaybackSpeed(1);
       this.scheduledSounds = [];
+      this.context = context;
+
+      Object.defineProperty(this, 'bpm', {
+        get: function() {
+          return (this.audioTrack && !this.audioTrack.track.muted && this.audioTrack.bpm) || this._bpm;
+          // var useTrackBpm = this.audioTrack && !this.audioTrack.track.muted && Boolean(this.audioTrack.bpm);
+          // return useTrackBpm? this.audioTrack.bpm : this._bpm;
+        }
+      });
 
       this.input = {
         muted: true,
@@ -776,9 +785,20 @@
 
       if (isPlaybackEnd) {
         $timeout(function() {
-          this.stop();
+          this.stop(false, startTime);
         }.bind(this), 1000*(startTime - currentTime));
       } else {
+        // console.log('Beat: '+(startTime-this.ts));
+        // console.log('Beat Time: '+(startTime-this.lastBeatTime));
+        // this.lastBeatTime = startTime;
+        if (this.audioTrack) {
+          // var apDur = this.context.currentTime - this.ts;
+          // var atDur = this.audioTrack.track._stream.currentTime - this.at_ts;
+          // console.log('Dur Diff: '+(1000*(apDur-atDur)));
+          // console.log('PLAYER: '+apDur);
+          // console.log('AT: ' + atDur);
+        }
+
         var nextBar, nextBeat;
         var isLastBeatInBar = beat === timeSignature.top;
         var isPlaybackEnd = bar === this.playbackRange.end.bar && beat === this.playbackRange.end.beat;
@@ -829,7 +849,7 @@
       var bar = start.bar;
       var beat = start.beat;
 
-      if (options.audioTrack && options.audioTrack.track.initialized) {
+      if (options.audioTrack && options.audioTrack.track.initialized && !options.audioTrack.track.playing) {
         var playbackStart = ((bar-1)*this.section.timeSignature.top + beat-1)*(60/this.bpm);
         if (options.audioTrack.start) {
           var offset = options.audioTrack.start;
@@ -838,9 +858,21 @@
 
         options.audioTrack.track.setPlaybackRate(this.playbackSpeed);
 
-        // var delta = Math.abs(options.audioTrack.track._stream.currentTime - playbackStart);
+        var t1 = performance.now();
         options.audioTrack.track.play(playbackStart)
           .then(function() {
+            // console.log('DIFF: '+(performance.now()-t1));
+            // console.log('DIFF: '+(playbackStart-options.audioTrack.track._stream.currentTime));
+
+            this.ts = context.currentTime;
+            this.t1 = performance.now();
+            this.lastBeatTime = this.ts;
+            this.at_ts = options.audioTrack.track._stream.currentTime;
+            // console.log('---- START ----');
+            // console.log('PLAYER: '+context.currentTime);
+            // console.log('AT: '+this.at_ts);
+            // console.log('expected: '+ (16*60/(this.bpm * this.playbackSpeed)));
+
             this.playBeat(bar, beat, context.currentTime, true);
             this.audioTrack = options.audioTrack;
           }.bind(this))
@@ -853,7 +885,7 @@
     };
 
     AudioPlayer.prototype.setBpm = function(bpm) {
-      this.bpm = bpm;
+      this._bpm = bpm;
     }
 
     AudioPlayer.prototype.setPlaybackSpeed = function(playbackSpeed) {
@@ -951,7 +983,7 @@
       countDownTick();
     };
 
-    AudioPlayer.prototype.stop = function(hard) {
+    AudioPlayer.prototype.stop = function(hard, info) {
       this.playing = false;
       if (this.lastSyncTimerId) {
         clearTimeout(this.lastSyncTimerId);
@@ -974,7 +1006,7 @@
         this.scheduledSounds = [];
       }
       if (this.audioTrack) {
-        this.audioTrack.track.stop();
+        // this.audioTrack.track.stop();
       }
 
       /*
@@ -983,7 +1015,7 @@
       this.oscillator.output.disconnect();
       */
       this.dispatchEvent('playbackStopped');
-      this.playbackStoppedCallback();
+      this.playbackStoppedCallback(info);
     };
 
     AudioPlayer.prototype.playBassSample = function(track, bassSound) {

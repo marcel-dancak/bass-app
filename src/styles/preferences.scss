@@ -74,8 +74,331 @@
     }
   }
   .volume-field {
+    min-height: 3rem;
+    height: auto;
+    margin-top: 4px;
+    &:before {
+      display: none;
+    }
     .md-button {
       font-size: 1em;
+      margin: 0 0.313rem;
+      background-color: transparent;
+      &.mute-button {
+        padding: 0.75rem 0 0 0;
+      }
+    }
+    .rzslider {
+      margin-top: 30px;
+      margin-left: 10px;
+    }
+    .extra-fields {
+      width: 100%;
+      padding: 0 0.75rem 0.25rem 0.25rem;
+      margin-top: -0.25rem;
+      align-items: flex-end;
+      .md-button {
+        margin: 0;
+        padding: 0;
+        min-width: 2.25rem;
+        md-icon {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+      }
+    }
+  }
+
+  table.sync-timeline {
+    width: 100%;
+    border-collapse: collapse;
+    td {
+      height: 2.5rem;
+      &.line {
+        width: 25px;
+        position: relative;
+        .a, .b {
+          position: absolute;
+          width: 3px;
+          height: 50%;
+          left: 12px;
+          border-left: 3px solid #ccc;
+        }
+        .a {
+          top: 0;
+        }
+        .b {
+          top: 50%;
+        }
+        .point {
+          position: absolute;
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          left: calc(50% - 6px);
+          top: calc(50% - 5px);
+          display: block;
+          background-color: #827717;
+          background-color: #fff;
+          border: 2px solid #bbb;
+          box-sizing: border-box;
+        }
+      }
+      &.label {
+        width: 20px;
+        padding-right: 0.875rem;
+        text-align: right;
+        transition: color ease 0.8s;
+        span {
+          transition: all ease 0.8s;
+        }
+      }
+      &.time {
+        padding-left: 0.875rem;
+        outline: none;
+        position: relative;
+
+        > .edit {
+          outline: none;
+          &.ng-enter, &.ng-leave {
+            transition: all ease 0.3s;
+          }
+          &.ng-enter,
+          &.ng-leave.ng-leave-active {
+            opacity: 0;
+            height: 2.5rem;
+          }
+          &.ng-leave,
+          &.ng-enter.ng-enter-active {
+            opacity: 1;
+            height: 5rem;
+          }
+        }
+        > .md-button {
+          &.ng-enter {
+            transition: all ease 0.3s;
+          }
+          &.ng-enter,
+          &.ng-leave.ng-leave-active {
+            opacity: 0;
+          }
+          &.ng-leave,
+          &.ng-enter.ng-enter-active {
+            opacity: 1;
+          }
+          margin: 0;
+          position: absolute;
+          top: 0;
+          height: 2.5rem;
+          text-transform: none;
+          .bpm {
+            padding-left: 0.5rem;
+            opacity: 0.5;
+            font-size: 0.813rem;
+          }
+        }
+        md-input-container {
+          height: 36px;
+          width: auto;
+          margin: 0 5px;
+          label {
+            position: static;
+            display: inline;
+            font-size: 0.85rem;
+            transform: none;
+            xline-height: 2.85rem;
+            height: 1.2rem;
+          }
+          .md-input {
+            max-width: 3.6rem;
+            float: none;
+            display: inline-block;
+          }
+          &.bpm {
+            margin-bottom: 0.25rem;
+            .md-input {
+              max-width: 5rem;
+            }
+          }
+        }
+        span {
+          line-height: 2.5rem;
+        }
+      }
+    }
+    tr.first {
+      td {
+        &.label span {
+          xfont-weight: 500;
+          display: inline-block;
+          background-color: #E6EE9C;
+          padding-left: 0.7rem;
+          padding-right: 0.75rem;
+          height: 1.40rem;
+          line-height: 1.40rem;
+          position: relative;
+          border-radius: 0.25rem;
+          white-space: nowrap;
+          &:after {
+            content: "";
+            position: absolute;
+            background-color: inherit;
+            top: 0;
+            width: 1rem;
+            height: 1rem;
+            transform: scale(0.8, 1) translate(0.25rem, 0.22rem) rotateZ(45deg)  ;
+            border-radius: 2px;
+          }
+        }
+        .point {
+          border: 2px solid #827717;
+        }
+      }
+    }
+    tr.disconnected {
+      td.line .a {
+        /*border-color: red;*/
+        border-left-style: dotted;
+        /*display: none;*/
+      }
+    }
+    tr.x {
+      overflow: hidden;
+      td {
+        height: inherit;
+        xoverflow: hidden;
+        > * {
+          display: block;
+          height: inherit;
+          xoverflow: hidden;
+        }
+        &.time {
+          color: #888;
+        }
+        &.line {
+          .b {
+            display: none;
+          }
+          .x {
+            position: absolute;
+            background-color: #fff;
+            top: 0.7rem;
+            left: 0.2rem;
+            width: 1rem;
+            height: 1rem;
+            line-height: 0.9rem;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 0.85rem;
+            border: 2px solid #ccc;
+            color: #888;
+            outline: none;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+    tr.active {
+      td.label {
+        color: #42A5F5;
+        span {
+          background-color: #42A5F5;
+          color: initial;
+        }
+      }
+      td.line .point {
+        border-color: #42A5F5;
+      }
+    }
+
+    .animate-if.ng-enter, .animate-if.ng-leave {
+      transition: all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.4s;
+    }
+    .animate-if.ng-enter,
+    .animate-if.ng-leave.ng-leave-active {
+      opacity: 0;
+      height: 0;
+    }
+
+    .animate-if.ng-leave,
+    .animate-if.ng-enter.ng-enter-active {
+      opacity: 1;
+      height: 2.5rem;
+    }
+  }
+  div.sync-timeline {
+
+    .item {
+      padding-left: 10rem;
+      position: relative;
+      hr {
+        border: none;
+        background-color: #ddd;
+        width: 100%;
+        height: 1px;
+        margin: 0;
+      }
+      label {
+        position: absolute;
+        padding-left: 10px;
+        margin-left: -5rem;
+        color: #aaa;
+        xtext-align: right;
+        &:before {
+          position: absolute;
+          content: "";
+          left: -2px;
+          top: 0;
+          height: 100%;
+          width: 3px;
+          background-color: #777;
+        }
+      }
+      .segment {
+        position: relative;
+        min-height: 2.5rem;
+        padding-left: 1rem;
+        line-height: 2.5rem;
+        .line {
+          position: absolute;
+          left: -2px;
+          height: 100%;
+          width: 3px;
+          background-color: #777;
+        }
+        .point {
+          position: absolute;
+          width: 0.5rem;
+          height: 0.5rem;
+          border-radius: 50%;
+          top: 12px;
+          left: 0;
+          transform: translate(-50%, 0);
+          border: 3px solid #555;
+          background-color: #eee;
+        }
+      }
+    }
+  }
+  .sync-table {
+    md-list-item {
+      padding-left: 0;
+      .md-list-item-inner {
+        padding: 0;
+      }
+      span {
+        font-weight: bold;
+        pointer-events: none;
+      }
+      &.computed span {
+        font-weight: normal;
+      }
+      input[type="number"] {
+        max-width: 4rem;
+      }
+      label.inline {
+        position: static;
+      }
     }
   }
   .bottom-border {
@@ -83,13 +406,6 @@
   }
 }
 
-
-.preferences .volume-field .md-button {
-  min-width: 3rem;
-  margin: 0 0.313rem;
-  padding: 0.75rem 0 0 0;
-  background-color: transparent;
-}
 .preferences .volume-field .md-button.active md-icon {
   fill: #2196F3;
 }
@@ -121,21 +437,11 @@
 }
 
 
-md-list-item.volume-field {
-  min-height: 3rem;
-  height: auto;
-  &:before {
-    display: none;
-  }
-}
-
 md-list-item.volume-field.audio-track {
   flex-direction: column;
 }
 
-md-list-item.volume-field .rzslider {
-  margin-top: 30px;
-}
+
 .volume-field .drop-area {
   opacity: 0.45;
   text-align: right;
@@ -169,8 +475,4 @@ md-list-item.volume-field .rzslider {
   vertical-align: bottom;
   display: inline-block;
   align-self: center;
-}
-
-.preferences .volume-field .rzslider {
-  margin-left: 10px;
 }

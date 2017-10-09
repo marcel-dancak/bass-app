@@ -154,6 +154,7 @@
 
       workspace.playlist.items.forEach(function(item) {
         var section = projectManager.getSection(item.section);
+
         for (var i = 0; i < item.repeats; i++) {
           if (index >= $scope.player.playbackRange.start && index <= $scope.player.playbackRange.end) {
             playlist.push(section);
@@ -164,6 +165,7 @@
           index++;
         }
       });
+
       sectionsTicks.splice(0, 1);
       $scope.player.progress.value = 0;
       $scope.player.progress.max = beatsCount - 1;
@@ -198,6 +200,7 @@
     $scope.updatePlaylist = function() {
       updatePlaylistRange();
       initPlaylistSlides();
+      workspace.playlist.updateSyncTimes();
     }
 
 
@@ -239,6 +242,7 @@
       $scope.player.progress.update(playbackState.beatCounter);
     }
 
+
     function playSection(start) {
       var section = playlist[playbackState.section];
       audioPlayer.setBpm(section.bpm);
@@ -256,10 +260,12 @@
         countdown: $scope.player.countdown && (angular.isDefined(start) || playbackState.section === 0),
         start: start || { bar: 1, beat: 1 }
       }
-      if (projectManager.project.audioTrack && section.audioTrackStart) {
+
+      if (projectManager.project.audioTrack && section.audioTrack) {
         options.audioTrack = {
           track: projectManager.project.audioTrack,
-          start: section.audioTrackStart
+          start: playlistItemStart(playbackState.section),
+          bpm: playlistItemBpm(playbackState.section)
         }
       }
       audioPlayer.play(section, beatSync, playbackStopped, options);
@@ -339,7 +345,7 @@
 
     $scope.player.pause = function() {
       $scope.player.playing = false;
-      playbackState.section = playlist.length;
+      // playbackState.section = playlist.length;
       audioPlayer.stop(true);
     };
 
@@ -358,15 +364,46 @@
     }
 
     function playbackStopped(evt) {
+      // var apDur = audioPlayer.context.currentTime - audioPlayer.ts;
+      // var atDur = projectManager.project.audioTrack._stream.currentTime - audioPlayer.at_ts
+      // console.log('Dur Diff: '+(1000*(apDur-atDur)));
+      // console.log('PLAYER: '+apDur);
+      // console.log('AT: ' + atDur);
+      // console.log('Real: '+((performance.now()-audioPlayer.t1)/1000));
+
+      // var stopDiff = 0;
+      // if (evt) {
+      //   stopDiff = evt - audioPlayer.context.currentTime;
+      //   console.log('STOP DIFF: '+(stopDiff));
+      // }
+      // console.log('stopped at: '+audioPlayer.context.currentTime);
       if (workspace.playlist.onPlaybackEnd) {
         workspace.playlist.onPlaybackEnd(evt);
       }
+      var currentSection = playbackState.section;
       playbackState.section++;
       if ($scope.player.playing && playbackState.section < playlist.length) {
         // continue in playlist
+        if (projectManager.project.audioTrack) {
+          var nextStart = playlistItemStart(playbackState.section);
+          var flatTime = nextStart[0]*60 + nextStart[1] + nextStart[2]/1000;
+          var diff = projectManager.project.audioTrack._stream.currentTime - flatTime;
+
+          console.log(diff);
+          if (Math.abs(diff) > 0.1) {
+            projectManager.project.audioTrack.stop();
+          }
+        }
+        // if (projectManager.project.audioTrack && playlist[currentSection].id !== playlist[playbackState.section].id) {
+        //   console.log('DIFFERENT SECTION');
+        //   projectManager.project.audioTrack.stop();
+        // }
         playSection();
       } else {
         if ($scope.player.playing && $scope.player.loop) {
+          if (projectManager.project.audioTrack) {
+            projectManager.project.audioTrack.stop();
+          }
           if ($scope.player.visibleBeatsOnly) {
             // repeat visible playback
             playFromCurrentPosition();
@@ -380,6 +417,9 @@
           }
         } else {
           // stop playback
+          if (projectManager.project.audioTrack) {
+            projectManager.project.audioTrack.stop();
+          }
           timeline.stop();
           playbackState.section = 0;
           $scope.player.playing = false;
@@ -451,8 +491,96 @@
       $scope.player.playbackRange.end = $scope.player.playbackRange.max;
     }
 
+
+    function playlistItemStart(playlistIndex) {
+      var flatIndex = playlistIndex + $scope.player.playbackRange.start - 1;
+      for (var k = 0, i = 0; i < workspace.playlist.items.length; i++) {
+        var item = workspace.playlist.items[i];
+        if (flatIndex < k + item.repeats) {
+          // console.log(i+':'+(flatIndex - k)+' => '+options.audioTrack.start)
+          return workspace.playlist.syncAudioTrack[i][flatIndex - k].start;
+        }
+        k += item.repeats;
+      }
+    }
+    function playlistItemBpm(playlistIndex) {
+      var flatIndex = playlistIndex + $scope.player.playbackRange.start - 1;
+      for (var k = 0, i = 0; i < workspace.playlist.items.length; i++) {
+        var item = workspace.playlist.items[i];
+        if (flatIndex < k + item.repeats) {
+          // console.log(i+':'+(flatIndex - k)+' => '+options.audioTrack.start)
+          return workspace.playlist.syncAudioTrack[i][flatIndex - k].bpm;
+        }
+        k += item.repeats;
+      }
+    }
+
+    function sectionDuration(section) {
+      var bpm = (section.audioTrack && section.audioTrack.bpm) || section.bpm;
+      var beats = section.length * section.timeSignature.top;
+      return beats * (60 / bpm);
+    }
+    function addTime(time, duration) {
+      var flatTime = time[0]*60 + time[1] + time[2]/1000;
+      flatTime += duration;
+      var minutes = parseInt(flatTime / 60);
+      var seconds = parseInt(flatTime - (60*minutes));
+      var mili = Math.round((flatTime - parseInt(flatTime)) * 1000);
+      return [minutes, seconds, mili];
+    }
+
+    function audioTrackSync(playlist) {
+      var used = [];
+      var lastEnd = [0, 0, 0];
+      playlist.items.forEach(function(item, index) {
+        var itemTimes = playlist.syncAudioTrack[index] || [];
+        var section = projectManager.getSection(item.section);
+        var duration = sectionDuration(section);
+
+        for (var r = 0; r < item.repeats; r++) {
+          var itemSync = item.syncTimes && item.syncTimes[r]? item.syncTimes[r] : {};
+          var start = null;
+          if (itemSync.start) {
+            // highest priority - time set by user
+            start = itemSync.start;
+            start.computed = false;
+          } else if (r === 0 && used.indexOf(section.id) === -1 && section.audioTrack) {
+            // first occurence of some section (with set time)
+            start = addTime(section.audioTrack.start, 0);
+            start.computed = false;
+          } else {
+            start = addTime(lastEnd, 0);
+            start.computed = true;
+          }
+          var bpm = null;
+          if (used.indexOf(section.id) === -1 && section.audioTrack && section.audioTrack.bpm) {
+            bpm = section.audioTrack.bpm;
+          }
+          if (itemSync.bpm) {
+            bpm = itemSync.bpm;
+          }
+          var bpmRatio = bpm ? bpm/section.bpm : 1;
+          var end = addTime(start, duration/bpmRatio);
+          var aligned = start[0] !== lastEnd[0] || start[1] !== lastEnd[1] || start[2] !== lastEnd[2];
+          itemTimes[r] = angular.extend(itemTimes[r] || {}, {
+            start: start,
+            end: end,
+            prevEnd: aligned? addTime(lastEnd, 0) : null,
+            bpm: bpm,
+            originalBpm: section.bpm
+          });
+          lastEnd = end;
+        }
+        playlist.syncAudioTrack[index] = itemTimes;
+        used.push(section.id);
+      });
+    }
+
     function playlistLoaded(playlist) {
-      console.log('playlistLoaded')
+      Object.defineProperty(playlist, 'syncAudioTrack', {value: 'static', writable: true});
+      playlist.syncAudioTrack = [];
+      playlist.updateSyncTimes = audioTrackSync.bind(null, playlist);
+      playlist.updateSyncTimes();
       workspace.playlist = playlist;
       workspace.selectedPlaylistId = playlist.id;
       updatePlaylistRange();
@@ -504,7 +632,7 @@
       var missingSlides = slide + Math.round(viewer.layout.slidesPerView) - viewer.swiper.slides.length;
       if (missingSlides > 0) {
         while (missingSlides > 0) {
-          console.log('generating slide');
+          // console.log('generating slide');
           generateSlide();
           missingSlides--;
         }
@@ -567,6 +695,7 @@
 
     viewer.setFretboardVisible = function(visible) {
       viewer.fretboardVisible = visible;
+      // TODO: try $$postDigest instead of $mdUtil.nextTick
       $mdUtil.nextTick(function() {
         viewer.swiper.onResize();
         var elem = $element[0].querySelector('.fretboard-container');
