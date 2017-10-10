@@ -1,6 +1,6 @@
 <div md-whiteframe="16" class="md-dialog" style="pointer-events: auto; width:22rem;"> 
   <div class="dialog-header dragable">
-    <span>Audio Track</span>
+    <span>Audio Track Timing</span>
     <md-button
       md-no-ink
       aria-label="Close"
@@ -43,33 +43,21 @@
       </md-input-container>
     </md-list-item>
 
-    <md-list-item
-      md-no-ink
-      ng-init="
-        data = {
-          bpmEnabled: workspace.section.audioTrack.bpm? true : false,
-          bpm: workspace.section.audioTrack.bpm || workspace.section.bpm
-        }">
+    <md-list-item>
       <label>Playback bpm</label>
+      <!-- <span>xx</span> -->
       <md-input-container>
-        <!-- ngIf inside checkbox prevents state toggling inside whole list item -->
-        <md-checkbox
-          ng-if="true"
-          class="md-primary"
-          ng-model="data.bpmEnabled"
-          ng-change="workspace.section.audioTrack.bpm = data.bpmEnabled? data.bpm : undefined">Enable
-        </md-checkbox>
-      </md-input-container>
-      <md-input-container>
-        <!-- <label class="md-no-float">bpm</label> -->
+        <!-- To make placeholder visible -->
+        <label></label>
         <input
           type="number"
           min="10"
           step="0.1"
           aria-label="bpm"
-          ng-model="data.bpm"
-          ng-change="workspace.section.audioTrack.bpm = data.bpmEnabled? data.bpm : undefined"
-          ng-disabled="!data.bpmEnabled"
+          ng-model="workspace.section.audioTrack.bpm"
+          placeholder="{{ workspace.section.bpm }}"
+          ng-focus="workspace.section.audioTrack.bpm = workspace.section.audioTrack.bpm || workspace.section.bpm"
+          ng-blur="workspace.section.audioTrack.bpm === workspace.section.bpm? workspace.section.audioTrack.bpm = undefined : ''"
           bd-disable-step-validator>
       </md-input-container>
     </md-list-item>
