@@ -4,7 +4,7 @@
   }
 
   md-list-item {
-    padding: 0;
+    padding-right: 4px;
     label {
       position: absolute;
       color: #777;
@@ -31,8 +31,11 @@
   .group-field {
     padding-left: 1rem;
     md-input-container {
-      margin-right: 0.625em;
       margin-top: 2em;
+      margin-right: 0.625em;
+      &:last-of-type {
+        margin-right: 0;
+      }
       label.md-no-float {
         top: -1em;
         font-size: 0.688em;
@@ -77,27 +80,20 @@
       margin: 0 0.313rem;
       background-color: transparent;
       &.mute-button {
-        padding: 0.75rem 0 0 0;
+        padding: 0.7rem 0 0 0;
       }
-    }
-    .rzslider {
-      margin-top: 30px;
-      margin-left: 10px;
-    }
-    .extra-fields {
-      width: 100%;
-      padding: 0 0.75rem 0.25rem 0.25rem;
-      margin-top: -0.25rem;
-      align-items: flex-end;
-      .md-button {
-        margin: 0;
-        padding: 0;
-        min-width: 2.25rem;
+      &.secondary {
+        min-width: 1.5rem;
+        margin-top: 0.5rem;
         md-icon {
           width: 1.25rem;
           height: 1.25rem;
         }
       }
+    }
+    .rzslider {
+      margin-top: 30px;
+      margin-left: 10px;
     }
   }
 
@@ -167,6 +163,12 @@
           }
         }
         > .md-button {
+          margin: 0;
+          position: absolute;
+          top: 0;
+          height: 2.5rem;
+          min-width: 4rem;
+          text-transform: none;
           &.ng-enter {
             transition: all ease 0.3s;
           }
@@ -178,11 +180,6 @@
           &.ng-enter.ng-enter-active {
             opacity: 1;
           }
-          margin: 0;
-          position: absolute;
-          top: 0;
-          height: 2.5rem;
-          text-transform: none;
           .bpm {
             padding-left: 0.5rem;
             opacity: 0.5;
@@ -429,9 +426,9 @@
 }
 
 
-md-list-item.volume-field.audio-track {
+/*md-list-item.volume-field.audio-track {
   flex-direction: column;
-}
+}*/
 
 
 .volume-field .drop-area {

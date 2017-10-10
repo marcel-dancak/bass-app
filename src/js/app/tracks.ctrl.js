@@ -193,14 +193,6 @@
     $scope.removeAudioTrack = projectManager.removeAudioTrack.bind(projectManager);
     initializeSectionStart();
 
-    $scope.syncInfo = function() {
-      if (workspace.section.audioTrack && workspace.section.audioTrack.start) {
-        return '{0} - {1}'.format(
-          formatTime(workspace.section.audioTrack.start),
-          formatTime(sectionEnd(workspace.section))
-        );
-      }
-    }
 
     $scope.openSyncPreferences = function(evt) {
       var box = evt.target.getBoundingClientRect();

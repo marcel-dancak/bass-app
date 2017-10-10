@@ -54,7 +54,7 @@
         </md-icon>
       </ng-switch>Audio Track
     </label>
-    <div style="width:100%" class="layout-row">
+    <!-- <div style="width:100%" class="layout-row"> -->
       <rzslider
         ng-if-start="project.audioTrack"
         rz-slider-model="project.audioTrack.audio.gain.value"
@@ -70,6 +70,16 @@
         }">
       </rzslider>
       <md-button
+        md-no-ink
+        class="secondary icon-hover"
+        ng-click="openSyncPreferences($event)">
+        <md-icon md-svg-icon="watch"></md-icon>
+        <md-tooltip md-delay="1500" md-direction="top">
+          <span xtranslate="SYNCHRONIZE">Set timing</span>
+        </md-tooltip>
+      </md-button>
+
+      <md-button
         ng-if-end
         md-no-ink
         aria-label="Mute"
@@ -80,9 +90,9 @@
           md-svg-icon="{{ project.audioTrack.muted? 'volume-mute' : 'volume-medium' }}">
         </md-icon>
       </md-button>
-    </div>
+    <!-- </div> -->
 
-    <div
+<!--     <div
       class="extra-fields layout-row"
       ng-if="runtime.desktop && project.audioTrack">
       <md-button
@@ -91,13 +101,9 @@
         ng-click="openSyncPreferences($event)">
         <md-icon md-svg-icon="watch"></md-icon>
         <md-tooltip md-delay="1500" md-direction="top">
-          <span xtranslate="SYNCHRONIZE">Synchronize timing</span>
+          <span xtranslate="SYNCHRONIZE">Set timing</span>
         </md-tooltip>
       </md-button>
-      <small
-        ng-if-start="player.mode === 0"
-        style="opacity: 0.5;padding-bottom: 0.3rem">{{ ::syncInfo() }}
-      </small>
       <span ng-if-end flex></span>
       <md-button
         md-no-ink
@@ -109,45 +115,6 @@
         <md-tooltip md-delay="1500" md-direction="top">
           <span xtranslate="SYNCHRONIZE">Remove Track</span>
         </md-tooltip>
-      </md-button>
-    </div>
-
-<!--     <div
-      ng-if="runtime.desktop && project.audioTrack && player.mode === 0"
-      layout="row"
-      class="time-field">
-      <md-input-container>
-        <label class="md-no-float">Minute</label>
-        <input
-          type="number"
-          min="0"
-          ng-model="workspace.section.audioTrack.start[0]">
-      </md-input-container>
-      <span> : </span>
-      <md-input-container>
-        <label class="md-no-float">Second</label>
-        <input
-          type="number"
-          min="0"
-          ng-model="workspace.section.audioTrack.start[1]">
-      </md-input-container>
-      <span>:</span>
-      <md-input-container>
-        <label class="md-no-float">Milisecond</label>
-        <input
-          type="number"
-          min="0"
-          step="10"
-          ng-model="workspace.section.audioTrack.start[2]"
-          bd-disable-step-validator>
-      </md-input-container>
-      <md-button
-        md-no-ink
-        style="padding:0"
-        class="icon-hover"
-        aria-label="Remove"
-        ng-click="removeAudioTrack()">
-        <md-icon md-svg-icon="x"></md-icon>
       </md-button>
     </div> -->
 
