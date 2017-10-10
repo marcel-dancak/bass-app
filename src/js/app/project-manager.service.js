@@ -666,7 +666,7 @@
         if (trackSection) {
           // filter beats with some data only (sounds or metadata)
           var trackData = trackSection.rawData().filter(function(beatData) {
-            return beatData.data.length > 0 ||
+            return beatData.data.length > 0 || beatData.subdivision !== 4 ||
               (beatData.meta && Object.keys(beatData.meta).length > 0);
           });
           data.tracks[track.id] = trackData;
