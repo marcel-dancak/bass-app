@@ -343,7 +343,16 @@
       }, 50);
     };
 
-    function playbackStopped() {
+
+    function playbackStopped(evt) {
+      if (evt) {
+        $timeout(_playbackStopped, 1000*(evt.endTime - audioPlayer.context.currentTime));
+      } else {
+        _playbackStopped();
+      }
+    }
+
+    function _playbackStopped() {
       if (projectManager.project.audioTrack) {
         projectManager.project.audioTrack.stop();
       }

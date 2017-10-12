@@ -243,12 +243,13 @@
     }
 
 
-    function playSection(start) {
+    function playSection(start, startTime) {
+      start = start || { bar: 1, beat: 1 };
       var section = playlist[playbackState.section];
       audioPlayer.setBpm(section.bpm);
 
       audioPlayer.playbackRange = {
-        start: start || { bar: 1, beat: 1 },
+        start: start,
         end: {
           bar: section.length,
           beat: section.timeSignature.top
@@ -258,7 +259,8 @@
       timeline.start();
       var options = {
         countdown: $scope.player.countdown && (angular.isDefined(start) || playbackState.section === 0),
-        start: start || { bar: 1, beat: 1 }
+        start: start,
+        startTime: startTime
       }
 
       if (projectManager.project.audioTrack && section.audioTrack) {
@@ -267,6 +269,7 @@
           start: playlistItemStart(playbackState.section),
           bpm: playlistItemBpm(playbackState.section)
         }
+        // console.log('-- BPM: '+playlistItemBpm(playbackState.section))
       }
       audioPlayer.play(section, beatSync, playbackStopped, options);
     }
@@ -304,6 +307,7 @@
     }
 
     $scope.player.play = function() {
+      ap.ts = null;
       fretboardViewer.clearDiagram();
       var sections = playlist.reduce(function(list, section) {
         if (list.indexOf(section) === -1) {
@@ -363,19 +367,65 @@
       }, 50);
     }
 
-    function playbackStopped(evt) {
-      // var apDur = audioPlayer.context.currentTime - audioPlayer.ts;
-      // var atDur = projectManager.project.audioTrack._stream.currentTime - audioPlayer.at_ts
-      // console.log('Dur Diff: '+(1000*(apDur-atDur)));
-      // console.log('PLAYER: '+apDur);
-      // console.log('AT: ' + atDur);
-      // console.log('Real: '+((performance.now()-audioPlayer.t1)/1000));
 
-      // var stopDiff = 0;
-      // if (evt) {
-      //   stopDiff = evt - audioPlayer.context.currentTime;
-      //   console.log('STOP DIFF: '+(stopDiff));
-      // }
+    function playbackStopped(evt) {
+      var timeToStop = evt? evt.endTime - audioPlayer.context.currentTime : 0;
+
+      // console.log('stopped at: '+audioPlayer.context.currentTime);
+      if (workspace.playlist.onPlaybackEnd) {
+        workspace.playlist.onPlaybackEnd(evt);
+      }
+
+      playbackState.section++;
+      if ($scope.player.playing && playbackState.section < playlist.length) {
+        // continue in playlist
+        if (projectManager.project.audioTrack) {
+          var nextStart = playlistItemStart(playbackState.section);
+          var flatTime = nextStart[0]*60 + nextStart[1] + nextStart[2]/1000;
+          var diff = timeToStop + projectManager.project.audioTrack._stream.currentTime - flatTime;
+
+          // console.log(diff);
+          if (Math.abs(diff) > 0.1) {
+            projectManager.project.audioTrack.stop();
+          }
+        }
+        playSection(null, evt.endTime);
+      } else {
+        if ($scope.player.playing && $scope.player.loop) {
+          setTimeout(function() {
+            if (projectManager.project.audioTrack) {
+              projectManager.project.audioTrack.stop();
+            }
+            if ($scope.player.visibleBeatsOnly) {
+              // repeat visible playback
+              playFromCurrentPosition();
+            } else {
+              // repeat playlist playback
+              playbackState.section = 0;
+              playbackState.beatCounter = -1;
+              playbackState.slideBeatCounter = -1;
+              viewer.swiper.slideTo(0, 0);
+              playSection();
+            }
+          }, 1000*timeToStop);
+        } else {
+          // stop playback
+          $timeout(function() {
+            if (projectManager.project.audioTrack) {
+              projectManager.project.audioTrack.stop();
+            }
+            timeline.stop();
+            playbackState.section = 0;
+            $scope.player.playing = false;
+          }, 1000*timeToStop);
+        }
+      }
+    }
+
+    /*
+    function playbackStopped2(evt) {
+      var timeToStop = evt? evt.endTime - audioPlayer.context.currentTime : 0;
+
       // console.log('stopped at: '+audioPlayer.context.currentTime);
       if (workspace.playlist.onPlaybackEnd) {
         workspace.playlist.onPlaybackEnd(evt);
@@ -387,7 +437,7 @@
         if (projectManager.project.audioTrack) {
           var nextStart = playlistItemStart(playbackState.section);
           var flatTime = nextStart[0]*60 + nextStart[1] + nextStart[2]/1000;
-          var diff = projectManager.project.audioTrack._stream.currentTime - flatTime;
+          var diff = timeToStop + projectManager.project.audioTrack._stream.currentTime - flatTime;
 
           console.log(diff);
           if (Math.abs(diff) > 0.1) {
@@ -398,35 +448,56 @@
         //   console.log('DIFFERENT SECTION');
         //   projectManager.project.audioTrack.stop();
         // }
-        playSection();
+        console.log('wait '+(evt.endTime - evt.eventTime))
+
+        var ct = ap.context.currentTime - ap.ts;
+        ct = evt.endTime - ap.ts;
+        var act = projectManager.project.audioTrack._stream.currentTime - ap.at_ts;
+        console.log('CT: '+ct);
+        console.log('AT_T: '+act);
+
+        function seconds(t) {
+          return t[0]*60 + t[1] + t[2]/1000;
+        }
+        var estimated = seconds(playlistItemStart(playbackState.section)) - seconds(playlistItemStart(0));
+        console.log('Estimated: '+estimated)
+        console.log('DIF: '+(1000*(ct-estimated)));
+
+        playSection(null, evt.endTime);
+        // playSection();
       } else {
         if ($scope.player.playing && $scope.player.loop) {
-          if (projectManager.project.audioTrack) {
-            projectManager.project.audioTrack.stop();
-          }
-          if ($scope.player.visibleBeatsOnly) {
-            // repeat visible playback
-            playFromCurrentPosition();
-          } else {
-            // repeat playlist playback
-            playbackState.section = 0;
-            playbackState.beatCounter = -1;
-            playbackState.slideBeatCounter = -1;
-            viewer.swiper.slideTo(0, 0);
-            playSection();
-          }
+          setTimeout(function() {
+            if (projectManager.project.audioTrack) {
+              projectManager.project.audioTrack.stop();
+            }
+            if ($scope.player.visibleBeatsOnly) {
+              // repeat visible playback
+              playFromCurrentPosition();
+            } else {
+              // repeat playlist playback
+              playbackState.section = 0;
+              playbackState.beatCounter = -1;
+              playbackState.slideBeatCounter = -1;
+              viewer.swiper.slideTo(0, 0);
+              playSection();
+            }
+          }, 1000*timeToStop);
         } else {
           // stop playback
-          if (projectManager.project.audioTrack) {
-            projectManager.project.audioTrack.stop();
-          }
-          timeline.stop();
-          playbackState.section = 0;
-          $scope.player.playing = false;
+
+          $timeout(function() {
+            if (projectManager.project.audioTrack) {
+              projectManager.project.audioTrack.stop();
+            }
+            timeline.stop();
+            playbackState.section = 0;
+            $scope.player.playing = false;
+          }, 1000*timeToStop);
         }
       }
     }
-
+    */
 
     $scope.ui.selectTrack = function(trackId) {
       // console.log('## selectTrack '+trackId)
@@ -516,9 +587,9 @@
     }
 
     function sectionDuration(section) {
-      var bpm = (section.audioTrack && section.audioTrack.bpm) || section.bpm;
+      // var bpm = (section.audioTrack && section.audioTrack.bpm) || section.bpm;
       var beats = section.length * section.timeSignature.top;
-      return beats * (60 / bpm);
+      return beats * (60 / section.bpm);
     }
     function addTime(time, duration) {
       var flatTime = time[0]*60 + time[1] + time[2]/1000;
@@ -530,7 +601,7 @@
     }
 
     function audioTrackSync(playlist) {
-      var used = [];
+      var used = new Set();
       var lastEnd = [0, 0, 0];
       playlist.items.forEach(function(item, index) {
         var itemTimes = playlist.syncAudioTrack[index] || [];
@@ -544,7 +615,7 @@
             // highest priority - time set by user
             start = itemSync.start;
             start.computed = false;
-          } else if (r === 0 && used.indexOf(section.id) === -1 && section.audioTrack) {
+          } else if (r === 0 && !used.has(section.id) && section.audioTrack) {
             // first occurence of some section (with set time)
             start = addTime(section.audioTrack.start, 0);
             start.computed = false;
@@ -553,13 +624,15 @@
             start.computed = true;
           }
           var bpm = null;
-          if (used.indexOf(section.id) === -1 && section.audioTrack && section.audioTrack.bpm) {
+          if (!used.has(section.id) && section.audioTrack && section.audioTrack.bpm) {
             bpm = section.audioTrack.bpm;
           }
           if (itemSync.bpm) {
             bpm = itemSync.bpm;
           }
           var bpmRatio = bpm ? bpm/section.bpm : 1;
+          // console.log("Duration: "+duration+' -> '+(duration/bpmRatio));
+
           var end = addTime(start, duration/bpmRatio);
           var aligned = start[0] !== lastEnd[0] || start[1] !== lastEnd[1] || start[2] !== lastEnd[2];
           itemTimes[r] = angular.extend(itemTimes[r] || {}, {
@@ -569,11 +642,13 @@
             bpm: bpm,
             originalBpm: section.bpm
           });
+          itemTimes.length = item.repeats;
           lastEnd = end;
         }
         playlist.syncAudioTrack[index] = itemTimes;
-        used.push(section.id);
+        used.add(section.id);
       });
+      // playlist.syncAudioTrack.length = playlist.items.length;
     }
 
     function playlistLoaded(playlist) {
