@@ -142,7 +142,7 @@
               var lastPosition = panelsPositions[options.id];
               if (lastPosition) {
                 panel.css({top: 0, left: 0});
-                panel.css('transform', 'translate('+lastPosition.left+'px, '+ lastPosition.top +'px)');
+                panel.css('transform', 'translate3d('+Math.round(lastPosition.left)+'px, '+ Math.round(lastPosition.top) +'px, 0)');
               }
             },
             onRemoving: function(panel) {
