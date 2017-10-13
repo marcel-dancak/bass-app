@@ -1,4 +1,6 @@
-<div md-whiteframe="16" class="md-dialog" style="pointer-events: auto; width:22rem;"> 
+<div
+  class="md-dialog md-dialog md-whiteframe-16dp"
+  style="pointer-events: auto; width:22rem;overflow: hidden;">
   <div class="dialog-header dragable">
     <span>Audio Track Timing</span>
     <md-button
@@ -102,9 +104,9 @@
 <!--   <sync-timeline class="sync-timeline">
   </sync-timeline> -->
 
-  <div
-    class="preferences layout-padding"
-    style="max-height: 400px; overflow-y: auto;"
+  <div pretty-scrollbar
+    class="preferences"
+    style="max-height: 400px; overflow-x: hidden;"
     ng-if="project.audioTrack && player.mode === 1"
     ng-init="list = {editing: null}"
     ng-click="$event.target.tagName !== 'INPUT' ? list.editing = null : null">
