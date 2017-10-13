@@ -7,7 +7,7 @@
 
 
 
-  function SoundPropertiesSlideshow($scope, $element, $timeout, basicHandler, bassSoundForm, $mdCompiler) {
+  function SoundPropertiesSlideshow($scope, $element, $timeout, bassEditor, bassSoundForm, $mdCompiler) {
 
     var editSound, editElem, form;
 
@@ -60,7 +60,7 @@
           form.close();
           form = null;
         }
-        basicHandler.clearSelection();
+        bassEditor.selector.clearSelection();
         $scope.workspace.trackSection.clearBeat($scope.workspace.trackSection.beat(1, 1));
       }
     ];

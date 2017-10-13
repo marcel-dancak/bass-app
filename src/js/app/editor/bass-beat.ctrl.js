@@ -6,8 +6,8 @@
     .controller('BassBeatController', BassBeatController)
     .controller('BassFormController', BassFormController)
     .factory('bassSoundForm', bassSoundForm)
-    .run(function(workspace, basicHandler) {
-      workspace.selected = basicHandler.selected;
+    .run(function(workspace, bassEditor) {
+      workspace.selected = bassEditor.selector.last;
     })
     .component('bassBeat', {
       scope: false,
@@ -48,26 +48,25 @@
     }
   ];
 
-  function BassBeatController($scope, basicHandler, bassDragHandler, bassResizeHandler, bassSoundForm, Note) {
+  function BassBeatController($scope, bassEditor, bassSoundForm, Note) {
     $scope.Note = Note;
-    $scope.selectSound = basicHandler.selectSound.bind(basicHandler);
-    $scope.keyPressed = basicHandler.keyPressed.bind(basicHandler);
-    $scope.dragHandler = bassDragHandler;
-    $scope.resizeHandler = bassResizeHandler;
+    $scope.clickHandler = bassEditor.selector;
+    $scope.dragHandler = bassEditor.dragHandler;
+    $scope.resizeHandler = bassEditor.resizeHandler;
     $scope.bassForm = bassSoundForm;
   }
 
 
-  function BassFormController($scope, $timeout, Note, sound, string, audioPlayer, basicHandler, mdPanelRef) {
+  function BassFormController($scope, $timeout, Note, sound, string, audioPlayer, bassEditor, mdPanelRef) {
     $scope.Note = Note;
     $scope.keyPressed = function(evt) {
-      basicHandler.keyPressed(evt);
+      bassEditor.keyPressed(evt);
       if (evt.keyCode === 46) {
         mdPanelRef.close();
       }
     };
 
-    $scope.soundStyleChanged = basicHandler.soundStyleChanged.bind(basicHandler);
+    $scope.soundStyleChanged = bassEditor.soundStyleChanged.bind(bassEditor);
 
     $scope.nextNote = function(note) {
       var index = -1;
@@ -100,7 +99,7 @@
         return note.code === n.code;
       });
       angular.extend(note, noteData);
-      basicHandler.soundLabelChanged(this.sound);
+      bassEditor.soundLabelChanged(this.sound);
     };
 
     $scope.soundLengthChanged = function(sound) {
@@ -108,7 +107,7 @@
     };
 
     $scope.noteTypeChanged = function() {
-      basicHandler.noteTypeChanged(this.sound);
+      bassEditor.noteTypeChanged(this.sound);
     }
 
     $scope.playSound = function() {
@@ -157,7 +156,7 @@
     $scope.playingStyles = PLAYLING_STYLES;
   }
 
-  function bassSoundForm($mdUtil, $mdPanel, basicHandler, swiperControl) {
+  function bassSoundForm($mdUtil, $mdPanel, bassEditor, swiperControl) {
 
     var panelRef;
     var appContextMenuHandler;
@@ -187,7 +186,7 @@
 
     var menu = {
       openNew: function(evt, beat) {
-        var sound = basicHandler.createSound(evt, beat);
+        var sound = bassEditor.createSound(evt, beat);
         $mdUtil.nextTick(function() {
           this.open({target: swiperControl.getSoundElem(sound)}, sound);
         }.bind(this));
@@ -196,7 +195,7 @@
         if (!appContextMenuHandler || window.oncontextmenu !== customContextMenuHandler) {
           appContextMenuHandler = window.oncontextmenu;
         }
-        basicHandler.selectSound(evt, sound);
+        bassEditor.selector.select(evt, sound);
 
         var position = $mdPanel.newPanelPosition()
           .relativeTo(evt.target)

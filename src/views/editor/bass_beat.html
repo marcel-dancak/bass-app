@@ -1,6 +1,4 @@
-<div
-  class="bass sounds-container"
-  ng-keyup="keyPressed($event)">
+<div class="bass sounds-container">
   <div class="string-container"
     ng-click="bassForm.openNew($event, vm.beat, bass)">
     <div
@@ -103,7 +101,7 @@
     drag="sound"
     drag-channel="bass.editor"
 
-    ng-click="selectSound($event, sound)"
+    ng-click="clickHandler.select($event, sound)"
     ng-right-click="bassForm.open($event, sound, bass)">
 
     <div class="top-label"></div>
@@ -124,7 +122,7 @@
       r-directions="['right']"
       on-resize="resizeHandler.onResize(sound, info)"
       on-resize-start="
-        selectSound({target: info.element[0]}, sound);
+        clickHandler.select({target: info.element[0]}, sound);
         resizeHandler.onResizeStart(sound, info)
       "
       on-resize-end="resizeHandler.onResizeEnd(sound, info, $event)"

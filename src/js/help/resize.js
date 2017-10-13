@@ -6,7 +6,7 @@
     .controller('ResizeSlideshow', ResizeSlideshow);
 
 
-  function ResizeSlideshow($scope, $element, $timeout, basicHandler, bassResizeHandler, workspace) {
+  function ResizeSlideshow($scope, $element, $timeout, bassEditor, workspace) {
 
     var editSound, editElem;
 
@@ -15,13 +15,13 @@
       editElem = angular.element(soundElem.querySelector('.resize-container'));
       editSound = editElem.scope().sound;
 
-      basicHandler.selectSound({target: soundElem}, editSound);
+      bassEditor.selector.select({target: soundElem}, editSound);
       editElem.addClass('hover');
       // this should be redesigned somehow
       if (!workspace.trackSection) {
         workspace.trackSection = $scope.workspace.trackSection;
       }
-      bassResizeHandler.onResizeStart(
+      bassEditor.resizeHandler.onResizeStart(
         editSound,
         {element: editElem, width: editElem[0].offsetWidth}
       );
@@ -29,7 +29,7 @@
     function resizeTo(factor) {
       var startWidth = editElem[0].clientWidth;
       var endWidth = startWidth * factor;
-      bassResizeHandler.onResize(
+      bassEditor.resizeHandler.onResize(
         editSound,
         {element: editElem, width: endWidth}
       );
@@ -37,7 +37,7 @@
     function finishResize() {
       // timeout is used for nicer animation
       $timeout(function() {
-        bassResizeHandler.onResizeEnd(
+        bassEditor.resizeHandler.onResizeEnd(
           editSound,
           {element: editElem},
           {stopPropagation: angular.noop}
@@ -105,7 +105,7 @@
       },
       /* Combine two sounds into the slide */
       function() {
-        basicHandler.clearSelection();
+        bassEditor.selector.clearSelection();
         editElem.removeClass('hover');
       },
       function() {
@@ -119,7 +119,7 @@
       },
       /* Clear bass sheet */
       function() {
-        basicHandler.clearSelection();
+        bassEditor.selector.clearSelection();
         $scope.workspace.trackSection.clearBeat($scope.workspace.trackSection.beat(1, 1));
         $scope.workspace.trackSection.clearBeat($scope.workspace.trackSection.beat(1, 2));
       }

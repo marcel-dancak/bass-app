@@ -5,7 +5,7 @@
     .module('bd.help')
     .controller('ComposedSounds', ComposedSounds);
 
-  function ComposedSounds($scope, $element, $timeout, basicHandler) {
+  function ComposedSounds($scope, $element, $timeout, bassEditor) {
 
     $scope.instructions = [
       function() {
@@ -45,12 +45,12 @@
       function() {
         var elem = $element[0].querySelectorAll('.sound-container')[1];
         var sound = angular.element(elem).scope().sound;
-        basicHandler.selectSound({target: elem}, sound);
+        bassEditor.selector.select({target: elem}, sound);
       },
       function() {
-        basicHandler.selected.sound.style = 'hammer';
-        basicHandler.soundStyleChanged('hammer');
-        basicHandler.clearSelection();
+        bassEditor.selector.last.sound.style = 'hammer';
+        bassEditor.soundStyleChanged(bassEditor.selector.last.sound);
+        bassEditor.selector.clearSelection();
       },
       function() {
         $scope.workspace.trackSection.clearBeat($scope.workspace.trackSection.beat(1, 1));

@@ -3,13 +3,13 @@
 
   angular
     .module('bd.app')
-    .factory('bassDragHandler', dragHandler)
-    .factory('basicHandler', basicHandler)
-
+    .factory('bassEditor', bassEditor)
 
   /***************** Private helper functions ******************/
 
-  function dragHandler(workspace, DragHandler, basicHandler) {
+  function bassEditor(workspace, Notes, SoundSelector, DragHandler, ResizeHandler) {
+    var selector = new SoundSelector();
+
     class BassDragHandler extends DragHandler {
 
       validateDrop(beat, string) {
@@ -37,47 +37,82 @@
 
       onDragStart(evt) {
         if (this.dragChannel !== 'instrument') {
-          basicHandler.selectSound(evt, this.dragSound);
+          selector.select(evt, this.dragSound);
         }
       }
 
       onDragEnd(evt, sound) {
-        basicHandler.selectSound(evt, sound, true);
+        selector.select(evt, sound, true);
       }
 
     }
-    return new BassDragHandler('bass');
-  }
+
+    function getSoundGrid(evt, beat) {
+      var container = evt.target.parentElement;
+
+      var box = container.getBoundingClientRect();
+      var x = evt.clientX - box.left;
+      var y = evt.clientY - box.top;
+
+      var subbeat = 1 + parseInt((x * beat.subdivision) / box.width);
+      var stringIndex = workspace.track.instrument.strings.length - 1 - parseInt(y / 36);
+      var string = workspace.track.instrument.strings[stringIndex];
+
+      return {
+        subbeat: subbeat,
+        string: string,
+        containerElem: container
+      };
+    }
+
+    function roundFloat(value) {
+      return parseFloat((value).toFixed(2))
+    }
 
 
-  function getSoundGrid(evt, beat) {
-    var container = evt.target.parentElement;
+    class BassResizeHandler extends ResizeHandler {
 
-    var box = container.getBoundingClientRect();
-    var x = evt.clientX - box.left;
-    var y = evt.clientY - box.top;
+      beforeResize(sound, info) {
+        console.log('bass beforeResize');
+      }
 
-    var subbeat = 1 + parseInt((x * beat.subdivision) / box.width);
-    var stringIndex = workspace.track.instrument.strings.length - 1 - parseInt(y / 36);
-    var string = workspace.track.instrument.strings[stringIndex];
+      afterResize(sound, info) {
+        function barPosition(beat, value) {
+          return (beat.bar - 1 ) * workspace.section.timeSignature.top + beat.beat - 1 + value;
+        }
+        var endPosition = barPosition(sound.beat, sound.end);
+        console.log(endPosition)
+        var beat = sound.beat;
+        var overlappingSound;
+
+
+        var sounds = [].concat(workspace.trackSection.beatSounds(beat));
+        while (beat && barPosition(beat, 1) < endPosition) {
+          beat = workspace.trackSection.nextBeat(beat);
+          Array.prototype.push.apply(sounds, workspace.trackSection.beatSounds(beat));
+        }
+
+        for (var i = 0; i < sounds.length; i++) {
+          var s = sounds[i];
+          if (s !== sound && s.string === sound.string && barPosition(s.beat, s.start) < endPosition && barPosition(s.beat, s.end) >= endPosition) {
+            overlappingSound = s;
+            break;
+          }
+        }
+        if (overlappingSound && !overlappingSound.next && overlappingSound.note && overlappingSound.note.type === 'regular') {
+          sound.note.type = 'slide';
+          sound.endNote = angular.copy(overlappingSound.note);
+          sound.note.slide = {};
+
+          workspace.trackSection.deleteSound(overlappingSound);
+        }
+      }
+    }
 
     return {
-      subbeat: subbeat,
-      string: string,
-      containerElem: container
-    };
-  }
-
-  function roundFloat(value) {
-    return parseFloat((value).toFixed(2))
-  }
-
-  function basicHandler(workspace, swiperControl, Notes, SoundSelector) {
-    var selector = new SoundSelector(swiperControl);
-
-    return {
-      selected: selector.last,
-      selectSound: selector.select.bind(selector),
+      selector: selector,
+      dragHandler: new BassDragHandler('bass'),
+      resizeHandler: new BassResizeHandler(),
       createSound: function(evt, beat) {
         var position = getSoundGrid(evt, beat);
         var sound = {
@@ -96,27 +131,27 @@
         workspace.trackSection.addSound(beat, sound);
         return sound;
       },
-      soundStyleChanged: function(style) {
+      soundStyleChanged: function(sound) {
+        var style = sound.style;
         if (style === 'hammer' || style === 'pull' || style === 'ring') {
-          var selectedSound = this.selected.sound;
-          var soundOnLeft = workspace.trackSection.prevSound(selectedSound);
+          var soundOnLeft = workspace.trackSection.prevSound(sound);
           if (soundOnLeft && soundOnLeft.note) {
             soundOnLeft.next = true;
-            selectedSound.prev = true;
+            sound.prev = true;
 
             if (style === 'ring') {
-              var ringNote = this.selected.sound.note;
+              var ringNote = sound.note;
               var prevNote = soundOnLeft.endNote || soundOnLeft.note;
-              var fretOffset = selectedSound.note.fret - prevNote.fret;
+              var fretOffset = sound.note.fret - prevNote.fret;
               if (fretOffset === 0) {
-                angular.merge(selectedSound.note, {
+                angular.merge(sound.note, {
                   type: 'regular',
                   fret: prevNote.fret,
                   name: prevNote.name,
                   octave: prevNote.octave,
                 });
               } else {
-                selectedSound.note = {
+                sound.note = {
                   type: 'slide',
                   fret: prevNote.fret,
                   name: prevNote.name,
@@ -128,7 +163,7 @@
                     end: 0.85
                   }
                 };
-                selectedSound.endNote = {
+                sound.endNote = {
                   fret: ringNote.fret,
                   name: ringNote.name,
                   octave: ringNote.octave
@@ -136,12 +171,12 @@
               }
             }
           } else {
-            this.selected.sound.style = 'finger';
+            sound.style = 'finger';
           }
         } else {
-          if (this.selected.sound.prev) {
-            delete workspace.trackSection.prevSound(this.selected.sound).next;
-            delete this.selected.sound.prev;
+          if (sound.prev) {
+            delete workspace.trackSection.prevSound(sound).next;
+            delete sound.prev;
           }
         }
       },
@@ -190,8 +225,8 @@
       },
       keyPressed: function(evt) {
         console.log(evt.keyCode);
-        if (this.selected.sound) {
-          var sound = this.selected.sound;
+        if (selector.last.sound) {
+          var sound = selector.last.sound;
           switch (evt.keyCode) {
             case 46: // Del
               selector.forSelectedSound(workspace.trackSection.deleteSound);
@@ -199,15 +234,15 @@
               break;
             case 72: // h
               sound.style = 'hammer';
-              this.soundStyleChanged('hammer');
+              this.soundStyleChanged(sound);
               break;
             case 80: // p
               sound.style = 'pull';
-              this.soundStyleChanged('pull');
+              this.soundStyleChanged(sound);
               break;
              case 82: // r
               sound.style = 'ring';
-              this.soundStyleChanged('ring');
+              this.soundStyleChanged(sound);
               break;
              case 190: // .
               if (sound.note.type !== 'ghost' && !sound.next) {
@@ -253,51 +288,5 @@
       }
     }
   }
-
-    function bassResizeHandler(ResizeHandler, workspace) {
-      class BassResizeHandler extends ResizeHandler {
-
-        beforeResize(sound, info) {
-          console.log('bass beforeResize');
-        }
-
-        afterResize(sound, info) {
-          function barPosition(beat, value) {
-            return (beat.bar - 1 ) * workspace.section.timeSignature.top + beat.beat - 1 + value;
-          }
-          var endPosition = barPosition(sound.beat, sound.end);
-          console.log(endPosition)
-          var beat = sound.beat;
-          var overlappingSound;
-
-
-          var sounds = [].concat(workspace.trackSection.beatSounds(beat));
-          while (beat && barPosition(beat, 1) < endPosition) {
-            beat = workspace.trackSection.nextBeat(beat);
-            Array.prototype.push.apply(sounds, workspace.trackSection.beatSounds(beat));
-          }
-
-          for (var i = 0; i < sounds.length; i++) {
-            var s = sounds[i];
-            if (s !== sound && s.string === sound.string && barPosition(s.beat, s.start) < endPosition && barPosition(s.beat, s.end) >= endPosition) {
-              overlappingSound = s;
-              break;
-            }
-          }
-          if (overlappingSound && !overlappingSound.next && overlappingSound.note && overlappingSound.note.type === 'regular') {
-            sound.note.type = 'slide';
-            sound.endNote = angular.copy(overlappingSound.note);
-            sound.note.slide = {};
-
-            workspace.trackSection.deleteSound(overlappingSound);
-          }
-        }
-      }
-      return new BassResizeHandler();
-    }
-
-  angular
-    .module('bd.app')
-    .factory('bassResizeHandler', bassResizeHandler)
 
 })();

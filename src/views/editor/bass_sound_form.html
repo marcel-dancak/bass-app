@@ -11,7 +11,7 @@
         flex
         md-no-ink
         ng-model="sound.style"
-        md-on-close="soundStyleChanged(sound.style)">
+        md-on-close="soundStyleChanged(sound)">
         <md-option
           ng-repeat="style in ::playingStyles"
           ng-value="::style.name"

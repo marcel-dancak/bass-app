@@ -32,7 +32,7 @@
         config: '=bdHelpBassSheet'
       },
       template: '',
-      controller: function($scope, $element, $mdCompiler, Bass, TrackSection, basicHandler) {
+      controller: function($scope, $element, $mdCompiler, Bass, TrackSection, bassEditor) {
         function createSlide(beat) {
           return {
             id: beat,
@@ -48,7 +48,7 @@
             bottom: numbers[1]
           };
           $scope.workspace = {
-            selected: basicHandler.selected,
+            selected: bassEditor.selector.last,
             section: {
               timeSignature: timeSignature,
               length: config.length || 1
