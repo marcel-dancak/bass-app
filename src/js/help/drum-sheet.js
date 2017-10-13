@@ -35,7 +35,7 @@
         config: '=bdHelpDrumSheet'
       },
       template: '',
-      controller: function($scope, $element, $mdCompiler, Drums, DrumTrackSection, basicHandler) {
+      controller: function($scope, $element, $mdCompiler, Drums, DrumTrackSection) {
         function createSlide(beat) {
           return {
             id: beat,
@@ -52,7 +52,6 @@
           var drumKit = Drums.Drums.slice(4);
           Drums.createIndex(drumKit);
           $scope.workspace = {
-            selected: basicHandler.selected,
             section: {
               timeSignature: timeSignature,
               length: config.length || 1

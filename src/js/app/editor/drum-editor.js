@@ -4,7 +4,7 @@
   angular
     .module('bd.app')
 
-    .factory('drumHandler', drumHandler)
+    .factory('drumEditor', drumEditor)
     .controller('DrumController', DrumController)
 
     .component('drumBeat', {
@@ -38,7 +38,7 @@
   };
 
 
-  function drumHandler(workspace, $mdUtil, $rootScope) {
+  function drumEditor(workspace, $mdUtil, $rootScope) {
     var dragSound;
 
     document.body.appendChild(dragBox.elem);
@@ -178,8 +178,8 @@
   }
 
 
-  function DrumController($scope, drumHandler) {
-    $scope.editor = drumHandler;
+  function DrumController($scope, drumEditor) {
+    $scope.editor = drumEditor;
   }
 
 })();

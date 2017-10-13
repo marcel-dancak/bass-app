@@ -91,12 +91,17 @@
 
 
   function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
-              projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer, DragHandler, dragablePanel) {
+              projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer, DragHandler, dragablePanel,
+              bassEditor, pianoEditor) {
 
     DragHandler.initialize('.instrument-grid', $scope);
     audioPlayer.setPlaybackSpeed(1);
     $scope.swiperControl = swiperControl;
     $scope.slides = [];
+    var keyHandlers = {
+      bass: bassEditor,
+      piano: pianoEditor
+    };
 
     if (!$scope.editor) {
       $scope.$root.editor = {
@@ -640,8 +645,20 @@
       $scope.player.progress.update(sw.snapIndex);
     }
 
+
+    function keyPressed(evt) {
+      var handler = keyHandlers[workspace.track.type];
+      if (handler) {
+        $scope.$apply(function() {
+          handler.keyPressed(evt);
+        });
+      }
+    }
+    window.addEventListener('keydown', keyPressed);
+
     $scope.$on('$destroy', function() {
       projectManager.un('sectionLoaded', sectionLoaded);
+      window.removeEventListener('keydown', keyPressed);
       // audioPlayer.un('playbackStopped', playbackStopped);
     });
     window.sw = swiperControl;

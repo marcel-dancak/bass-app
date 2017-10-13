@@ -1,6 +1,4 @@
-<div
-  ng-keydown="eventHandler.keyPressed($event)"
-  class="sounds-container">
+<div class="sounds-container">
 
   <div layout="column">
     <div
@@ -30,8 +28,7 @@
     ui-draggable="true"
     drag="sound"
     drag-channel="piano.editor"
-    ng-click="eventHandler.select($event, sound)"
-    >
+    ng-click="clickHandler.select($event, sound)">
 
     <div
       class="resize-container"
