@@ -229,7 +229,7 @@
           var sound = selector.last.sound;
           switch (evt.keyCode) {
             case 46: // Del
-              selector.forSelectedSound(workspace.trackSection.deleteSound);
+              selector.forSelectedSound(workspace.trackSection.deleteSound, workspace.trackSection);
               selector.clearSelection();
               break;
             case 72: // h

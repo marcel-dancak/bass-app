@@ -80,7 +80,7 @@
         if (sound) {
           switch (evt.keyCode) {
             case 46: // Del
-              selector.forSelectedSound(workspace.trackSection.deleteSound);
+              selector.forSelectedSound(workspace.trackSection.deleteSound, workspace.trackSection);
               break;
             case 84: // t
               console.log(JSON.stringify(sound));
@@ -102,7 +102,7 @@
               sound.note.staccato = !sound.note.staccato;
               break;
             case 109: // -
-              elector.forSelectedSound((sound) => {
+              selector.forSelectedSound((sound) => {
                 sound.volume = Math.max(0, parseFloat((sound.volume-0.05).toFixed(2)));
                 console.log(sound.volume);
               });

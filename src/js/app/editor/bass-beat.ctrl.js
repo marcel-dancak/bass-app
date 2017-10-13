@@ -59,12 +59,6 @@
 
   function BassFormController($scope, $timeout, Note, sound, string, audioPlayer, bassEditor, mdPanelRef) {
     $scope.Note = Note;
-    $scope.keyPressed = function(evt) {
-      bassEditor.keyPressed(evt);
-      if (evt.keyCode === 46) {
-        mdPanelRef.close();
-      }
-    };
 
     $scope.soundStyleChanged = bassEditor.soundStyleChanged.bind(bassEditor);
 
