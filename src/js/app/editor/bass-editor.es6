@@ -50,20 +50,6 @@
   }
 
 
-  function soundContainerElem(elem) {
-    var e = elem;
-    var maxDepth = 10;
-    while (e.className.indexOf("sound-container") === -1) {
-      //console.log(e.className);
-      e = e.parentElement;
-      if (maxDepth-- === 0) {
-        return null;
-      };
-    }
-    return e;
-  }
-
-
   function getSoundGrid(evt, beat) {
     var container = evt.target.parentElement;
 
@@ -86,13 +72,12 @@
     return parseFloat((value).toFixed(2))
   }
 
-  function basicHandler(workspace, swiperControl, Notes) {
+  function basicHandler(workspace, swiperControl, Notes, SoundSelector) {
+    var selector = new SoundSelector(swiperControl);
 
     return {
-      selected: {
-        sound: null,
-        element: null
-      },
+      selected: selector.last,
+      selectSound: selector.select.bind(selector),
       createSound: function(evt, beat) {
         var position = getSoundGrid(evt, beat);
         var sound = {
@@ -111,25 +96,6 @@
         workspace.trackSection.addSound(beat, sound);
         return sound;
       },
-      selectSound: function(evt, sound, focus) {
-        console.log('selectSound');
-        this.clearSelection();
-
-        this.selected.sound = sound;
-        this.selected.element = evt? soundContainerElem(evt.target) : swiperControl.getSoundElem(sound);
-        this.selected.element.classList.add('selected');
-        if (focus) {
-          this.selected.element.focus();
-        }
-      },
-      clearSelection: function() {
-        if (this.selected.element) {
-          this.selected.element.classList.remove('selected');
-        }
-        this.selected.sound = null;
-        this.selected.element = null;
-      },
-
       soundStyleChanged: function(style) {
         if (style === 'hammer' || style === 'pull' || style === 'ring') {
           var selectedSound = this.selected.sound;
@@ -202,14 +168,34 @@
         }
       },
 
+      transposeUp: function(sound) {
+        if (sound.note.type === 'regular' && sound.note.fret < 24) {
+          sound.note.fret++;
+          var bassString = workspace.trackSection.instrument.strings[sound.string];
+          var note = bassString.notes[sound.note.fret];
+          sound.note.name = note.label[0];
+          sound.note.octave = note.octave;
+          this.soundLabelChanged(sound)
+        }
+      },
+      transposeDown: function(sound) {
+        if (sound.note.type === 'regular' && sound.note.fret > 0) {
+          sound.note.fret--;
+          var bassString = workspace.trackSection.instrument.strings[sound.string];
+          var note = bassString.notes[sound.note.fret];
+          sound.note.name = note.label[0];
+          sound.note.octave = note.octave;
+          this.soundLabelChanged(sound)
+        }
+      },
       keyPressed: function(evt) {
         console.log(evt.keyCode);
         if (this.selected.sound) {
           var sound = this.selected.sound;
           switch (evt.keyCode) {
             case 46: // Del
-              workspace.trackSection.deleteSound(sound);
-              this.clearSelection();
+              selector.forSelectedSound(workspace.trackSection.deleteSound);
+              selector.clearSelection();
               break;
             case 72: // h
               sound.style = 'hammer';
@@ -229,30 +215,20 @@
               }
               break;
              case 38: // up
-              if (sound.note.type === 'regular' && sound.note.fret < 24) {
-                sound.note.fret++;
-                var bassString = workspace.trackSection.instrument.strings[sound.string];
-                var note = bassString.notes[sound.note.fret];
-                sound.note.name = note.label[0];
-                sound.note.octave = note.octave;
-                this.soundLabelChanged(sound)
-              }
+              selector.forSelectedSound(this.transposeUp, this);
               break;
              case 40: // down
-              if (sound.note.type === 'regular' && sound.note.fret > 0) {
-                sound.note.fret--;
-                var bassString = workspace.trackSection.instrument.strings[sound.string];
-                var note = bassString.notes[sound.note.fret];
-                sound.note.name = note.label[0];
-                sound.note.octave = note.octave;
-                this.soundLabelChanged(sound)
-              }
+              selector.forSelectedSound(this.transposeDown, this);
               break;
             case 109: // -
-              sound.volume = Math.max(0, roundFloat(sound.volume-0.05));
+              selector.forSelectedSound((sound) => {
+                sound.volume = Math.max(0, roundFloat(sound.volume-0.05));
+              });
               break;
             case 107: // +
-              sound.volume = Math.min(1.0, roundFloat(sound.volume+0.05));
+              selector.forSelectedSound((sound) => {
+                sound.volume = Math.min(1.0, roundFloat(sound.volume+0.05));
+              });
               break;
             case 37: // left
               workspace.trackSection.offsetSound(sound, -0.01);
@@ -261,13 +237,15 @@
               workspace.trackSection.offsetSound(sound, 0.01);
               break;
             case 76: // l
-              if (sound.note.name.endsWith('♯')) {
-                sound.note.name = Notes.toFlat(sound.note.name);
-                this.soundLabelChanged(sound)
-              } else if (sound.note.name.endsWith('♭')) {
-                sound.note.name = Notes.toSharp(sound.note.name);
-                this.soundLabelChanged(sound)
-              }
+              selector.forSelectedSound((sound) => {
+                if (sound.note.name.endsWith('♯')) {
+                  sound.note.name = Notes.toFlat(sound.note.name);
+                  this.soundLabelChanged(sound)
+                } else if (sound.note.name.endsWith('♭')) {
+                  sound.note.name = Notes.toSharp(sound.note.name);
+                  this.soundLabelChanged(sound)
+                }
+              }, this)
               evt.preventDefault();
               return false;
           }
@@ -276,7 +254,7 @@
     }
   }
 
-    function bassResizeHandler(ResizeHandler, eventHandler, workspace) {
+    function bassResizeHandler(ResizeHandler, workspace) {
       class BassResizeHandler extends ResizeHandler {
 
         beforeResize(sound, info) {
@@ -298,11 +276,10 @@
             beat = workspace.trackSection.nextBeat(beat);
             Array.prototype.push.apply(sounds, workspace.trackSection.beatSounds(beat));
           }
-          console.log(sounds);
+
           for (var i = 0; i < sounds.length; i++) {
             var s = sounds[i];
             if (s !== sound && s.string === sound.string && barPosition(s.beat, s.start) < endPosition && barPosition(s.beat, s.end) >= endPosition) {
-              console.log('overlapping');
               overlappingSound = s;
               break;
             }
