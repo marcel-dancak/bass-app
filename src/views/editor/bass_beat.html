@@ -101,7 +101,7 @@
     drag="sound"
     drag-channel="bass.editor"
 
-    ng-click="clickHandler.select($event, sound)"
+    ng-click="clickHandler.clickSelect($event, sound)"
     ng-right-click="bassForm.open($event, sound, bass)">
 
     <div class="top-label"></div>
@@ -122,7 +122,7 @@
       r-directions="['right']"
       on-resize="resizeHandler.onResize(sound, info)"
       on-resize-start="
-        clickHandler.select({target: info.element[0]}, sound);
+        clickHandler.select(info.element[0], sound);
         resizeHandler.onResizeStart(sound, info)
       "
       on-resize-end="resizeHandler.onResizeEnd(sound, info, $event)"

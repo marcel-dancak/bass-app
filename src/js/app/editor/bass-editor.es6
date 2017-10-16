@@ -37,12 +37,12 @@
 
       onDragStart(evt) {
         if (this.dragChannel !== 'instrument') {
-          selector.select(evt, this.dragSound);
+          selector.clickSelect(evt, this.dragSound);
         }
       }
 
       onDragEnd(evt, sound) {
-        selector.select(evt, sound, true);
+        selector.clickSelect(evt, sound);
       }
 
     }

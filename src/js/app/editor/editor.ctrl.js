@@ -656,6 +656,28 @@
     }
     window.addEventListener('keydown', keyPressed);
 
+    $scope.onSelected = function(selection) {
+      var x1 = selection.x;
+      var y1 = selection.y;
+      var x2 = selection.x + selection.width;
+      var y2 = selection.y + selection.height;
+
+      var visibleSoundElems = Array.from(document.querySelectorAll('.sound-container'));
+      var selection = visibleSoundElems
+        .filter(function(el) {
+          var bounds = el.getBoundingClientRect();
+          return bounds.left >= x1 && bounds.right <= x2 && bounds.top >= y1 && bounds.bottom <= y2;
+        })
+        .map(function(el) {
+          return {
+            element: el,
+            sound: angular.element(el).scope().sound
+          }
+        });
+      var instrumentHandler = keyHandlers[workspace.track.type];
+      instrumentHandler.selector.selectMultiple(selection);
+    }
+
     $scope.$on('$destroy', function() {
       projectManager.un('sectionLoaded', sectionLoaded);
       window.removeEventListener('keydown', keyPressed);

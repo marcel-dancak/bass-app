@@ -38,28 +38,47 @@
       });
     }
 
-    select(evt, sound, focus) {
-      if (!evt.ctrlKey) {
+    select(element, sound, flags) {
+      var element = soundContainerElem(element); // || swiperControl.getSoundElem(sound)
+      flags = flags || {};
+      if (!flags.add && !flags.toggle) {
         this.clearSelection();
-      } else {
-        var index = this.all.findIndex((item) => {
-          return item.sound === sound;
-        });
-        // if already selected, revert selection
-        if (index !== -1) {
-          this.all[index].element.classList.remove('selected');
-          this.all.splice(index, 1);
-          return;
-        }
+      }
+
+      var index = this.all.findIndex((item) => {
+        return item.sound === sound;
+      });
+      // if already selected, revert selection
+      if (flags.toggle && index !== -1) {
+        this.all[index].element.classList.remove('selected');
+        this.all.splice(index, 1);
+        return;
       }
 
       this.last.sound = sound;
-      this.last.element = evt? soundContainerElem(evt.target) : swiperControl.getSoundElem(sound);
-      this.last.element.classList.add('selected');
-      if (focus) {
-        this.last.element.focus();
+      this.last.element = element;
+
+      if (index === -1) {
+        this.last.element.classList.add('selected');
+        this.all.push(Object.assign({}, this.last));
       }
-      this.all.push(Object.assign({}, this.last));
+    }
+
+    clickSelect(evt, sound) {
+      this.select(evt.target, sound, { toggle: evt.ctrlKey });
+    }
+
+    selectMultiple(selection, flags) {
+      flags = flags || {};
+
+      if (!flags.add && !flags.toggle) {
+        this.clearSelection();
+      }
+
+      flags.add = true;
+      selection.forEach(function(item) {
+        this.select(item.element, item.sound, flags);
+      }, this);
     }
 
     clearSelection() {

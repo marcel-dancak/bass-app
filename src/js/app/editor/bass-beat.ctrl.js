@@ -189,7 +189,7 @@
         if (!appContextMenuHandler || window.oncontextmenu !== customContextMenuHandler) {
           appContextMenuHandler = window.oncontextmenu;
         }
-        bassEditor.selector.select(evt, sound);
+        bassEditor.selector.clickSelect(evt, sound);
 
         var position = $mdPanel.newPanelPosition()
           .relativeTo(evt.target)

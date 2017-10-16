@@ -446,6 +446,10 @@ md-option {
 .instrument-slide.swiper-slide:not(.swiper-slide-visible) > div  {
   display: none;
 }
+.instrument.swiper-container {
+  -webkit-user-select: none;
+  user-select: none;
+}
 
 
 md-menu-content,
@@ -1077,4 +1081,11 @@ md-sidenav md-list-item.strong .md-list-item-inner {
 
 input[type=number] {
   -moz-appearance: textfield!important;
+}
+
+.selection-box {
+  border: 1px solid #FF9800;
+  background-color: #FFF9C4;
+  opacity: 0.5;
+  z-index: 1000;
 }

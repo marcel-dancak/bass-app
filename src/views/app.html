@@ -75,8 +75,10 @@
   </div>
   <div pretty-scrollbar
     class="flex layout-column workspace">
-    <div flex="none"
-      class="instrument-grid"
+    <div
+      bd-area-selector
+      on-selected="onSelected(selection)"
+      class="instrument-grid flex-none"
       ng-class="[
         bass.settings.label,
         'strings-'+workspace.track.instrument.strings.length,

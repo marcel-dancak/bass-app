@@ -23,7 +23,7 @@
     class PianoResizeHandler extends ResizeHandler {
 
       beforeResize(sound, info) {
-        selector.select({target: info.element[0]}, sound);
+        selector.select(info.element[0], sound);
         selector.last.element.appendChild(this.resizeBox.elem);
       }
 
@@ -48,12 +48,12 @@
 
       onDragStart(evt) {
         if (this.dragChannel !== 'instrument') {
-          selector.select(evt, this.dragSound);
+          selector.clickSelect(evt, this.dragSound);
         }
       }
 
       onDragEnd(evt, sound) {
-        selector.select(evt, sound);
+        selector.clickSelect(evt, sound);
       }
     }
 
@@ -63,6 +63,9 @@
       var index = piano.stringIndex(sound.note);
       var transposedNote = piano.notes.list[index + step];
       if (transposedNote) {
+        if (sound.next) {
+          transpose(workspace.trackSection.nextSound(sound), step);
+        }
         sound.note.name = transposedNote.label[0];
         sound.note.octave = transposedNote.octave;
         sound.string = sound.note.name + sound.note.octave;
@@ -115,12 +118,16 @@
               break;
              case 38: // up
               selector.forSelectedSound((sound) => {
-                transpose(sound, 1);
+                if (!sound.prev) {
+                  transpose(sound, 1);
+                }
               }, this);
               break;
              case 40: // down
               selector.forSelectedSound((sound) => {
-                transpose(sound, -1);
+                if (!sound.prev) {
+                  transpose(sound, -1);
+                }
               }, this);
               break;
             case 37: // left
