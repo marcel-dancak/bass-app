@@ -15,7 +15,7 @@
       editElem = angular.element(soundElem.querySelector('.resize-container'));
       editSound = editElem.scope().sound;
 
-      bassEditor.selector.select({target: soundElem}, editSound);
+      bassEditor.selector.select(editSound);
       editElem.addClass('hover');
       // this should be redesigned somehow
       if (!workspace.trackSection) {

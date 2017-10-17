@@ -85,7 +85,8 @@
     ng-repeat="sound in vm.beat.data track by (sound.string + sound.start)"
     class="sound-container"
     ng-class="[{
-        staccato: sound.note.staccato
+        staccato: sound.note.staccato,
+        selected: sound.selected
       },
       sound.note.type,
       sound.style,
@@ -122,7 +123,7 @@
       r-directions="['right']"
       on-resize="resizeHandler.onResize(sound, info)"
       on-resize-start="
-        clickHandler.select(info.element[0], sound);
+        clickHandler.select(sound);
         resizeHandler.onResizeStart(sound, info)
       "
       on-resize-end="resizeHandler.onResizeEnd(sound, info, $event)"

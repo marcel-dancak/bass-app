@@ -6,9 +6,6 @@
     .controller('BassBeatController', BassBeatController)
     .controller('BassFormController', BassFormController)
     .factory('bassSoundForm', bassSoundForm)
-    .run(function(workspace, bassEditor) {
-      workspace.selected = bassEditor.selector.last;
-    })
     .component('bassBeat', {
       scope: false,
       templateUrl: 'views/editor/bass_beat.html',

@@ -23,8 +23,7 @@
     class PianoResizeHandler extends ResizeHandler {
 
       beforeResize(sound, info) {
-        selector.select(info.element[0], sound);
-        selector.last.element.appendChild(this.resizeBox.elem);
+        selector.select(sound);
       }
 
     }
@@ -78,12 +77,12 @@
       resizeHandler: new PianoResizeHandler(),
       dragHandler: new PianoDragHandler('piano'),
       keyPressed: function(evt) {
-        var sound = selector.last.sound;
+        var sound = selector.last;
         console.log(evt.keyCode)
         if (sound) {
           switch (evt.keyCode) {
             case 46: // Del
-              selector.forSelectedSound(workspace.trackSection.deleteSound, workspace.trackSection);
+              selector.all.forEach(workspace.trackSection.deleteSound, workspace.trackSection);
               break;
             case 84: // t
               console.log(JSON.stringify(sound));
@@ -105,26 +104,26 @@
               sound.note.staccato = !sound.note.staccato;
               break;
             case 109: // -
-              selector.forSelectedSound((sound) => {
+              selector.all.forEach((sound) => {
                 sound.volume = Math.max(0, parseFloat((sound.volume-0.05).toFixed(2)));
                 console.log(sound.volume);
               });
               break;
             case 107: // +
-              selector.forSelectedSound((sound) => {
+              selector.all.forEach((sound) => {
                 sound.volume = Math.min(1.0, parseFloat((sound.volume+0.05).toFixed(2)));
                 console.log(sound.volume);
               });
               break;
              case 38: // up
-              selector.forSelectedSound((sound) => {
+              selector.all.forEach((sound) => {
                 if (!sound.prev) {
                   transpose(sound, 1);
                 }
               }, this);
               break;
              case 40: // down
-              selector.forSelectedSound((sound) => {
+              selector.all.forEach((sound) => {
                 if (!sound.prev) {
                   transpose(sound, -1);
                 }

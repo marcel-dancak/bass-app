@@ -224,12 +224,11 @@
         }
       },
       keyPressed: function(evt) {
-        console.log(evt.keyCode);
-        if (selector.last.sound) {
-          var sound = selector.last.sound;
+        if (selector.last) {
+          var sound = selector.last;
           switch (evt.keyCode) {
             case 46: // Del
-              selector.forSelectedSound(workspace.trackSection.deleteSound, workspace.trackSection);
+              selector.all.forEach(workspace.trackSection.deleteSound, workspace.trackSection);
               selector.clearSelection();
               break;
             case 72: // h
@@ -250,29 +249,39 @@
               }
               break;
              case 38: // up
-              selector.forSelectedSound(this.transposeUp, this);
+              selector.all.forEach(this.transposeUp, this);
               break;
              case 40: // down
-              selector.forSelectedSound(this.transposeDown, this);
+              selector.all.forEach(this.transposeDown, this);
+              break;
+            case 37: // left
+              if (evt.altKey) {
+                workspace.trackSection.offsetSound(sound, -0.01);
+              } else {
+                selector.all.forEach(this.shiftLeft, this);
+              }
+              evt.preventDefault();
+              break;
+            case 39: // right
+              if (evt.altKey) {
+                workspace.trackSection.offsetSound(sound, 0.01);
+              } else {
+                selector.all.forEach(this.shiftRight, this);
+              }
+              evt.preventDefault();
               break;
             case 109: // -
-              selector.forSelectedSound((sound) => {
+              selector.all.forEach((sound) => {
                 sound.volume = Math.max(0, roundFloat(sound.volume-0.05));
               });
               break;
             case 107: // +
-              selector.forSelectedSound((sound) => {
+              selector.all.forEach((sound) => {
                 sound.volume = Math.min(1.0, roundFloat(sound.volume+0.05));
               });
               break;
-            case 37: // left
-              workspace.trackSection.offsetSound(sound, -0.01);
-              break;
-            case 39: // right
-              workspace.trackSection.offsetSound(sound, 0.01);
-              break;
             case 76: // l
-              selector.forSelectedSound((sound) => {
+              selector.all.forEach((sound) => {
                 if (sound.note.name.endsWith('♯')) {
                   sound.note.name = Notes.toFlat(sound.note.name);
                   this.soundLabelChanged(sound)
@@ -281,9 +290,10 @@
                   this.soundLabelChanged(sound)
                 }
               }, this)
-              evt.preventDefault();
-              return false;
+              break;
           }
+          // evt.preventDefault();
+          // return false;
         }
       }
     }

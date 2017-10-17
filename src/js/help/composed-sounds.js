@@ -45,11 +45,11 @@
       function() {
         var elem = $element[0].querySelectorAll('.sound-container')[1];
         var sound = angular.element(elem).scope().sound;
-        bassEditor.selector.select({target: elem}, sound);
+        bassEditor.selector.select(sound);
       },
       function() {
-        bassEditor.selector.last.sound.style = 'hammer';
-        bassEditor.soundStyleChanged(bassEditor.selector.last.sound);
+        bassEditor.selector.last.style = 'hammer';
+        bassEditor.soundStyleChanged(bassEditor.selector.last);
         bassEditor.selector.clearSelection();
       },
       function() {

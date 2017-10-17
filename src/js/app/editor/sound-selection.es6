@@ -20,52 +20,41 @@
 
   class SoundSelector {
 
-    constructor(swiperControl) {
-      this.swiperControl = swiperControl;
+    constructor() {
       this.all = [];
-      this.last = {
-        sound: null,
-        element: null
-      };
+      this.last = null;
     }
 
-    forSelectedSound(fn, obj) {
-      if (obj) {
-        fn = fn.bind(obj);
-      }
-      this.all.forEach((item) => {
-        fn(item.sound);
-      });
-    }
-
-    select(element, sound, flags) {
-      var element = soundContainerElem(element); // || swiperControl.getSoundElem(sound)
+    select(sound, flags) {
       flags = flags || {};
       if (!flags.add && !flags.toggle) {
         this.clearSelection();
       }
 
-      var index = this.all.findIndex((item) => {
-        return item.sound === sound;
-      });
+      var index = this.all.indexOf(sound);
       // if already selected, revert selection
       if (flags.toggle && index !== -1) {
-        this.all[index].element.classList.remove('selected');
+        this.all[index].selected = false;
         this.all.splice(index, 1);
+        if (this.last === sound) {
+          this.last = null;
+        }
         return;
       }
 
-      this.last.sound = sound;
-      this.last.element = element;
+      if (sound.selected === undefined) {
+        Object.defineProperty(sound, 'selected', {value: 'static', writable: true});
+      }
+      sound.selected = true;
+      this.last = sound;
 
       if (index === -1) {
-        this.last.element.classList.add('selected');
-        this.all.push(Object.assign({}, this.last));
+        this.all.push(this.last);
       }
     }
 
     clickSelect(evt, sound) {
-      this.select(evt.target, sound, { toggle: evt.ctrlKey });
+      this.select(sound, { toggle: evt.ctrlKey });
     }
 
     selectMultiple(selection, flags) {
@@ -76,19 +65,18 @@
       }
 
       flags.add = true;
-      selection.forEach(function(item) {
-        this.select(item.element, item.sound, flags);
+      selection.forEach(function(s) {
+        this.select(s, flags);
       }, this);
     }
 
     clearSelection() {
-      this.all.forEach((item) => {
-        item.element.classList.remove('selected');
+      this.all.forEach((s) => {
+        s.selected = false;
       });
       this.all.length = 0;
 
-      this.last.sound = null;
-      this.last.element = null;
+      this.last = null;
     }
   }
 

@@ -19,6 +19,7 @@
   <div
     ng-repeat="sound in vm.beat.data track by (sound.string + sound.start)"
     class="sound-container"
+    ng-class="{ selected: sound.selected }"
     ng-attr-octave="{{ sound.note.octave }}"
     ng-style="{
       bottom: (15*vm.instrument.stringIndex(sound.note))+'px',
