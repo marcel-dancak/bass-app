@@ -244,12 +244,11 @@
 
 
     function playSection(start, startTime) {
-      start = start || { bar: 1, beat: 1 };
       var section = playlist[playbackState.section];
       audioPlayer.setBpm(section.bpm);
 
       audioPlayer.playbackRange = {
-        start: start,
+        start: start || { bar: 1, beat: 1 },
         end: {
           bar: section.length,
           beat: section.timeSignature.top
@@ -258,8 +257,8 @@
       // audioPlayer.countdown = $scope.player.countdown;
       timeline.start();
       var options = {
-        countdown: $scope.player.countdown && (angular.isDefined(start) || playbackState.section === 0),
-        start: start,
+        countdown: $scope.player.countdown && (Boolean(start) || playbackState.section === 0),
+        start: audioPlayer.playbackRange.start,
         startTime: startTime
       }
 
