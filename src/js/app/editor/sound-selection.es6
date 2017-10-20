@@ -5,19 +5,6 @@
     .module('bd.app')
 
 
-  function soundContainerElem(elem) {
-    var e = elem;
-    var maxDepth = 10;
-    while (e.className.indexOf("sound-container") === -1) {
-      //console.log(e.className);
-      e = e.parentElement;
-      if (maxDepth-- === 0) {
-        return null;
-      };
-    }
-    return e;
-  }
-
   class SoundSelector {
 
     constructor() {
@@ -37,7 +24,7 @@
         this.all[index].selected = false;
         this.all.splice(index, 1);
         if (this.last === sound) {
-          this.last = null;
+          this.last = this.all[this.all.length-1];
         }
         return;
       }
