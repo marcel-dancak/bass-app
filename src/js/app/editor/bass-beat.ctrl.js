@@ -94,7 +94,7 @@
     };
 
     $scope.soundLengthChanged = function(sound) {
-      sound.end = sound.start + workspace.trackSection.soundDuration(sound);
+      bassEditor.resizeHandler.resizeSound(sound, sound.note.length, sound.note.dotted);
     };
 
     $scope.noteTypeChanged = function() {

@@ -83,8 +83,8 @@
           if (!s) break;
           dependencies.push(s);
         }
-        sound.note.length = resizeLength.length;
-        sound.note.dotted = resizeLength.dotted;
+        sound.note.length = length;
+        sound.note.dotted = dotted;
 
         var duration = workspace.trackSection.soundDuration(sound);
         sound.end = sound.start + duration;
@@ -111,7 +111,6 @@
       onResizeStart(sound, info) {
         var soundElem = info.element[0].parentElement;
         this.beforeResize(sound, info);
-        this.resizeBox.setPxStyles({height: soundElem.offsetHeight});
         soundElem.appendChild(this.resizeBox.elem);
 
         var beatWidth = soundElem.parentElement.clientWidth;
