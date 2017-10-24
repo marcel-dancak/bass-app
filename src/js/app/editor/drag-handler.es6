@@ -41,12 +41,12 @@
             dragSoundElem.appendChild(document.createTextNode(label));
           }
           dragSoundElem.style.transform = 'scale3d({0}, {0}, 1)'.format(window.scale || 1);
-          dragSoundElem.style.width = evt.target.clientWidth + 'px';
-          dragSoundElem.style.height = evt.target.clientHeight + 'px';
+          dragSoundElem.style.width = evt.target.offsetWidth + 'px';
+          dragSoundElem.style.height = evt.target.offsetHeight + 'px';
           dragElem.appendChild(dragSoundElem);
 
           workspaceElem.appendChild(dragElem);
-          evt.dataTransfer.setDragImage(dragElem, 10, evt.target.clientHeight/2);
+          evt.dataTransfer.setDragImage(dragElem, 10, evt.target.offsetHeight/2);
 
           dragBox = angular.element('<div class="drag-box"></div>');
           document.body.appendChild(dragBox[0]);
@@ -88,7 +88,7 @@
             workspace.trackSection.deleteSound(dragSound);
           }
           workspace.trackSection.addSound(dropArea.beat, sound);
-          return sound;
+          return [sound];
         },
         onDragEnd: function(evt) {
           if (dragSound.elem) {
@@ -156,6 +156,7 @@
           var dragElemHeight = srcDragElems[0].offsetHeight;
           dragElem.style.height = dragElemHeight+'px';
           dragElem.style.paddingTop = '32px';
+          dragElem.style.marginTop = '-32px';
 
           workspaceElem.appendChild(dragElem);
 
@@ -217,7 +218,7 @@
           if (evt.dataTransfer.dropEffect === "move") {
             workspace.trackSection.deleteSound(sounds[0]);
           }
-          return createdSounds[0];
+          return createdSounds;
         },
         onDragEnd: function(evt) {
           dragElem.remove();
@@ -248,6 +249,7 @@
             groupBounds.y2 = Math.max(groupBounds.y2, box.bottom);
             return box;
           });
+          groupBounds.y1 -= 32; // top padding for hammer-on/pull-off labels
           // move 'main' sound handler to first index
           items.splice(0, 0, items.splice(mainIndex, 1)[0]);
           bounds.splice(0, 0, bounds.splice(mainIndex, 1)[0]);
@@ -270,13 +272,14 @@
           var container = document.createDocumentFragment();
           
           var elemIndex = 0;
+          var maxImageY = 0;
           evt.dataTransfer.setDragImage = function(elem, x, y) {
+            maxImageY = Math.max(maxImageY, y);
             // elem.remove();
             elem.style.position = 'absolute';
             elem.style.left = (bounds[elemIndex].left - groupBounds.x1) + 'px';
-            elem.style.top = (bounds[elemIndex].top - groupBounds.y1 - y) + 'px';
-            // elem.style.bottom = (bounds[elemIndex].top - groupBounds.y1 + bounds[elemIndex].height) + 'px';
-            // elem.style.top = 'auto';
+            elem.style.top = (bounds[elemIndex].top - groupBounds.y1) + 'px';
+            // elem.style.top = (bounds[elemIndex].top - groupBounds.y1 - y) + 'px';
 
             container.appendChild(elem);
             elemIndex++;
@@ -290,7 +293,11 @@
 
           dragElem.appendChild(container);
           workspaceElem.appendChild(dragElem);
-          evt.dataTransfer._setDragImage(dragElem, bounds[0].left-groupBounds.x1+10, bounds[0].top-groupBounds.y1+10);
+          evt.dataTransfer._setDragImage(
+            dragElem,
+            bounds[0].left-groupBounds.x1+10,
+            bounds[0].top-groupBounds.y1+bounds[0].height/2
+          );
         },
         onDragOver: function(dropInfo, evt) {
           if (!evt.index) {
@@ -320,10 +327,7 @@
         onDrop: function(evt) {
           var sounds = [];
           items.forEach((item) => {
-            var s = item.handler.onDrop(evt);
-            if (s) {
-              sounds.push(s);
-            }
+            Array.prototype.push.apply(sounds, item.handler.onDrop(evt));
           });
           return sounds;
         },
@@ -446,7 +450,6 @@
       var dragHandler;
       scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
         console.log('ANGULAR_DRAG_START');
-        console.log(data.data.length)
         var channelParts = channel.split('.');
         dragHandler = registredHandlers[channelParts[0]];
         if (dragHandler) {

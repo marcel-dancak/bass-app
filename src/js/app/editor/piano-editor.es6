@@ -47,11 +47,7 @@
       },
 
       afterDrop: (evt, data) => {
-        if (angular.isArray(data)) {
-          selector.selectMultiple(data);
-        } else {
-          selector.select(data);
-        }
+        selector.selectMultiple(data);
       }
     }
 
