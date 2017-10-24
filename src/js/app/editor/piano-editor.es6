@@ -17,7 +17,7 @@
     });
 
 
-  function pianoEditor(workspace, Notes, SoundSelector, ResizeHandler, DragHandler) {
+  function pianoEditor(workspace, Notes, SoundSelector, ResizeHandler, DragHandler, soundAnimation) {
     var selector = new SoundSelector();
 
     class PianoResizeHandler extends ResizeHandler {
@@ -28,34 +28,32 @@
 
     }
 
-    class PianoDragHandler extends DragHandler {
+    var pianoDragHandlerOpts = {
 
-      validateDrop(beat, key) {
-        if (this.dragChannel === 'instrument') {
-          return key.octave === this.dragSound.note.octave && key.label[0] === this.dragSound.note.name;
+      validateDrop: (dropInfo, dragSound) => {
+        var key = dropInfo.position;
+        if (dropInfo.channel === 'instrument') {
+          return key.octave === dragSound.note.octave && key.label[0] === dragSound.note.name;
         }
         return true;
-      }
+      },
 
-      updateDropSound(sound, beat, note) {
+      updateDropSound: (sound, beat, note) => {
         // console.log('--- updateDropSound ---');
         var isFlat = sound.note.name[1] === '♭';
         sound.note.name = note.label[(isFlat && note.label[1])? 1 : 0];
         sound.note.octave = note.octave;
         sound.string = note.label[0] + note.octave;
-      }
+      },
 
-      onDragStart(evt) {
-        if (this.dragChannel !== 'instrument') {
-          selector.clickSelect(evt, this.dragSound);
+      afterDrop: (evt, data) => {
+        if (angular.isArray(data)) {
+          selector.selectMultiple(data);
+        } else {
+          selector.select(data);
         }
       }
-
-      onDragEnd(evt, sound) {
-        selector.clickSelect(evt, sound);
-      }
     }
-
 
     function transpose(sound, step) {
       var piano = workspace.track.instrument;
@@ -75,7 +73,7 @@
     return {
       selector: selector,
       resizeHandler: new PianoResizeHandler(),
-      dragHandler: new PianoDragHandler('piano'),
+      dragHandler: DragHandler.create('piano', pianoDragHandlerOpts),
       keyPressed: function(evt) {
         var sound = selector.last;
         console.log(evt.keyCode)

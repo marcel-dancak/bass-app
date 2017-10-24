@@ -27,7 +27,6 @@
       var canDrop = false;
       var dropArea;
       return {
-        // createDragSoundElem: function() {},
         onDragStart: function(evt) {
           dragElem = dragHandler.createDragWrapperElement();
 
@@ -64,7 +63,7 @@
           }
         },
         onDragOver: function(dropInfo) {
-          canDrop = dragHandler.validateDrop(dragSound, dropInfo.beat, dropInfo.position);
+          canDrop = dragHandler.validateDrop(dropInfo, dragSound);
           dropSound.beat = dropInfo.beat;
           var width = workspace.trackSection.soundDuration(dropSound) * dropInfo.beatBounds.width;
           dragBox.css({
@@ -85,7 +84,7 @@
 
           if (evt.dataTransfer.dropEffect === 'move' && dragSound.elem) {
             soundAnimation(dragSound.elem[0]);
-            dragSound.elem.removeClass('drag-move-element');
+            // dragSound.elem.removeClass('drag-move-element');
             workspace.trackSection.deleteSound(dragSound);
           }
           workspace.trackSection.addSound(dropArea.beat, sound);
@@ -93,8 +92,6 @@
         },
         onDragEnd: function(evt) {
           if (dragSound.elem) {
-            // soundAnimation(dragSound.elem[0]);
-            // soundAnimation(evt.target);
             dragSound.elem.removeClass('drag-move-element');
           }
           dragElem.remove();
@@ -183,7 +180,7 @@
           for (var i = 0; i < sounds.length; i++) {
             dropSound.note = sounds[i].note;
             width += workspace.trackSection.soundDuration(dropSound) * dropInfo.beatBounds.width;
-            if (!dragHandler.validateDrop(sounds[i], dropInfo.beat, dropInfo.position)) {
+            if (!dragHandler.validateDrop(dropInfo, sounds[i])) {
               canDrop = false;
             }
           }
@@ -321,16 +318,20 @@
           }
         },
         onDrop: function(evt) {
+          var sounds = [];
           items.forEach((item) => {
-            item.handler.onDrop(evt);
+            var s = item.handler.onDrop(evt);
+            if (s) {
+              sounds.push(s);
+            }
           });
+          return sounds;
         },
         onDragEnd: function(evt) {
           items.forEach((item) => {
             item.handler.onDragEnd(evt);
           });
           dragElem.remove();
-          console.log(dragElem);
         }
       }
     };
@@ -338,10 +339,12 @@
     var registredHandlers = {}
 
     class DragHandler {
-      constructor(type) {
+      constructor(type, opts) {
         this.type = type;
-        this.lastDragOver = {};
-        registredHandlers[type] = this;
+        this.opts = opts;
+        this.soundHandler = null;
+        // Object.assign(DragHandler.prototype, opts);
+        Object.assign(this, opts);
       }
 
       createDragWrapperElement() {
@@ -350,22 +353,48 @@
         return dragElem;
       }
 
-      selectSoundHandler(channel, sound) {
-        if (channel === 'instrument') {
-          return SingleSoundHandler(this, sound);
-        }
-        if (channel === 'editor') {
-          var isMultiSound = sound.next || sound.prev;
-          return isMultiSound? MultiSoundHandler(this, sound) : SingleSoundHandler(this, sound);
-        }
+      selectSoundHandler(sound) {
+        var isMultiSound = sound.next || sound.prev;
+        return isMultiSound? MultiSoundHandler(this, sound) : SingleSoundHandler(this, sound);
       }
 
-      onDragStart(evt, sound) {}
-      onDragEnd(evt, sound) {}
-
+      onDragStart(evt, channel, data) {
+        this.channel = channel;
+        if (data.length > 1) {
+          // normalize selection of tied sounds (use only first sound)
+          var sounds = new Set();
+          data.forEach((sound) => {
+            if (sound.prev) {
+              var rootSound = sound;
+              while (rootSound.prev) {
+                rootSound = workspace.trackSection.prevSound(rootSound);
+              }
+              sounds.add(rootSound);
+            } else {
+              sounds.add(sound);
+            }
+          });
+          data = Array.from(sounds);
+          var handlers = [];
+          data.forEach((sound) => {
+            var handler = this.selectSoundHandler(sound);
+            handlers.push({
+              sound,
+              handler
+            });
+          });
+          this.soundHandler = ProxySoundsHandler(this, handlers);
+        } else {
+          if (data.length === 1) {
+            data = data[0];
+          }
+          this.soundHandler = this.selectSoundHandler(data);
+        }
+        this.soundHandler.onDragStart(evt, data);
+      }
 
       onDragOver(evt, beat, position) {
-        console.log('onDragOver');
+        // console.log('onDragOver');
         var grid = beatGrid(beat);
         var cell = evt.target.offsetWidth / grid;
         // var x = parseInt(evt.offsetX / cell); // doesn't work in FF
@@ -380,7 +409,8 @@
         if (this.lastDragOverKey !== key) {
           var box = evt.target.getBoundingClientRect();
 
-          soundHandler.onDragOver({
+          this.soundHandler.onDragOver({
+            channel: this.channel,
             beatBounds: box,
             beat: beat,
             position: position,
@@ -393,53 +423,41 @@
       }
 
       onDrop(evt) {
-        var sound = soundHandler.onDrop(evt);
+        var data = this.soundHandler.onDrop(evt);
+        if (this.afterDrop && data) {
+          this.afterDrop(evt, data);
+        }
       }
+
+      onDragEnd(evt) {
+        this.soundHandler.onDragEnd(evt);
+      }
+    }
+
+    DragHandler.create = function(instrument, opts) {
+      var handler = new DragHandler(instrument, opts);
+      registredHandlers[instrument] = handler;
+      return handler;
     }
 
     DragHandler.initialize = function(selector, scope) {
       workspaceElem = document.querySelector(selector);
 
-      var dragData;
       var dragHandler;
       scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
         console.log('ANGULAR_DRAG_START');
         console.log(data.data.length)
         var channelParts = channel.split('.');
-        var _this = registredHandlers[channelParts[0]];
-        if (_this) {
-          if (data.data.length > 1) {
-            var handlers = [];
-            data.data.forEach((sound) => {
-              var handler = _this.selectSoundHandler(channelParts[1], sound);
-              handlers.push({
-                sound,
-                handler
-              });
-            });
-            soundHandler = ProxySoundsHandler(_this, handlers);
-          } else {
-            if (data.data.length === 1) {
-              data.data = data.data[0];
-            }
-            soundHandler = _this.selectSoundHandler(channelParts[1], data.data);
-          }
-          dragData = data.data;
-          dragHandler = _this;
-          if (soundHandler) {
-            _this.dragChannel = channelParts[1];
-            _this.onDragStart(e, dragData);
-            soundHandler.onDragStart(e);
-          }
+        dragHandler = registredHandlers[channelParts[0]];
+        if (dragHandler) {
+          dragHandler.onDragStart(e, channelParts[1], data.data);
         }
       });
 
       scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
         console.log('ANGULAR_DRAG_END');
-        if (soundHandler) {
-          soundHandler.onDragEnd(e, dragData);
-          dragHandler.onDragEnd(e, dragData);
-          soundHandler = null;
+        if (dragHandler) {
+          dragHandler.onDragEnd(e);
         }
       });
 

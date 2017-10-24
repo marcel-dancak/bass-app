@@ -7,23 +7,21 @@
 
   /***************** Private helper functions ******************/
 
-  function bassEditor(workspace, Notes, SoundSelector, DragHandler, ResizeHandler) {
+  function bassEditor(workspace, Notes, SoundSelector, DragHandler, ResizeHandler, soundAnimation) {
     var selector = new SoundSelector();
 
-    class BassDragHandler extends DragHandler {
+    var bassDragHandlerOpts = {
 
-      validateDrop(beat, string) {
-        if (this.dragSound.note.type === 'ghost') {
+      validateDrop: (dropInfo, sound) => {
+        var string = dropInfo.position;
+        if (sound.note.type === 'ghost') {
           return true;
         }
-        // if (this.dragChannel === 'instrument') {
-          var fret = workspace.track.instrument.stringFret(string.label, this.dragSound.note);
-          return fret >= 0;
-        // }
-        return false;
-      }
+        var fret = workspace.track.instrument.stringFret(string.label, sound.note);
+        return fret >= 0;
+      },
 
-      updateDropSound(sound, beat, string) {
+      updateDropSound: (sound, beat, string) => {
         sound.string = string.label;
         if (sound.note.type !== 'ghost') {
           sound.note.fret = workspace.track.instrument.stringFret(string.label, sound.note);
@@ -33,18 +31,15 @@
             string.label, sound.endNote
           );
         }
-      }
+      },
 
-      onDragStart(evt) {
-        if (this.dragChannel !== 'instrument') {
-          selector.clickSelect(evt, this.dragSound);
+      afterDrop: (evt, data) => {
+        if (angular.isArray(data)) {
+          selector.selectMultiple(data);
+        } else {
+          selector.select(data);
         }
       }
-
-      onDragEnd(evt, sound) {
-        selector.clickSelect(evt, sound);
-      }
-
     }
 
     function getSoundGrid(evt, beat) {
@@ -111,7 +106,7 @@
 
     return {
       selector: selector,
-      dragHandler: new BassDragHandler('bass'),
+      dragHandler: DragHandler.create('bass', bassDragHandlerOpts),
       resizeHandler: new BassResizeHandler(),
       createSound: function(evt, beat) {
         var position = getSoundGrid(evt, beat);
