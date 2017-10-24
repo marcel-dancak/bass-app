@@ -65,26 +65,29 @@
                     element.unbind('$destroy', dragendHandler);
                 }, 0);
                 var sendChannel = attrs.dragChannel || 'defaultchannel';
-                $rootScope.$broadcast('ANGULAR_DRAG_END', e, sendChannel);
 
                 determineEffectAllowed(e);
 
                 if (e.dataTransfer && e.dataTransfer.dropEffect !== 'none') {
                     if (attrs.onDropSuccess) {
                         var onDropSuccessFn = $parse(attrs.onDropSuccess);
-                        scope.$evalAsync(function() {
+                        // scope.$evalAsync(function() {
                             onDropSuccessFn(scope, {$event: e});
-                        });
+                        // });
                     } else {
                         if (attrs.onDropFailure) {
                             var onDropFailureFn = $parse(attrs.onDropFailure);
-                            scope.$evalAsync(function() {
+                            // scope.$evalAsync(function() {
                                 onDropFailureFn(scope, {$event: e});
-                            });
+                            // });
                         }
                     }
                 }
                 element.removeClass(draggingClass);
+                // scope.$evalAsync(function() {
+                    $rootScope.$broadcast('ANGULAR_DRAG_END', e, sendChannel);
+                // });
+                scope.$apply();
             }
 
             function setDragElement(e, dragImageElementId) {
@@ -254,14 +257,13 @@
                 }
 
                 var sendData = e.dataTransfer.getData('text');
-                console.log(sendData);
                 sendData = angular.fromJson(sendData);
-                console.log(sendData);
 
                 determineEffectAllowed(e);
 
                 var uiOnDropFn = $parse(attr.uiOnDrop);
-                scope.$evalAsync(function() {
+                // scope.$evalAsync(function() {
+                scope.$apply(function() {
                     uiOnDropFn(scope, {$data: sendData.data, $event: e, $channel: sendData.channel});
                 });
                 element.removeClass(dragEnterClass);
