@@ -6,7 +6,7 @@
     .factory('ResizeHandler', resizeHandler)
 
 
-  function resizeHandler(workspace, Note) {
+  function resizeHandler(workspace, Note, soundAnimation) {
 
     var resizeBox = {
       elem: angular.element('<div class="resize-box"><i></i></div>')[0],
@@ -141,6 +141,7 @@
 
       onResizeEnd(sound, info, evt) {
         info.element.css('width', '');
+        soundAnimation(info.element[0], 'resize');
         resizeBox.elem.remove();
 
         this.resizeSound(sound, resizeLength.length, resizeLength.dotted);

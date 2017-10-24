@@ -5,7 +5,6 @@
       ng-repeat="string in vm.instrument.strings | orderBy:string.index:'-' track by string.index"
       class="bass-string"
       drop-channel="bass.instrument,bass.editor"
-      ui-on-drag-enter="dragHandler.onDragEnter($event, vm.beat, string)"
       ui-on-drag-over="dragHandler.onDragOver($event, vm.beat, string)"
       ui-on-drop="dragHandler.onDrop($event, vm.beat, string)">
     </div>
@@ -82,7 +81,8 @@
   </div>
 
   <div
-    ng-repeat="sound in vm.beat.data track by (sound.string + sound.start)"
+    ng-repeat="sound in vm.beat.data"
+    sound-model="sound"
     class="sound-container"
     ng-class="[{
         staccato: sound.note.staccato,
@@ -99,7 +99,7 @@
     }"
 
     ui-draggable="true"
-    drag="sound"
+    drag="clickHandler.all.indexOf(sound) !== -1? clickHandler.all : [sound]"
     drag-channel="bass.editor"
 
     ng-click="clickHandler.clickSelect($event, sound)"

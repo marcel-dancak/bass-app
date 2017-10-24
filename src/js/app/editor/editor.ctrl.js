@@ -3,9 +3,21 @@
 
   angular
     .module('bd.app')
+    .directive('soundModel', soundModel)
     .controller('MetadataController', MetadataController)
     .controller('EditModeController', EditModeController);
 
+
+    function soundModel() {
+      return {
+        scope: false,
+        link: function(scope, elem, attrs) {
+          var model = scope[attrs.soundModel];
+          Object.defineProperty(model, 'elem', {value: 'static', writable: true});
+          model.elem = elem;
+        }
+      }
+    }
 
     function MetadataController($scope, workspace, mdPanelRef, projectManager, updateChordLabels) {
       function reorderChords() {

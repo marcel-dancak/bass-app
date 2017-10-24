@@ -108,6 +108,12 @@
 
 /* with enter/leave animations */
 
+.sound-container.animated {
+  transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
+}
+.sound-container.resize {
+  transition-property: width;
+}
 .sound-container.ng-enter {
   transition-property: opacity;
   opacity:0;
@@ -151,8 +157,6 @@
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
   line-height: 2.125em;
   pointer-events: auto;
-  transition: 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
-  transition-property: none;
 }
 
 .sound-container .label-wrapper label.note,
@@ -279,10 +283,11 @@ div[bd-sound-label] {
   border: 2px solid #333!important;
   margin: 0 1px 0 1px;
   border-radius: 4px;
+  z-index: 201;
+}
+.bass .sound-container.selected {
   line-height: 2em;
   height: 2.25em;
-  transition-property: width, opacity;
-  z-index: 201;
 }
 .fret-input {
   min-width: 18px;
@@ -378,6 +383,7 @@ div[bd-sound-label] {
   top: -2px;
   left: -2px;
   position: absolute;
+  height: inherit;
 }
 .resize-box i {
   position: absolute;
@@ -571,7 +577,6 @@ md-input-container.slide-field > span {
 }
 .drag-sound .sound-container {
   position: relative!important;
-  xtransform: none!important;
   left: 0!important;
   top: 0!important;
 }

@@ -54,7 +54,7 @@
   }
 
 
-  function BassFormController($scope, $timeout, Note, sound, string, audioPlayer, bassEditor, mdPanelRef) {
+  function BassFormController($scope, $timeout, Note, sound, string, audioPlayer, bassEditor, mdPanelRef, soundAnimation) {
     $scope.Note = Note;
 
     $scope.soundStyleChanged = bassEditor.soundStyleChanged.bind(bassEditor);
@@ -94,6 +94,7 @@
     };
 
     $scope.soundLengthChanged = function(sound) {
+      soundAnimation(sound.elem[0]);
       bassEditor.resizeHandler.resizeSound(sound, sound.note.length, sound.note.dotted);
     };
 

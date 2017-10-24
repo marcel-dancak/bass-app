@@ -9,7 +9,6 @@
         'c-key': note.label[0] === 'C'
       }"
       drop-channel="piano.editor,piano.instrument"
-      ui-on-drag-enter="dragHandler.onDragEnter($event, vm.beat, note)"
       ui-on-drag-over="dragHandler.onDragOver($event, vm.beat, note)"
       ui-on-drop="dragHandler.onDrop($event, vm.beat, note)">
       <!-- {{ ::note.label.join('/') }} -->
@@ -17,8 +16,9 @@
   </div>
   <!-- <div style="min-height: {{ ::vm.instrument.notes.list.length*15 }}px;"></div> -->
   <div
-    ng-repeat="sound in vm.beat.data track by (sound.string + sound.start)"
+    ng-repeat="sound in vm.beat.data track"
     class="sound-container"
+    sound-model="sound"
     ng-class="{ selected: sound.selected }"
     ng-attr-octave="{{ sound.note.octave }}"
     ng-style="{
@@ -27,7 +27,7 @@
       width: (100*(sound.end - sound.start - sound.offset))+'%'
     }"
     ui-draggable="true"
-    drag="sound"
+    drag="clickHandler.all.indexOf(sound) !== -1? clickHandler.all : [sound]"
     drag-channel="piano.editor"
     ng-click="clickHandler.clickSelect($event, sound)">
 
