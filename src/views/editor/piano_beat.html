@@ -16,7 +16,7 @@
   </div>
   <!-- <div style="min-height: {{ ::vm.instrument.notes.list.length*15 }}px;"></div> -->
   <div
-    ng-repeat="sound in vm.beat.data track"
+    ng-repeat="sound in vm.beat.data"
     class="sound-container"
     sound-model="sound"
     ng-class="{ selected: sound.selected }"

@@ -66,6 +66,28 @@
       console.log(index)
     }
 
+    function shiftLeft(sound) {
+      if (sound.prev) {
+        return;
+      }
+      var startTime;
+      if (sound.start > 0) {
+        startTime = sound.start - 1 / sound.beat.subdivision;
+      } else {
+        var prevBeat = workspace.trackSection.prevBeat(sound.beat);
+        startTime = -1 / prevBeat.subdivision;
+      }
+      workspace.trackSection.setSoundStart(sound, startTime);
+    }
+
+    function shiftRight(sound) {
+      if (sound.prev) {
+        return;
+      }
+      var step = 1 / sound.beat.subdivision;
+      workspace.trackSection.setSoundStart(sound, sound.start + step);
+    }
+
     return {
       selector: selector,
       resizeHandler: new PianoResizeHandler(),
@@ -76,7 +98,12 @@
         if (sound) {
           switch (evt.keyCode) {
             case 46: // Del
-              selector.all.forEach(workspace.trackSection.deleteSound, workspace.trackSection);
+              selector.all.forEach((s) => {
+                if (s.elem) {
+                  soundAnimation(s.elem[0]);
+                }
+                workspace.trackSection.deleteSound(s);
+              });
               break;
             case 84: // t
               console.log(JSON.stringify(sound));
@@ -121,15 +148,24 @@
                 if (!sound.prev) {
                   transpose(sound, -1);
                 }
-              }, this);
+              });
               break;
             case 37: // left
-              workspace.trackSection.offsetSound(sound, -0.01);
+              if (evt.altKey) {
+                workspace.trackSection.offsetSound(sound, -0.01);
+              } else {
+                selector.all.forEach(shiftLeft);
+              }
+              evt.preventDefault();
               break;
             case 39: // right
-              workspace.trackSection.offsetSound(sound, 0.01);
+              if (evt.altKey) {
+                workspace.trackSection.offsetSound(sound, 0.01);
+              } else {
+                selector.all.forEach(shiftRight);
+              }
+              evt.preventDefault();
               break;
-
             // just for debugging
             case 78: // n
               var n = workspace.trackSection.nextSound(sound)
