@@ -365,6 +365,45 @@
       //   s.end = parseFloat((s.end + offset).toFixed(2));
       // });
     }
+
+    setSoundStart(sound, start) {
+      var tiedSounds = [];
+      var s = sound;
+      while (s.next) {
+        s = this.nextSound(s);
+        tiedSounds.push(s);
+      }
+
+      if (start >= 0 && start < 1) {
+        sound.start = start;
+        sound.end = sound.start + this.soundDuration(sound);
+      } else {
+        var destBeat;
+        if (start < 0) {
+          destBeat = this.prevBeat(sound.beat);
+          start += 1;
+        } else {
+          destBeat = this.nextBeat(sound.beat);
+          start -= 1;
+        }
+        sound.beat.data.splice(sound.beat.data.indexOf(sound), 1);
+        sound.start = start;
+        this.addSound(destBeat, sound);
+      }
+
+      var prevSound = sound;
+      tiedSounds.forEach((s) => {
+        var position = this.nextSoundPosition(prevSound);
+        s.start = position.start;
+        if (position.beat !== s.beat) {
+          s.beat.data.splice(s.beat.data.indexOf(s), 1);
+          this.addSound(position.beat, s);
+        } else {
+          s.end = s.start + this.soundDuration(s);
+        }
+        prevSound = s;
+      });
+    }
   }
 
 

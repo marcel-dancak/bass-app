@@ -195,31 +195,81 @@
       },
 
       transposeUp: function(sound) {
-        if (sound.note.type === 'regular' && sound.note.fret < 24) {
-          sound.note.fret++;
+        if (sound.note.type !== 'ghost') {
           var bassString = workspace.trackSection.instrument.strings[sound.string];
-          var note = bassString.notes[sound.note.fret];
-          sound.note.name = note.label[0];
-          sound.note.octave = note.octave;
+
+          if (sound.style !== 'ring' && sound.note.fret < 24) {
+            sound.note.fret++;
+            var note = bassString.notes[sound.note.fret];
+            sound.note.name = note.label[0];
+            sound.note.octave = note.octave;
+          }
+
+          if (sound.endNote && sound.endNote.fret < 24) {
+            sound.endNote.fret++;
+            note = bassString.notes[sound.endNote.fret];
+            sound.endNote.name = note.label[0];
+            sound.endNote.octave = note.octave;
+          }
+
           this.soundLabelChanged(sound)
         }
       },
       transposeDown: function(sound) {
-        if (sound.note.type === 'regular' && sound.note.fret > 0) {
-          sound.note.fret--;
+        if (sound.note.type !== 'ghost') {
           var bassString = workspace.trackSection.instrument.strings[sound.string];
-          var note = bassString.notes[sound.note.fret];
-          sound.note.name = note.label[0];
-          sound.note.octave = note.octave;
+
+          if (sound.style !== 'ring' && sound.note.fret > 0) {
+            sound.note.fret--;
+            var note = bassString.notes[sound.note.fret];
+            sound.note.name = note.label[0];
+            sound.note.octave = note.octave;
+          }
+
+          if (sound.endNote && sound.endNote.fret > 0) {
+            sound.endNote.fret--;
+            note = bassString.notes[sound.endNote.fret];
+            sound.endNote.name = note.label[0];
+            sound.endNote.octave = note.octave;
+          }
+
           this.soundLabelChanged(sound)
         }
       },
+
+      shiftLeft: function(sound) {
+        if (sound.prev) {
+          return;
+        }
+        var startTime;
+        if (sound.start > 0) {
+          startTime = sound.start - 1 / sound.beat.subdivision;
+        } else {
+          var prevBeat = workspace.trackSection.prevBeat(sound.beat);
+          startTime = -1 / prevBeat.subdivision;
+        }
+        workspace.trackSection.setSoundStart(sound, startTime);
+      },
+      shiftRight:function(sound) {
+        if (sound.prev) {
+          return;
+        }
+        var step = 1 / sound.beat.subdivision;
+        workspace.trackSection.setSoundStart(sound, sound.start + step);
+      },
+
       keyPressed: function(evt) {
         if (selector.last) {
           var sound = selector.last;
           switch (evt.keyCode) {
             case 46: // Del
-              selector.all.forEach(workspace.trackSection.deleteSound, workspace.trackSection);
+              // selector.all.forEach(workspace.trackSection.deleteSound, workspace.trackSection);
+              selector.all.forEach((s) => {
+                if (s.elem) {
+                  soundAnimation(s.elem[0]);
+                }
+                workspace.trackSection.deleteSound(s);
+              });
               selector.clearSelection();
               break;
             case 72: // h
@@ -273,14 +323,25 @@
               break;
             case 76: // l
               selector.all.forEach((sound) => {
-                if (sound.note.name.endsWith('♯')) {
-                  sound.note.name = Notes.toFlat(sound.note.name);
-                  this.soundLabelChanged(sound)
-                } else if (sound.note.name.endsWith('♭')) {
-                  sound.note.name = Notes.toSharp(sound.note.name);
-                  this.soundLabelChanged(sound)
+                var notes = sound.style !== 'ring'? [sound.note] : [];
+                if (sound.endNote) {
+                  notes.push(sound.endNote);
                 }
-              }, this)
+                var changed = false;
+                notes.forEach((note) => {
+                  const name = note.name || '';
+                  if (name.endsWith('♯')) {
+                    note.name = Notes.toFlat(name);
+                    changed = true;
+                  } else if (name.endsWith('♭')) {
+                    note.name = Notes.toSharp(name);
+                    changed = true;
+                  }
+                });
+                if (changed) {
+                  this.soundLabelChanged(sound);
+                }
+              });
               break;
           }
           // evt.preventDefault();
