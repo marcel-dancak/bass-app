@@ -318,7 +318,7 @@
   width: 2.25em;
   height: 2.25em;
 }
-.playlist-swiper .drum-sound {
+.playlist-swiper .drum-cell {
   margin: 0 0;
   transform: scale(0.75, 0.75);
 }

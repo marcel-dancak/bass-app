@@ -102,9 +102,9 @@
     }
 
 
-  function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
+  function EditModeController($scope, $timeout, $element, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
               projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer, DragHandler, dragablePanel,
-              bassEditor, pianoEditor) {
+              bassEditor, drumEditor, pianoEditor) {
 
     DragHandler.initialize('.instrument-grid', $scope);
     audioPlayer.setPlaybackSpeed(1);
@@ -112,6 +112,7 @@
     $scope.slides = [];
     var keyHandlers = {
       bass: bassEditor,
+      drums: drumEditor,
       piano: pianoEditor
     };
 

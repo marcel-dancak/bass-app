@@ -5,8 +5,6 @@
   style="height: {{ :: 3 * vm.instrument.length }}em;"
   drop-channel="drum"
   ui-on-drag-over="editor.onDragOver($event, vm.beat)"
-  xxui-on-drag-enter="editor.onDragEnter($event, vm.beat)"
-  xxui-on-drag-leave="editor.onDragLeave($event, vm.beat)"
   ui-on-drop="editor.onDrop($event, vm.beat, $data)">
 
   <div class="drum-grid" ng-switch="vm.beat.grid || vm.beat.subdivision">
@@ -54,21 +52,25 @@
   </div>
 
   <div
-    ng-repeat="sound in vm.beat.data track by (sound.drum + sound.start)"
-    class="drum-sound"
+    ng-repeat="sound in vm.beat.data"
+    class="drum-cell"
     ng-style="{
       left: (100*sound.start)+'%',
+      top: (vm.instrument.index[sound.drum] * 3)+'rem',
       width: (100/(vm.beat.grid||vm.beat.subdivision))+'%'
-    }"
-    style="top: {{ ::vm.instrument.index[sound.drum] * 3 }}em;"
-    ui-draggable="true"
-    drag-channel="drum"
-    drag="sound">
+    }">
     <div
-      class="volume-meter"
-      ng-style="{
-        transform: 'scale('+sound.volume+','+sound.volume+')'
-      }">
+      class="sound-container"
+      ng-class="{ selected: sound.selected }"
+      ui-draggable="true"
+      drag-channel="drum"
+      drag="sound">
+      <div
+        class="volume-meter"
+        ng-style="{
+          transform: 'scale('+sound.volume+','+sound.volume+')'
+        }">
+      </div>
     </div>
   </div>
 </div>

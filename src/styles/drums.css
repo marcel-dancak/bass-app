@@ -26,7 +26,7 @@
   text-align: right;
 }*/
 
-.drum-sound-box {
+.drum-cell-box {
   min-height: 40px;
   max-height: 44px;
   height: 44px;
@@ -44,8 +44,7 @@
   xbackground-color: #ff5722;
   background-color: rgb(255, 152, 0);
   max-width: 100%;
-  width: 2em;
-  height: 2em;
+  height: 100%;
   border-radius: 1em;
   transition: transform 0.3s ease 0s;
 }
@@ -65,17 +64,32 @@
   width: 100%;
   outline: none;
 }
-.drum-sound {
+.drum-cell {
   position: absolute;
   text-align: center;
-  margin: 0.5em 0;
-  height: 2em;
+  margin: 0.5rem 0;
+  height: 2rem;
   /*background-color: blue;*/
 }
-.drum-sound .volume-meter {
-  display: inline-block;
-  content: "";
+
+.drum-cell .sound-container {
+  width: 2rem;
+  height: 2rem;
+  background-color: #fff;
+  border-radius: 50%;
+  margin: auto auto;
+  left: calc(50% - 1rem);
+  box-shadow: none;
+  border-color: #bbb;
+  box-sizing: content-box;
+  transform: translate(-1px, -1px);
+  /*border: none;*/
 }
+.drum-cell .sound-container.selected {
+  border-color: #555!important;
+  transform: translate(-2px, -2px);
+}
+
 
 .drumset-grid {
   display: table-cell;
@@ -89,16 +103,16 @@
 
 /** Add/Remove animations */
 
-.drum-sound.ng-enter .volume-meter {
+.drum-cell.ng-enter .volume-meter {
   transform: scale(0, 0)!important;
 }
 
-.drum-sound.ng-leave {
+.drum-cell.ng-leave {
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   transition-property: opacity;
 }
 
-.drum-sound.ng-leave.ng-leave-active .volume-meter {
+.drum-cell.ng-leave.ng-leave-active .volume-meter {
   transform: scale(0, 0)!important;
 }
 

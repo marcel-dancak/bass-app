@@ -86,14 +86,16 @@
 
         {{~beat.sounds :sound}}
         <div
-          class="drum-sound"
+          class="drum-cell"
           style="
             left: {{= 100*sound.start }}%;
             width: {{= 100/(beat.grid||beat.subdivision) }}%;
             top: {{= it.track.instrument.index[sound.drum] * 2.25 }}em">
-          <div
-            class="volume-meter"
-            style="transform: {{= 'scale('+sound.volume+','+sound.volume+')' }}">
+          <div class="sound-container">
+            <div
+              class="volume-meter"
+              style="transform: {{= 'scale('+sound.volume+','+sound.volume+')' }}">
+            </div>
           </div>
         </div>
         {{~}}
