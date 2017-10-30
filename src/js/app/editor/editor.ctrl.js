@@ -278,9 +278,11 @@
     }
 
     $scope.setBeatsPerView = function(value) {
+      var snapIndex = swiperControl.barSwiper.snapIndex;
       editor.beatsPerView = swiperControl.setBeatsPerView(value);
       audioVisualiser.updateSize();
       swiperControl.setBeatsPerView(editor.beatsPerView);
+      swiperControl.setIndex(snapIndex, 0, true);
     };
 
     function updateLockedPlayerRange() {
@@ -354,7 +356,7 @@
       }
       $scope.player.progress.value = 0;
       setTimeout(function() {
-        swiperControl.reset(0);
+        swiperControl.setIndex(0);
         if (restartPlayback) {
           $scope.player.play();
         }

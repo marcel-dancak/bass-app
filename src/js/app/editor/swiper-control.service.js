@@ -479,9 +479,9 @@
       return this.barSwiper.wrapper[0];
     };
 
-    SwiperControl.prototype.reset = function() {
-      this.lastRequestedIndex = 0;
-      this.barSwiper.slideTo(0, 0, true);
+    SwiperControl.prototype.setIndex = function(index) {
+      this.lastRequestedIndex = index;
+      this.barSwiper.slideTo(index, 0, true);
     };
 
     SwiperControl.prototype.slideTo = function(slideIndex, speed, runCallbacks, internal) {
