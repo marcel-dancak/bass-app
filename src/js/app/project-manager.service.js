@@ -71,7 +71,7 @@
     if (index !== -1) {
       var item = this.projects.splice(index, 1)[0];
       this.projects.splice(0, 0, item);
-      var data = JSON.stringify(this.projects);
+      var data = angular.toJson(this.projects);
       this.save(this.PROJECTS_KEY, data);
     }
   };
@@ -116,7 +116,7 @@
       name: this.project.name
     });
 
-    var data = JSON.stringify(this.projects);
+    var data = angular.toJson(this.projects);
     this.save(this.PROJECTS_KEY, data);
     return this.project;
   };
@@ -135,6 +135,9 @@
 
     var data = JSON.stringify(this.project, function(k, v) {
       if (k === 'playlists') {
+        return undefined;
+      }
+      if (k.startsWith('$$')) { // clean JSON from Angular hashes
         return undefined;
       }
       return v;
@@ -164,7 +167,7 @@
     var index = projects.findIndex(byId(projectId));
     if (index !== -1) {
       projects.splice(index, 1);
-      this.save(this.PROJECTS_KEY, JSON.stringify(projects));
+      this.save(this.PROJECTS_KEY, angular.toJson(projects));
     }
     this.projects = projects;
   };
@@ -205,7 +208,7 @@
   ProjectLocalStore.prototype.savePlaylists = function(playlists) {
     var key = playlistsKey(this.project.id);
     console.log('ProjectLocalStore.savePlaylists: '+key);
-    this.save(key, JSON.stringify(playlists))
+    this.save(key, angular.toJson(playlists))
   };
 
   ProjectLocalStore.prototype._projectData = function() {
@@ -700,12 +703,7 @@
         }
       }, this);
 
-      return JSON.stringify(data, function(k, v) {
-        if (k.startsWith('$$')) { // clean JSON from Angular hashes
-          return undefined;
-        }
-        return v;
-      });
+      return angular.toJson(data);
     }
 
 
