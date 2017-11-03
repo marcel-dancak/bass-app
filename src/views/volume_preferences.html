@@ -1,14 +1,15 @@
+<div class="layout-row" ng-init="advanced = {track: null}">
 <md-list class="tracks-mixer preferences">
 
   <md-list-item
     ng-repeat="track in project.tracks track by track.id"
-    class="volume-field bottom-border">
+    class="volume-field">
     <label>
       <md-icon
         style="padding-right: 8px;"
         md-svg-icon="{{ ::track.instrument.icon || track.type }}">
       </md-icon>
-      {{ track.name }}
+      {{ ::track.name }}
     </label>
     <rzslider
       rz-slider-model="track.audio.gain.value"
@@ -17,6 +18,8 @@
         ceil: 1,
         step: 0.01,
         precision: 2,
+        xshowTicks: true,
+        xticksArray: [0, 0.5, 1],
         hideLimitLabels: true,
         hidePointerLabels: true,
         showSelectionBar: true,
@@ -33,11 +36,34 @@
         md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
       </md-icon>
     </md-button>
+
+    <md-button
+      md-no-ink
+      class="icon-hover advanced"
+      ng-class="{active: advanced.track === track}"
+      ng-click="advanced.track = advanced.track !== track? track : null">
+      <md-icon md-svg-icon="audio-preferences"></md-icon>
+    </md-button>
+
+<!--     <md-button
+      md-no-ink
+      class="icon-hover solo"
+      ng-click="showMorePreferences(track)">s
+    </md-button> -->
+    <md-button
+      md-no-ink
+      aria-label="Solo"
+      class="icon-hover solo"
+      ng-class="{active: track.solo}"
+      ng-click="toggleSolo(track)">
+      <p class="icon">s</p>
+    </md-button>
   </md-list-item>
 
   <md-list-item
-    ng-if="runtime.desktop || project.audioTrack"
-    class="volume-field bottom-border audio-track"
+    xng-if="runtime.desktop || project.audioTrack"
+    ng-if="project.audioTrack"
+    class="volume-field audio-track"
     xbd-binary-file-drop="addFileAudioTrack($file)"
     bd-data-url-file-drop="addFileAudioTrack($file)">
     <label>
@@ -50,11 +76,20 @@
         <md-icon
           ng-switch-when="file"
           style="padding-right: 8px;"
-          md-svg-icon="audio-file">
+          md-svg-icon="audio-file2">
         </md-icon>
       </ng-switch>Audio Track
     </label>
     <!-- <div style="width:100%" class="layout-row"> -->
+
+      <md-button
+        md-no-ink
+        aria-label="Timing"
+        class="secondary icon-hover"
+        ng-click="openSyncPreferences($event)">
+        <md-icon md-svg-icon="watch"></md-icon>
+      </md-button>
+
       <rzslider
         ng-if-start="project.audioTrack"
         rz-slider-model="project.audioTrack.audio.gain.value"
@@ -69,15 +104,13 @@
           disabled: project.audioTrack.muted
         }">
       </rzslider>
-      <md-button
+
+<!--       <md-button
         md-no-ink
         class="secondary icon-hover"
         ng-click="openSyncPreferences($event)">
         <md-icon md-svg-icon="watch"></md-icon>
-        <md-tooltip md-delay="1500" md-direction="top">
-          <span xtranslate="SYNCHRONIZE">Set timing</span>
-        </md-tooltip>
-      </md-button>
+      </md-button> -->
 
       <md-button
         ng-if-end
@@ -89,6 +122,25 @@
         <md-icon
           md-svg-icon="{{ project.audioTrack.muted? 'volume-mute' : 'volume-medium' }}">
         </md-icon>
+      </md-button>
+      <md-button
+        md-no-ink
+        aria-label="Solo"
+        class="solo"
+        ng-class="{active: project.audioTrack.solo}"
+        ng-click="toggleSolo(project.audioTrack)">
+        <p class="icon">s</p>
+      </md-button>
+
+      <md-button
+        md-no-ink
+        class="icon-hover advanced"
+        ng-class="{active: advanced.track === project.audioTrack}"
+        ng-click="advanced.track = advanced.track !== project.audioTrack? project.audioTrack : null">
+        <md-icon md-svg-icon="audio-preferences"></md-icon>
+        <md-tooltip md-delay="1500" md-direction="top">
+          <span xtranslate="SYNCHRONIZE">Audio Preferences</span>
+        </md-tooltip>
       </md-button>
     <!-- </div> -->
 
@@ -140,9 +192,15 @@
   </md-list-item>
 
   <md-list-item
-    ng-if="::runtime.desktop"
-    class="volume-field bottom-border">
-    <label translate="INPUT_VOLUME"></label>
+    ng-if="showInputChannel"
+    class="volume-field">
+    <label>
+      <md-icon
+        style="padding-right: 8px;"
+        md-svg-icon="jack-input">
+        <span translate="INPUT_VOLUME"></span>
+      </md-icon>
+    </label>
     <rzslider
       rz-slider-model="input.audio.gain.value"
       rz-slider-options="{
@@ -169,3 +227,101 @@
   </md-list-item>
 
 </md-list>
+  <md-list
+    ng-if="advanced.track"
+    class="preferences audio">
+    <md-list-item
+      xng-if-start="advanced.track.type === 'stream'"
+      xng-if-start="advanced.track.source.type === 'file'">
+      <label>Filter</label>
+      <md-input-container layout="row">
+        <label>Type</label>
+        <!-- Switch must be added later to avoid md-proxy issue -->
+        <md-switch
+          md-no-ink
+          ng-if="true"
+          class="md-primary"
+          ng-model="advanced.track.audio.filter.on"
+          ng-change="setFilter(advanced.track, advanced.track.audio.filter.on)">
+        </md-switch>
+        <md-select
+          flex
+          md-no-ink
+          aria-label="Strings"
+          ng-disabled="!advanced.track.audio.filter.on"
+          ng-model="advanced.track.audio.filter.type">
+          <md-option value="lowpass">Lowpass</md-option>
+          <md-option value="highpass">Highpass</md-option>
+        </md-select>
+      </md-input-container>
+    </md-list-item>
+    <md-list-item xng-if-end style="padding: 0 8px">
+      <rzslider
+        ng-if="advanced.track.audio.filter"
+        rz-slider-model="advanced.track.audio.filter.frequency.value"
+        rz-slider-options="{
+          floor: 50,
+          ceil: 16000,
+          step: 5,
+          logScale: true,
+          ticksArray: [50, 150, 400, 1000, 3000, 8000, 16000],
+          showTicks: true,
+          translate: frequencyLabel,
+          showTicksValues: true,
+          showSelectionBar: true,
+          disabled: !advanced.track.audio.filter.on
+        }">
+      </rzslider>
+    </md-list-item>
+  </md-list>
+</div>
+
+<div class="toolbar layout-row">
+  <md-button
+    md-no-ink
+    aria-label="Online Track"
+    class="icon-hover"
+    ng-class="{ 'md-primary': project.audioTrack.source.type === 'youtube' }"
+    ng-click="toggleYoutubeTrack()">
+    <md-icon md-svg-icon="youtube"></md-icon>
+  </md-button>
+  <md-button
+    md-no-ink
+    aria-label="File Track"
+    class="icon-hover"
+    ng-class="{ 'md-primary': project.audioTrack.source.type === 'file' }"
+    ng-click="project.audioTrack.source.type === 'file'? removeAudioTrack() : ''"
+    bd-data-url-file-drop="addFileAudioTrack($file)">
+    <md-icon md-svg-icon="audio-file2"></md-icon>
+    <input
+      ng-if="project.audioTrack.source.type !== 'file'"
+      type="file" name="file" placeholder="open file"
+      style="position: absolute; left:0; top: 0; width:100%; height: 100%; opacity:0.01; cursor:pointer; overflow: hidden;" />
+  </md-button>
+  <md-button
+    md-no-ink
+    aria-label="Input"
+    class="icon-hover"
+    ng-class="{ 'md-primary': showInputChannel }"
+    ng-click="showInputChannel = !showInputChannel">
+    <md-icon md-svg-icon="jack-input"></md-icon>
+  </md-button>
+  <span flex></span>
+  <md-button
+    md-no-ink
+    aria-label="Preferences"
+    class="icon-hover"
+    ng-click="
+      detached? closePanel() : detachPanel();
+      detached = true
+    ">
+    <md-icon md-svg-icon="{{ detached? 'x' : 'detach' }}"></md-icon>
+  </md-button>
+<!--   <md-button
+    md-no-ink
+    aria-label="Preferences"
+    class="icon-hover"
+    ng-click="advancedAudioPreferences = !advancedAudioPreferences">
+    <md-icon md-svg-icon="audio-preferences"></md-icon>
+  </md-button> -->
+</div>

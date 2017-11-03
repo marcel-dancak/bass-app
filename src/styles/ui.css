@@ -148,6 +148,9 @@ md-select {
 md-select-value {
   height: 30px;
 }
+md-select[disabled] .md-select-value {
+  margin-bottom: 0;
+}
 
 md-input-container.input-inline-label {
   margin: 0.375em 0;
@@ -311,14 +314,18 @@ md-option {
 }
 
 .volume-field .rzslider .rz-pointer[aria-valuenow="0"],
-.rzslider[disabled] .rz-pointer {
+.volume-field .rzslider[disabled] .rz-pointer {
   cursor: default;
   background-color: #ccc;
   border: 2px solid white;
   width: 16px;
   height: 16px;
   top: -6px;
+  margin-left: 4px;
   box-sizing: border-box;
+}
+.volume-field .rzslider[disabled] .rz-bar.rz-selection {
+  background-color: red;
 }
 
 .rzslider .rz-ticks .rz-tick.rz-selected {
@@ -1029,7 +1036,6 @@ md-sidenav md-list-item.strong .md-list-item-inner {
   transform-origin: 0 0;
   background-color: #fff;
   border-radius: 3px;
-  padding: 8px;
 }
 .md-panel.menu-animation-enter,
 .md-panel.menu-animation-leave {
@@ -1050,7 +1056,11 @@ md-sidenav md-list-item.strong .md-list-item-inner {
 
 .md-panel.menu .tracks-mixer {
   width: 270px;
-  padding: 0;
+  padding: 8px 8px 2px 8px;
+}
+/*.md-panel.menu .tracks-mixer md-list-item {*/
+.md-panel.menu .tracks-mixer md-list-item:not(:last-child) {
+  border-bottom: 1px solid #ddd;
 }
 
 .app-cover {

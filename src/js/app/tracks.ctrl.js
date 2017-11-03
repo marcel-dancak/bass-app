@@ -151,6 +151,67 @@
       }
     };
 
+    var silence = context.createGain();
+    silence.gain.value = 0;
+    silence.connect(context.destination);
+    $scope.toggleSolo = function(track) {
+
+      track.solo = !track.solo;
+      var tracks = projectManager.project.tracks.concat();
+      if (projectManager.project.audioTrack) {
+        tracks = tracks.concat(projectManager.project.audioTrack);
+      }
+      var soloOn = tracks.find(function(t) {
+        return t.solo;
+      });
+      if (soloOn) {
+        tracks.forEach(function(t) {
+          if (!t.solo) {
+            t.audio.disconnect();
+            t.audio.connect(silence)
+          } else {
+            t.audio.disconnect();
+            t.audio.connect(t.audio.chain[0]);
+          }
+        });
+      } else {
+        tracks.forEach(function(t) {
+          t.audio.disconnect();
+          t.audio.connect(t.audio.chain[0]);
+        });
+      }
+    };
+
+    $scope.setFilter = function(track, on) {
+      console.log('setFilter: '+on)
+      var audio = track.audio;
+      var hasFilterNode = Boolean(audio.filter.context);
+
+      if (on) {
+        if (!hasFilterNode) {
+          audio.filter = context.createBiquadFilter();
+          audio.filter.frequency.value = 700;
+          audio.filter.on = on;
+          audio.disconnect();
+          audio.connect(audio.filter);
+          audio.filter.connect(audio.chain[0]);
+          audio.chain.splice(0, 0, audio.filter);
+        } else {
+          console.log('re-connect filter');
+          audio.disconnect();
+          audio.connect(audio.chain[0]);
+          audio.filter.connect(audio.chain[1]);
+        }
+      } else {
+        console.log('remove filter')
+        audio.filter.disconnect();
+        audio.connect(audio.chain[1]);
+        audio.filter.on = false;
+      }
+      // $scope.$broadcast('rzSliderForceRender');
+    }
+
+
     function initializeSectionStart() {
       // initialize audioTrackStart model
       if (workspace.section && !workspace.section.audioTrack) {
@@ -165,10 +226,10 @@
       $mdUtil.nextTick(function() {
         $scope.$broadcast('rzSliderForceRender');
       });
-      projectManager.addUrlStreamTrack(file.content);
+      projectManager.addUrlStreamTrack(file.content, {type: 'file'});
     };
 
-    $scope.addYoutubeTrack = function(file) {
+    $scope.addYoutubeTrack = function() {
       var prompt = $mdDialog.prompt()
         .title('Online Stream')
         .textContent('Enter Youtube video or other supported online stream resource')
@@ -193,12 +254,42 @@
     $scope.removeAudioTrack = projectManager.removeAudioTrack.bind(projectManager);
     initializeSectionStart();
 
+    $scope.toggleYoutubeTrack = function() {
+      var project = projectManager.project;
+      if (project.audioTrack && project.audioTrack.source.type === 'youtube') {
+        projectManager.removeAudioTrack();
+      } else {
+        if (project.audioTrack) {
+          projectManager.removeAudioTrack();
+        }
+        $scope.addYoutubeTrack();
+      }
+    }
+
+    $scope.toggleFileTrack = function() {
+      var project = projectManager.project;
+      if (project.audioTrack && project.audioTrack.source.type === 'file') {
+        projectManager.removeAudioTrack();
+      } else {
+        if (project.audioTrack) {
+          projectManager.removeAudioTrack();
+        }
+        $scope.addYoutubeTrack();
+      }
+    }
 
     $scope.openSyncPreferences = function(evt) {
       var box = evt.target.getBoundingClientRect();
-      var position = $mdPanel.newPanelPosition()
-        .relativeTo(evt.target)
-        .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_TOPS)
+      var position = $mdPanel.newPanelPosition();
+      if (window.runtime.desktop) {
+        position
+          .relativeTo(evt.target)
+          .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_TOPS);
+      } else {
+        position
+          .absolute()
+          .center();
+      }
 
       var animation = $mdPanel.newPanelAnimation()
         .withAnimation($mdPanel.animation.FADE);
@@ -219,6 +310,22 @@
         // delete position after first use to fix weird issues on scroll
         delete panel.config.position
       })
+    };
+
+    $scope.detachPanel = function() {
+      console.log(mdPanelRef);
+      var bounds = mdPanelRef.panelEl[0].getBoundingClientRect();
+      mdPanelRef.panelContainer.css('pointerEvents', 'none');
+      mdPanelRef.panelEl.css('pointerEvents', 'auto');
+      dragablePanel.makeDragable(mdPanelRef, '.toolbar');
+    };
+    $scope.closePanel = mdPanelRef.close.bind(mdPanelRef);
+
+    $scope.frequencyLabel = function(value) {
+      if (value >= 1000) {
+        return (value/1000).toFixed(2).replace('.00', '')+'k'
+      }
+      return value;
     }
   }
 })();

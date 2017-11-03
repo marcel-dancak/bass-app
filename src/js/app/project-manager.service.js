@@ -306,8 +306,12 @@
           oscillator.stop();
         }, 50);
         track.audio.connect(compressor);
+        track.audio.output = compressor;
+        track.audio.chain = [compressor, context.destination];
       } else {
         track.audio.connect(context.destination);
+        track.audio.output = context.destination;
+        track.audio.chain = [context.destination];
       }
 
       var index = this.project.tracks.length;
@@ -474,30 +478,52 @@
     };
 
     ProjectManager.prototype.addUrlStreamTrack = function(url, config) {
-      var audio = new Audio(url);
-      audio.autoplay = false;
-      audio.preload = 'none';
-      // audio.crossorigin = 'anonymous';
+      var stream = new Audio(url);
+      stream.autoplay = false;
+      // stream.preload = 'none';
 
-      var gain = {};
-      Object.defineProperty(gain, 'value', {
-        set: function(x) {
-          audio.volume = x;
-          this._value = x;
-        },
-        get: function() {
-          return this._value;
-        }
-      });
-      gain.value = 1;
+      var audio;
+      if (url.startsWith('data:')) {
+        stream.crossOrigin = "anonymous";
+        var source = context.createMediaElementSource(stream);
+
+        audio = context.createGain();
+        source.connect(audio);
+        audio.connect(context.destination);
+
+        audio.chain = [context.destination];
+      } else {
+        stream.preload = 'none';
+
+        var gain = {};
+        Object.defineProperty(gain, 'value', {
+          set: function(x) {
+            stream.volume = x;
+            this._value = x;
+          },
+          get: function() {
+            return this._value;
+          }
+        });
+        gain.value = 1;
+        audio = {
+          gain: gain,
+          disconnect: function() {
+            stream.volume = 0;
+          },
+          connect: function() {
+            stream.volume = this.gain.value;
+          }
+        };
+      }
+
       this.project.audioTrack = {
-        _stream: audio,
+        _stream: stream,
         initialized: true,
         playbackRate: 1,
         playing: false,
-        audio: {
-          gain: gain
-        },
+        audio: audio,
+        type: 'stream',
         play: function(offset) {
           if (!this.playing) {
             this.playing = true;

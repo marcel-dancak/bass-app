@@ -126,6 +126,11 @@
   function dragablePanel($window, $document, $mdPanel) {
     var panelsPositions = {};
     return {
+      makeDragable: function(panelRef, dragSelector) {
+        var panel = panelRef.panelEl;
+        var scope = panelRef.config.scope;
+        rcDragDirective($window, $document).link(scope, panel, {rcDrag: dragSelector});
+      },
       open: function(options) {
         return $mdPanel.open(
           angular.extend(options, {
