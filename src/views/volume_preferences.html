@@ -12,28 +12,26 @@
       {{ ::track.name }}
     </label>
     <rzslider
-      rz-slider-model="track.audio.gain.value"
+      rz-slider-model="track.audio.volume"
       rz-slider-options="{
         floor: 0,
         ceil: 1,
         step: 0.01,
         precision: 2,
-        xshowTicks: true,
-        xticksArray: [0, 0.5, 1],
         hideLimitLabels: true,
         hidePointerLabels: true,
         showSelectionBar: true,
-        disabled: track.muted
+        disabled: track.audio.muted
       }">
     </rzslider>
     <md-button
       md-no-ink
       aria-label="Mute"
       class="mute-button"
-      ng-class="{active: !track.muted}"
-      ng-click="toggleVolumeMute(track)">
+      ng-class="{active: !track.audio.muted}"
+      ng-click="track.audio.muted = !track.audio.muted">
       <md-icon
-        md-svg-icon="{{ track.muted? 'volume-mute' : 'volume-medium' }}">
+        md-svg-icon="{{ track.audio.muted? 'volume-mute' : 'volume-medium' }}">
       </md-icon>
     </md-button>
 
@@ -92,7 +90,7 @@
 
       <rzslider
         ng-if-start="project.audioTrack"
-        rz-slider-model="project.audioTrack.audio.gain.value"
+        rz-slider-model="project.audioTrack.audio.volume"
         rz-slider-options="{
           floor: 0,
           ceil: 1,
@@ -101,7 +99,7 @@
           hideLimitLabels: true,
           hidePointerLabels: true,
           showSelectionBar: true,
-          disabled: project.audioTrack.muted
+          disabled: project.audioTrack.audio.muted
         }">
       </rzslider>
 
@@ -117,10 +115,10 @@
         md-no-ink
         aria-label="Mute"
         class="mute-button"
-        ng-class="{active: !project.audioTrack.muted}"
-        ng-click="toggleVolumeMute(project.audioTrack)">
+        ng-class="{active: !project.audioTrack.audio.muted}"
+        ng-click="project.audioTrack.audio.muted = !project.audioTrack.audio.muted">
         <md-icon
-          md-svg-icon="{{ project.audioTrack.muted? 'volume-mute' : 'volume-medium' }}">
+          md-svg-icon="{{ project.audioTrack.audio.muted? 'volume-mute' : 'volume-medium' }}">
         </md-icon>
       </md-button>
       <md-button
@@ -241,14 +239,14 @@
           md-no-ink
           ng-if="true"
           class="md-primary"
-          ng-model="advanced.track.audio.filter.on"
-          ng-change="setFilter(advanced.track, advanced.track.audio.filter.on)">
+          ng-model="advanced.track.audio.filter.active"
+          ng-change="setFilter(advanced.track, advanced.track.audio.filter.active)">
         </md-switch>
         <md-select
           flex
           md-no-ink
           aria-label="Strings"
-          ng-disabled="!advanced.track.audio.filter.on"
+          ng-disabled="!advanced.track.audio.filter.active"
           ng-model="advanced.track.audio.filter.type">
           <md-option value="lowpass">Lowpass</md-option>
           <md-option value="highpass">Highpass</md-option>
@@ -269,7 +267,7 @@
           translate: frequencyLabel,
           showTicksValues: true,
           showSelectionBar: true,
-          disabled: !advanced.track.audio.filter.on
+          disabled: !advanced.track.audio.filter.active
         }">
       </rzslider>
     </md-list-item>

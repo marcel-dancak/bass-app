@@ -313,19 +313,20 @@ md-option {
   background-color: #fff!important;
 }
 
-.volume-field .rzslider .rz-pointer[aria-valuenow="0"],
-.volume-field .rzslider[disabled] .rz-pointer {
-  cursor: default;
+.volume-field .rzslider .rz-pointer[aria-valuenow="0"] {
   background-color: #ccc;
   border: 2px solid white;
   width: 16px;
   height: 16px;
   top: -6px;
-  margin-left: 4px;
   box-sizing: border-box;
 }
-.volume-field .rzslider[disabled] .rz-bar.rz-selection {
-  background-color: red;
+
+.volume-field .rzslider[disabled] .rz-pointer {
+  cursor: default;
+  background-color: #ccc;
+  border: 2px solid white;
+  box-sizing: border-box;
 }
 
 .rzslider .rz-ticks .rz-tick.rz-selected {

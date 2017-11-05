@@ -151,9 +151,6 @@
       }
     };
 
-    var silence = context.createGain();
-    silence.gain.value = 0;
-    silence.connect(context.destination);
     $scope.toggleSolo = function(track) {
 
       track.solo = !track.solo;
@@ -167,17 +164,14 @@
       if (soloOn) {
         tracks.forEach(function(t) {
           if (!t.solo) {
-            t.audio.disconnect();
-            t.audio.connect(silence)
+            t.audio.active = false;
           } else {
-            t.audio.disconnect();
-            t.audio.connect(t.audio.chain[0]);
+            t.audio.active = true;
           }
         });
       } else {
         tracks.forEach(function(t) {
-          t.audio.disconnect();
-          t.audio.connect(t.audio.chain[0]);
+          t.audio.active = true;
         });
       }
     };
@@ -191,24 +185,13 @@
         if (!hasFilterNode) {
           audio.filter = context.createBiquadFilter();
           audio.filter.frequency.value = 700;
-          audio.filter.on = on;
-          audio.disconnect();
-          audio.connect(audio.filter);
-          audio.filter.connect(audio.chain[0]);
-          audio.chain.splice(0, 0, audio.filter);
+          audio.add(audio.filter);
         } else {
-          console.log('re-connect filter');
-          audio.disconnect();
-          audio.connect(audio.chain[0]);
-          audio.filter.connect(audio.chain[1]);
+          audio.filter.active = true;
         }
       } else {
-        console.log('remove filter')
-        audio.filter.disconnect();
-        audio.connect(audio.chain[1]);
-        audio.filter.on = false;
+        audio.filter.active = false;
       }
-      // $scope.$broadcast('rzSliderForceRender');
     }
 
 

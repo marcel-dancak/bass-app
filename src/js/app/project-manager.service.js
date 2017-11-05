@@ -247,10 +247,10 @@
     }
   }
 
-  function projectManager($http, $q, $mdDialog, $mdToast, Observable, context, Bass, Drums, Piano, DrumTrackSection, TrackSection, Config) {
+  function projectManager($http, $q, $mdDialog, $mdToast, Observable, context,
+      Bass, Drums, Piano, DrumTrackSection, TrackSection, AudioTrack, StreamAudioTrack, Config) {
 
     var idCouter = {};
-    var compressors = {};
 
     function ProjectManager() {
       this.store = new ProjectLocalStore();
@@ -283,38 +283,18 @@
         track.instrument = (track.type === 'bass')? new Bass(track) : Drums[track.kit];
       }
 
-      track.audio = context.createGain();
-      if (track.volume) {
-        track.audio.gain.value = track.volume.muted? 0.0001 : track.volume.value;
-        track._volume = track.volume.value;
-      }
-
+      track.audio = AudioTrack(context);
       if (track.type !== 'drums') {
-        var compressor = context.createDynamicsCompressor();
-        compressor.threshold.value = -35;
-        compressor.knee.value = 40;
-        compressor.ratio.value = 12;
-        compressor.attack.value = 0;
-        // compressor.release.value = 0.25;
-        compressors[track.type] = compressor;
-        compressor.connect(context.destination);
-
-        // avoid initial fade-in caused by compressor by playing
-        // a short inaudible audio through it
-        var oscillator = context.createOscillator();
-        oscillator.frequency.value = 22050;
-        oscillator.connect(compressor);
-        oscillator.start();
-        setTimeout(function() {
-          oscillator.stop();
-        }, 50);
-        track.audio.connect(compressor);
-        track.audio.output = compressor;
-        track.audio.chain = [compressor, context.destination];
-      } else {
-        track.audio.connect(context.destination);
-        track.audio.output = context.destination;
-        track.audio.chain = [context.destination];
+        track.audio.addCompressor({
+          threshold: -35,
+          knee: 40,
+          ratio: 12,
+          attack: 0
+        });
+      }
+      if (track.volume) {
+        track.audio.volume = track.volume.value;
+        track.audio.muted = track.volume.muted;
       }
 
       var index = this.project.tracks.length;
@@ -487,37 +467,14 @@
 
       var audio;
       if (url.startsWith('data:')) {
-        stream.crossOrigin = "anonymous";
+        stream.crossOrigin = 'anonymous';
+
         var source = context.createMediaElementSource(stream);
-
-        audio = context.createGain();
+        audio = AudioTrack(context);
         source.connect(audio);
-        audio.connect(context.destination);
-
-        audio.chain = [context.destination];
       } else {
         stream.preload = 'none';
-
-        var gain = {};
-        Object.defineProperty(gain, 'value', {
-          set: function(x) {
-            stream.volume = x;
-            this._value = x;
-          },
-          get: function() {
-            return this._value;
-          }
-        });
-        gain.value = 1;
-        audio = {
-          gain: gain,
-          disconnect: function() {
-            stream.volume = 0;
-          },
-          connect: function() {
-            stream.volume = this.gain.value;
-          }
-        };
+        audio = StreamAudioTrack(stream);
       }
 
       this.project.audioTrack = {
@@ -551,20 +508,6 @@
           }
         }
       }
-      /*
-      Object.defineProperty(this.project.audioTrack, 'muted', {
-        set: function(val) {
-          if (!val && !this.initialized) {
-            console.log('Enabled')
-            this.initialized = true;
-          }
-          this._value = val;
-        },
-        get: function() {
-          return this._value;
-        }
-      });*/
-      this.project.audioTrack._volume = 1;
       this.project.audioTrack.source = config;
     }
 
@@ -576,7 +519,6 @@
 
     ProjectManager.prototype.createProject = function(tracks) {
       idCouter = {};
-      compressors = {};
       this.store.project = null;
       this.project = {
         sections: [],
@@ -592,7 +534,6 @@
 
     ProjectManager.prototype.loadProject = function(projectId) {
       idCouter = {};
-      compressors = {};
       var projectData = this.store.getProject(projectId);
       this.project = {
         name: projectData.name,
@@ -606,9 +547,8 @@
       if (projectData.audioTrack && projectData.audioTrack.source) {
         var config = projectData.audioTrack;
         this.addOnlineStreamTrack(config.source.resource, config.source).then(function(audioTrack) {
-          audioTrack.muted = Boolean(config.volume.muted);
-          audioTrack.audio.gain.value =  audioTrack.muted? 0.0001 : config.volume.value;
-          audioTrack._volume = config.volume.value;
+          audioTrack.audio.volume =  config.volume.value;
+          audioTrack.audio.muted = Boolean(config.volume.muted);
         });
       }
 
@@ -713,14 +653,13 @@
         return;
       }
       function trackVolume(track) {
-        var muted = track.audio.gain.value <= 0.001;
         return {
-          muted: muted,
-          value: muted? track._volume : track.audio.gain.value
+          muted: track.audio.muted,
+          value: track.audio.volume
         };
       }
 
-      var trackExcludedProperties = ['id', 'instrument', 'audio', '_volume'];
+      var trackExcludedProperties = ['id', 'instrument', 'audio'];
       var tracks = this.project.tracks.map(function(track) {
         var trackConfig = Object.keys(track).reduce(function(obj, property) {
           if (trackExcludedProperties.indexOf(property) === -1) {
