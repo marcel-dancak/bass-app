@@ -306,3 +306,45 @@
 </div>
 
 <ng-include ng-if="::runtime.mobile" src="'views/sidenav.html'"></ng-include>
+
+<svg width="100%">
+  <defs>
+    <g id="bass-cell" style="transform: translate(-1.063rem, 0)">
+      <circle cx="1.063em" cy="1.125em" r="1em" fill="#fff" stroke="#ddd"/>
+      <line x1="0.813em" y1="1.156em" x2="1.375em" y2="1.156em" stroke="#ddd"/>
+      <line x1="1.094em" y1="0.875em" x2="1.094em" y2="1.438em" stroke="#ddd"/>
+    </g>
+    <g id="bass-cell-small" style="transform: translate(-1.063rem, 0)">
+      <circle cx="1.063em" cy="1.125em" r="0.688em" fill="#fff" stroke="#ddd"/>
+      <line x1="0.813em" y1="1.156em" x2="1.375em" y2="1.156em" stroke="#ddd"/>
+      <line x1="1.094em" y1="0.875em" x2="1.094em" y2="1.438em" stroke="#ddd"/>
+    </g>
+
+    <g id="bass-grid-3" width="100%">
+      <use x="16.67%" xlink:href="#bass-cell" />
+      <use x="50%" xlink:href="#bass-cell" />
+      <use x="83.33%" xlink:href="#bass-cell" />
+    </g>
+
+    <g id="bass-grid-4" width="100%">
+      <use x="12.5%" xlink:href="#bass-cell" />
+      <use x="37.5%" xlink:href="#bass-cell" />
+      <use x="62.5%" xlink:href="#bass-cell" />
+      <use x="87.5%" xlink:href="#bass-cell" />
+    </g>
+
+    <g id="bass-grid-6" width="100%">
+      <use
+        ng-repeat="i in [0,1,2,3,4,5]"
+        ng-attr-x="{{ ::(100/12 + i * 100/6) }}%"
+        xlink:href="#bass-cell-small" />
+    </g>
+
+    <g id="bass-grid-8" width="100%">
+      <use
+        ng-repeat="i in [0,1,2,3,4,5,6,7]"
+        ng-attr-x="{{ ::(100/16 + i * 100/8) }}%"
+        xlink:href="#bass-cell-small" />
+    </g>
+  </defs>
+</svg>

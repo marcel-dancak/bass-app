@@ -12,69 +12,33 @@
     <div
       class="bass-grid"
       ng-switch="vm.beat.grid || vm.beat.subdivision">
-      <svg width="100%" height="100%" ng-switch-when="4">
-        <defs>
-          <pattern id="grid-4" x="12.5%" y="0" width="25%" height="2.25em" patternUnits="userSpaceOnUse">
-            <circle cx="1.063em" cy="1.125em" r="1em" fill="#fff" stroke="#ddd"/>
-            <line x1="0.813em" y1="1.156em" x2="1.375em" y2="1.156em" stroke="#ddd"/>
-            <line x1="1.094em" y1="0.875em" x2="1.094em" y2="1.438em" stroke="#ddd"/>
-          </pattern>
-        </defs>
-        <rect
-          class="grid-4"
-          style="transform: translate(-1.063em, 0)"
-          fill="url(#grid-4)"
-          width="110%"
-          height="100%"
-        />
-      </svg>
+
       <svg width="100%" height="100%" ng-switch-when="3">
-        <defs>
-          <pattern id="grid-3" x="16.67%" y="0" width="33.33%" height="2.25em" patternUnits="userSpaceOnUse">
-            <circle cx="1.063em" cy="1.125em" r="1em" fill="#fff" stroke="#ddd"/>
-            <line x1="0.813em" y1="1.156em" x2="1.375em" y2="1.156em" stroke="#ddd"/>
-            <line x1="1.094em" y1="0.875em" x2="1.094em" y2="1.438em" stroke="#ddd"/>
-          </pattern>
-        </defs>
-        <rect
-          class="grid-3"
-          style="transform: translate(-1.063em, 0)"
-          fill="url(#grid-3)"
-          width="110%"
-          height="100%"
-        />
+        <use
+          ng-repeat="i in [0,1,2,3,4,5]"
+          ng-attr-y="{{ ::(i*2.25) }}rem"
+          xlink:href="#bass-grid-3"/>
       </svg>
+
+      <svg width="100%" height="100%" ng-switch-when="4">
+        <use
+          ng-repeat="i in [0,1,2,3,4,5]"
+          ng-attr-y="{{ ::(i*2.25) }}rem"
+          xlink:href="#bass-grid-4"/>
+      </svg>
+
       <svg width="100%" height="100%" ng-switch-when="6">
-        <defs>
-          <pattern id="grid-6" x="8.33%" y="0" width="16.66%" height="2.25em" patternUnits="userSpaceOnUse">
-            <circle cx="1.063em" cy="1.125em" r="0.688em" fill="#fff" stroke="#ddd"/>
-            <line x1="0.813em" y1="1.156em" x2="1.375em" y2="1.156em" stroke="#ddd"/>
-            <line x1="1.094em" y1="0.875em" x2="1.094em" y2="1.438em" stroke="#ddd"/>
-          </pattern>
-        </defs>
-        <rect
-          class="grid-6"
-          style="transform: translate(-1.063em, 0)"
-          fill="url(#grid-6)"
-          width="110%"
-          height="100%"
-        />
+        <use
+          ng-repeat="i in [0,1,2,3,4,5]"
+          ng-attr-y="{{ ::(i*2.25) }}rem"
+          xlink:href="#bass-grid-6"/>
       </svg>
+
       <svg width="100%" height="100%" ng-switch-when="8">
-        <defs>
-          <pattern id="grid-8" x="6.25%" y="0" width="12.5%" height="2.25em" patternUnits="userSpaceOnUse">
-            <circle cx="1.063em" cy="1.125em" r="0.688em" fill="#fff" stroke="#ddd"/>
-            <line x1="0.813em" y1="1.156em" x2="1.375em" y2="1.156em" stroke="#ddd"/>
-            <line x1="1.094em" y1="0.875em" x2="1.094em" y2="1.438em" stroke="#ddd"/>
-          </pattern>
-        </defs>
-        <rect
-          class="grid-8"
-          style="transform: translate(-1.063em, 0)"
-          fill="url(#grid-8)"
-          width="110%"
-          height="100%"
-        />
+        <use
+          ng-repeat="i in [0,1,2,3,4,5]"
+          ng-attr-y="{{ ::(i*2.25) }}rem"
+          xlink:href="#bass-grid-8"/>
       </svg>
     </div>
 

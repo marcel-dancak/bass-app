@@ -821,10 +821,14 @@ md-input-container.slide-field > span {
   left: 0;
   height: 100%;
   width: 100%;
-  transition: opacity 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0s;
   pointer-events: none;
   svg {
-    opacity: 0;
+    opacity: 0.01;
+    transition: opacity 0.5s cubic-bezier(0.15, 0.8, 0.25, 1) 0s;
+    will-change: opacity;
+  }
+  svg.ng-leave, svg.ng-enter {
+    transition: none;
   }
 }
 
