@@ -560,12 +560,13 @@
     AudioPlayer.prototype._playDrumSound = function(track, sound, startTime) {
       var audioData = this.bufferLoader.loadResource(track.instrument.drumMap[sound.drum].filename);
       if (audioData) {
-        var source = context.createBufferSource();
+        var source = track.audio.context.createBufferSource();
         source.buffer = audioData;
-        var gain = context.createGain();
+        var gain = track.audio.context.createGain();
         gain.gain.value = sound.volume;
         source.connect(gain);
         gain.connect(track.audio);
+
         // console.log(source.buffer.duration);
         // console.log('startTime: {0} volume: {1} duration: {2}'.format(startTime, sound.volume, sound.duration));
         source.start(startTime);
@@ -608,8 +609,8 @@
         }
       }
 
-      var source = context.createBufferSource();
-      var gain = context.createGain();
+      var source = track.audio.context.createBufferSource();
+      var gain = track.audio.context.createGain();
       source.connect(gain);
       gain.connect(track.audio);
       source.buffer = audioData;
@@ -941,6 +942,77 @@
       }
       return task.promise;
     };
+
+    AudioPlayer.prototype.export = function(sections, finished, options) {
+      var playbackSpeed = this.playbackSpeed;
+      var duration = sections.reduce(function(duration, section) {
+        var beatTime = 60/(section.bpm * playbackSpeed);
+        return duration + (section.timeSignature.top * section.length * beatTime);
+      }, 0);
+      var offlineCtx = new OfflineAudioContext(2, 44100*(duration+0.1), 44100);
+
+      var outputs = {};
+      pm.project.tracks.forEach(function(track) {
+        var audio = offlineCtx.createGain();
+        audio.gain.value = track.audio.gain.value;
+        audio.chain = [];
+        audio.connect(offlineCtx.destination);
+        outputs[track.id] = audio;
+      });
+
+      sections.forEach(function(section) {
+        for (var trackId in section.tracks) {
+          section.tracks[trackId].audio = outputs[trackId];
+        }
+      });
+
+      var beatStart = offlineCtx.currentTime;
+      sections.forEach(function(section) {
+        for (var bar = 1; bar <= section.length; bar++) {
+          for (var beat = 1; beat <= section.timeSignature.top; beat++) {
+            beatStart += this.exportBeat(section, bar, beat, beatStart, true);
+          }
+        }
+      }, this);
+      offlineCtx.startRendering()
+        .then(function(renderedBuffer) {
+          sections.forEach(function(section) {
+            for (var trackId in section.tracks) {
+              section.tracks[trackId].audio = pm.project.tracksMap[trackId].audio;
+            }
+          });
+          var wav = audioBufferToWav(renderedBuffer);
+          var blob = new window.Blob([ new DataView(wav) ], {
+            type: 'audio/wav'
+          });
+          saveAs(blob, 'export.wav');
+        });
+    }
+
+    AudioPlayer.prototype.exportBeat = function(section, bar, beat, startTime) {
+      var beatTime = 60/(section.bpm * this.playbackSpeed);
+      for (var trackId in section.tracks) {
+        var track = section.tracks[trackId];
+        var trackBeat = track.beat(bar, beat);
+        track.beatSounds(trackBeat).forEach(function(sound) {
+          var startAt = startTime + (sound.start * beatTime);;
+          try {
+            if (track.type === 'bass') {
+              this._playBassSound(trackId, track, sound, startAt, beatTime);
+            } else if (track.type === 'drums') {
+              this._playDrumSound(track, sound, startAt);
+            } else {
+              this._playSound(trackId, track, trackBeat, sound, startAt, beatTime);
+            }
+          } catch (ex) {
+            if (ex instanceof ResourceNotAvailable) {
+              console.log('Failed to load resource: '+ex.resource);
+            }
+          }
+        }, this);
+      }
+      return beatTime;
+    }
 
     AudioPlayer.prototype.play = function(section, beatPrepared, playbackStopped, options) {
       options = options || {};
