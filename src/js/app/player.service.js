@@ -943,10 +943,12 @@
       return task.promise;
     };
 
-    AudioPlayer.prototype.export = function(sections, finished, options) {
+
+    AudioPlayer.prototype.export = function(sections, audioTrack) {
       var playbackSpeed = this.playbackSpeed;
-      var duration = sections.reduce(function(duration, section) {
-        var beatTime = 60/(section.bpm * playbackSpeed);
+      var duration = sections.reduce(function(duration, section, index) {
+        var bpm = (audioTrack[index] || section).bpm;
+        var beatTime = 60/(bpm * playbackSpeed);
         return duration + (section.timeSignature.top * section.length * beatTime);
       }, 0);
       var offlineCtx = new OfflineAudioContext(2, 44100*(duration+0.1), 44100);
@@ -959,22 +961,68 @@
         audio.connect(offlineCtx.destination);
         outputs[track.id] = audio;
       });
-
       sections.forEach(function(section) {
         for (var trackId in section.tracks) {
           section.tracks[trackId].audio = outputs[trackId];
         }
       });
 
-      var beatStart = offlineCtx.currentTime;
-      sections.forEach(function(section) {
-        for (var bar = 1; bar <= section.length; bar++) {
-          for (var beat = 1; beat <= section.timeSignature.top; beat++) {
-            beatStart += this.exportBeat(section, bar, beat, beatStart, true);
-          }
+      var _this = this;
+      function exportBeat(tracks, bar, beat, startTime, beatTime) {
+        for (var trackId in tracks) {
+          var track = tracks[trackId];
+          var trackBeat = track.beat(bar, beat);
+          track.beatSounds(trackBeat).forEach(function(sound) {
+            var startAt = startTime + (sound.start * beatTime);;
+            try {
+              if (track.type === 'bass') {
+                _this._playBassSound(trackId, track, sound, startAt, beatTime);
+              } else if (track.type === 'drums') {
+                _this._playDrumSound(track, sound, startAt);
+              } else {
+                _this._playSound(trackId, track, trackBeat, sound, startAt, beatTime);
+              }
+            } catch (ex) {
+              if (ex instanceof ResourceNotAvailable) {
+                console.log('Failed to load resource: '+ex.resource);
+              }
+            }
+          });
         }
-      }, this);
-      offlineCtx.startRendering()
+      }
+
+      this.fetchResources(sections)
+        .then(function() {
+          // generate sounds
+          var beatStart = offlineCtx.currentTime;
+          sections.forEach(function(section, index) {
+            var bpm = audioTrack? audioTrack[index].bpm : section.bpm;
+            var beatTime = 60/(bpm * playbackSpeed);
+            for (var bar = 1; bar <= section.length; bar++) {
+              for (var beat = 1; beat <= section.timeSignature.top; beat++) {
+                exportBeat(section.tracks, bar, beat, beatStart, beatTime);
+                beatStart += beatTime;
+              }
+            }
+          });
+          // handle audio track
+          if (audioTrack) {
+            var stream = pm.project.audioTrack._stream.cloneNode();
+            var source = offlineCtx.createMediaElementSource(stream);
+            var gain = offlineCtx.createGain();
+            gain.gain.value = audioTrack[0].track.audio.volume;
+            source.connect(offlineCtx.destination);
+
+            var offset = audioTrack[0].start;
+            stream.currentTime = offset[0] * 60 + offset[1] + offset[2]/1000;
+            return stream.play();
+          } else {
+            return Promise.resolve();
+          }
+        })
+        .then(function() {
+          return offlineCtx.startRendering();
+        })
         .then(function(renderedBuffer) {
           sections.forEach(function(section) {
             for (var trackId in section.tracks) {
@@ -987,31 +1035,6 @@
           });
           saveAs(blob, 'export.wav');
         });
-    }
-
-    AudioPlayer.prototype.exportBeat = function(section, bar, beat, startTime) {
-      var beatTime = 60/(section.bpm * this.playbackSpeed);
-      for (var trackId in section.tracks) {
-        var track = section.tracks[trackId];
-        var trackBeat = track.beat(bar, beat);
-        track.beatSounds(trackBeat).forEach(function(sound) {
-          var startAt = startTime + (sound.start * beatTime);;
-          try {
-            if (track.type === 'bass') {
-              this._playBassSound(trackId, track, sound, startAt, beatTime);
-            } else if (track.type === 'drums') {
-              this._playDrumSound(track, sound, startAt);
-            } else {
-              this._playSound(trackId, track, trackBeat, sound, startAt, beatTime);
-            }
-          } catch (ex) {
-            if (ex instanceof ResourceNotAvailable) {
-              console.log('Failed to load resource: '+ex.resource);
-            }
-          }
-        }, this);
-      }
-      return beatTime;
     }
 
     AudioPlayer.prototype.play = function(section, beatPrepared, playbackStopped, options) {
