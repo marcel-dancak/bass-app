@@ -7,12 +7,12 @@
 
   class SoundSelector {
 
-    constructor() {
+    constructor () {
       this.all = [];
       this.last = null;
     }
 
-    select(sound, flags) {
+    select (sound, flags) {
       flags = flags || {};
       if (!flags.add && !flags.toggle) {
         this.clearSelection();
@@ -40,11 +40,11 @@
       }
     }
 
-    clickSelect(evt, sound) {
+    clickSelect (evt, sound) {
       this.select(sound, { toggle: evt.ctrlKey });
     }
 
-    selectMultiple(selection, flags) {
+    selectMultiple (selection, flags) {
       flags = flags || {};
 
       if (!flags.add && !flags.toggle) {
@@ -52,15 +52,11 @@
       }
 
       flags.add = true;
-      selection.forEach(function(s) {
-        this.select(s, flags);
-      }, this);
+      selection.forEach(s => this.select(s, flags));
     }
 
-    clearSelection() {
-      this.all.forEach((s) => {
-        s.selected = false;
-      });
+    clearSelection () {
+      this.all.forEach(s => s.selected = false);
       this.all.length = 0;
 
       this.last = null;

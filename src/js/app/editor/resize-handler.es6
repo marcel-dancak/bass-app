@@ -10,12 +10,12 @@
 
     var resizeBox = {
       elem: angular.element('<div class="resize-box"><i></i></div>')[0],
-      setSymbol: function(symbol, dotted) {
+      setSymbol (symbol, dotted) {
         var labelElem = this.elem.children[0];
         labelElem.className = symbol;
         labelElem.innerHTML = dotted? '.' : '';
       },
-      setPxStyles: function(styles) {
+      setPxStyles (styles) {
         for (var key in styles) {
           this.elem.style[key] = styles[key]+'px';
         }
@@ -69,11 +69,11 @@
     var resizeLength;
 
     class ResizeHandler {
-      constructor() {
+      constructor () {
         this.resizeBox = resizeBox;
       }
 
-      resizeSound(sound, length, dotted) {
+      resizeSound (sound, length, dotted) {
         var dependencies = [];
 
         // collect next sounds
@@ -90,7 +90,7 @@
         sound.end = sound.start + duration;
 
         var prevSound = sound;
-        dependencies.forEach(function(depSound) {
+        dependencies.forEach(depSound => {
           var position = workspace.trackSection.nextSoundPosition(prevSound);
           depSound.start = position.start;
           if (position.beat !== depSound.beat) {
@@ -105,17 +105,17 @@
         });
       }
 
-      beforeResize(sound, info) {}
-      afterResize(sound, info) {}
+      beforeResize (sound, info) {}
+      afterResize (sound, info) {}
 
-      onResizeStart(sound, info) {
+      onResizeStart (sound, info) {
         var soundElem = info.element[0].parentElement;
         this.beforeResize(sound, info);
         soundElem.appendChild(this.resizeBox.elem);
 
         var beatWidth = soundElem.parentElement.clientWidth;
         var tmpSound = {beat: sound.beat};
-        notesWidths = noteLengths.map(function(noteLength) {
+        notesWidths = noteLengths.map(noteLength => {
           tmpSound.note = noteLength;
           return workspace.trackSection.soundDuration(tmpSound) * beatWidth;
         });
@@ -123,10 +123,10 @@
         this.onResize(sound, info);
       }
 
-      onResize(sound, info) {
+      onResize (sound, info) {
         var delta, closestWidth;
         var minDelta = notesWidths[0];
-        notesWidths.forEach(function(width, index) {
+        notesWidths.forEach((width, index) => {
           delta = Math.abs(info.width - width);
           if (delta < minDelta) {
             closestWidth = width;
@@ -139,7 +139,7 @@
         resizeBox.setSymbol(symbol, resizeLength.dotted);
       }
 
-      onResizeEnd(sound, info, evt) {
+      onResizeEnd (sound, info, evt) {
         info.element.css('width', '');
         soundAnimation(info.element[0], 'resize');
         resizeBox.elem.remove();

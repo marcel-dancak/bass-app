@@ -30,7 +30,7 @@
 
     var pianoDragHandlerOpts = {
 
-      validateDrop: (dropInfo, dragSound) => {
+      validateDrop (dropInfo, dragSound) {
         var key = dropInfo.position;
         if (dropInfo.channel === 'instrument') {
           return key.octave === dragSound.note.octave && key.label[0] === dragSound.note.name;
@@ -38,7 +38,7 @@
         return true;
       },
 
-      updateDropSound: (sound, beat, note) => {
+      updateDropSound (sound, beat, note) {
         // console.log('--- updateDropSound ---');
         var isFlat = sound.note.name[1] === '♭';
         sound.note.name = note.label[(isFlat && note.label[1])? 1 : 0];
@@ -46,7 +46,7 @@
         sound.string = note.label[0] + note.octave;
       },
 
-      afterDrop: (evt, data) => {
+      afterDrop (evt, data) {
         selector.selectMultiple(data);
       }
     }
@@ -92,13 +92,13 @@
       selector: selector,
       resizeHandler: new PianoResizeHandler(),
       dragHandler: DragHandler.create('piano', pianoDragHandlerOpts),
-      keyPressed: function(evt) {
+      keyPressed (evt) {
         var sound = selector.last;
         console.log(evt.keyCode)
         if (sound) {
           switch (evt.keyCode) {
             case 46: // Del
-              selector.all.forEach((s) => {
+              selector.all.forEach(s => {
                 if (s.elem) {
                   soundAnimation(s.elem[0]);
                 }
@@ -125,26 +125,26 @@
               sound.note.staccato = !sound.note.staccato;
               break;
             case 109: // -
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 sound.volume = Math.max(0, parseFloat((sound.volume-0.05).toFixed(2)));
                 console.log(sound.volume);
               });
               break;
             case 107: // +
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 sound.volume = Math.min(1.0, parseFloat((sound.volume+0.05).toFixed(2)));
                 console.log(sound.volume);
               });
               break;
              case 38: // up
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 if (!sound.prev) {
                   transpose(sound, 1);
                 }
               }, this);
               break;
              case 40: // down
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 if (!sound.prev) {
                   transpose(sound, -1);
                 }

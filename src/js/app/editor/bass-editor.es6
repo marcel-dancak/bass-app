@@ -12,7 +12,7 @@
 
     var bassDragHandlerOpts = {
 
-      validateDrop: (dropInfo, sound) => {
+      validateDrop (dropInfo, sound) {
         var string = dropInfo.position;
         if (sound.note.type === 'ghost') {
           return true;
@@ -21,7 +21,7 @@
         return fret >= 0;
       },
 
-      updateDropSound: (sound, beat, string) => {
+      updateDropSound (sound, beat, string) {
         sound.string = string.label;
         if (sound.note.type !== 'ghost') {
           sound.note.fret = workspace.track.instrument.stringFret(string.label, sound.note);
@@ -33,7 +33,7 @@
         }
       },
 
-      afterDrop: (evt, data) => {
+      afterDrop (evt, data) {
         selector.selectMultiple(data);
       }
     }
@@ -63,16 +63,15 @@
 
     class BassResizeHandler extends ResizeHandler {
 
-      beforeResize(sound, info) {
+      beforeResize (sound, info) {
         console.log('bass beforeResize');
       }
 
-      afterResize(sound, info) {
+      afterResize (sound, info) {
         function barPosition(beat, value) {
           return (beat.bar - 1 ) * workspace.section.timeSignature.top + beat.beat - 1 + value;
         }
         var endPosition = barPosition(sound.beat, sound.end);
-        console.log(endPosition)
         var beat = sound.beat;
         var overlappingSound;
 
@@ -104,7 +103,7 @@
       selector: selector,
       dragHandler: DragHandler.create('bass', bassDragHandlerOpts),
       resizeHandler: new BassResizeHandler(),
-      createSound: function(evt, beat) {
+      createSound (evt, beat) {
         var position = getSoundGrid(evt, beat);
         var sound = {
           string: position.string.label,
@@ -122,7 +121,7 @@
         workspace.trackSection.addSound(beat, sound);
         return sound;
       },
-      soundStyleChanged: function(sound) {
+      soundStyleChanged (sound) {
         var style = sound.style;
         if (style === 'hammer' || style === 'pull' || style === 'ring') {
           var soundOnLeft = workspace.trackSection.prevSound(sound);
@@ -172,14 +171,14 @@
         }
       },
 
-      noteTypeChanged(sound) {
+      noteTypeChanged (sound) {
         var type = sound.note.type;
         if (sound.endNote && type !== 'slide' && type !== 'grace') {
           delete sound.endNote;
         }
       },
 
-      soundLabelChanged(sound) {
+      soundLabelChanged (sound) {
         while (sound.next) {
           var nextSound = workspace.trackSection.nextSound(sound);
           if (nextSound.style === 'hammer' || nextSound.style === 'pull') {
@@ -194,7 +193,7 @@
         }
       },
 
-      transposeUp: function(sound) {
+      transposeUp (sound) {
         if (sound.note.type !== 'ghost') {
           var bassString = workspace.trackSection.instrument.strings[sound.string];
 
@@ -215,7 +214,7 @@
           this.soundLabelChanged(sound)
         }
       },
-      transposeDown: function(sound) {
+      transposeDown (sound) {
         if (sound.note.type !== 'ghost') {
           var bassString = workspace.trackSection.instrument.strings[sound.string];
 
@@ -237,7 +236,7 @@
         }
       },
 
-      shiftLeft: function(sound) {
+      shiftLeft (sound) {
         if (sound.prev) {
           return;
         }
@@ -250,7 +249,7 @@
         }
         workspace.trackSection.setSoundStart(sound, startTime);
       },
-      shiftRight:function(sound) {
+      shiftRight (sound) {
         if (sound.prev) {
           return;
         }
@@ -258,13 +257,13 @@
         workspace.trackSection.setSoundStart(sound, sound.start + step);
       },
 
-      keyPressed: function(evt) {
+      keyPressed (evt) {
         if (selector.last) {
           var sound = selector.last;
           switch (evt.keyCode) {
             case 46: // Del
               // selector.all.forEach(workspace.trackSection.deleteSound, workspace.trackSection);
-              selector.all.forEach((s) => {
+              selector.all.forEach(s => {
                 if (s.elem) {
                   soundAnimation(s.elem[0]);
                 }
@@ -285,9 +284,11 @@
               this.soundStyleChanged(sound);
               break;
              case 190: // .
-              if (sound.note.type !== 'ghost' && !sound.next) {
-                sound.note.staccato = !sound.note.staccato;
-              }
+              selector.all.forEach(s => {
+                if (s.note.type !== 'ghost' && !s.next) {
+                  s.note.staccato = !s.note.staccato;
+                }
+              });
               break;
              case 38: // up
               selector.all.forEach(this.transposeUp, this);
@@ -312,23 +313,23 @@
               evt.preventDefault();
               break;
             case 109: // -
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 sound.volume = Math.max(0, roundFloat(sound.volume-0.05));
               });
               break;
             case 107: // +
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 sound.volume = Math.min(1.0, roundFloat(sound.volume+0.05));
               });
               break;
             case 76: // l
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 var notes = sound.style !== 'ring'? [sound.note] : [];
                 if (sound.endNote) {
                   notes.push(sound.endNote);
                 }
                 var changed = false;
-                notes.forEach((note) => {
+                notes.forEach(note => {
                   const name = note.name || '';
                   if (name.endsWith('♯')) {
                     note.name = Notes.toFlat(name);

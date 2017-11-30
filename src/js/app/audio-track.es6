@@ -25,19 +25,19 @@
     const audioConfig = {};
 
     Object.defineProperty(audio, 'volume', {
-      set(value) {
+      set (value) {
         audioConfig.volume = value;
         if (audio.active && !audio.muted) {
           audio.gain.value = value;
         }
       },
-      get() {
+      get () {
         return audioConfig.volume;
       }
     });
 
     Object.defineProperty(audio, 'muted', {
-      set: function(mute) {
+      set (mute) {
         if (mute) {
           audio.gain.value = 0;
         } else if (audio.active) {
@@ -45,12 +45,12 @@
         }
         audioConfig.muted = mute;
       },
-      get: function() {
+      get () {
         return audioConfig.muted;
       }
     });
     Object.defineProperty(audio, 'active', {
-      set: function(active) {
+      set (active) {
         if (active && !audio.muted) {
           audio.gain.value = audio.volume;
         } else {
@@ -58,7 +58,7 @@
         }
         this._active = active;
       },
-      get: function() {
+      get () {
         return this._active;
       }
     });
@@ -68,10 +68,10 @@
 
     Object.assign(audio, {
 
-      add(node) {
+      add (node) {
         audio.chain.push(node);
         Object.defineProperty(node, 'active', {
-          set: function(active) {
+          set (active) {
             if (active) {
               const prevNode = prevActiveNode(audio.chain, node) || audio;
               const nextNode = nextActiveNode(audio.chain, node) || context.destination;
@@ -87,14 +87,14 @@
             }
             this._active = active;
           },
-          get: function() {
+          get () {
             return this._active;
           }
         });
         node.active = true;
       },
 
-      addCompressor(params) {
+      addCompressor (params) {
         const compressor = context.createDynamicsCompressor();
         for (let param in params) {
           compressor[param].value = params[param];
@@ -106,12 +106,10 @@
         oscillator.frequency.value = 22050;
         oscillator.connect(compressor);
         oscillator.start();
-        setTimeout(function() {
-          oscillator.stop();
-        }, 50);
+        setTimeout(() => {oscillator.stop()}, 50);
         return compressor;
       },
-      toJSON() {
+      toJSON () {
         return audioConfig;
       }
     });
@@ -126,18 +124,18 @@
     const audio = {};
     const audioConfig = {};
     Object.defineProperty(audio, 'volume', {
-      set: function(value) {
+      set (value) {
         audioConfig.volume = value;
         if (audio.active && !audio.muted) {
           stream.volume = value;
         }
       },
-      get: function() {
+      get () {
         return audioConfig.volume;
       }
     });
     Object.defineProperty(audio, 'muted', {
-      set: function(mute) {
+      set (mute) {
         if (mute) {
           stream.volume = 0;
         } else if (audio.active) {
@@ -145,12 +143,12 @@
         }
         audioConfig.muted = mute;
       },
-      get: function() {
+      get () {
         return audioConfig.muted;
       }
     });
     Object.defineProperty(audio, 'active', {
-      set: function(active) {
+      set (active) {
         if (active && !audio.muted) {
           stream.volume = audio.volume;
         } else {
@@ -158,7 +156,7 @@
         }
         audioConfig.active = active;
       },
-      get: function() {
+      get () {
         return audioConfig.active;
       }
     });

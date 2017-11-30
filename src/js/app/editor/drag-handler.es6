@@ -27,7 +27,7 @@
       var canDrop = false;
       var dropArea;
       return {
-        onDragStart: function(evt) {
+        onDragStart (evt) {
           dragElem = dragHandler.createDragWrapperElement();
 
           var dragSoundElem;
@@ -52,7 +52,7 @@
           document.body.appendChild(dragBox[0]);
 
           if (!evt.ctrlKey && dragSound.elem) {
-            setTimeout(function() {
+            setTimeout(() => {
               dragSound.elem.addClass('drag-move-element');
             }, 80);
           }
@@ -62,7 +62,7 @@
             note: dragSound.note
           }
         },
-        onDragOver: function(dropInfo) {
+        onDragOver (dropInfo) {
           canDrop = dragHandler.validateDrop(dropInfo, dragSound);
           dropSound.beat = dropInfo.beat;
           var width = workspace.trackSection.soundDuration(dropSound) * dropInfo.beatBounds.width;
@@ -76,7 +76,7 @@
           });
           dropArea = dropInfo;
         },
-        onDrop: function(evt) {
+        onDrop (evt) {
           if (!canDrop) return;
           var sound = angular.copy(dragSound);
           sound.start = dropArea.start;
@@ -90,7 +90,7 @@
           workspace.trackSection.addSound(dropArea.beat, sound);
           return [sound];
         },
-        onDragEnd: function(evt) {
+        onDragEnd (evt) {
           if (dragSound.elem) {
             dragSound.elem.removeClass('drag-move-element');
           }
@@ -108,7 +108,7 @@
       var dropArea;
       var canDrop;
       return {
-        onDragStart: function(evt) {
+        onDragStart (evt) {
           var sound = dragSound;
           sounds = [sound];
           while (sound.prev) {
@@ -172,7 +172,7 @@
           dragBox = angular.element('<div class="drag-box"></div>');
           document.body.appendChild(dragBox[0]);
         },
-        onDragOver: function(dropInfo) {
+        onDragOver (dropInfo) {
           canDrop = true;
           var width = 0;
           var dropSound = {
@@ -196,13 +196,13 @@
           });
           dropArea = dropInfo;
         },
-        onDrop: function(evt) {
+        onDrop (evt) {
           var sound = angular.copy(dragSound);
           var beat = dropArea.beat;
           var start = dropArea.start;
 
           var createdSounds = [];
-          sounds.forEach(function(sound) {
+          sounds.forEach(sound => {
             var newSound = angular.copy(sound);
             newSound.start = start;
             dragHandler.updateDropSound(newSound, beat, dropArea.position);
@@ -220,10 +220,10 @@
           }
           return createdSounds;
         },
-        onDragEnd: function(evt) {
+        onDragEnd (evt) {
           dragElem.remove();
           dragBox.remove();
-          srcDragElems.forEach(function(elem) {
+          srcDragElems.forEach(elem => {
             soundAnimation(elem);
             elem.classList.remove('drag-move-element');
           });
@@ -235,7 +235,7 @@
       var offsets;
       var dragElem;
       return {
-        onDragStart: function(evt) {
+        onDragStart (evt) {
           var mainIndex;
           var groupBounds = {x1: 5000, y1: 5000, x2: 0, y2: 0};
           var bounds = items.map((item, index) => {
@@ -273,7 +273,7 @@
           
           var elemIndex = 0;
           var maxImageY = 0;
-          evt.dataTransfer.setDragImage = function(elem, x, y) {
+          evt.dataTransfer.setDragImage = (elem, x, y) => {
             maxImageY = Math.max(maxImageY, y);
             // elem.remove();
             elem.style.position = 'absolute';
@@ -285,7 +285,7 @@
             elemIndex++;
           };
 
-          items.forEach((item) => {
+          items.forEach(item => {
             Object.defineProperty(evt, 'target', {writable: true, enumerable: true});
             evt.target = item.sound.elem[0];
             item.handler.onDragStart(evt);
@@ -299,7 +299,7 @@
             bounds[0].top-groupBounds.y1+bounds[0].height/2
           );
         },
-        onDragOver: function(dropInfo, evt) {
+        onDragOver (dropInfo, evt) {
           if (!evt.index) {
             items[0].handler.onDragOver(dropInfo);
 
@@ -324,15 +324,15 @@
             items[evt.index].handler.onDragOver(dropInfo);
           }
         },
-        onDrop: function(evt) {
+        onDrop (evt) {
           var sounds = [];
-          items.forEach((item) => {
+          items.forEach(item => {
             Array.prototype.push.apply(sounds, item.handler.onDrop(evt));
           });
           return sounds;
         },
-        onDragEnd: function(evt) {
-          items.forEach((item) => {
+        onDragEnd (evt) {
+          items.forEach(item => {
             item.handler.onDragEnd(evt);
           });
           dragElem.remove();
@@ -343,7 +343,7 @@
     var registredHandlers = {}
 
     class DragHandler {
-      constructor(type, opts) {
+      constructor (type, opts) {
         this.type = type;
         this.opts = opts;
         this.soundHandler = null;
@@ -351,23 +351,23 @@
         Object.assign(this, opts);
       }
 
-      createDragWrapperElement() {
+      createDragWrapperElement () {
         var dragElem = document.createElement('div');
         dragElem.className = 'drag-sound '+this.type;
         return dragElem;
       }
 
-      selectSoundHandler(sound) {
+      selectSoundHandler (sound) {
         var isMultiSound = sound.next || sound.prev;
         return isMultiSound? MultiSoundHandler(this, sound) : SingleSoundHandler(this, sound);
       }
 
-      onDragStart(evt, channel, data) {
+      onDragStart (evt, channel, data) {
         this.channel = channel;
         if (data.length > 1) {
           // normalize selection of tied sounds (use only first sound)
           var sounds = new Set();
-          data.forEach((sound) => {
+          data.forEach(sound => {
             if (sound.prev) {
               var rootSound = sound;
               while (rootSound.prev) {
@@ -380,7 +380,7 @@
           });
           data = Array.from(sounds);
           var handlers = [];
-          data.forEach((sound) => {
+          data.forEach(sound => {
             var handler = this.selectSoundHandler(sound);
             handlers.push({
               sound,
@@ -397,7 +397,7 @@
         this.soundHandler.onDragStart(evt, data);
       }
 
-      onDragOver(evt, beat, position) {
+      onDragOver (evt, beat, position) {
         // console.log('onDragOver');
         var grid = beatGrid(beat);
         var cell = evt.target.offsetWidth / grid;
@@ -426,14 +426,14 @@
         this.lastDragOverKey = key;
       }
 
-      onDrop(evt) {
+      onDrop (evt) {
         var data = this.soundHandler.onDrop(evt);
         if (this.afterDrop && data) {
           this.afterDrop(evt, data);
         }
       }
 
-      onDragEnd(evt) {
+      onDragEnd (evt) {
         this.soundHandler.onDragEnd(evt);
       }
     }
@@ -448,7 +448,7 @@
       workspaceElem = document.querySelector(selector);
 
       var dragHandler;
-      scope.$on('ANGULAR_DRAG_START', function(evt, e, channel, data) {
+      scope.$on('ANGULAR_DRAG_START', (evt, e, channel, data) => {
         console.log('ANGULAR_DRAG_START');
         var channelParts = channel.split('.');
         dragHandler = registredHandlers[channelParts[0]];
@@ -457,14 +457,14 @@
         }
       });
 
-      scope.$on('ANGULAR_DRAG_END', function(evt, e, channel, data) {
+      scope.$on('ANGULAR_DRAG_END', (evt, e, channel, data) => {
         console.log('ANGULAR_DRAG_END');
         if (dragHandler) {
           dragHandler.onDragEnd(e);
         }
       });
 
-      scope.$on('$destroy', function() {
+      scope.$on('$destroy', () => {
         workspaceElem = null;
       });
     }

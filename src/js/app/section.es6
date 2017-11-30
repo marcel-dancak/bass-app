@@ -20,19 +20,17 @@
     note.name = scale[index];
   }
 
-  function floatsEqual(a, b) {
-    return Math.abs(a - b) <= 0.01;
-  }
+  const floatsEqual = (a, b) => (Math.abs(a - b) <= 0.01);
 
   class BaseTrackSection {
-    constructor(section, data) {
+    constructor (section, data) {
       this.section = section;
       this.data = data;
       if (!data) {
         throw new Exception();
       }
-      this.data.forEach(function(beat) {
-        beat.data.forEach(function(sound) {
+      this.data.forEach(beat => {
+        beat.data.forEach(sound => {
           Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
           sound.beat = beat;
           if (sound.hasOwnProperty('subbeat')) {
@@ -75,13 +73,17 @@
             }
           }
           this.initializeSound(sound);
-        }, this);
-      }, this);
+        });
+      });
     }
 
-    initializeSound(sound) {}
+    initializeSound (sound) {
+      // if (sound.drum === 'hihat') {
+        // sound.volume -= 0.15;
+      // }
+    }
 
-    beat(bar, beat) {
+    beat (bar, beat) {
       // var flatIndex = (bar-1)*this.timeSignature.top + beat-1;
       // return this.data[flatIndex];
       for (var i = 0; i < this.data.length; i++) {
@@ -101,7 +103,7 @@
       return beat;
     }
 
-    prevBeat(beat) {
+    prevBeat (beat) {
       var barIndex = beat.bar;
       var beatIndex = beat.beat - 1;
       if (beatIndex === 0) {
@@ -113,7 +115,7 @@
       }
     }
 
-    nextBeat(beat) {
+    nextBeat (beat) {
       var barIndex = beat.bar;
       var beatIndex = beat.beat + 1;
 
@@ -126,7 +128,7 @@
       }
     }
 
-    sound(beat, filter) {
+    sound (beat, filter) {
       for (var i = 0; i < beat.data.length; i++) {
         var sound = beat.data[i];
         var match = true;
@@ -142,17 +144,15 @@
       }
     }
 
-    beatSounds(beat) {
+    beatSounds (beat) {
       return beat.data;
     }
 
-    orderedBeatSounds(beat) {
-      return beat.data.sort(function(a, b) {
-        return a.start - b.start;
-      });
+    orderedBeatSounds (beat) {
+      return beat.data.sort((a, b) => (a.start - b.start));
     }
 
-    addSound(beat, sound) {
+    addSound (beat, sound) {
       Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
       sound.beat = beat
       delete sound.offset;
@@ -160,31 +160,31 @@
       beat.data.push(sound);
     }
 
-    deleteSound(sound) {
+    deleteSound (sound) {
       var index = sound.beat.data.indexOf(sound);
       if (index !== -1) {
         sound.beat.data.splice(index, 1);
       }
     }
 
-    clearBeat(beat) {
+    clearBeat (beat) {
       beat.data.splice(0, beat.data.length);
     }
 
-    loadBeats(beats) {
-      beats.forEach(function(beat) {
+    loadBeats (beats) {
+      beats.forEach(beat => {
         var destBeat = this.beat(beat.bar, beat.beat);
         Array.prototype.push.apply(destBeat.data, beat.data);
-        destBeat.data.forEach(function(sound) {
+        destBeat.data.forEach(sound => {
           Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
           sound.beat = destBeat;
           this.initializeSound(sound);
-        }, this);
-      }, this);
+        });
+      });
 
       // fix references with prev and next beat
       var firstBeat = this.beat(beats[0].bar, beats[0].beat);
-      firstBeat.data.forEach(function(sound) {
+      firstBeat.data.forEach(sound => {
         if (sound.prev && sound.start === 0) {
           var prev = this.prevSound(sound);
           if (prev) {
@@ -193,10 +193,10 @@
             sound.prev = false;
           }
         }
-      }, this);
+      });
       var lastBeat = beats[beats.length-1];
       lastBeat = this.beat(lastBeat.bar, lastBeat.beat)
-      lastBeat.data.forEach(function(sound) {
+      lastBeat.data.forEach(sound => {
         if (sound.next && sound.end === 1) {
           var next = this.nextSound(sound);
           if (next) {
@@ -205,10 +205,10 @@
             sound.next = false;
           }
         }
-      }, this);
+      });
     }
 
-    forEachBeat(callback, obj) {
+    forEachBeat (callback, obj) {
       if (obj) {
         callback = callback.bind(obj);
       }
@@ -220,7 +220,7 @@
       }
     }
 
-    forEachSound(callback, obj) {
+    forEachSound (callback, obj) {
       if (obj) {
         callback = callback.bind(obj);
       }
@@ -244,11 +244,11 @@
 
 
   class NotesTrackSection extends BaseTrackSection {
-    constructor(section, data) {
+    constructor (section, data) {
       super(section, data);
     }
 
-    soundDuration(sound) {
+    soundDuration (sound) {
       if (sound && sound.note) {
         var duration = this.section.timeSignature.bottom / sound.note.length;
         if (sound.note.dotted) {
@@ -261,7 +261,7 @@
       }
     }
 
-    initializeSound(sound) {
+    initializeSound (sound) {
       Object.defineProperty(sound, 'end', {value: 'static', writable: true});
       if (sound.note && sound.note.length < 1) {
         sound.note.length = Math.round(1.0/sound.note.length);
@@ -269,7 +269,7 @@
       sound.end = sound.start + this.soundDuration(sound);
     }
 
-    nextSoundPosition(sound) {
+    nextSoundPosition (sound) {
       var beatOffset = parseInt(sound.end);
       var start = sound.end - beatOffset;
 
@@ -284,7 +284,7 @@
       };
     }
 
-    nextSound(sound) {
+    nextSound (sound) {
       var position = this.nextSoundPosition(sound);
       if (!position.beat) return;
 
@@ -297,7 +297,7 @@
       }
     }
 
-    prevSound(sound) {
+    prevSound (sound) {
       var ts = this.section.timeSignature;
       function sectionTime(beat, value) {
         var v1 = (beat.bar - 1)* ts.top;
@@ -327,7 +327,7 @@
       }
     }
 
-    deleteSound(sound) {
+    deleteSound (sound) {
       if (sound.prev) {
         // console.log('BREAK PREV SOUND CHAIN')
         var prevSound = this.prevSound(sound);
@@ -343,13 +343,13 @@
       super.deleteSound(sound);
     }
 
-    clearBeat(beat) {
+    clearBeat (beat) {
       while (beat.data.length) {
         this.deleteSound(beat.data[0]);
       }
     }
 
-    offsetSound(sound, offset) {
+    offsetSound (sound, offset) {
       sound.offset = parseFloat(((sound.offset || 0) + offset).toFixed(2));
       if (sound.offset === 0) delete sound.offset;
 
@@ -366,7 +366,7 @@
       // });
     }
 
-    setSoundStart(sound, start) {
+    setSoundStart (sound, start) {
       var tiedSounds = [];
       var s = sound;
       while (s.next) {
@@ -392,7 +392,7 @@
       }
 
       var prevSound = sound;
-      tiedSounds.forEach((s) => {
+      tiedSounds.forEach(s => {
         var position = this.nextSoundPosition(prevSound);
         s.start = position.start;
         if (position.beat !== s.beat) {
