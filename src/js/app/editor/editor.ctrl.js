@@ -102,7 +102,7 @@
     }
 
 
-  function EditModeController($scope, $timeout, $element, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
+  function EditModeController($scope, $timeout, $mdUtil, $mdToast, $mdPanel, context, workspace, audioPlayer, audioVisualiser,
               projectManager, Drums, DrumTrackSection, TrackSection, HighlightTimeline, swiperControl, fretboardViewer, DragHandler, dragablePanel,
               bassEditor, drumEditor, pianoEditor) {
 
@@ -660,8 +660,10 @@
       $scope.player.progress.update(sw.snapIndex);
     }
 
-
     function keyPressed(evt) {
+      if (evt.target.tagName === 'INPUT') {
+        return;
+      }
       var handler = keyHandlers[workspace.track.type];
       if (handler) {
         $scope.$apply(function() {
@@ -684,13 +686,12 @@
           return bounds.left >= x1 && bounds.right <= x2 && bounds.top >= y1 && bounds.bottom <= y2;
         })
         .map(function(el) {
-          return {
-            element: el,
-            sound: angular.element(el).scope().sound
-          }
+          return angular.element(el).scope().sound;
         });
       var instrumentHandler = keyHandlers[workspace.track.type];
-      instrumentHandler.selector.selectMultiple(selection);
+      $scope.$apply(function() {
+        instrumentHandler.selector.selectMultiple(selection);
+      });
     }
 
     $scope.$on('$destroy', function() {
