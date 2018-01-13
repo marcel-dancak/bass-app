@@ -41,7 +41,7 @@
 <section id="section-2">
   <h4>{{ ::item.sections[1] }}</h4>
   <p>
-    Drag & Drop operation can be used to:
+    Drag &amp; Drop operation can be used to:
     <ul>
       <li>Create a new sound by dragging particular note from fretboard</li>
       <li>Move existing sound to the new position (string and time)</li>
@@ -114,17 +114,22 @@
 <section id="section-5">
   <h4>{{ ::item.sections[4] }}</h4>
   <ul>
+    <li><b>Ctrl + Mouse left button</b> - toggle sound selection</li>
+    <li><b>Shift + Hold mouse left button + Move mouse</b> - select multiple sounds inside selection area</li>
+    <br />
     <li><b>Delete</b> - delete selected sound</li>
     <li><b>+</b> - raise volume by 5%</li>
     <li><b>-</b> - lower volume by 5%</li>
-    <li><b>Left</b> - reduce delay</li>
-    <li><b>Right</b> - add delay</li>
-    <h6>Regular notes:</h6>
+    <li><b>Left</b> - move to left on timeline</li>
+    <li><b>Right</b> - move to right on timeline</li>
+    <li><b>Alt + Left</b> - reduce delay</li>
+    <li><b>Alt + Right</b> - add delay</li>
+
     <li><b>L</b> - switch note label (sharp -> flat, flat -> sharp)</li>
     <li><b>Up</b> - raise note pitch by one semitone (fret)</li>
     <li><b>Down</b> - lower note pitch by one semitone (fret)</li>
     <li><b>.</b> - toggle staccato attribute</li>
-    <h6>Sounds transitions:</h6>
+
     <li><b>H</b> - Hammer-On</li>
     <li><b>P</b> - Pull-Off</li>
     <li><b>R</b> - Let ring (Tie when both sounds have the same pitch, slide transition otherwise)</li>
