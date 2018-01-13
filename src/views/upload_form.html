@@ -1,6 +1,8 @@
 <md-dialog class="upload-project-dialog">
-  <div class="dialog-header">
-    <span ng-attr-translate="{{ ::newUpload? 'UPLOAD' : 'UPDATE' }}"></span>
+  <div
+    ng-if-start="window.form"
+    class="dialog-header">
+    <span ng-attr-translate="{{ window.title }}"></span>
     <md-button
       md-no-ink
       aria-label="Close"
@@ -10,10 +12,14 @@
     </md-button>
   </div>
 
-  <md-dialog-content layout-padding ng-switch="form">
+  <md-dialog-content
+    layout-padding
+    xstyle="min-width:300px;min-height: 200px;"
+    ng-switch="window.form">
     <form
       style="width:680px;max-width: 100%"
-      xng-hide="showLogin" ng-switch-when="upload">
+      ng-switch-when="upload"
+      ng-init="initializeEditor()">
       <md-input-container class="md-block">
         <label class="md-no-float">Title</label>
         <input
@@ -73,7 +79,6 @@
         <md-chips
           ng-model="project.genres"
           md-autocomplete-snap
-          xmd-transform-chip="transformChip($chip)"
           md-require-match="false">
           <md-autocomplete
             md-selected-item="ctrl.selectedItem"
@@ -114,10 +119,36 @@
       </md-input-container>
     </form>
 
+    <div ng-switch-when="fork">
+      You are going to create/update a new version of the original project.
+
+      <div>
+        <br />
+        <md-radio-group
+          class="md-primary"
+          ng-model="fork.tag">
+          <md-radio-button
+            md-no-ink
+            class="md-primary"
+            aria-label="New"
+            value="">
+            Create new version
+          </md-radio-button>
+          <md-radio-button
+            ng-repeat="fork in ::forks"
+            md-no-ink
+            class="md-primary"
+            aria-label=""
+            ng-value="::fork.tag">
+            Update version v{{ fork.tag }}
+          </md-radio-button>
+        </md-radio-group>
+      </div>
+    </div>
+
     <form
       name="loginForm"
       style="max-width:400px;"
-      xng-show="showLogin"
       ng-switch-when="login">
       <p class="text-center">You have to be authenticated with
         <a href="https://basscloud.net">BassCloud</a> service
@@ -140,10 +171,10 @@
     </form>
   </md-dialog-content>
 
-  <md-dialog-actions>
+  <md-dialog-actions ng-if-end>
     <span flex></span>
     <md-button
-      ng-hide="showLogin"
+      ng-hide="window.form === 'login'"
       md-no-ink
       aria-label="Upload"
       ng-click="upload()"
@@ -151,7 +182,7 @@
       class="md-raised md-primary">
     </md-button>
     <md-button
-      ng-show="showLogin"
+      ng-show="window.form === 'login'"
       md-no-ink
       aria-label="Continue"
       ng-click="login()"
@@ -160,7 +191,7 @@
     </md-button>
   </md-dialog-actions>
 
-  <div
+<!--   <div
     ng-if="fetching"
     class="dialog-backdrop"
     layout-padding>
@@ -170,5 +201,5 @@
       md-diameter="24"
       style="margin:0 auto">
     </md-progress-circular>
-  </div>
+  </div> -->
 </md-dialog>

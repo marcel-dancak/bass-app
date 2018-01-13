@@ -7,19 +7,22 @@
 
 
   function UploadController($scope, $http, $sce, $mdDialog, projectManager, Config) {
-    console.log('-- UploadController --')
-    // if (projectManager.store)
-
     $scope.close = $mdDialog.hide;
-    $scope.showLogin = false;
-    $scope.form = "upload";
-    $scope.user = {
-      username: '',
-      password: ''
-    };
-    $scope.transformChip = function(chip) {
-      console.log('transformChip')
-    };
+    $scope.window = {};
+
+    if ($http.user) {
+      initializeUpload();
+    } else {
+      $scope.window = {
+        form: 'login',
+        title: 'LOGIN'
+      };
+      $scope.user = {
+        username: '',
+        password: ''
+      };
+    }
+
     var genres = [
       'Funk', 'Rock', 'Pop', 'Jazz', 'Acid Jazz', 'Soul', 'RnB', 'Disco', 'Blues',
       'Punk', 'Ska', 'House', 'Reggae', 'Hip hop', 'Trance', 'Gospel',
@@ -63,96 +66,126 @@
 
     // console.log(LZString.decompressFromBase64(data));
 
-    // analyze project data
-    var styles = new Set();
-    var tracks = new Set();
-    data.sections.forEach(function(sectionData) {
-      for (var trackId in sectionData.tracks) {
-        if (!projectManager.project.tracksMap[trackId]) {
-          // deleted track
-          continue;
-        }
-        var trackType = trackId.split('_')[0];
-        tracks.add(trackType)
-        if (trackType === 'bass') {
-          var trackBeats = sectionData.tracks[trackId];
-          trackBeats.forEach(function(trackBeat) {
-            var sounds = trackBeat.data;
-            sounds.forEach(function(sound) {
-              // Backward compatibility is here
-              styles.add(sound.sound? sound.sound.style : sound.style);
+    function collectProjectData() {
+      // analyze project data
+      var styles = new Set();
+      var tracks = new Set();
+      data.sections.forEach(function(sectionData) {
+        for (var trackId in sectionData.tracks) {
+          if (!projectManager.project.tracksMap[trackId]) {
+            // deleted track
+            continue;
+          }
+          var trackType = trackId.split('_')[0];
+          tracks.add(trackType)
+          if (trackType === 'bass') {
+            var trackBeats = sectionData.tracks[trackId];
+            trackBeats.forEach(function(trackBeat) {
+              var sounds = trackBeat.data;
+              sounds.forEach(function(sound) {
+                // Backward compatibility is here
+                styles.add(sound.sound? sound.sound.style : sound.style);
+              });
             });
-          });
+          }
         }
-      }
-    });
+      });
 
-    var playingStyles = [];
-    var techniques = ['finger', 'slap', 'tap', 'pick'];
-    styles.forEach(function(style) {
-      if (techniques.indexOf(style) !== -1) {
-        playingStyles.push(style.charAt(0).toUpperCase() + style.slice(1));
-      }
-    });
+      var playingStyles = [];
+      var techniques = ['finger', 'slap', 'tap', 'pick'];
+      styles.forEach(function(style) {
+        if (techniques.indexOf(style) !== -1) {
+          playingStyles.push(style.charAt(0).toUpperCase() + style.slice(1));
+        }
+      });
 
-    $scope.project = {
-      title: projectManager.project.name,
-      category: 'Cover',
-      playing_styles: playingStyles,
-      genres: [],
-      tracks: Array.from(tracks),
-      tags: [],
-      // data: data,
-      data: LZString.compressToBase64(JSON.stringify(data)),
-      level: 3
+      $scope.project = {
+        title: projectManager.project.name,
+        category: 'Cover',
+        playing_styles: playingStyles,
+        genres: [],
+        tracks: Array.from(tracks),
+        tags: [],
+        // data: data,
+        data: LZString.compressToBase64(JSON.stringify(data)),
+        level: 3
+      }
     }
 
-    var uploadId = projectManager.store.project.upload_id;
-    $scope.newUpload = !Boolean(uploadId);
-    if (uploadId) {
-      $scope.fetching = true;
-      $http.get(Config.apiUrl+'project/', { params: {id: uploadId} })
-        .then(function(resp) {
-          // do not override playing_styles
-          delete resp.data.playing_styles;
-          delete resp.data.tracks;
-          // update form with fetched data
-          for (var key in resp.data) {
-            $scope.project[key] = resp.data[key];
-          }
-          $scope.descriptionHtml = $sce.trustAsHtml(marked(resp.data.description));
-        }, function(resp) {
+    function initializeUpload() {
+      var uploadId = projectManager.store.project.upload_id;
 
-        })
-        .finally(function() {
-          $scope.fetching = false;
-        })
+      $scope.window.title = uploadId ? 'UPDATE' : 'UPLOAD';
+      if (uploadId) {
+        var projectId = uploadId.split('-')[0];
+        $scope.fetching = true;
+        $http.get(Config.apiUrl+'project/', { params: {id: projectId} })
+          .then(function(resp) {
+            if (resp.data.author.id !== $http.user.id) {
+              $scope.window.form = 'fork';
+              var tag = uploadId.split('-')[1];
+              $scope.forks = resp.data.forks.filter(function(fork) {
+                return fork.user === $http.user.id;
+              });
+              console.log(tag)
+              $scope.fork = {
+                project: projectId,
+                tag: tag ? parseInt(tag.replace('v', '')) : '',
+                data: LZString.compressToBase64(JSON.stringify(data))
+              };
+            } else {
+              collectProjectData();
+
+              // do not override playing_styles
+              delete resp.data.playing_styles;
+              delete resp.data.tracks;
+              // update form with fetched data
+              for (var key in resp.data) {
+                $scope.project[key] = resp.data[key];
+              }
+              $scope.descriptionHtml = $sce.trustAsHtml(marked(resp.data.description));
+              $scope.window.form = 'upload';
+            }
+          }, function(resp) {
+            // ???
+          })
+          .finally(function() {
+            $scope.fetching = false;
+          })
+      } else {
+        collectProjectData();
+        $scope.project.id = projectId;
+        $scope.window.form = 'upload';
+      }
     }
     
     $scope.login = function() {
       $scope.loginFailed = false;
       $http.post(Config.apiUrl+'login/', $scope.user, {withCredentials: true})
-        .then($scope.upload, function(resp) {
-          $scope.loginFailed = true;
-        })
+        .then(function(resp) {
+          $http.user = resp.data;
+          initializeUpload();
+        });
     };
 
     $scope.upload = function() {
-      $http.post(Config.apiUrl+'project/', $scope.project, {withCredentials: true})
-        .then(function(resp) {
-          projectManager.store.project.upload_id = resp.data;
-          projectManager.saveProjectConfig();
-          $scope.close(true);
-
-        }, function(resp) {
-          if (resp.status === 401 || resp.status === 403) {
-            if (resp.status === 403) {
-              $http.get(Config.apiUrl+'logout/', {withCredentials: true});
-            }
-            $scope.showLogin = true;
-            $scope.form = "login";
-          }
-        })
+      var upload;
+      if ($scope.window.form === 'fork') {
+        upload = $http.post(Config.apiUrl+'fork/', $scope.fork, {withCredentials: true});
+      } else {
+        upload = $http.post(Config.apiUrl+'project/', $scope.project, {withCredentials: true});
+      }
+      upload.then(function(resp) {
+        projectManager.store.project.upload_id = resp.data;
+        projectManager.saveProjectConfig();
+        $scope.close(true);
+      });
+      // if (resp.status === 401 || resp.status === 403) {
+      //   if (resp.status === 403) {
+      //     $http.get(Config.apiUrl+'logout/', {withCredentials: true});
+      //   }
+      //   $scope.form = "login";
+      // }
     }
 
     var editor;
@@ -162,14 +195,16 @@
       $scope.project.description = md;
     }
 
-    setTimeout(function() {
-      editor = new Pen({
-        class: 'description',
-        editor: document.querySelector('.markdown-editor'),
-        list: ['h1', 'h2', 'bold', 'italic', 'underline', 'insertorderedlist',
-              'insertunorderedlist', 'superscript', 'subscript', 'createlink']
-      });
-    }, 200);
+    $scope.initializeEditor = function() {
+      setTimeout(function() {
+        editor = new Pen({
+          class: 'description',
+          editor: document.querySelector('.markdown-editor'),
+          list: ['h1', 'h2', 'bold', 'italic', 'underline', 'insertorderedlist',
+                'insertunorderedlist', 'superscript', 'subscript', 'createlink']
+        });
+      }, 200);
+    }
   }
 
 })();

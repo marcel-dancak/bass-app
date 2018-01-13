@@ -179,6 +179,10 @@
     }
 
     $scope.openProject = function() {
+      if (projectManager.store.readOnly) {
+        projectManager.store = new ProjectLocalStore()
+        $location.hash('');
+      }
       $mdDialog.show({
         templateUrl: 'views/open_project.html',
         controller: OpenProjectController,
@@ -353,17 +357,30 @@
       })
     };
 
-    workspace.importProject = function() {
+    $scope.importProject = function() {
       $timeout(function() {
         var projectName = $location.path();
         console.log('Importing project: '+projectName)
         var sections = projectManager.project.sections.map(function(sectionInfo) {
           return projectManager.getSection(sectionInfo.id);
         });
-        $scope.newProject();
-        sections.forEach(projectManager.importSection, projectManager);
+
+        projectManager.store = new ProjectLocalStore();
+        projectManager.project.sections = [];
+        sections.forEach(function(section) {
+          projectManager.project.sections.push(section);
+          projectManager.loadSection(section.id);
+          projectManager.saveSection();
+        });
+        projectManager.store.project.upload_id = location.hash.substr(1);
+        projectManager.savePlaylists();
+        projectManager.saveProjectConfig();
+
         projectManager.loadSection(sections[0].id);
         workspace.selectedSectionId = projectManager.section.id;
+
+        showNotification('Project Imported');
+        location.hash = '';
       });
     };
 

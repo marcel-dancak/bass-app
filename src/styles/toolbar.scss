@@ -356,7 +356,7 @@ md-menu-content.preferences {
 .playback-active .disabled-on-playback,
 .readonly-project .md-button[aria-label="Save Section"],
 .readonly-project .md-button[aria-label="Save Playlists"],
-.readonly-project md-menu-item > .md-button[aria-label="Open Project"],
+/*.readonly-project md-menu-item > .md-button[aria-label="Open Project"],*/
 .readonly-project md-menu-item > .md-button[aria-label="New Section"],
 .readonly-project md-menu-item > .md-button[aria-label="Save As"],
 .readonly-project md-menu-item > .md-button[aria-label="Export"],
@@ -364,6 +364,16 @@ md-menu-content.preferences {
 .readonly-project md-menu-item > .md-button[aria-label="Delete Section"] {
   opacity: 0.6!important;
   pointer-events: none;
+}
+.readonly-project md-menu-item.export,
+.readonly-project md-menu-item.upload {
+  display: none;
+}
+md-menu-item.import {
+  display: none;
+}
+.readonly-project md-menu-item.import {
+  display: block;
 }
 
 .control-panel md-select[disabled] .md-select-value {
