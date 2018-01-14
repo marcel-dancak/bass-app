@@ -2,7 +2,7 @@
   'use strict';
 
 
-  function prevActiveNode(chain, node) {
+  function prevActiveNode (chain, node) {
     let index = chain.indexOf(node);
     while (--index >= 0) {
       if (chain[index].active) {
@@ -11,7 +11,7 @@
     }
   }
 
-  function nextActiveNode(chain, node) {
+  function nextActiveNode (chain, node) {
     let index = chain.indexOf(node);
     while (++index < chain.length) {
       if (chain[index].active) {
@@ -20,7 +20,7 @@
     }
   }
 
-  function AudioTrack(context, config) {
+  function AudioTrack (context, config) {
     const audio = context.createGain();
     const audioConfig = {};
 
@@ -165,6 +165,8 @@
     audio.active = true;
     return audio;
   }
+
+  window.AudioTrack = AudioTrack;
 
   angular
     .module('bd.app')

@@ -145,6 +145,7 @@
             <md-button
               ng-if="list.editing !== time"
               md-no-ink
+              aria-label="Bpm"
               ng-click="list.editing = time; $event.stopPropagation()">
               {{ formatTime(time.start) }}
               <span class="bpm" ng-if="time.bpm">({{ time.bpm }} bpm)</span>

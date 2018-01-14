@@ -55,7 +55,12 @@
           kit: 'Percussions',
           type: 'drums',
           icon: 'percussions'
-        }
+        }/*, {
+          name: 'Bongo',
+          kit: 'Bongo',
+          type: 'drums',
+          icon: ''
+        }*/
       ];
       $scope.addTrack = function(trackInfo) {
         projectManager.addTrack(trackInfo);

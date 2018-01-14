@@ -223,7 +223,16 @@
         </md-button>
       </md-menu-item>
 
-      <md-menu-item>
+      <md-menu-item class="import">
+        <md-button
+          md-no-ink
+          aria-label="Import"
+          ng-click="importProject()"
+          translate="IMPORT">
+        </md-button>
+      </md-menu-item>
+
+      <md-menu-item class="export">
         <md-button
           md-no-ink
           aria-label="Export"
@@ -232,7 +241,7 @@
         </md-button>
       </md-menu-item>
 
-      <md-menu-item>
+      <md-menu-item class="upload">
         <md-button
           md-no-ink
           aria-label="Upload"

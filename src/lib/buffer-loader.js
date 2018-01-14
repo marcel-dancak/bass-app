@@ -98,8 +98,8 @@ BufferLoader.prototype.loadResources = function(urlList, callback, errorCallback
   var resourceLoaded = function() {
     count++;
     if (count === urlList.length) {
-      console.log('Decode Time: '+this.decodeTime);
-      console.log('Total Time: '+(performance.now()-t1));
+      // console.log('Decode Time: '+this.decodeTime);
+      // console.log('Total Time: '+(performance.now()-t1));
       callback && callback();
     }
   }.bind(this);

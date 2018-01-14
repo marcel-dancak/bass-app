@@ -173,12 +173,13 @@
 
     AudioVisualiser.prototype.deactivate = function() {
       this.enabled = false;
-      console.log(this.input);
       try {
-        this.input.disconnect(this.audioProcessor);
+        if (this.input) {
+          this.input.disconnect(this.audioProcessor);
+        }
         this.audioProcessor.disconnect(context.destination);
       } catch (ex) {
-        console.log(ex);
+        // console.log(ex);
       }
       // this.beat = null;
     };

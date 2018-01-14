@@ -261,6 +261,7 @@
         max: 0,
         value: 0,
         update: function(value) {
+          // console.log(value)
           $scope.player.progress.value = value;
           // Update Progress Slider without Angular's digest cycle
           if (!this._progressEl) {
@@ -343,6 +344,7 @@
     // Assign isons for Drums/Percussions
     Drums.Drums.icon = 'drums';
     Drums.Percussions.icon = 'percussions';
+    Drums.Bongo.icon = 'bongo';
 
     // Stop playback when a tab is going to the background (setTimout will not work
     // properly in background tab)
@@ -357,6 +359,7 @@
     window.workspace = workspace;
     window.pm = projectManager;
     window.av = audioVisualiser;
+    window.ap = audioPlayer;
 
     window.addEventListener('keydown', function(e) {
       if (e.ctrlKey && e.key === 'i') {
@@ -435,6 +438,7 @@
     projectManager.on('projectLoaded', function(project) {
 
       // $http.get('intervals.html').then(function(resp) {
+      // $http.get('jam.html').then(function(resp) {
       //   loadScript(resp.data);
       //   projectManager.store.project.script = resp.data;
       // });
@@ -496,7 +500,7 @@
             close: 'menu-animation-leave'
           })
 
-      $mdPanel.open(angular.extend({
+      return $mdPanel.open(angular.extend({
         attachTo: document.body,
         position: position,
         animation: animation,

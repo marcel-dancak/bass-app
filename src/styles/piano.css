@@ -23,8 +23,8 @@
   box-sizing: border-box;
   font-size: 13px;
   color: #222;
-  max-height: 15px;
-  line-height: 14px;
+  height: 15px;
+  line-height: 13px;
   padding-left: 5px;
   top: auto;
   -webkit-user-select: none;
@@ -33,9 +33,7 @@
   box-shadow: none;
 }
 .piano .sound-container.selected {
-  border: 2px solid #555;
-  max-height: 17px;
-  transform: translate3d(0, 1px, 0);
+  height: 17px;
 }
 .piano .sound-container .resize-handler {
   font-size: 8px;
@@ -75,6 +73,9 @@
   line-height: 24px;
   padding-right: 2px;
   outline: none;
+  border-right: 1px solid #ccc;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 .piano-keys-container .piano-key:hover {
   background-color: #FFF9C4;

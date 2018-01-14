@@ -37,7 +37,7 @@
     "material.components.progressCircular",
     // "material.components.progressLinear",
     // "material.components.checkbox",
-    // "material.components.radioButton",
+    "material.components.radioButton",
     "material.components.select",
     "material.components.showHide",
     "material.components.sidenav",

@@ -26,6 +26,7 @@
         NEW: 'New',
         OPEN: 'Open',
         EXPORT: 'Export',
+        IMPORT: 'Import',
         UPLOAD: 'Upload',
         UPDATE: 'Update',
         SAVE: 'Save',
