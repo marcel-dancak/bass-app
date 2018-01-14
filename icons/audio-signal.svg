@@ -15,7 +15,7 @@
    viewBox="0 0 32 32"
    id="svg2"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="audio-signal2.svg">
+   sodipodi:docname="audio-signal.svg">
   <metadata
      id="metadata10">
     <rdf:RDF>
@@ -24,7 +24,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -43,9 +43,9 @@
      inkscape:window-height="854"
      id="namedview6"
      showgrid="false"
-     inkscape:zoom="11.313709"
-     inkscape:cx="22.547191"
-     inkscape:cy="12.176027"
+     inkscape:zoom="5.6568545"
+     inkscape:cx="7.7071951"
+     inkscape:cy="16.845363"
      inkscape:window-x="36"
      inkscape:window-y="72"
      inkscape:window-maximized="0"
