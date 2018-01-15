@@ -638,7 +638,7 @@
 
     AudioPlayer.prototype._bassSoundScheduled = function(trackId, sound) {};
 
-    AudioPlayer.prototype._playSound = function(trackId, track, beat, sound, startTime, beatTime) {
+    AudioPlayer.prototype._playSound = function(trackId, track, sound, startTime, beatTime) {
       startTime += sound.offset || 0;
       var duration = noteRealDuration(sound, beatTime);
       var audio;
@@ -742,14 +742,14 @@
           var track = this.section.tracks[trackId];
           var trackBeat = track.beat(bar, beat);
           track.beatSounds(trackBeat).forEach(function(sound) {
-            var startAt = startTime + (sound.start * beatTime);;
+            var startAt = startTime + (sound.start * beatTime);
             try {
               if (track.type === 'bass') {
                 this._playBassSound(trackId, track, sound, startAt, beatTime);
               } else if (track.type === 'drums') {
                 this._playDrumSound(track, sound, startAt);
               } else {
-                this._playSound(trackId, track, trackBeat, sound, startAt, beatTime);
+                this._playSound(trackId, track, sound, startAt, beatTime);
               }
             } catch (ex) {
               if (ex instanceof ResourceNotAvailable) {
@@ -980,7 +980,7 @@
               } else if (track.type === 'drums') {
                 _this._playDrumSound(track, sound, startAt);
               } else {
-                _this._playSound(trackId, track, trackBeat, sound, startAt, beatTime);
+                _this._playSound(trackId, track, sound, startAt, beatTime);
               }
             } catch (ex) {
               if (ex instanceof ResourceNotAvailable) {
@@ -1153,7 +1153,7 @@
         // this._playSound.bind(this, track.id, track, {subdivision: 4}, sounds[0], context.currentTime, 1)
         function() {
           sounds.forEach(function(sound) {
-            _this._playSound(track.id, track, {subdivision: 4}, sound, context.currentTime, 1);
+            _this._playSound(track.id, track, sound, context.currentTime, 1);
           });
         }
       );

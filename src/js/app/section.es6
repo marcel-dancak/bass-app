@@ -30,9 +30,10 @@
         throw new Exception();
       }
       this.data.forEach(beat => {
+        beat.section = this;
         beat.data.forEach(sound => {
-          Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
-          sound.beat = beat;
+          Object.defineProperty(sound, 'beat', {value: beat, writable: true});
+
           if (sound.hasOwnProperty('subbeat')) {
             sound.start = (sound.subbeat - 1) / beat.subdivision;
           }
@@ -95,6 +96,7 @@
       beat = {
         bar: bar,
         beat: beat,
+        section: this,
         subdivision: 4,
         meta: {},
         data: []
@@ -153,8 +155,7 @@
     }
 
     addSound (beat, sound) {
-      Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
-      sound.beat = beat
+      Object.defineProperty(sound, 'beat', {value: beat, writable: true});
       delete sound.offset;
       this.initializeSound(sound);
       beat.data.push(sound);
@@ -176,8 +177,7 @@
         var destBeat = this.beat(beat.bar, beat.beat);
         Array.prototype.push.apply(destBeat.data, beat.data);
         destBeat.data.forEach(sound => {
-          Object.defineProperty(sound, 'beat', {value: 'static', writable: true});
-          sound.beat = destBeat;
+          Object.defineProperty(sound, 'beat', {value: destBeat, writable: true});
           this.initializeSound(sound);
         });
       });
@@ -233,18 +233,20 @@
       }
     }
 
-    rawBeatData(beat) {
+    rawBeatData (beat) {
       return beat;
     }
 
-    rawData() {
+    rawData () {
       return this.data;
     }
+
+    toJSON() {}
   }
 
 
   class NotesTrackSection extends BaseTrackSection {
-    constructor (section, data) {
+    constructor(section, data) {
       super(section, data);
     }
 
@@ -262,11 +264,11 @@
     }
 
     initializeSound (sound) {
-      Object.defineProperty(sound, 'end', {value: 'static', writable: true});
       if (sound.note && sound.note.length < 1) {
         sound.note.length = Math.round(1.0/sound.note.length);
       }
-      sound.end = sound.start + this.soundDuration(sound);
+      const end = sound.start + this.soundDuration(sound);
+      Object.defineProperty(sound, 'end', {value: end, writable: true});
     }
 
     nextSoundPosition (sound) {
@@ -325,6 +327,13 @@
         }
         beat = this.prevBeat(beat);
       }
+    }
+
+    rootSoundOf (sound) {
+      while (sound.prev) {
+        sound = this.prevSound(sound);
+      }
+      return sound;
     }
 
     deleteSound (sound) {
@@ -406,6 +415,7 @@
     }
   }
 
+  window.NotesTrackSection = NotesTrackSection;
 
   angular
     .module('bd.app')

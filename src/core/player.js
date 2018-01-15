@@ -38,7 +38,7 @@ function Player(context) {
     },
 
     playBeat(section, bar, beat, startTime) {
-      console.log('playBeat', bar, beat, startTime);
+      // console.log('playBeat', bar, beat, startTime);
       const beatTime = 60/(section.bpm * this.playbackSpeed);
       // Object.values(section.tracks).forEach(track => {});
       for (let id in section.tracks) {
@@ -143,7 +143,7 @@ function StringInstrument(context, output, bufferLoader, params) {
     fadeOut() {
       this._fadeOut = {
         time: this.endTime-0.016,
-        gain: this.gain.value
+        gain: this.slide? this.slide.volume : this.gain.value
       };
       this.gain.setValueAtTime(this._fadeOut.gain, this._fadeOut.time);
       this.gain.linearRampToValueAtTime(0.000001, this.endTime);
@@ -274,9 +274,13 @@ function StringInstrument(context, output, bufferLoader, params) {
         return curve;
       },
       startPlayback(sound, startTime, beatTime) {
-        const audio = this.createSoundAudio(sound, beatTime);
-        audio.play(startTime, 0.1);
-        return audio;
+        const s = sound.note.slide.start || 0.2;
+        const e = sound.note.slide.end || 0.8;
+        const curve = this.slideCurve(sound, beatTime, s, 1-e);
+
+        const resources = this.getResources(sound);
+        const samples = resources.map(resource => createSoundAudio(sound, beatTime, resource));
+        return AudioUtils.audioSlide(null, sound, curve, startTime, beatTime, samples);;
       },
       continuePlayback(sound, startTime, beatTime) {
         const prevAudio = lastSoundAudio(sound.string);
@@ -483,7 +487,7 @@ player.addTrack({
 // player.addTrack(trackConfig);
 // player.addStreamTrack(config);
 
-player.play(section);
+// player.play(section);
 // player.export(section);
 
 // window.play = () => player.play(section);

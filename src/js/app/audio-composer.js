@@ -161,7 +161,6 @@
     averageStepRate[i] = (1 + stepRate[i]) / 2;
   }
 
-
   AudioComposer.prototype.createSlide = function(track, prevAudio, sound, curve, startTime, beatTime) {
     var st = performance.now();
 
@@ -684,6 +683,184 @@
     // saveAs(blob, 'sound.wav');
     return output;
   };
+
+  /*
+  function AudioArray() {
+    var segments = [];
+    return {
+      segments,
+      add (audio) {
+        segments.push(audio);
+      },
+      last () {
+        return segments[segments.length - 1];
+      },
+      play (startTime) {
+        segments.forEach(audio => {
+          audio.play(audio.startTime, audio.offset);
+        });
+      }
+    }
+  }
+  */
+
+  function audioJoin(audio1, audio2) {
+    var sampleRate = audio1.source.buffer.sampleRate;
+    var buffer1 = audio1.source.buffer.getChannelData(0);
+    var buffer2 = audio2.source.buffer.getChannelData(0);
+
+    var waveLength = soundWaveLength(audio1.sound);
+    var searchMaxSize = parseInt(1.5*waveLength*sampleRate);
+
+    var endIndex = parseInt(audio1.duration*sampleRate);
+    var cross1 = analyzeSignal(buffer1, endIndex-parseInt(waveLength*sampleRate), searchMaxSize).crossIndex;
+    var endOffset = (cross1 - endIndex)/sampleRate;
+    // console.log('Audio1 end offset: '+endOffset);
+    var fadeStartTime = audio1.endTime+endOffset;
+    audio1.gain.setValueCurveAtTime(fadeOut(audio1.sound.volume), fadeStartTime, waveLength-0.001);
+    audio1.gain.setValueAtTime(0.00001, fadeStartTime+waveLength);
+    audio1.duration += endOffset + waveLength;
+    audio1.endTime += endOffset + waveLength;
+
+    // second sound
+    waveLength = soundWaveLength(audio2.sound);
+    searchMaxSize = parseInt(1.5*waveLength*sampleRate);
+    var startIndex = parseInt(0.25*sampleRate);
+    var cross2 = analyzeSignal(buffer2, startIndex, searchMaxSize).crossIndex;
+    audio2.play(fadeStartTime, cross2/sampleRate);
+    audio2.gain.setValueCurveAtTime(fadeIn(audio2.sound.volume), fadeStartTime, waveLength-0.0001);
+    audio2.gain.setValueAtTime(audio2.sound.volume, fadeStartTime+waveLength);
+  }
+
+  function audioSlide(prevAudio, sound, curve, startTime, beatTime, samples) {
+    var steps = Math.abs(sound.note.fret - sound.endNote.fret);
+    var direction = (sound.note.fret > sound.endNote.fret)? -1 : 1;
+
+    var audio = prevAudio;
+    if (!audio) {
+      audio = samples[0];
+      audio.startTime = startTime;
+      audio.duration = 0;
+      audio.endTime = startTime;
+    }
+    var sampleRate = audio.source.buffer.sampleRate;
+
+    var buffer = audio.source.buffer.getChannelData(0);
+    var waveLength = fretWaveLength(sound.string, sound.note.fret);
+    var searchMaxSize = parseInt(1.5 * waveLength * sampleRate);
+
+    // console.log(curve[0]+' vs '+waveLength);
+    var crossPointIndex = parseInt((audio.duration + curve[0]) * sampleRate);
+    var info = analyzeSignal(buffer, crossPointIndex, searchMaxSize);
+    var diff = info.crossIndex - crossPointIndex;
+
+    // console.log(crossPointIndex+' vs '+info.crossIndex);
+    crossPointIndex = info.crossIndex;
+    audio.slide = {
+      crossPointIndex: crossPointIndex,
+      crossPointDuration: curve[0]+diff/sampleRate,
+      nextStepDurationCorrection: -diff/sampleRate,
+      crossPointTime: audio.startTime + crossPointIndex/sampleRate,
+      // amplitude: info.absoluteValue*sound.volume,
+      volume: prevAudio? prevAudio.slide? prevAudio.slide.volume : prevAudio.sound.volume : sound.volume
+    };
+    audio.slide.amplitude = info.absoluteValue*audio.slide.volume;
+
+    // console.log('add duration: '+audio.slide.crossPointDuration);
+
+    // console.log('first slide sound start time: '+startTime);
+    // console.log('amplitude: '+info.absoluteValue);
+    audio.gain.setValueAtTime(audio.slide.volume, startTime);
+    audio.duration += audio.slide.crossPointDuration;
+    audio.endTime += audio.slide.crossPointDuration;
+
+    audio.duration2 = audio.duration;
+
+    var step;
+    for (var i = 0; i < steps; i += step) {
+      waveLength = fretWaveLength(sound.string, sound.note.fret+((i+1)*direction));
+      var wavesCount = ((audio.slide.nextStepDurationCorrection + curve[i+1]) / waveLength);
+      if (wavesCount < 2.5 && i+1 < steps) {
+        step = 2;
+      } else {
+        step = 1;
+      }
+      // console.log('Waves: {0} Step: {1}'.format(wavesCount, step));
+      searchMaxSize = parseInt(1.5*waveLength*sampleRate);
+
+      var nextAudio = samples[i+step];
+      nextAudio.duration = 0;
+      nextAudio.endTime = 0;
+      // determine next's sound offset
+      buffer = nextAudio.source.buffer.getChannelData(0);
+      var nextBufferOffset = parseInt(0.45*sampleRate);
+      info = analyzeSignal(buffer, nextBufferOffset, searchMaxSize);
+      nextBufferOffset = info.crossIndex;
+
+      var nextStepDuration = audio.slide.nextStepDurationCorrection+curve[i+1];
+      if (step === 2) {
+        nextStepDuration += curve[i+2];
+      }
+      var nextCrossPointIndex = nextBufferOffset + parseInt(nextStepDuration*averageStepRate[-step*direction]*sampleRate);
+      // console.log('raw nextCrossPointIndex: '+nextCrossPointIndex);
+      var nextStartRate = stepRate[-direction*step];
+      // console.log((-step*direction)+' avg: '+averageStepRate[-step*direction]);
+      info = analyzeSignal(buffer, nextCrossPointIndex, searchMaxSize); // maybe add small step back to search region
+      diff = info.crossIndex - nextCrossPointIndex;
+      nextCrossPointIndex = info.crossIndex;
+      // console.log('nextStepDuration: {0} nextCrossPointIndex: {1} nextStartRate: {2}'.format(nextStepDuration, nextCrossPointIndex, nextStartRate));
+
+      var volumeCorrection = audio.slide.amplitude/info.absoluteValue;
+      nextAudio.slide = {
+        crossPointIndex: nextCrossPointIndex,
+        crossPointDuration: nextStepDuration + diff/sampleRate,
+        nextStepDurationCorrection: -diff/sampleRate,
+        crossPointTime: audio.slide.crossPointTime+nextStepDuration + diff/sampleRate,// relative to the begining of the whole slide
+        amplitude: info.absoluteValue*volumeCorrection,
+        volume: volumeCorrection,
+        startRate: nextStartRate
+      };
+
+      // setup playback
+      audio.duration += nextAudio.slide.crossPointDuration;
+      audio.endTime += nextAudio.slide.crossPointDuration;
+      audio.slide.endRate = stepRate[step*direction];
+
+      audio.source.playbackRate.setValueAtTime(1, audio.slide.crossPointTime);
+      audio.source.playbackRate.linearRampToValueAtTime(audio.slide.endRate, nextAudio.slide.crossPointTime);
+      audio.gain.setValueAtTime(audio.slide.volume, audio.slide.crossPointTime);
+      audio.gain.linearRampToValueAtTime(0.00001, nextAudio.slide.crossPointTime);
+      // audio.gain.setValueCurveAtTime(fadeOut(audio.slide.volume), audio.slide.crossPointTime+0.0001, nextAudio.slide.crossPointDuration-0.0002);
+      // audio.gain.setValueAtTime(0.00001, nextAudio.slide.crossPointTime);
+
+      audio.play(audio.startTime, audio.offset);
+
+      nextAudio.startTime = audio.slide.crossPointTime;
+      nextAudio.source.playbackRate.setValueAtTime(nextAudio.slide.startRate, nextAudio.startTime);
+      nextAudio.source.playbackRate.linearRampToValueAtTime(1, nextAudio.slide.crossPointTime);
+
+      nextAudio.gain.setValueAtTime(0.00001, nextAudio.startTime);
+      nextAudio.gain.linearRampToValueAtTime(nextAudio.slide.volume, nextAudio.slide.crossPointTime-0.0001);
+      // nextAudio.gain.setValueCurveAtTime(fadeIn(nextAudio.slide.volume), nextAudio.startTime+0.0001, nextAudio.slide.crossPointDuration-0.0002);
+      // nextAudio.gain.setValueAtTime(nextAudio.slide.volume, nextAudio.startTime+nextAudio.slide.crossPointDuration);
+      // console.log('{0} fade in: at {1} duration {2}'.format(i, nextAudio.startTime, nextAudio.slide.crossPointDuration));
+      nextAudio.offset = nextBufferOffset/sampleRate;
+      nextAudio.duration = nextAudio.slide.crossPointDuration;
+      nextAudio.endTime = nextAudio.slide.crossPointTime;
+      audio = nextAudio;
+    }
+
+    audio.duration += curve[curve.length-1];//+0.1;
+    audio.endTime += curve[curve.length-1];
+    // audio.gain.setValueAtTime(audio.slide.volume, audio.slide.crossPointTime+0.0001);
+    audio.play(audio.startTime, audio.offset);
+    return audio;
+  }
+
+  window.AudioUtils = {
+    join: audioJoin,
+    audioSlide: audioSlide
+  }
 
   return AudioComposer;
   }
