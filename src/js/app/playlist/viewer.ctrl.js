@@ -46,6 +46,144 @@
     }
     var viewer = $scope.viewer;
 
+    viewer.exportPlaylist = function() {
+      var audioTrack;
+      if (projectManager.project.audioTrack) {
+        audioTrack = playlist.map(function(section, index) {
+          return {
+            track: projectManager.project.audioTrack,
+            start: playlistItemStart(index),
+            bpm: playlistItemBpm(index)
+          }
+        });
+        console.log(audioTrack);
+      }
+      audioPlayer.export(playlist, audioTrack);
+    }
+    /*
+    viewer.generateTimes = function() {
+      var time = 0;
+      var slides = [];
+      var times = [];
+      var beatCounter = 0;
+      playlist.forEach(function(section) {
+        var track = section.tracks[viewerTrackId];
+        var beatTime = 60/(section.bpm * audioPlayer.playbackSpeed);
+        for (var bar = 1; bar <= section.length; bar++) {
+          for (var beat = 1; beat <= section.timeSignature.top; beat++) {
+            var subdivision = track.beat(bar, beat).subdivision;
+            var subbeatTime = beatTime/subdivision;
+            for (var subbeat = 1; subbeat <= subdivision; subbeat++) {
+              times.push(time);
+              time += subbeatTime;
+            }
+            beatCounter++;
+            if (beatCounter === viewer.beatsPerSlide) {
+              slides.push(times);
+              times = [];
+              beatCounter = 0;
+            }
+          }
+        }
+      });
+      var json = JSON.stringify(slides, null, 4);
+      var js = 'window.slides = '+json;
+      var blob = new Blob(
+        [js],
+        // [JSON.stringify(data)],
+        {type: "application/json;charset=utf-8"}
+      );
+      window.saveAs(blob, 'data.js');
+    }
+
+    viewer.renderSlide = function(mode) {
+      var playlistPosition = {
+        section: 0,
+        bar: 1,
+        beat: 1
+      }
+
+      var containerEl = document.createElement('div');
+      containerEl.className = 'playlist-swiper bass-sheet swiper-container strings-4';
+      containerEl.style.position = 'absolute';
+      containerEl.style.left = '0';
+      containerEl.style.top = '-500px';
+      containerEl.style.width = '1200px';
+      containerEl.style.height = '300px';
+
+      document.querySelector('.viewer-container').appendChild(containerEl);
+
+      var wrapEl = document.createElement('div');
+      wrapEl.style.padding = '0 8px 0 10px';
+      containerEl.appendChild(wrapEl);
+
+      function render(slide, skip) {
+        return new Promise(function(resolve, reject) {
+          var slideEl = slidesCompiler.generateSlide(
+            $scope,
+            playlist,
+            playlistPosition,
+            viewer.beatsPerSlide,
+            viewerTrackId,
+            {}
+          ).elem[0];
+          slideEl.classList.add('swiper-slide-visible');
+
+          if (skip) {
+            slideEl = null;
+            resolve();
+          }
+
+          // containerEl.appendChild(slideEl);
+          wrapEl.appendChild(slideEl);
+
+          var subbeats = slideEl.querySelectorAll('.subbeat');
+
+          function renderSubbeat(index) {
+            if (index > 0) {
+              subbeats[index-1].classList.add('active');
+            }
+            if (index > 1) {
+              subbeats[index-2].classList.remove('active');
+            }
+            domtoimage
+              .toBlob(wrapEl)
+              .then(function(blob) {
+                window.saveAs(blob, 'slide_{0}_{1}.png'.format(slide, index));
+
+                if (index < subbeats.length) {// && index < 2
+                  renderSubbeat(++index);
+                } else {
+                  slideEl.remove();
+                  resolve();
+                }
+              });
+          }
+          renderSubbeat(0);
+        });
+      }
+
+      var limit = 100;
+      var currentSlideIndex = viewer.swiper.snapIndex;
+      mode = mode || 'current';
+      function recursiveRender(slide) {
+        var position = JSON.stringify(playlistPosition);
+        var skip = false;
+        if (mode === 'current') {
+          skip = slide !== currentSlideIndex;
+        } else if (mode === 'rest') {
+          skip = slide < currentSlideIndex;
+        }
+        render(slide, skip).then(function() {
+          if (--limit> 0 && position !== JSON.stringify(playlistPosition)) {
+            recursiveRender(slide+1);
+          }
+        });
+      }
+      recursiveRender(0);
+    }
+    */
+
     var playlist;
     var playlistSlidePosition;
     var playbackState;
