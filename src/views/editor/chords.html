@@ -1,0 +1,107 @@
+<div
+  class="dialog chord-identify md-whiteframe-16dp"
+  layout="column">
+  <div class="dialog-header dragable">
+    <span>Chords Identifier</span>
+    <md-button
+      md-no-ink
+      aria-label="Close"
+      class="dialog-close icon-hover"
+      ng-click="close()">
+      <md-icon md-svg-icon="x"></md-icon>
+    </md-button>
+  </div>
+  <div
+    style="min-width: 450px;"
+    class="layout-padding layout-column flex">
+<!--     <div class="layout-row">
+      <span><b>Notes:</b>&nbsp;{{ ::sounds.join(' ') }}</span>
+      <div flex></div>
+      <md-button
+        md-no-ink
+        class="icon-hover play"
+        aria-label="Play"
+        ng-click="playInputSounds()">
+        <md-icon md-svg-icon="arrow-"></md-icon>
+      </md-button>
+    </div> -->
+    <div class="input layout-row" style="flex-shrink: 0">
+      <md-input-container flex>
+        <label>Notes</label>
+        <input
+          aria-label="Chord"
+          ng-model="input"
+          ng-keyup="inputUpdated($event)"
+          xng-blur="inputUpdated({key: 'Enter'})">
+      </md-input-container>
+      <md-input-container style="width: 50px;">
+        <label>Octave</label>
+        <input
+          aria-label="Octave"
+          ng-model="rootOctave"
+          type="number">
+      </md-input-container>
+      <md-button
+        md-no-ink
+        class="icon-hover play"
+        aria-label="Update"
+        ng-click="updateSelection()">
+        <md-icon md-svg-icon="loop"></md-icon>
+      </md-button>
+      <md-button
+        md-no-ink
+        class="icon-hover play"
+        aria-label="Play"
+        ng-click="playInputSounds()">
+        <md-icon md-svg-icon="play"></md-icon>
+      </md-button>
+    </div>
+
+    <div class="filter layout-row" style="flex-shrink: 0">
+      <!-- <small flex>Results ({{ results.length }})</small> -->
+      <md-checkbox
+        ng-model="filter.strict"
+        ng-change="applyFilter()">Strict match
+      </md-checkbox>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <md-input-container flex>
+        <label>Chords filter</label>
+        <input
+          aria-label="Chord"
+          autocomplete="off"
+          ng-model="filter.text"
+          ng-keyup="applyFilter($event)">
+      </md-input-container>
+    </div>
+
+    <small>Chords ({{ results.length }})</small>
+    <md-list
+      md-no-ink
+      class="select-list chord-list flex">
+      <md-list-item
+        ng-repeat="chord in results">
+        <small>{{ ::$index + 1}}. &nbsp;</small>
+        <div flex>
+          <b>{{ ::chord.label }}:</b>
+          <span
+            ng-repeat="note in chord.notes track by $index"
+            ng-class="{match: chord.matches[$index]}">{{ note }} </span>
+        </div>
+        <span ng-if-start="chord.enharmonic">/&nbsp;&nbsp;</span>
+        <div ng-if-end flex>
+          <b>{{ ::chord.enharmonic.label }}:</b>
+          <span
+            ng-repeat="note in chord.enharmonic.notes track by $index"
+            ng-class="{match: chord.matches[$index]}">{{ note }} </span>
+        </div>
+        <md-button
+          class="icon-hover play"
+          aria-label="Play"
+          ng-click="playChord(chord.name)">
+          <md-icon md-svg-icon="play"></md-icon>
+        </md-button>
+      </md-list-item>
+    </md-list>
+
+  </div>
+</div>

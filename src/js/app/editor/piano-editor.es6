@@ -17,8 +17,8 @@
     });
 
 
-  function pianoEditor(workspace, Notes, SoundSelector, ResizeHandler, DragHandler, soundAnimation) {
-    var selector = new SoundSelector();
+  function pianoEditor(workspace, Notes, SoundSelector, ResizeHandler, DragHandler, soundAnimation, dragablePanel) {
+    const selector = new SoundSelector();
 
     class PianoResizeHandler extends ResizeHandler {
 
@@ -28,10 +28,10 @@
 
     }
 
-    var pianoDragHandlerOpts = {
+    const pianoDragHandlerOpts = {
 
       validateDrop (dropInfo, dragSound) {
-        var key = dropInfo.position;
+        const key = dropInfo.position;
         if (dropInfo.channel === 'instrument') {
           return key.octave === dragSound.note.octave && key.label[0] === dragSound.note.name;
         }
@@ -40,7 +40,7 @@
 
       updateDropSound (sound, beat, note) {
         // console.log('--- updateDropSound ---');
-        var isFlat = sound.note.name[1] === '♭';
+        const isFlat = sound.note.name[1] === '♭';
         sound.note.name = note.label[(isFlat && note.label[1])? 1 : 0];
         sound.note.octave = note.octave;
         sound.string = note.label[0] + note.octave;
@@ -52,9 +52,9 @@
     }
 
     function transpose(sound, step) {
-      var piano = workspace.track.instrument;
-      var index = piano.stringIndex(sound.note);
-      var transposedNote = piano.notes.list[index + step];
+      const piano = workspace.track.instrument;
+      const index = piano.stringIndex(sound.note);
+      const transposedNote = piano.notes.list[index + step];
       if (transposedNote) {
         if (sound.next) {
           transpose(workspace.trackSection.nextSound(sound), step);
@@ -70,11 +70,11 @@
       if (sound.prev) {
         return;
       }
-      var startTime;
+      let startTime;
       if (sound.start > 0) {
         startTime = sound.start - 1 / sound.beat.subdivision;
       } else {
-        var prevBeat = workspace.trackSection.prevBeat(sound.beat);
+        const prevBeat = workspace.trackSection.prevBeat(sound.beat);
         startTime = -1 / prevBeat.subdivision;
       }
       workspace.trackSection.setSoundStart(sound, startTime);
@@ -84,7 +84,7 @@
       if (sound.prev) {
         return;
       }
-      var step = 1 / sound.beat.subdivision;
+      const step = 1 / sound.beat.subdivision;
       workspace.trackSection.setSoundStart(sound, sound.start + step);
     }
 
@@ -93,11 +93,11 @@
       resizeHandler: new PianoResizeHandler(),
       dragHandler: DragHandler.create('piano', pianoDragHandlerOpts),
       keyPressed (evt) {
-        var sound = selector.last;
-        console.log(evt.keyCode)
+        const sound = selector.last;
+        console.log(evt.key)
         if (sound) {
-          switch (evt.keyCode) {
-            case 46: // Del
+          switch (evt.key) {
+            case 'Delete':
               selector.all.forEach(s => {
                 if (s.elem) {
                   soundAnimation(s.elem[0]);
@@ -105,15 +105,15 @@
                 workspace.trackSection.deleteSound(s);
               });
               break;
-            case 84: // t
+            case 't':
               console.log(JSON.stringify(sound));
-              var prevSound = workspace.trackSection.prevSound(sound);
+              const prevSound = workspace.trackSection.prevSound(sound);
               if (prevSound) {
                 sound.prev = true;
                 prevSound.next = true;
               }
               break;
-            case 76: // l
+            case 'l':
               if (sound.note.name.endsWith('♯')) {
                 sound.note.name = Notes.toFlat(sound.note.name);
               } else if (sound.note.name.endsWith('♭')) {
@@ -121,36 +121,38 @@
               }
               evt.preventDefault();
               return false;
-            case 190: // .
-              sound.note.staccato = !sound.note.staccato;
+            case '.':
+              selector.all.forEach(sound => {
+                sound.note.staccato = !sound.note.staccato;
+              });
               break;
-            case 109: // -
+            case '-':
               selector.all.forEach(sound => {
                 sound.volume = Math.max(0, parseFloat((sound.volume-0.05).toFixed(2)));
                 console.log(sound.volume);
               });
               break;
-            case 107: // +
+            case '+':
               selector.all.forEach(sound => {
                 sound.volume = Math.min(1.0, parseFloat((sound.volume+0.05).toFixed(2)));
                 console.log(sound.volume);
               });
               break;
-             case 38: // up
+             case 'ArrowUp':
               selector.all.forEach(sound => {
                 if (!sound.prev) {
                   transpose(sound, 1);
                 }
               }, this);
               break;
-             case 40: // down
+             case 'ArrowDown':
               selector.all.forEach(sound => {
                 if (!sound.prev) {
                   transpose(sound, -1);
                 }
               });
               break;
-            case 37: // left
+            case 'ArrowLeft':
               if (evt.altKey) {
                 workspace.trackSection.offsetSound(sound, -0.01);
               } else {
@@ -158,7 +160,7 @@
               }
               evt.preventDefault();
               break;
-            case 39: // right
+            case 'ArrowRight':
               if (evt.altKey) {
                 workspace.trackSection.offsetSound(sound, 0.01);
               } else {
@@ -167,15 +169,39 @@
               evt.preventDefault();
               break;
             // just for debugging
-            case 78: // n
-              var n = workspace.trackSection.nextSound(sound)
+            case 'n':
+              const n = workspace.trackSection.nextSound(sound)
               console.log(n)
               break;
-            case 80: // p
-              var prev = workspace.trackSection.prevSound(sound);
+            case 'p':
+              const prev = workspace.trackSection.prevSound(sound);
               if (prev) {
                 console.log('OK');
               }
+              break;
+            case 'm':
+              selector.all.forEach(sound => {
+                if (sound.volume > 0.01) {
+                  sound.elem.attr('muted', sound.volume);
+                  sound.volume = 0;
+                } else {
+                  sound.volume = parseFloat(sound.elem.attr('muted'));
+                  sound.elem.removeAttr('muted');
+                }
+              });
+              break;
+            case 'i':
+              // if (!this.chordsPanel || !this.chordsPanel.isAttached) {
+                this.chordsPanel = dragablePanel.open({
+                  id: 'chords-identify',
+                  attachTo: document.body,
+                  templateUrl: 'views/editor/chords.html',
+                  controller: 'ChordIdentifier',
+                  locals: {
+                    selector: selector
+                  }
+                });
+              // }
               break;
           }
           evt.preventDefault();
