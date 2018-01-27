@@ -37,7 +37,7 @@
     }
 
     function updateViewport() {
-      target.css('transform', 'translate('+ (offset.x + mouseDelta.x) +'px,'+ (offset.y + mouseDelta.y) +'px)');
+      target.css('transform', 'translate('+ Math.round(offset.x + mouseDelta.x) +'px,'+ Math.round(offset.y + mouseDelta.y) +'px)');
     }
 
     function requestUpdateViewport() {
@@ -68,14 +68,15 @@
     }
 
     function mousemove(ev) {
-      var x = Math.min(Math.max(ev.pageX, bounds.left), bounds.right);
-      var y = Math.min(Math.max(ev.pageY, bounds.top), bounds.bottom);
-      if (mouseLast === null || Math.abs(x - mouseLast.x) > moveThreshold || Math.abs(y - mouseLast.y) > moveThreshold) {
+      // var x = Math.min(Math.max(ev.pageX, bounds.left), bounds.right);
+      // var y = Math.min(Math.max(ev.pageY, bounds.top), bounds.bottom);
+      var x = ev.pageX;
+      var y = Math.max(ev.pageY, bounds.top);
+      if (mouseLast === null) {
         mouseStart = null;
         mouseup();
       }
       else {
-        
         mouseLast = {x: x, y: y};
         mouseDelta = {x: (x - mouseStart.x), y: (y - mouseStart.y)};
         requestUpdateViewport();
@@ -132,24 +133,53 @@
         rcDragDirective($window, $document).link(scope, panel, {rcDrag: dragSelector});
       },
       open: function(options) {
-        return $mdPanel.open(
+        if (!options.position) {
+          options.position = $mdPanel.newPanelPosition()
+            .absolute()
+            .center();
+        }
+        if (!options.animation) {
+          options.animation = $mdPanel.newPanelAnimation().withAnimation($mdPanel.animation.FADE);
+        }
+
+        var panel = $mdPanel.create(
           angular.extend(options, {
             propagateContainerEvents: true,
             onDomAdded: function(args) {
               var panel = args[1].panelEl;
               var scope = args[1].config.scope;
+
+              delete args[1].config.position;
               
               if (!scope.close) {
                 scope.close = args[1].close.bind(args[1]);
               }
+
               rcDragDirective($window, $document).link(scope, panel, {rcDrag: '.dialog-header'});
 
               var lastPosition = panelsPositions[options.id];
               if (lastPosition) {
-                panel.css({top: 0, left: 0});
-                panel.css('transform', 'translate3d('+Math.round(lastPosition.left)+'px, '+ Math.round(lastPosition.top) +'px, 0)');
+                panel.css({
+                  top: 0,
+                  left: 0,
+                  transform: 'translate3d('+Math.round(lastPosition.left)+'px, '+ Math.round(lastPosition.top) +'px, 0)'
+                });
               }
             },
+            /*
+            // Fix for blurry text (Edit: used filter: blur(0) css rule instead)
+            onOpenComplete: function(args) {
+              var panel = args[0].panelEl;
+              if (!panelsPositions[options.id]) {
+                var position = panel[0].getBoundingClientRect();
+                panel.css({
+                  // transition: 'none',
+                  top: 0,
+                  left: 0,
+                  transform: 'translate3d('+Math.round(position.left)+'px, '+ Math.round(position.top) +'px, 0)'
+                });
+              }
+            },*/
             onRemoving: function(panel) {
               if (panel.config.id) {
                 var bounds = panel.panelEl[0].getBoundingClientRect();
@@ -163,6 +193,8 @@
             }
           })
         );
+        panel.open();
+        return panel;
       }
     };
   }

@@ -812,16 +812,20 @@ footer .separator {
   pointer-events: none;
 }
 
+
+.dialog {
+  background-color: #fff;
+  pointer-events: auto;
+  max-height: 80vh;
+  filter: blur(0);
+}
+
 .section-dialog {
   width: 500px;
   min-height: 280px;
-  pointer-events: auto;
-  background-color: #fff;
   border-radius: 3px;
   overflow: hidden;
 }
-
-
 
 .section-dialog .left-panel md-icon {
   width: 16px;
@@ -843,7 +847,7 @@ footer .separator {
   display: none;
 }
 .section-dialog .select-list md-list-item {
-  min-height: 43px;
+  min-height: 2.688em;
 }
 
 .section-dialog .left-panel {
@@ -1099,4 +1103,40 @@ input[type=number] {
   background-color: #FFF9C4;
   opacity: 0.5;
   z-index: 1000;
+}
+
+.chord-identify.dialog {
+  min-height: 50vh;
+}
+.chord-identify.dialog md-list {
+  padding: 0;
+  overflow: auto;
+}
+.chord-identify.dialog md-list-item {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.chord-identify.dialog .md-button.play {
+  min-width: 36px;
+  margin: 0;
+  padding: 0 8px;
+}
+
+.chord-identify.dialog md-input-container {
+  margin: 4px 8px 0 0;
+  height: 2.25em;
+}
+.chord-identify.dialog small {
+  opacity: 0.5;
+}
+.chord-identify.dialog md-checkbox {
+  margin-top: 4px;
+  margin-bottom: 0;
+  line-height: 32px;
+  height: 2.25em;
+}
+
+.chord-identify.dialog .match {
+  color: green;
+  xfont-weight: 500;
 }

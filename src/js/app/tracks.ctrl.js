@@ -288,10 +288,6 @@
         locals: {
           player: $scope.player
         },
-      })//.then(mdPanelRef.close.bind(mdPanelRef));
-      .then(function(panel) {
-        // delete position after first use to fix weird issues on scroll
-        delete panel.config.position
       })
     };
 

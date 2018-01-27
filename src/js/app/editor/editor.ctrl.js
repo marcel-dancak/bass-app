@@ -635,20 +635,11 @@
 
 
     workspace.metadataEditor = function() {
-      var position = $mdPanel.newPanelPosition()
-        .absolute()
-        .center()
-
-      var animation = $mdPanel.newPanelAnimation()
-        .withAnimation($mdPanel.animation.FADE);
-
       dragablePanel.open({
         id: 'chords',
         attachTo: document.body,
         templateUrl: 'views/editor/section_chords.html',
         controller: 'MetadataController',
-        position: position,
-        animation: animation,
         panelClass: 'metadata',
         locals: {
           updateChordLabels: updateChordLabels
