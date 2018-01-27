@@ -264,6 +264,14 @@ div[bd-sound-label] {
   background-color: $octave5;
 }
 
+.sound-container.muted {
+  background-color: #f0f0f0;
+  opacity: 0.75;
+}
+.sound-container.muted .slide {
+  background: transparent;
+}
+
 .ghost.sound-container {
   background-color: #ddd;
 }
@@ -555,7 +563,6 @@ md-input-container.slide-field > span {
 .slide.octave-4 {
   background: linear-gradient(to right, transparent, transparent, $octave4, $octave4);
 }
-
 
 .sound-container .grace {
   font-size: 0.7em;

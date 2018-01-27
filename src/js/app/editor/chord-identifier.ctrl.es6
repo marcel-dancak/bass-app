@@ -166,7 +166,7 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
     function findBySounds(inputSounds) {
       const _soundsTags = new Set();
       sounds = JSON.parse(JSON.stringify(inputSounds))
-        .filter(sound => sound.volume > 0)
+        .filter(sound => !sound.muted)
         .filter(sound => {
           const key = noteToNum(sound.note);
           const included = _soundsTags.has(key);
@@ -181,7 +181,7 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
       });
 
       const notes = Array.from(sounds
-        .filter(sound => sound.volume > 0)
+        // .filter(sound => sound.volume > 0)
         .reduce((values, sound) => {
           return values.add(sound.note.name);
         }, new Set())

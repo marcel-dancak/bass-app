@@ -181,12 +181,12 @@
               break;
             case 'm':
               selector.all.forEach(sound => {
-                if (sound.volume > 0.01) {
-                  sound.elem.attr('muted', sound.volume);
-                  sound.volume = 0;
+                if (sound.muted) {
+                  sound.elem.removeClass('muted');
+                  delete sound.muted;
                 } else {
-                  sound.volume = parseFloat(sound.elem.attr('muted'));
-                  sound.elem.removeAttr('muted');
+                  sound.muted = true;
+                  sound.elem.addClass('muted');
                 }
               });
               break;

@@ -742,6 +742,7 @@
           var track = this.section.tracks[trackId];
           var trackBeat = track.beat(bar, beat);
           track.beatSounds(trackBeat).forEach(function(sound) {
+            if (sound.muted) return;
             var startAt = startTime + (sound.start * beatTime);
             try {
               if (track.type === 'bass') {
@@ -973,6 +974,7 @@
           var track = tracks[trackId];
           var trackBeat = track.beat(bar, beat);
           track.beatSounds(trackBeat).forEach(function(sound) {
+            if (sound.muted) return;
             var startAt = startTime + (sound.start * beatTime);;
             try {
               if (track.type === 'bass') {

@@ -344,6 +344,20 @@
                 }
               });
               break;
+            case 77: // m
+              selector.all.forEach(sound => {
+                if (sound.muted) {
+                  sound.elem.removeClass('muted');
+                  delete sound.muted;
+                } else {
+                  sound.muted = true;
+                  sound.elem.addClass('muted');
+                }
+              });
+              break;
+            case 68: // d (debug)
+              console.log(sound);
+              break;
           }
           // evt.preventDefault();
           // return false;

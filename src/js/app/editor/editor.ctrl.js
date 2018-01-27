@@ -15,6 +15,9 @@
           var model = scope[attrs.soundModel];
           Object.defineProperty(model, 'elem', {value: 'static', writable: true});
           model.elem = elem;
+          if (model.volume === 0 || model.muted) {
+            elem.addClass('muted');
+          }
         }
       }
     }
