@@ -108,6 +108,55 @@
     $scope.workspace = workspace;
     $scope.input = audioPlayer.input;
 
+    var maxGain = {
+      bass: 6,
+      drums: 3,
+      piano: 2
+    };
+    $scope.volumeSliderOpts = function(track) {
+      var ceil = maxGain[track.type] || 1;
+      if (ceil > 1) {
+        return {
+          floor: 0,
+          ceil: ceil,
+          step: 0.01,
+          precision: 2,
+          customPositionToValue: $scope.volumePositionToValue,
+          customValueToPosition: $scope.volumeValueToPosition,
+          showTicks: true,
+          ticksArray: [1],
+          hideLimitLabels: true,
+          hidePointerLabels: true,
+          showSelectionBar: true,
+          disabled: track.audio.muted
+        };
+      }
+      return {
+        floor: 0,
+        ceil: ceil,
+        step: 0.01,
+        precision: 2,
+        hideLimitLabels: true,
+        hidePointerLabels: true,
+        showSelectionBar: true,
+        disabled: track.audio.muted
+      };
+    };
+
+    $scope.volumeValueToPosition = function(val, minVal, maxVal) {
+      if (val < 1) {
+        return 0.75 * val;
+      } else {
+        return 0.75 + 0.25*(val-1)/(maxVal - 1);
+      }
+    }
+    $scope.volumePositionToValue = function(percent, minVal, maxVal) {
+      if (percent < 0.75) {
+        return percent/0.75;
+      }
+      return 1 + ((percent-0.75)/0.25)*(maxVal-1);
+    }
+
     $scope.toggleVolumeMute = function(instrument) {
       if (!instrument.muted) {
         instrument._volume = instrument.audio.gain.value;

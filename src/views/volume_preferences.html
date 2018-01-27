@@ -13,16 +13,7 @@
     </label>
     <rzslider
       rz-slider-model="track.audio.volume"
-      rz-slider-options="{
-        floor: 0,
-        ceil: 1,
-        step: 0.01,
-        precision: 2,
-        hideLimitLabels: true,
-        hidePointerLabels: true,
-        showSelectionBar: true,
-        disabled: track.audio.muted
-      }">
+      rz-slider-options="volumeSliderOpts(track)">
     </rzslider>
     <md-button
       md-no-ink
@@ -37,6 +28,7 @@
 
     <md-button
       md-no-ink
+      aria-label="Preferences"
       class="icon-hover advanced"
       ng-class="{active: advanced.track === track}"
       ng-click="advanced.track = advanced.track !== track? track : null">
