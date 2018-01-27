@@ -270,10 +270,10 @@
       if (track.kit === 'Standard') {
         track.kit = 'Drums';
         track.name = track.kit;
-      } else if (track.kit === 'Bongo') {
+      } /*else if (track.kit === 'Bongo') {
         track.kit = 'Percussions';
         track.name = track.kit;
-      }
+      }*/
 
       if (track.type === 'piano') {
         track.range = track.range || ['C2', 'B5'];
@@ -296,6 +296,7 @@
         track.audio.volume = track.volume.value;
         track.audio.muted = track.volume.muted;
       }
+      track.solo = false;
 
       var index = this.project.tracks.length;
       this.project.tracks.forEach(function(t, i) {
@@ -316,51 +317,6 @@
       delete this.section[trackId];
       delete this.project.tracksMap[trackId];
     };
-
-    /*
-    ProjectManager.prototype.addFileAudioTrack = function(file) {
-      var gain = context.createGain();
-      gain.connect(context.destination);
-      this.project.audioTrack = {
-        _data: null,
-        audio: gain,
-        play: function(offset) {
-          this._source = context.createBufferSource();
-          this._source.buffer = this._data;
-          this._source.connect(this.audio);
-          this._source.playbackRate.value = this.playbackRate;
-          console.log(this._playbackRate)
-          this._source.start(context.currentTime, offset);
-          return $q.when();
-        },
-        stop: function() {
-          this._source.stop();
-        },
-        playbackRate: 1,
-        setPlaybackRate: function(rate, delay) {
-          if (this._source) {
-            console.log('# Already playing')
-            if (delay) {
-              console.log('# setValueAtTime')
-
-              this._source.playbackRate.setValueAtTime(this.playbackRate, context.currentTime);
-              this._source.playbackRate.setValueAtTime(rate, context.currentTime+delay);
-              // setTimeout(function() {
-              //   this._source.playbackRate.value = rate;
-              // }.bind(this), delay*1000);
-            } else {
-              console.log('# playbackRate')
-              this._source.playbackRate.value = rate;
-            }
-          }
-          this.playbackRate = rate;
-        }
-      };
-      context.decodeAudioData(file.content, function(buffer) {
-        this.project.audioTrack._data = buffer
-      }.bind(this));
-    };
-    */
 
 
     function findBestStream(formats) {
@@ -403,7 +359,8 @@
 
     ProjectManager.prototype.addOnlineStreamTrack = function(resource) {
       var task = $q.defer();
-      extractStreamUrl(resource)
+      var requiresExtraction = /youtube|soundcloud/i.test(resource);
+      (requiresExtraction? extractStreamUrl(resource) : $q.when({extractor: 'raw', url: resource}))
         .then(function(stream) {
           var config = {
             resource: resource,
@@ -466,11 +423,12 @@
       // stream.preload = 'none';
 
       var audio;
-      if (url.startsWith('data:')) {
+      if (url.startsWith('data:') || config.type === 'raw') {
         stream.crossOrigin = 'anonymous';
 
         var source = context.createMediaElementSource(stream);
         audio = AudioTrack(context);
+        audio.source = source;
         source.connect(audio);
       } else {
         stream.preload = 'none';
@@ -642,7 +600,6 @@
           // data.tracks[track.id] = trackSection.rawData();
         }
       }, this);
-
       return angular.toJson(data);
     }
 
@@ -724,7 +681,7 @@
     };
 
     ProjectManager.prototype.loadSectionData = function(section) {
-      console.log('loadSectionData');
+      // console.log('loadSectionData');
 
       for (var trackId in section.tracks) {
         var trackData = section.tracks[trackId];
@@ -799,7 +756,7 @@
         section.tracks = {};
       }
 
-      console.log('--- load section from store ---');
+      // console.log('--- load section from store ---');
       var storedSection = this.store.getSection(section.id);
       if (storedSection) {
         this._filterProjectTracks(storedSection);

@@ -106,8 +106,6 @@
         genres: [],
         tracks: Array.from(tracks),
         tags: [],
-        // data: data,
-        data: LZString.compressToBase64(JSON.stringify(data)),
         level: 3
       }
     }
@@ -127,14 +125,12 @@
               $scope.forks = resp.data.forks.filter(function(fork) {
                 return fork.user === $http.user.id;
               });
-              console.log(tag)
               $scope.fork = {
                 project: projectId,
-                tag: tag ? parseInt(tag.replace('v', '')) : '',
-                data: LZString.compressToBase64(JSON.stringify(data))
+                tag: tag ? parseInt(tag.replace('v', '')) : ''
               };
             } else {
-              collectProjectData();
+              collectProjectData(resp.data);
 
               // do not override playing_styles
               delete resp.data.playing_styles;
@@ -169,10 +165,21 @@
     };
 
     $scope.upload = function() {
+      if (data.audioTrack && data.audioTrack.source.resource.startsWith('http://localhost')) {
+        if ($scope.project.video_link) {
+          data.audioTrack.source = {
+            resource: $scope.project.video_link,
+            type: 'youtube'
+          }
+        }
+      }
+
       var upload;
       if ($scope.window.form === 'fork') {
+        $scope.fork.data = LZString.compressToBase64(JSON.stringify(data));
         upload = $http.post(Config.apiUrl+'fork/', $scope.fork, {withCredentials: true});
       } else {
+        $scope.project.data = LZString.compressToBase64(JSON.stringify(data));
         upload = $http.post(Config.apiUrl+'project/', $scope.project, {withCredentials: true});
       }
       upload.then(function(resp) {
