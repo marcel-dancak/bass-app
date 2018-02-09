@@ -223,6 +223,7 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
       $scope.rootOctave = sounds[0].note.octave;
       $scope.input = $scope.sounds.join(' ');
       $scope.applyFilter();
+      $scope.selected = {index: null};
     }
 
     $scope.applyFilter = function() {
@@ -263,6 +264,47 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
       const chordSounds = createSounds(notes, $scope.rootOctave);
       console.log(chordSounds.map(s => s.string));
       audioPlayer.playPianoSample(workspace.track, chordSounds);
+    }
+
+    $scope.addToWorkspace = function(chord) {
+      const notes = Tonal.Chord.notes(chord).map(n => prettyNote(Tonal.Note.simplify(n).replace(/\d+/, '')));
+      const chordSounds = createSounds(notes, $scope.rootOctave);
+
+      const referenceSound = selector.all[0];
+      const tied = [];
+      let s = referenceSound;
+      while (s.next) {
+        s = workspace.trackSection.nextSound(s);
+        tied.push(s);
+      }
+      console.log(tied);
+
+      function createSound(sound, refSound) {
+        const newSound = JSON.parse(angular.toJson(sound));
+        newSound.start = refSound.start;
+        newSound.volume = refSound.volume;
+        newSound.note.length = refSound.note.length;
+        newSound.note.dotted = refSound.note.dotted;
+        return newSound;
+      }
+
+      const newSounds = [];
+      chordSounds.forEach(s => {
+        let sound = createSound(s, referenceSound);
+        workspace.trackSection.addSound(referenceSound.beat, sound);
+        newSounds.push(sound);
+
+        tied.forEach(ts => {
+          const nextSound = createSound(s, ts);
+          workspace.trackSection.addSound(ts.beat, nextSound);
+          newSounds.push(nextSound);
+          sound.next = true;
+          nextSound.prev = true;
+          sound = nextSound;
+        });
+      });
+      selector.all.forEach(s => workspace.trackSection.deleteSound(s));
+      selector.selectMultiple(newSounds);
     }
 
     findBySounds(selector.all);
