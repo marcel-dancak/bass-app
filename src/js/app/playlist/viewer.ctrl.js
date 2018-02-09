@@ -6,6 +6,10 @@
     .controller('PlaylistViewer', PlaylistViewer);
 
 
+  function floatTime(array) {
+    return 60 * array[0] + array[1] + array[2]/1000;
+  }
+
   function PlaylistViewer($scope, $timeout, $element, $mdUtil, audioPlayer, projectManager,
         workspace, HighlightTimeline, slidesCompiler, fretboardViewer) {
 
@@ -518,7 +522,7 @@
         // continue in playlist
         if (projectManager.project.audioTrack) {
           var nextStart = playlistItemStart(playbackState.section);
-          var flatTime = nextStart[0]*60 + nextStart[1] + nextStart[2]/1000;
+          var flatTime = floatTime(nextStart);
           var diff = timeToStop + projectManager.project.audioTrack._stream.currentTime - flatTime;
 
           // console.log(diff);
@@ -573,7 +577,7 @@
         // continue in playlist
         if (projectManager.project.audioTrack) {
           var nextStart = playlistItemStart(playbackState.section);
-          var flatTime = nextStart[0]*60 + nextStart[1] + nextStart[2]/1000;
+          var flatTime = floatTime(nextStart);
           var diff = timeToStop + projectManager.project.audioTrack._stream.currentTime - flatTime;
 
           console.log(diff);
@@ -729,7 +733,7 @@
       return beats * (60 / section.bpm);
     }
     function addTime(time, duration) {
-      var flatTime = time[0]*60 + time[1] + time[2]/1000;
+      var flatTime = floatTime(time);
       flatTime += duration;
       var minutes = parseInt(flatTime / 60);
       var seconds = parseInt(flatTime - (60*minutes));
@@ -771,11 +775,12 @@
           // console.log("Duration: "+duration+' -> '+(duration/bpmRatio));
 
           var end = addTime(start, duration/bpmRatio);
-          var aligned = start[0] !== lastEnd[0] || start[1] !== lastEnd[1] || start[2] !== lastEnd[2];
+          var diff = floatTime(start) - floatTime(lastEnd);
+          var aligned = Math.abs(diff) < 0.002;
           itemTimes[r] = angular.extend(itemTimes[r] || {}, {
             start: start,
             end: end,
-            prevEnd: aligned? addTime(lastEnd, 0) : null,
+            prevEnd: !aligned ? addTime(lastEnd, 0) : null,
             bpm: bpm,
             originalBpm: section.bpm
           });
