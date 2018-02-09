@@ -106,14 +106,18 @@
     };
 
     SwiperControl.prototype.setSlides = function(slides, params) {
+      var resetPosition = this.slides && slides.length < this.slides.length;
       this.slideType = slides[0].type;
       this.slides = slides;
       this.firstSlide = 0;
       this.lastSlide = slides.length - 1;
       // params.initialSlide = 0;
       this.reinitialize(params);
-      this.barSwiper.slideTo(0, 0, false);
-      this.barSwiper.setWrapperTranslate(0);
+      this.barSwiper.slideTo(params.initialSlide || 0, 0, false);
+      if (resetPosition) {
+        // this.barSwiper.slideTo(0, 0, false);
+        this.barSwiper.setWrapperTranslate(0);
+      }
       this.updateSlidesVisibility();
       this.updateSubbeatsVisibility();
       if (slides.length <= this.barSwiper.params.slidesPerView) {

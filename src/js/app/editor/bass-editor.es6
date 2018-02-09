@@ -355,6 +355,14 @@
                 }
               });
               break;
+            case 65: // a
+              if (evt.ctrlKey) {
+                const sounds = [];
+                workspace.trackSection.forEachSound(s => sounds.push(s));
+                selector.selectMultiple(sounds);
+                evt.preventDefault();
+              }
+              break;
             case 68: // d (debug)
               console.log(sound);
               break;

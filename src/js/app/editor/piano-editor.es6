@@ -190,6 +190,17 @@
                 }
               });
               break;
+            case 'a':
+              if (evt.ctrlKey) {
+                const sounds = [];
+                workspace.trackSection.forEachSound(s => sounds.push(s));
+                selector.selectMultiple(sounds);
+                evt.preventDefault();
+              }
+              break;
+            case 'd':
+              console.log(sound);
+              break;
             case 'i':
               // if (!this.chordsPanel || !this.chordsPanel.isAttached) {
                 this.chordsPanel = dragablePanel.open({

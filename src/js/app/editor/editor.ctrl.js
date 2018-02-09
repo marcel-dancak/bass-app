@@ -239,9 +239,10 @@
     }
 
     function beatPrepared(evt) {
+      var timeToBeat = evt.startTime - evt.eventTime;
+
       if (!$scope.player.visibleBeatsOnly) {
         var slide = evt.flatIndex - swiperControl.firstSlide;
-        var timeToBeat = evt.startTime - evt.eventTime;
         // console.log(slide-$scope.barSwiper.activeIndex);
         // console.log(timeToBeat);
         if (evt.flatIndex < swiperControl.barSwiper.snapIndex) {
@@ -277,7 +278,9 @@
       timeline.beatSync(evt);
       fretboardViewer.beatSync(evt);
 
+      // setTimeout(function() {
       $scope.player.progress.update(evt.flatIndex - swiperControl.firstSlide + 1);
+      // }, parseInt(timeToBeat*1000));
     }
 
     $scope.setBeatsPerView = function(value) {
@@ -546,10 +549,14 @@
     }
 
     function sectionLoaded(section) {
+      var initSlide = 0;
+      if (swiperControl.barSwiper) {
+        initSlide = swiperControl.barSwiper.snapIndex;
+      }
+
       fretboardViewer.clearDiagram();
       audioVisualiser.clear();
       audioVisualiser.reinitialize();
-      console.log('sectionLoaded');
 
       workspace.section = section;
       $scope.player.playbackRange.start = 1;
@@ -573,13 +580,22 @@
           slidesPerGroup: 1
           // slidesPerGroup: editor.beatsPerSlide
         });
+
         $scope.player.playbackRangeChanged();
         $mdUtil.nextTick(function() {
           updateChordLabels();
+          // just to ensure correct position (last slide is problematic)
+          if (initSlide < swiperControl.barSwiper.slides.length) {
+            swiperControl.slideTo(initSlide);
+          }
         });
       });
     }
 
+    function projectLoaded() {
+      swiperControl.slideTo(0, 0);
+    }
+    projectManager.on('projectLoaded', projectLoaded);
     projectManager.on('sectionLoaded', sectionLoaded);
 
 
@@ -658,12 +674,21 @@
       if (evt.target.tagName === 'INPUT') {
         return;
       }
+      if (evt.code === 'Space') {
+        $scope.$apply(function() {
+          $scope.player.playing? $scope.player.pause() : $scope.player.play();
+        });
+        evt.preventDefault();
+        evt.stopPropagation();
+        return;
+      }
       var handler = keyHandlers[workspace.track.type];
       if (handler) {
         $scope.$apply(function() {
           handler.keyPressed(evt);
         });
       }
+
     }
     window.addEventListener('keydown', keyPressed);
 
@@ -690,6 +715,7 @@
 
     $scope.$on('$destroy', function() {
       projectManager.un('sectionLoaded', sectionLoaded);
+      projectManager.un('projectLoaded', projectLoaded);
       window.removeEventListener('keydown', keyPressed);
       // audioPlayer.un('playbackStopped', playbackStopped);
     });

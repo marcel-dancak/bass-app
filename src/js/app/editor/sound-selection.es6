@@ -41,7 +41,9 @@
     }
 
     clickSelect (evt, sound) {
-      this.select(sound, { toggle: evt.ctrlKey });
+      if (evt.code !== 'Space') {
+        this.select(sound, { toggle: evt.ctrlKey });
+      }
     }
 
     selectMultiple (selection, flags) {
