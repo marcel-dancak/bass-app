@@ -166,7 +166,8 @@
         <div
           class="sound-container {{= sound.style }} {{= sound.note.type }}
             string-{{= it.track.instrument.stringIndex[sound.string] }}
-            {{? sound.note.staccato }} staccato {{?}}"
+            {{? sound.note.staccato }} staccato {{?}}
+            {{? sound.muted }} muted {{?}}"
           style="
             left: {{= 100 * (sound.start + (sound.offset || 0)) }}%;
             width: {{= 100 * (sound.end - sound.start - (sound.offset || 0)) }}%;"

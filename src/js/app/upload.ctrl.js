@@ -9,6 +9,7 @@
   function UploadController($scope, $http, $sce, $mdDialog, projectManager, Config) {
     $scope.close = $mdDialog.hide;
     $scope.window = {};
+    var data = projectManager.store._projectData();
 
     if ($http.user) {
       initializeUpload();
@@ -60,7 +61,6 @@
       });
     };
 
-    var data = projectManager.store._projectData();
     // data = LZString.compressToBase64(JSON.stringify(data));
     // data = LZString.compressToUTF16(JSON.stringify(data));
 
@@ -130,7 +130,7 @@
                 tag: tag ? parseInt(tag.replace('v', '')) : ''
               };
             } else {
-              collectProjectData(resp.data);
+              collectProjectData();
 
               // do not override playing_styles
               delete resp.data.playing_styles;

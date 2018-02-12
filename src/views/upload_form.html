@@ -57,7 +57,7 @@
             <md-option value="Original Composition">Original Composition</md-option>
             <md-option value="Backing Track">Backing Track</md-option>
           </md-select>
-        </md-input-container>
+        </md-input-container>&nbsp;&nbsp;
 
         <md-input-container class="md-block" flex="50">
           <label class="md-no-float">Level</label>
@@ -71,6 +71,13 @@
               </div>
             </md-option>
           </md-select>
+        </md-input-container>&nbsp;&nbsp;
+
+        <md-input-container class="md-block">
+          <md-checkbox
+            md-no-ink
+            style="margin: 6px 0 0 0"
+            ng-model="project.public">Public</md-checkbox>
         </md-input-container>
       </div>
 
