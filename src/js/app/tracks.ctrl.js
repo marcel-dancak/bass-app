@@ -98,6 +98,22 @@
         }
       }
     };
+    $scope.offset = undefined;
+    $scope.addOffset = function(offset) {
+      workspace.playlist.items.forEach(function(item, index) {
+        workspace.playlist.syncAudioTrack[index].forEach(function(time, i) {
+          time.start[2] += offset;
+          $scope.updatePlayistItemTime(item, i, time) ;
+        });
+      });
+      // workspace.playlist.syncAudioTrack.forEach(function(group) {
+      //   group.forEach(function(item) {
+      //     console.log(item)
+      //     item.start[2] += offset;
+      //   })
+      // });
+      // workspace.playlist.updateSyncTimes();
+    }
   }
 
   function TracksController($scope, $mdUtil, $mdDialog, $mdPanel, mdPanelRef,
@@ -262,10 +278,12 @@
     };
 
     $scope.addYoutubeTrack = function() {
+      var initial = projectManager.project.audioTrack ? projectManager.project.audioTrack.source.resource : ''
       var prompt = $mdDialog.prompt()
         .title('Online Stream')
         .textContent('Enter Youtube video or other supported online stream resource')
         .placeholder('Youtube video, SoundCloud track, ...')
+        .initialValue(initial)
         .ok('OK')
         .cancel('Cancel');
 
@@ -277,10 +295,15 @@
           if (!resource.startsWith('http')) {
             resource = 'https://www.youtube.com/watch?v='+resource;
           }
+          if (projectManager.project.audioTrack) {
+            projectManager.removeAudioTrack();
+          }
           projectManager.addOnlineStreamTrack(resource);
           initializeSectionStart();
         })
-        .catch(angular.noop);
+        .catch(function(err) {
+          console.log(err)
+        });
     };
 
     $scope.removeAudioTrack = projectManager.removeAudioTrack.bind(projectManager);
@@ -288,6 +311,7 @@
 
     $scope.toggleYoutubeTrack = function() {
       var project = projectManager.project;
+      /*
       if (project.audioTrack && project.audioTrack.source.type === 'youtube') {
         projectManager.removeAudioTrack();
       } else {
@@ -296,6 +320,8 @@
         }
         $scope.addYoutubeTrack();
       }
+      */
+      $scope.addYoutubeTrack();
     }
 
     $scope.toggleFileTrack = function() {
@@ -326,7 +352,10 @@
       var animation = $mdPanel.newPanelAnimation()
         .withAnimation($mdPanel.animation.FADE);
 
-      mdPanelRef.close();
+      if (!mdPanelRef.detached) {
+        mdPanelRef.close();
+      }
+
       dragablePanel.open({
         id: 'volume',
         attachTo: document.body,
@@ -337,7 +366,7 @@
         locals: {
           player: $scope.player
         },
-      })
+      });
     };
 
     $scope.detachPanel = function() {
@@ -346,6 +375,7 @@
       mdPanelRef.panelContainer.css('pointerEvents', 'none');
       mdPanelRef.panelEl.css('pointerEvents', 'auto');
       dragablePanel.makeDragable(mdPanelRef, '.toolbar');
+      mdPanelRef.detached = true;
     };
     $scope.closePanel = mdPanelRef.close.bind(mdPanelRef);
 
@@ -355,5 +385,21 @@
       }
       return value;
     }
+
+    $scope.showVideo = function() {
+      console.log('showVideo');
+      console.log(projectManager.project.audioTrack._stream)
+      dragablePanel.open({
+        id: 'video',
+        attachTo: document.body,
+        // contentElement: projectManager.project.audioTrack._stream,
+        templateUrl: 'views/video_window.html',
+        onDomAdded: function(args) {
+          var panel = args[1].panelEl;
+          console.log(panel);
+          panel.children().append(projectManager.project.audioTrack._stream);
+        }
+      });
+    };
   }
 })();

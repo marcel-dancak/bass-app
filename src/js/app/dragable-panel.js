@@ -142,8 +142,9 @@
           options.animation = $mdPanel.newPanelAnimation().withAnimation($mdPanel.animation.FADE);
         }
 
+        // var config = Object.assign({}, options)
         var panel = $mdPanel.create(
-          angular.extend(options, {
+          Object.assign({}, options, {
             propagateContainerEvents: true,
             onDomAdded: function(args) {
               var panel = args[1].panelEl;
@@ -164,6 +165,9 @@
                   left: 0,
                   transform: 'translate3d('+Math.round(lastPosition.left)+'px, '+ Math.round(lastPosition.top) +'px, 0)'
                 });
+              }
+              if (options.onDomAdded) {
+                options.onDomAdded.apply(options, arguments);
               }
             },
             /*

@@ -284,6 +284,10 @@
       }
 
       track.audio = AudioTrack(context);
+      // var panNode = context.createStereoPanner();
+      // panNode.pan.value = 1;
+      // track.audio.add(panNode);
+
       if (track.type !== 'drums') {
         track.audio.addCompressor({
           threshold: -35,
@@ -292,6 +296,7 @@
           attack: 0
         });
       }
+
       if (track.volume) {
         track.audio.volume = track.volume.value;
         track.audio.muted = track.volume.muted;
@@ -326,6 +331,13 @@
         return f.protocol === 'https';
       });
 
+      if (window.runtime.mp4Support) {
+        var mp4 = formats.find(function(f) { return f.format_id === '140' });
+        if (mp4) {
+          return mp4;
+        }
+      }
+
       if (window.runtime.oggSupport) {
         var webmFormats = formats.filter(function(f) {
           return f.ext === 'webm' || f.acodec === 'opus' || f.acodec === 'vorbis';
@@ -338,8 +350,7 @@
 
       return formats.find(function(f) {
         return f.abr >= minAbr;
-      })
-      || formats[0];
+      }) || formats[0];
     }
 
     function extractStreamUrl(resource) {
@@ -418,7 +429,18 @@
     };
 
     ProjectManager.prototype.addUrlStreamTrack = function(url, config) {
-      var stream = new Audio(url);
+      var stream;
+
+      if (/\.(mp4|webm)$/i.test(url)) {
+        var video = document.createElement('video');
+        video.className = 'video-player';
+        // video.setAttribute('src', url);
+        video.src = url;
+        // document.body.appendChild(video);
+        stream = video;
+      } else {
+        stream = new Audio(url)
+      }
       stream.autoplay = false;
       // stream.preload = 'none';
 
@@ -430,6 +452,10 @@
         audio = AudioTrack(context);
         audio.source = source;
         source.connect(audio);
+
+        // var panNode = context.createStereoPanner();
+        // panNode.pan.value = -1;
+        // audio.add(panNode);
       } else {
         stream.preload = 'none';
         audio = StreamAudioTrack(stream);
@@ -441,11 +467,13 @@
         playbackRate: 1,
         playing: false,
         audio: audio,
+        hasVideo: stream.tagName === 'VIDEO',
         type: 'stream',
-        play: function(offset) {
+        offset: 0,
+        play: function(time) {
           if (!this.playing) {
             this.playing = true;
-            this._stream.currentTime = offset || 0;
+            this._stream.currentTime = (time || 0) + this.offset;
             return this._stream.play();
           }
           return $q.when();
@@ -453,6 +481,12 @@
         stop: function() {
           this.playing = false;
           this._stream.pause();
+        },
+        get currentTime() {
+          return this._stream.currentTime + this.offset;
+        },
+        set currentTime(value) {
+          return this._stream.currentTime = value + this.offset;
         },
         setPlaybackRate: function(rate, delay) {
           if (delay) {

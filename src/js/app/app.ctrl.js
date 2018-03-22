@@ -106,6 +106,7 @@
       }
 
       var audio = document.createElement('audio');
+      runtime.mp4Support = audio.canPlayType('audio/mp4; codecs="mp4a.40.2"') === 'probably';
       runtime.oggSupport = audio.canPlayType('audio/ogg; codecs="vorbis"') === 'probably';
       // runtime.oggSupport = false;
       if (!runtime.oggSupport) {

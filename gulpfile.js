@@ -127,7 +127,7 @@ gulp.task('uglify', function() {
         'src/lib/string-format.js',
         'src/lib/angular-native-dragdrop/draganddrop.js',
         'src/lib/angular-resizable/angular-resizable.js',
-
+        'src/lib/tonal.min.js',
 
         // 'bower_components/angular-material/angular-material.js',
 

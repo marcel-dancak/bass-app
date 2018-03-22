@@ -671,7 +671,7 @@
     }
 
     function keyPressed(evt) {
-      if (evt.target.tagName === 'INPUT') {
+      if (evt.target.tagName === 'INPUT' || evt.target.hasAttribute('contenteditable')) {
         return;
       }
       if (evt.code === 'Space') {
@@ -724,9 +724,9 @@
     // Some useful utilities
     window.setStyle = function(style) {
       workspace.trackSection.forEachSound(function(s) {
-        if (s.style === 'finger') {
+        // if (s.style === 'finger') {
           s.style = style;
-        }
+        // }
       });
     }
 

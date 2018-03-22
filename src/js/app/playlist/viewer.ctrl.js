@@ -14,6 +14,7 @@
         workspace, HighlightTimeline, slidesCompiler, fretboardViewer) {
 
     var viewerTrackId = workspace.track && workspace.track.type !== 'piano' ? workspace.track.id : 'bass_0';
+    console.log(viewerTrackId)
 
     if (!$scope.viewer) {
       console.log('Initializing viewer')
@@ -523,11 +524,12 @@
         if (projectManager.project.audioTrack) {
           var nextStart = playlistItemStart(playbackState.section);
           var flatTime = floatTime(nextStart);
-          var diff = timeToStop + projectManager.project.audioTrack._stream.currentTime - flatTime;
-
-          // console.log(diff);
-          if (Math.abs(diff) > 0.1) {
+          var diff = timeToStop + projectManager.project.audioTrack.currentTime - flatTime;
+          // console.log(diff)
+          if (Math.abs(diff) > 0.15) {
             projectManager.project.audioTrack.stop();
+          } else {
+            // projectManager.project.audioTrack.currentTime -= diff;
           }
         }
         playSection(null, evt.endTime);
@@ -578,7 +580,7 @@
         if (projectManager.project.audioTrack) {
           var nextStart = playlistItemStart(playbackState.section);
           var flatTime = floatTime(nextStart);
-          var diff = timeToStop + projectManager.project.audioTrack._stream.currentTime - flatTime;
+          var diff = timeToStop + projectManager.project.audioTrack.currentTime - flatTime;
 
           console.log(diff);
           if (Math.abs(diff) > 0.1) {
@@ -593,7 +595,7 @@
 
         var ct = ap.context.currentTime - ap.ts;
         ct = evt.endTime - ap.ts;
-        var act = projectManager.project.audioTrack._stream.currentTime - ap.at_ts;
+        var act = projectManager.project.audioTrack.currentTime - ap.at_ts;
         console.log('CT: '+ct);
         console.log('AT_T: '+act);
 
@@ -641,7 +643,7 @@
     */
 
     $scope.ui.selectTrack = function(trackId) {
-      // console.log('## selectTrack '+trackId)
+      // console.log('## selectTrack '+trackId);
       workspace.track = projectManager.project.tracksMap[trackId];
       viewerTrackId = trackId;
       if (slidesMetadata) {
@@ -807,7 +809,6 @@
 
 
     function projectLoaded(project) {
-      console.log('projectLoaded');
       if (!viewer.swiper) {
         return;
       }
@@ -827,7 +828,7 @@
         $scope.ui.playlist.showEditor = true;
         viewer.swiper.removeAllSlides();
       }
-      $scope.ui.selectTrack($scope.ui.trackId);
+      $scope.ui.selectTrack($scope.ui.trackId || 'bass_0');
     }
 
 

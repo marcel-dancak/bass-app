@@ -29,7 +29,7 @@
 
   var dropBox = {
     elem: angular.element('<div class="drum drop-box"></div>')[0],
-    setPxStyles: function(styles) {
+    setPxStyles(styles) {
       // Object.keys(styles).forEach(function(key))
       for (var key in styles) {
         this.elem.style[key] = styles[key]+'px';
@@ -46,20 +46,20 @@
     document.body.appendChild(dragBox.elem);
     document.body.appendChild(dropBox.elem);
 
-    $rootScope.$on('ANGULAR_DRAG_START', function(e, evt, channel, data) {
+    $rootScope.$on('ANGULAR_DRAG_START', (e, evt, channel, data) => {
       if (channel === 'drum') {
         dragSound = data.data;
         dragBox.elem.lastChild.style.transform = 'scale({0}, {0})'.format(dragSound.volume);
         evt.dataTransfer.setDragImage(dragBox.elem, 10, 12);
         if (!evt.ctrlKey) {
-          setTimeout(function() {
+          setTimeout(() => {
             evt.target.classList.add('drag-move-element');
           }, 80);
         }
         dropBox.elem.style.opacity = 1;
       }
     });
-    $rootScope.$on('ANGULAR_DRAG_END', function(e, evt, channel, data) {
+    $rootScope.$on('ANGULAR_DRAG_END', (e, evt, channel, data) => {
       if (channel === 'drum') {
         if (evt.target) {
           evt.target.classList.remove('drag-move-element');
@@ -125,7 +125,7 @@
 
     function moveUp(sound) {
       var index = workspace.trackSection.instrument.index[sound.drum];
-      if (index > 1) {
+      if (index > 0) {
       index -= 1;
         workspace.trackSection.deleteSound(sound);
         sound.drum = workspace.trackSection.instrument[index].name;
@@ -143,7 +143,7 @@
 
     return {
       selector: selector,
-      click: function(evt, beat) {
+      click(evt, beat) {
         var grid = getSoundGrid(evt, beat, true);
         if (!grid) return;
 
@@ -162,7 +162,7 @@
           workspace.trackSection.addSound(beat, sound);
         }
       },
-      volumeScroll: function(evt, beat, step) {
+      volumeScroll(evt, beat, step) {
         var grid = getSoundGrid(evt.originalEvent, beat, true);
         if (!grid) return;
 
@@ -185,7 +185,7 @@
         }
       },
 
-      onDragOver: function(evt, beat) {
+      onDragOver(evt, beat) {
         var grid = getSoundGrid(evt, beat);
 
         var beatBox = grid.containerElem.getBoundingClientRect();
@@ -200,13 +200,13 @@
         });
         // dropBox.elem.style.transform = 'translate('+beatBox.left+'px,'+beatBox.top+'px)';
       },
-      onDragEnter: function(evt, beat) {
+      onDragEnter(evt, beat) {
         // dropBox.elem.style.opacity = 1;
       },
-      onDragLeave: function(evt, beat) {
+      onDragLeave(evt, beat) {
         // dropBox.elem.style.opacity = 0;
       },
-      onDrop: function(evt, beat) {
+      onDrop(evt, beat) {
         var grid = getSoundGrid(evt, beat);
 
         var destSound = workspace.trackSection.sound(beat, {start: grid.start, drum: grid.drum});
@@ -229,7 +229,7 @@
           // workspace.trackSection.deleteSound(dragSound);
         }
       },
-      keyPressed: function(evt) {
+      keyPressed(evt) {
         switch (evt.keyCode) {
           case 46: // Del
             selector.all.forEach(workspace.trackSection.deleteSound, workspace.trackSection);
@@ -252,14 +252,22 @@
               evt.preventDefault();
               break;
             case 109: // -
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 sound.volume = Math.max(0, parseFloat((sound.volume-0.05).toFixed(2)));
               });
               break;
             case 107: // +
-              selector.all.forEach((sound) => {
+              selector.all.forEach(sound => {
                 sound.volume = Math.min(1.0, parseFloat((sound.volume+0.05).toFixed(2)));
               });
+              break;
+            case 65: // a
+              if (evt.ctrlKey) {
+                const sounds = [];
+                workspace.trackSection.forEachSound(s => sounds.push(s));
+                selector.selectMultiple(sounds);
+                evt.preventDefault();
+              }
               break;
         }
       }

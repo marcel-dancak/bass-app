@@ -106,7 +106,6 @@
               });
               break;
             case 't':
-              console.log(JSON.stringify(sound));
               const prevSound = workspace.trackSection.prevSound(sound);
               if (prevSound) {
                 sound.prev = true;
@@ -168,17 +167,6 @@
               }
               evt.preventDefault();
               break;
-            // just for debugging
-            case 'n':
-              const n = workspace.trackSection.nextSound(sound)
-              console.log(n)
-              break;
-            case 'p':
-              const prev = workspace.trackSection.prevSound(sound);
-              if (prev) {
-                console.log('OK');
-              }
-              break;
             case 'm':
               selector.all.forEach(sound => {
                 if (sound.muted) {
@@ -198,9 +186,6 @@
                 evt.preventDefault();
               }
               break;
-            case 'd':
-              console.log(sound);
-              break;
             case 'i':
               // if (!this.chordsPanel || !this.chordsPanel.isAttached) {
                 this.chordsPanel = dragablePanel.open({
@@ -213,6 +198,18 @@
                   }
                 });
               // }
+              break;
+            // just for debugging
+            case 'd':
+              console.log(sound);
+              break;
+            case 'n':
+              const n = workspace.trackSection.nextSound(sound)
+              console.log(n);
+              break;
+            case 'p':
+              const prev = workspace.trackSection.prevSound(sound);
+              console.log(prev);
               break;
           }
           evt.preventDefault();

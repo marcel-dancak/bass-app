@@ -841,12 +841,12 @@ footer .separator {
   max-height: 500px;
   overflow: auto;
 }
-.section-dialog .select-list md-list-item:before,
-.section-dialog .select-list .md-list-item-inner:before {
+.select-list md-list-item:before,
+.select-list .md-list-item-inner:before {
   min-height: 0;
   display: none;
 }
-.section-dialog .select-list md-list-item {
+.select-list md-list-item {
   min-height: 2.688em;
 }
 
@@ -1116,7 +1116,7 @@ input[type=number] {
   padding-left: 8px;
   padding-right: 8px;
 }
-.chord-identify.dialog .md-button.play {
+.chord-identify.dialog .md-button.action {
   min-width: 36px;
   margin: 0;
   padding: 0 8px;
@@ -1136,7 +1136,35 @@ input[type=number] {
   height: 2.25em;
 }
 
-.chord-identify.dialog .match {
-  color: green;
-  xfont-weight: 500;
+.chord-identify.dialog md-list-item label {
+  font-size: 0.938em;
+  color: #333;
+}
+
+.chord-identify.dialog .note-name {
+  color: #E64A19;
+  font-weight: 500;
+}
+
+.chord-identify.dialog .note-name.match {
+  color: #388E3C;
+}
+
+.chord-identify .list-header {
+  min-height: 48px;
+  height: 48px;
+}
+.chord-identify .list-header small {
+  padding-bottom: 6px;
+}
+
+/*.video-player {
+  position: absolute;
+  bottom: 2.5em;
+  border: 2px solid #333;
+  right: 0.25em;
+  z-index: 100;
+}*/
+.video-player {
+  max-height: 400px;
 }

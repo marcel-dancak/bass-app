@@ -43,7 +43,7 @@
     <md-button
       md-no-ink
       aria-label="Solo"
-      class="icon-hover solo"
+      class="icon-hover top solo"
       ng-class="{active: track.solo}"
       ng-click="toggleSolo(track)">
       <p class="icon">s</p>
@@ -72,13 +72,13 @@
     </label>
     <!-- <div style="width:100%" class="layout-row"> -->
 
-      <md-button
+<!--       <md-button
         md-no-ink
         aria-label="Timing"
         class="secondary icon-hover"
         ng-click="openSyncPreferences($event)">
         <md-icon md-svg-icon="watch"></md-icon>
-      </md-button>
+      </md-button> -->
 
       <rzslider
         ng-if-start="project.audioTrack"
@@ -102,6 +102,40 @@
         <md-icon md-svg-icon="watch"></md-icon>
       </md-button> -->
 
+    <div
+      class="top-toolbar layout-row"
+      ng-if="runtime.desktop && project.audioTrack">
+      <md-button
+        md-no-ink
+        class="icon-hover"
+        ng-click="openSyncPreferences($event)">
+        <md-icon md-svg-icon="watch"></md-icon>
+        <md-tooltip md-delay="1500" md-direction="top">
+          <span xtranslate="SYNCHRONIZE">Set timing</span>
+        </md-tooltip>
+      </md-button>
+<!--       <md-button
+        md-no-ink
+        style="padding:0"
+        class="icon-hover"
+        aria-label="Remove"
+        ng-click="removeAudioTrack()">
+        v
+      </md-button> -->
+<!--       <span ng-if-end flex></span>
+      <md-button
+        md-no-ink
+        style="padding:0"
+        class="icon-hover"
+        aria-label="Remove"
+        ng-click="removeAudioTrack()">
+        <md-icon md-svg-icon="x"></md-icon>
+        <md-tooltip md-delay="1500" md-direction="top">
+          <span xtranslate="SYNCHRONIZE">Remove Track</span>
+        </md-tooltip>
+      </md-button> -->
+    </div>
+
       <md-button
         ng-if-end
         md-no-ink
@@ -116,10 +150,18 @@
       <md-button
         md-no-ink
         aria-label="Solo"
-        class="solo"
+        class="top solo icon-hover"
         ng-class="{active: project.audioTrack.solo}"
         ng-click="toggleSolo(project.audioTrack)">
         <p class="icon">s</p>
+      </md-button>
+      <md-button
+        ng-if="project.audioTrack.hasVideo"
+        md-no-ink
+        aria-label="Video"
+        class="top video icon-hover"
+        ng-click="showVideo()">
+        <p class="icon">v</p>
       </md-button>
 
       <md-button
@@ -133,32 +175,6 @@
         </md-tooltip>
       </md-button>
     <!-- </div> -->
-
-<!--     <div
-      class="extra-fields layout-row"
-      ng-if="runtime.desktop && project.audioTrack">
-      <md-button
-        md-no-ink
-        class="icon-hover"
-        ng-click="openSyncPreferences($event)">
-        <md-icon md-svg-icon="watch"></md-icon>
-        <md-tooltip md-delay="1500" md-direction="top">
-          <span xtranslate="SYNCHRONIZE">Set timing</span>
-        </md-tooltip>
-      </md-button>
-      <span ng-if-end flex></span>
-      <md-button
-        md-no-ink
-        style="padding:0"
-        class="icon-hover"
-        aria-label="Remove"
-        ng-click="removeAudioTrack()">
-        <md-icon md-svg-icon="trash"></md-icon>
-        <md-tooltip md-delay="1500" md-direction="top">
-          <span xtranslate="SYNCHRONIZE">Remove Track</span>
-        </md-tooltip>
-      </md-button>
-    </div> -->
 
     <p
       ng-if="!project.audioTrack"

@@ -1,5 +1,5 @@
 <div
-  class="md-dialog md-dialog md-whiteframe-16dp"
+  class="md-dialog md-whiteframe-16dp"
   style="pointer-events: auto; width:22rem;overflow: hidden;">
   <div class="dialog-header dragable">
     <span>Audio Track Timing</span>
@@ -10,6 +10,24 @@
       ng-click="close()">
       <md-icon md-svg-icon="x"></md-icon>
     </md-button>
+  </div>
+
+  <div layout="row">
+    <md-input-container class="layout-row input-inline-label flex">
+      <label class="md-no-float">Offset</label>
+      <input
+        aria-label="Offset"
+        type="number"
+        step="0.01"
+        bd-disable-step-validator
+        placeholder="0 ms"
+        xng-model="offset"
+        ng-model="project.audioTrack.offset">
+    </md-input-container>
+    <md-button
+      md-no-ink
+      ng-click="addOffset(offset)"
+      ng-disabled="!offset">Set</md-button>
   </div>
 
   <md-list
@@ -111,7 +129,7 @@
     ng-init="list = {editing: null}"
     ng-click="$event.target.tagName !== 'INPUT' ? list.editing = null : null">
 
-    <table class="sync-timeline" xng-if="xx">
+    <table class="sync-timeline">
       <tbody ng-repeat="item in workspace.playlist.items track by $index">
         <tr
           ng-repeat-start="time in workspace.playlist.syncAudioTrack[$index] track by $index"
@@ -208,94 +226,6 @@
       </tbody>
     </table>
 
-
-    <md-list class="sync-table" ng-if="xx">
-      <div
-        ng-repeat="item in workspace.playlist.items track by $index"
-        layout="column">
-        <label>{{ sectionsNames[item.section] }}</label>
-        <md-list-item
-          md-no-ink
-          ng-repeat="time in workspace.playlist.syncAudioTrack[$index] track by $index"
-          class="group-field no-label layout-row"
-          ng-class="{computed: time.start.computed}"
-          ng-click="list.editing = time;$event.stopPropagation()">
-          <!-- <label ng-if="$index === 0">{{ sectionsNames[item.section] }}</label> -->
-          <!-- <label ng-if="$index !== 0">({{ $index+1 }})</label> -->
-          <!-- <label ng-if="item.repeats > 1">({{ $index+1 }})</label> -->
-          <span ng-if="item.repeats > 1" style="opacity: 0.5">({{ $index+1 }})</span>
-          &nbsp;
-          <!-- <span ng-if="item.repeats === 1">{{ sectionsNames[item.section] }}</span> -->
-          <label
-            class="inline"
-            ng-if-start="list.editing === time">Start
-          </label>
-          <md-input-container>
-            <!-- <label class="md-no-float">min</label> -->
-            <input
-              aria-label="Minute"
-              type="number"
-              min="0"
-              ng-model="time.start[0]"
-              ng-change="updatePlayistItemTime(item, $index, time)">
-          </md-input-container>
-          <span> : </span>
-          <md-input-container>
-            <!-- <label class="md-no-float">sec</label> -->
-            <input
-              aria-label="Second"
-              type="number"
-              min="0"
-              ng-model="time.start[1]"
-              ng-change="updatePlayistItemTime(item, $index, time)">
-          </md-input-container>
-          <span>:</span>
-          <md-input-container>
-            <!-- <label class="md-no-float">ms</label> -->
-            <input
-              aria-label="Milisecond"
-              type="number"
-              min="0"
-              step="10"
-              ng-model="time.start[2]"
-              ng-change="updatePlayistItemTime(item, $index, time)"
-              bd-disable-step-validator>
-          </md-input-container>
-          <label class="inline">bpm</label>
-          <md-input-container ng-if-end>
-            <input
-              aria-label="Milisecond"
-              type="number"
-              min="0"
-              step="0.1"
-              ng-model="time.bpm"
-              ng-change="updatePlayistItemTime(item, $index, time)"
-              bd-disable-step-validator>
-          </md-input-container>
-<!--           <md-button ng-if-end
-            md-no-ink
-            aria-label="Clear"
-            class="icon-hover"
-            ng-click="time.set = false; time.edit = false">
-            <md-icon md-svg-icon="x"></md-icon>
-          </md-button> -->
-
-          <span 
-            ng-if-start="list.editing !== time"
-            class="flex text-right">{{ formatTime(time.start) }} &nbsp; -</span>
-          <span
-            ng-if-end
-            style="transform: scale(0.85, 0.85); opacity:0.5">{{ formatTime(time.end) }}</span>
-<!--           <md-button
-            md-no-ink
-            aria-label="Edit"
-            class="icon-hover"
-            ng-click="time.edit = !time.edit">
-            <md-icon md-svg-icon="pen"></md-icon>
-          </md-button> -->
-        </md-list-item>
-      </div>
-    </md-list>
   </div>
 
 </div>

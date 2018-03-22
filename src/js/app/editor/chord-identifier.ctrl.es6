@@ -165,8 +165,8 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
 
     function findBySounds(inputSounds) {
       const _soundsTags = new Set();
-      sounds = JSON.parse(JSON.stringify(inputSounds))
-        .filter(sound => !sound.muted)
+      sounds = angular.copy(inputSounds)
+        .filter(sound => !sound.muted && sound.note.name)
         .filter(sound => {
           const key = noteToNum(sound.note);
           const included = _soundsTags.has(key);
@@ -188,13 +188,14 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
       );
 
       const notesCodes = notes.map(note => Tonal.Note.chroma(asciiNote(note)));
+      console.log('find by ', sounds, notesCodes, inputSounds)
       matches = [];
       'A A# B C C# D D# E F F# G G#'.split(' ').forEach(root => {
         ChordTypes.forEach(type => {
           const chord = root + type;
           const list = Tonal.Chord.notes(chord).map(n => Tonal.Note.chroma(n));
           // list.length === notes.length && 
-          if (notesCodes.every(code => list.includes(code))) {
+          if (notesCodes.length === 0 || notesCodes.every(code => list.includes(code))) {
             const match = {
               name: chord,
               label: prettyNote(chord),
@@ -220,7 +221,7 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
       $scope.sounds = sounds
         .sort((a, b) => noteToNum(a.note) - noteToNum(b.note))
         .map(s => s.note.name);
-      $scope.rootOctave = sounds[0].note.octave;
+      $scope.rootOctave = sounds[0] ? sounds[0].note.octave : 4;
       $scope.input = $scope.sounds.join(' ');
       $scope.applyFilter();
       $scope.selected = {index: null};
@@ -246,11 +247,9 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
     };
 
     $scope.inputUpdated = function(evt) {
-      console.log(evt)
       if (evt.key === 'Enter') {
-        const s = createSounds($scope.input.split(' '), $scope.rootOctave);
-        console.log(s);
-        findBySounds(s);
+        const sounds = createSounds($scope.input.split(' '), $scope.rootOctave);
+        findBySounds(sounds);
       }
     };
 
@@ -277,10 +276,9 @@ const ChordTypes = Tonal.Chord.names().filter(ch => !excluded.includes(ch));
         s = workspace.trackSection.nextSound(s);
         tied.push(s);
       }
-      console.log(tied);
 
       function createSound(sound, refSound) {
-        const newSound = JSON.parse(angular.toJson(sound));
+        const newSound = angular.copy(sound);//JSON.parse(angular.toJson(sound));
         newSound.start = refSound.start;
         newSound.volume = refSound.volume;
         newSound.note.length = refSound.note.length;
