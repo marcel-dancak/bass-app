@@ -20,19 +20,19 @@
         width: 100 * (sound.end - sound.start) + '%',
         backgroundColor: colors[sound.note.octave]
       }">
-      {{ sound.note.name }}
+      <bass-label :sound="sound" :display="display" />
     </div>
   </div>
 </template>
 
 <script>
 import { Colors } from '../colors'
+import BassLabel from './BassLabel'
 
 export default {
   name: 'bass-beat',
-  props: ['beat', 'instrument'],
-  data: () => ({
-  }),
+  components: { BassLabel },
+  props: ['beat', 'instrument', 'display'],
   computed: {
     colors () {
       return Colors

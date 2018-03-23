@@ -3,10 +3,8 @@
     class="swiper"
     @mousedown="swipe.start"
     @xwheel="scroll">
-    <p>Show: {{ visible.first + 1 }} - {{ visible.last + 1 }} (width: {{ width }})</p>
-    <br />
     <div
-      class="container"
+      class="slides-container"
       :class="{animate: animate}"
       :style="{transform: `translate3d(${translate}px, 0, 0)`}"
       @transitionend="swipe.after">
@@ -37,6 +35,8 @@
       </swiper-slide>
 
     </div>
+    <br />
+    <!-- <p><small>Show: {{ visible.first + 1 }} - {{ visible.last + 1 }} (width: {{ width }})</small></p> -->
   </div>
 </template>
 
@@ -264,8 +264,9 @@ export default {
 .swiper {
   user-select: none;
   overflow: hidden;
+  margin-top: 2em;
 
-  .container {
+  .slides-container {
     display: flex;
     flex-direction: flex-row;
     position: relative;

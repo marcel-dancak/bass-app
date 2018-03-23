@@ -25,12 +25,11 @@ export default {
   computed: {
     subbeats () {
       const beat = this.beat
-      console.log('#subbeats', beat.bar, beat.beat)
       // return [beat.beat].concat(Subbeats[beat.subdivision])
       return [beat.beat].concat(Subbeats[beat.subdivision])
         .map((label, i) => ({
           label,
-          id: `${beat.bar}:${beat.beat}:${i+1}`
+          id: `${beat.bar}:${beat.beat}:${i + 1}`
         }))
     }
   }
@@ -42,7 +41,9 @@ export default {
   position: relative;
   font-size: 1em;
   display: flex;
+  margin-top: 1em;
   height: 3em;
+  box-sizing: content-box;
 
   xbackground-color: #eee;
   > label {

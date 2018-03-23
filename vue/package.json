@@ -13,7 +13,8 @@
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
     "file-saver": "^1.3.4",
-    "vue": "^2.5.2"
+    "vue": "^2.5.2",
+    "vuetify": "^1.0.10"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -22,6 +23,7 @@
     "babel-helper-vue-jsx-merge-props": "^2.0.3",
     "babel-loader": "^7.1.1",
     "babel-plugin-syntax-jsx": "^6.18.0",
+    "babel-plugin-transform-imports": "^1.5.0",
     "babel-plugin-transform-runtime": "^6.22.0",
     "babel-plugin-transform-vue-jsx": "^3.5.0",
     "babel-preset-env": "^1.3.2",
@@ -55,6 +57,11 @@
     "semver": "^5.3.0",
     "shelljs": "^0.7.6",
     "style-loader": "^0.20.3",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "svg-sprite-loader": "^3.7.3",
+    "svgo": "^1.0.5",
+    "svgo-loader": "^2.1.0",
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
     "vue-loader": "^13.3.0",
