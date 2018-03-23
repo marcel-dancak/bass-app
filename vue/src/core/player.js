@@ -1,12 +1,8 @@
 import saveAs from 'file-saver'
 import audioBufferToWav from 'audiobuffer-to-wav'
 import { AudioTrack } from './audio-track'
-import bufferLoader from './buffer-loader'
+import { bufferLoader } from './buffer-loader'
 
-
-function ResourceNotAvailable (resource) {
-  this.resource = resource
-}
 
 export default function Player (context) {
   const tracks = {}

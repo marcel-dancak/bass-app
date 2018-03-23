@@ -1,4 +1,5 @@
-import bufferLoader from './buffer-loader'
+import { bufferLoader, ResourceNotAvailable } from './buffer-loader'
+import AudioUtils from './audio-utils'
 
 // Effects:
 
@@ -170,7 +171,7 @@ export default function StringInstrument (params) {
 
         const resources = this.getResources(sound)
         const samples = resources.map(resource => createSoundAudio(sound, beatTime, resource))
-        return AudioUtils.audioSlide(null, sound, curve, startTime, beatTime, samples)
+        return AudioUtils.slide(null, sound, curve, startTime, beatTime, samples)
       },
       continuePlayback (sound, startTime, beatTime) {
         const prevAudio = lastSoundAudio(sound.string)
@@ -209,6 +210,31 @@ export default function StringInstrument (params) {
         audio.duration = Math.min(audio.duration, audio.source.buffer.duration) - 0.02
         audio.play(startTime)
         return audio
+      }
+    },
+    {
+      filter: (sound) => sound.note.type === 'grace',
+      getResources (sound) {
+        return [
+          `bass/${sound.style}/${sound.string}${sound.note.fret}`,
+          `bass/${sound.style}/${sound.string}${sound.endNote.fret}`
+        ]
+      },
+      startPlayback (sound, startTime, beatTime) {
+        const graceTime = 0.08
+        const startAudio = this.createSoundAudio(sound, beatTime)
+        const endAudio = this.createSoundAudio(sound, beatTime, 1)
+
+        const duration = noteRealDuration(sound, beatTime)
+        startAudio.duration = graceTime
+        startAudio.endTime = startTime + startAudio.duration
+
+        endAudio.duration = duration - startAudio.duration
+        endAudio.endTime = startTime + duration
+
+        AudioUtils.join(startAudio, endAudio)
+        startAudio.play(startTime)
+        return startAudio
       }
     },
     {

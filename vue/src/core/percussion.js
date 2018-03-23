@@ -1,4 +1,4 @@
-import bufferLoader from './buffer-loader'
+import { bufferLoader } from './buffer-loader'
 
 export const DrumKit = [
   {
@@ -65,7 +65,7 @@ export const PercussionKit = [
     name: 'bongo',
     label: 'Bongo',
     filename: 'percussion/bongo_005a'
-  }, /*{
+  }, /* {
     name: 'djembe',
     label: 'Djembe',
     filename: 'percussion/bongo_005d'
@@ -73,11 +73,11 @@ export const PercussionKit = [
     name: 'conga',
     label: 'Conga',
     filename: 'percussion/bongo_002c'
-  }/*, {
+  }/* , {
     name: 'cajon',
     label: 'Cajon',
     filename: 'percussion/bongo_002c'
-  }*/
+  } */
 ]
 
 export function PercussionInstrument (config = DrumKit) {
