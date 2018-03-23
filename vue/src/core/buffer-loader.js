@@ -1,5 +1,5 @@
-export default function BufferLoader (context, serverUrl, nativeOggDecoder) {
-  this.context = context
+function BufferLoader (serverUrl, nativeOggDecoder) {
+  this.context = new AudioContext()
   this.serverUrl = serverUrl
   this.format = 'ogg'
   this.nativeOggDecoder = nativeOggDecoder
@@ -108,3 +108,6 @@ BufferLoader.prototype.loadResources = function (urlList, callback, errorCallbac
     this.loadResource(urlList[i], resourceLoaded, errorCallback)
   }
 }
+
+// new BufferLoader(context, '/sounds/', true)
+export default new BufferLoader('http://127.0.0.1:8887/sounds/', true)

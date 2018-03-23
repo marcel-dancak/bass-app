@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <swiper
+      v-if="track"
       ref="swiper"
       :per-view="slidesPerView"
       :checkSwipeable="true"
@@ -23,7 +24,7 @@
         class="beat"
         :class="{first: props.item.beat === 1}">
         <beat-header swipeable="true" :beat="props.item" :active="activeSubbeat"/>
-        <bass-beat class="instrument bass" :beat="props.item" :instrument="bass" />
+        <bass-beat class="instrument bass" :beat="props.item" :instrument="track.instrument.config" />
         <!-- <div class="beat bass"></div> -->
       </div>
 
@@ -40,13 +41,17 @@
 <script>
 import { Section } from './core/section'
 import Player from './core/player'
+import { PercussionInstrument, DrumKit, PercussionKit } from './core/percussion'
+import StringInstrument from './core/string-instrument'
 
 import Swiper from './components/Swiper'
 import BeatHeader from './components/BeatHeader'
 import BassBeat from './components/BassBeat'
 
-import data from './data/Candy.json'
+// import data from './data/Candy.json'
 // import data from './data/TheseDays.json'
+import data from './data/AnotherDayInParadise'
+
 
 export default {
   name: 'App',
@@ -59,26 +64,40 @@ export default {
     activeSubbeat: '',
     beats: null,
     // beats: data.sections[0].tracks.bass_0,
-    bass: {
-      strings: ['E', 'A', 'D', 'G']
-    }
+    track: null
   }),
   created () {
-    const sectionData = data.sections[0]
+    const sectionData = data.sections[1]
     const section = Section(sectionData)
     section.addBass('bass_0', sectionData.tracks.bass_0)
-    // this.beats = section.tracks.bass_0.data
+    section.addDrum('drums_0', sectionData.tracks.drums_0)
+    if (sectionData.tracks.drums_1) {
+      section.addDrum('drums_1', sectionData.tracks.drums_1)
+    }
+
     const beats = []
     section.tracks.bass_0.forEachBeat(beat => { beats.push(beat) })
     this.beats = beats
     this.player = Player(new AudioContext())
     this.player.addTrack({
       id: 'bass_0',
-      instrument: {},
-      audio: {}
+      instrument: StringInstrument({
+        strings: ['B', 'E', 'A', 'D', 'G']
+      })
+    })
+    this.player.addTrack({
+      id: 'drums_0',
+      instrument: PercussionInstrument(DrumKit),
+    })
+    this.player.addTrack({
+      id: 'drums_1',
+      instrument: PercussionInstrument(PercussionKit),
     })
     this.section = section
-    window.t = this
+    this.track = this.player.tracks['bass_0']
+  },
+  beforeDestroy () {
+    this.player.context.close()
   },
   methods: {
     play () {

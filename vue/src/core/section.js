@@ -422,6 +422,12 @@ export function Section (params) {
       track.id = id
       tracks[id] = track
       return track
+    },
+    addDrum (id, data) {
+      const track = new BaseTrackSection(params, data)
+      track.id = id
+      tracks[id] = track
+      return track
     }
   }
 }
