@@ -1,7 +1,6 @@
 <template>
-  <div
-    class="bass-beat">
-    <div class="">
+  <div class="bass-beat">
+    <div>
       <div
         v-for="string in strings"
         :key="string"
@@ -9,34 +8,35 @@
       </div>
     </div>
 
-    <div
-      v-for="(sound, i) in beat.data"
-      :key="i"
-      class="sound"
-      :class="{selected: false}"
-      :style="{
-        left: (sound.start * 100)+ '%',
-        top: stringsPositions[sound.string],
-        width: 100 * (sound.end - sound.start) + '%',
-        backgroundColor: colors[sound.note.octave]
-      }">
-      <bass-label :sound="sound" :display="display" />
-    </div>
+    <template v-for="(sound, i) in beat.data">
+      <sound-top-label :key="i" :sound="sound" />
+      <div
+        :key="i"
+        ref="sound"
+        class="sound"
+        :class="{selected: editor.selection.includes(sound)}"
+        click="e => $emit('soundClick', e, sound)"
+        @click="e => editor.select(e, sound)"
+        :style="{
+          left: (sound.start * 100) + '%',
+          top: stringsPositions[sound.string],
+          width: 100 * (sound.end - sound.start) + '%'
+        }">
+        <sound-label :sound="sound" :display="display" />
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
-import { Colors } from '../colors'
-import BassLabel from './BassLabel'
+import SoundLabel from './BassLabel'
+import SoundTopLabel from './SoundTopLabel'
 
 export default {
   name: 'bass-beat',
-  components: { BassLabel },
-  props: ['beat', 'instrument', 'display'],
+  components: { SoundLabel, SoundTopLabel },
+  props: ['editor', 'beat', 'instrument', 'display'],
   computed: {
-    colors () {
-      return Colors
-    },
     strings () {
       return [].concat(this.instrument.strings).reverse()
     },
@@ -69,15 +69,19 @@ export default {
   }
   .sound {
     position: absolute;
+    top: 0;
     height: 2.25em;
     line-height: 2.25em;
-    background-color: #ccc;
-    border-radius: 4px;
-    border: 1px solid #555;
     z-index: 100;
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-    box-sizing: border-box;
     color: #222;
+
+    .label {
+      padding: 1px;
+    }
+    &.selected .label {
+      border: 2px solid #333;
+      padding: 0;
+    }
   }
 }
 </style>

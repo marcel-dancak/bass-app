@@ -41,7 +41,6 @@
 </template>
 
 <script>
-// import throttle from 'lodash/throttle'
 import debounce from 'lodash/debounce'
 
 const SwiperSlide = {
@@ -239,7 +238,7 @@ export default {
       // return e.path.slice(0, e.path.indexOf(this.$el)).find(el => el.getAttribute('swipeable'))
       let el = e.target
       while (el && el !== this.$el) {
-        if (el.getAttribute('swipeable')) {
+        if (el.hasAttribute('swipeable')) {
           return true
         }
         el = el.parentElement

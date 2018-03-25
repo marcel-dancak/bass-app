@@ -4,23 +4,39 @@
     color="blue-grey darken-2"
     class="main-toolbar elevation-3">
     <v-spacer />
-    <v-btn icon @click="$emit('playbackChange')">
+
+    <v-btn
+      icon
+      @click="togglePlayback()">
       <icon name="play" />
     </v-btn>
 
-    <v-btn icon>
+    <v-btn
+      icon
+      @click="$bus.$emit('playerBack')">
       <icon name="back" />
     </v-btn>
 
-    <v-btn icon>
+    <v-btn
+      icon flat
+      :class="{'primary--text': app.player.countdown}"
+      @click="app.player.countdown = !app.player.countdown">
       <icon name="countdown" />
     </v-btn>
 
-    <v-btn icon @click="player.loopMode = !player.loopMode">
+    <!-- <icon class="toggle" name="countdown" /> -->
+
+    <v-btn
+      icon
+      :class="{'primary--text': app.player.loopMode}"
+      @click="app.player.loopMode = !app.player.loopMode">
       <icon name="loop" />
     </v-btn>
 
-    <v-btn icon>
+    <v-btn
+      icon
+      :class="{'primary--text': app.player.screenLock}"
+      @click="app.player.screenLock = !app.player.screenLock">
       <icon name="screen-playback" />
     </v-btn>
 
@@ -29,7 +45,7 @@
     <v-select
       class="sections"
       :items="sections"
-      v-model="editor.sectionIntex"
+      v-model="app.editor.sectionIndex"
       item-text="name"
       item-value="index"
       hide-details>
@@ -40,15 +56,22 @@
 
 <script>
 export default {
-  props: ['player', 'project', 'editor'],
+  props: ['app'],
   computed: {
     sections () {
-      console.log('sections', this.project)
-      if (!this.project) return []
-      return this.project.sections.map((s, i) => ({
+      const project = this.app.project
+      console.log('project', project)
+      if (!project) return []
+      return project.sections.map((s, i) => ({
         index: i,
         name: s.name
       }))
+    }
+  },
+  methods: {
+    togglePlayback () {
+      // $emit('playbackChange')
+      this.$bus.$emit('playbackChange')
     }
   }
 }
@@ -66,9 +89,19 @@ export default {
     height: inherit!important;
   }
 
-  .icon {
+  .toggle {
     width: 1.25em;
     height: 1.25em;
+  }
+  .btn {
+    transition: none;
+    &.active {
+      color: red;
+    }
+    .icon {
+      width: 1.25em;
+      height: 1.25em;
+    }
   }
 
   .input-group {
@@ -81,7 +114,7 @@ export default {
   input-group--select {
   }
   .sections {
-    max-width: 250px;
+    min-width: 150px;
   }
 }
 </style>
