@@ -67,9 +67,9 @@ export default function StringInstrument (params) {
     let audioData
     switch (typeof resource) {
       case 'undefined':
-        resource = 0
+        resource = 0 // eslint-disable-line no-fallthrough
       case 'number':
-        resource = this.getResources(sound)[resource]
+        resource = this.getResources(sound)[resource] // eslint-disable-line no-fallthrough
       case 'string':
         audioData = bufferLoader.loadResource(resource)
         if (!audioData) {

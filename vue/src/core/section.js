@@ -201,10 +201,7 @@ export class BaseTrackSection {
     })
   }
 
-  forEachBeat (callback, obj) {
-    if (obj) {
-      callback = callback.bind(obj)
-    }
+  forEachBeat (callback) {
     let barIndex, beatIndex
     for (barIndex = 1; barIndex <= this.section.length; barIndex++) {
       for (beatIndex = 1; beatIndex <= this.section.timeSignature.top; beatIndex++) {
@@ -213,10 +210,7 @@ export class BaseTrackSection {
     }
   }
 
-  forEachSound (callback, obj) {
-    if (obj) {
-      callback = callback.bind(obj)
-    }
+  forEachSound (callback) {
     for (let i = 0; i < this.data.length; i++) {
       const beat = this.data[i]
       for (let j = 0; j < beat.data.length; j++) {

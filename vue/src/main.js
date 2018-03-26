@@ -15,10 +15,13 @@ import {
   VCheckbox,
   VGrid,
   VMenu,
+  VList,
   VSelect,
   VDialog,
-  transitions,
-  VToolbar
+  VToolbar,
+  VTextField,
+  VSlider,
+  transitions
 } from 'vuetify'
 
 require('vuetify/src/stylus/app.styl')
@@ -30,10 +33,13 @@ Vue.use(Vuetify, {
     VBtn,
     VCheckbox,
     VGrid,
+    VList,
     VMenu,
     VSelect,
     VDialog,
-    VToolbar
+    VToolbar,
+    VTextField,
+    VSlider
   },
   transitions
 })

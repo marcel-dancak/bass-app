@@ -15,13 +15,14 @@
         ref="sound"
         class="sound"
         :class="{selected: editor.selection.includes(sound)}"
-        click="e => $emit('soundClick', e, sound)"
-        @click="e => editor.select(e, sound)"
         :style="{
           left: (sound.start * 100) + '%',
           top: stringsPositions[sound.string],
           width: 100 * (sound.end - sound.start) + '%'
-        }">
+        }"
+        click="e => $emit('soundClick', e, sound)"
+        @click="e => editor.select(e, sound)"
+        @contextmenu.prevent="(e) => $emit('contextmenu', e, sound)">
         <sound-label :sound="sound" :display="display" />
       </div>
     </template>

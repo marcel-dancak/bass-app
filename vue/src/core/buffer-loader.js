@@ -77,7 +77,7 @@ BufferLoader.prototype.loadResource = function (url, callback, errorCallback) {
 
     if (!loader.nativeOggDecoder) {
       var t1 = performance.now()
-      var ogg = oggaudiobuffer(new Uint8Array(request.response), loader.context)
+      var ogg = window.oggaudiobuffer(new Uint8Array(request.response), loader.context)
       console.log('Time: ' + (performance.now() - t1))
       loader.decodeTime += performance.now() - t1
       onSuccess(ogg.data)

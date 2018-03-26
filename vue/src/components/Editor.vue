@@ -18,16 +18,19 @@
           :beat="props.item"
           :active="activeSubbeat"
         />
-        <bass-beat
+        <div
+          :is="'bass-beat'"
           class="instrument bass"
           :beat="props.item"
           :editor="trackEditor"
           :instrument="app.track.instrument.config"
           :display="app.label"
+          @contextmenu="soundContextMenu"
         />
       </div>
     </swiper>
     <mouse-selector @selected="mouseSelection"/>
+    <context-menu ref="contextMenu" />
   </div>
 </template>
 
@@ -37,6 +40,8 @@ import Swiper from './Swiper'
 import MouseSelector from './MouseSelector'
 import BeatHeader from './BeatHeader'
 import BassBeat from './BassBeat'
+import BassSoundForm from './BassSoundForm'
+import ContextMenu from '../ui/ContextMenu'
 
 const bassEditor = {
   selection: [],
@@ -57,37 +62,37 @@ const bassEditor = {
 export default {
   name: 'editor',
   components: {
-    Swiper, MouseSelector, BeatHeader, BassBeat
+    Swiper, MouseSelector, BeatHeader, BassBeat, BassSoundForm, ContextMenu
   },
   inject: ['$player'],
   props: ['app', 'sectionData'],
   data: () => ({
     slidesPerView: 8,
     activeSubbeat: '',
-    trackEditor: null,
-    selectionRect: null
+    trackEditor: bassEditor
   }),
   computed: {
-    beats () {
-      if (!this.sectionData) return []
-
-      const sectionData = this.sectionData
-      const section = Section(sectionData)
-      section.addBass('bass_0', sectionData.tracks.bass_0)
-      section.addDrum('drums_0', sectionData.tracks.drums_0)
-      if (sectionData.tracks.drums_1) {
-        section.addDrum('drums_1', sectionData.tracks.drums_1)
+    section () {
+      const data = this.sectionData
+      const section = Section(data)
+      section.addBass('bass_0', data.tracks.bass_0)
+      section.addDrum('drums_0', data.tracks.drums_0)
+      if (data.tracks.drums_1) {
+        section.addDrum('drums_1', data.tracks.drums_1)
       }
-      this.section = section
+      return section
+    },
+    beats () {
+      if (!this.section) return []
       const beats = []
-      section.tracks[this.app.trackId].forEachBeat(beat => { beats.push(beat) })
-      this.trackEditor = bassEditor
+      this.section.tracks[this.app.trackId].forEachBeat(beat => { beats.push(beat) })
       return beats
     }
   },
   created () {
     this.$bus.$on('playbackChange', this.play)
     this.$bus.$on('playerBack', this.seekToStart)
+    document.addEventListener('keydown', this.keyDown)
   },
   beforeDestroy () {
     this.$bus.$off('playbackChange', this.play)
@@ -160,6 +165,19 @@ export default {
         }
       })
       this.trackEditor.selection = sounds
+    },
+    keyDown (evt) {
+      if (evt.target.tagName === 'INPUT' || evt.target.hasAttribute('contenteditable')) {
+        return
+      }
+      console.log(evt)
+      if (evt.key === 'ArrowUp') {
+        this.trackEditor.selection[0].note.fret += 1
+      }
+    },
+    soundContextMenu (e, sound) {
+      this.trackEditor.select({}, sound)
+      this.$refs.contextMenu.open(e, BassSoundForm, {sound})
     }
   }
 }

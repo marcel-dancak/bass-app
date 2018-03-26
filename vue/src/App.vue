@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app @contextmenu.native.prevent>
     <main-toolbar
       :app="$data"
       @playbackChange="audioPlayer.playing ? stop() : play()"
