@@ -20,6 +20,30 @@
       </v-flex>
     </v-layout>
     <v-layout>
+      <note-select
+        label="Pitch"
+        :root="sound.string + '1'"
+        :note="sound.note" />
+      <note-select
+        v-if="sound.endNote"
+        label="End pitch"
+        :root="sound.string + '1'"
+        :note="sound.endNote" />
+    </v-layout>
+    <v-layout row>
+      <v-flex xs4>
+        <v-select
+          label="Length"
+          :items="NoteLengths"
+          v-model="sound.note.length"
+          hide-details>
+          <template
+            slot="selection"
+            slot-scope="data">
+            <icon :name="data.item.symbol" />
+          </template>
+        </v-select>
+      </v-flex>
       <v-checkbox
         label="Dotted"
         color="primary"
@@ -62,34 +86,18 @@
 </template>
 
 <script>
-const PlayingStyles = [
-  {text: 'Finger', value: 'finger'},
-  {text: 'Slap', value: 'slap'},
-  {text: 'Pop', value: 'pop'},
-  {text: 'Finger', value: 'finger'},
-  {text: 'Pick', value: 'pick'},
-  {text: 'Tap', value: 'tap'},
-  {text: 'Hammer-On', value: 'hammer'},
-  {text: 'Pill-Off', value: 'pull'},
-  {text: 'Let ring (Tie)', value: 'ring'}
-]
-const NoteTypes = [
-  {text: 'Regular', value: 'regular'},
-  {text: 'Ghost', value: 'ghost'},
-  {text: 'Slide', value: 'slide'},
-  {text: 'Grace', value: 'grace'},
-  {text: 'Bend', value: 'bend'},
-  {text: 'Harmonics', value: 'harmonics'}
-]
+import { NoteLengths, NoteTypes, PlayingStyles } from './constants'
+import NoteSelect from './NoteSelect'
 
 export default {
+  components: { NoteSelect },
   props: ['sound'],
-  data: () => ({
-    PlayingStyles,
-    NoteTypes
-  }),
+  computed: {
+    PlayingStyles: () => PlayingStyles,
+    NoteTypes: () => NoteTypes,
+    NoteLengths: () => NoteLengths
+  },
   methods: {
-
   }
 }
 </script>
@@ -101,18 +109,26 @@ export default {
     padding: 0.25em;
   }
   .layout.row {
-    align-items: center;
+    align-items: flex-end;
   }
   .input-group {
     label {
       font-size: 0.938em;
+    }
+    .input-group__selections {
+      height: 2.5em;
+      .icon {
+        font-size: 1em;
+        width: 1.25em;
+        height: 1.25em;
+      }
     }
   }
   .input-group--select .input-group__selections__comma {
     font-size: 0.938em;
   }
   .btn--icon {
-    margin: 0;
+    margin: 0.7em 0;
     padding: 0;
     font-size: 1em;
     width: 1.5em;

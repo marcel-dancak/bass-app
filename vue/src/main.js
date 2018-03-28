@@ -44,6 +44,13 @@ Vue.use(Vuetify, {
   transitions
 })
 
+
+function requireAll (requireContext) {
+  return requireContext.keys().map(requireContext)
+}
+requireAll(require.context('../icons', false, /.*\.svg$/))
+requireAll(require.context('../icons/musical', false, /.*\.svg$/))
+
 // Disable ripple ink effect by overriding Vuetify's directive
 Vue.directive('ripple', (el, binding) => {})
 Vue.component('icon', Icon)

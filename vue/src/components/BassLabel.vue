@@ -36,7 +36,7 @@ export default {
     }
     if (note.type === 'regular' || note.type === 'bend') {
       return (
-        <div class={['label', {prev: sound.prev}]} style={{background: color}}>
+        <div class="label" style={{background: color}}>
           {extra}
           { Note(h, note, display) }
         </div>
@@ -51,6 +51,15 @@ export default {
         <div class="label" style={{background: color}}>
           { Note(h, note, display) }
           <span class={cls}>|</span>
+          { Note(h, sound.endNote, display) }
+        </div>
+      )
+    }
+
+    if (note.type === 'grace') {
+      return (
+        <div class="label" style={{background: color}}>
+          <small>{ Note(h, note, display) }</small>&nbsp;
           { Note(h, sound.endNote, display) }
         </div>
       )
@@ -77,6 +86,13 @@ export default {
     }
     */
 
+    small {
+      font-size: 70%;
+      line-height: 3em;
+      .column {
+        line-height: 1.9em;
+      }
+    }
     .column {
       display: flex;
       flex-direction: column;

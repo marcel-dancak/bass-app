@@ -97,6 +97,7 @@ export default {
   beforeDestroy () {
     this.$bus.$off('playbackChange', this.play)
     this.$bus.$off('playerBack', this.seekToStart)
+    document.removeEventListener('keydown', this.keyDown)
   },
   methods: {
     play () {
@@ -171,8 +172,8 @@ export default {
         return
       }
       console.log(evt)
-      if (evt.key === 'ArrowUp') {
-        this.trackEditor.selection[0].note.fret += 1
+      if (evt.key === 'd') {
+        console.log(this.trackEditor.selection[0])
       }
     },
     soundContextMenu (e, sound) {
