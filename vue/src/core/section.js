@@ -73,6 +73,10 @@ export class BaseTrackSection {
         this.initializeSound(sound)
       })
     })
+
+    const beats = []
+    this.forEachBeat(beat => { beats.push(beat) })
+    this.beats = beats
   }
 
   initializeSound (sound) {}
@@ -251,7 +255,8 @@ export class NotesTrackSection extends BaseTrackSection {
       sound.note.length = Math.round(1.0 / sound.note.length)
     }
     const end = sound.start + this.soundDuration(sound)
-    Object.defineProperty(sound, 'end', {value: end, writable: true})
+    // sound.end = end
+    Object.defineProperty(sound, 'end', {value: end, writable: true, configurable: true, enumerable: false})
   }
 
   nextSoundPosition (sound) {
@@ -365,12 +370,7 @@ export class NotesTrackSection extends BaseTrackSection {
   }
 
   setSoundStart (sound, start) {
-    const tiedSounds = []
-    let s = sound
-    while (s.next) {
-      s = this.nextSound(s)
-      tiedSounds.push(s)
-    }
+    const tiedSounds = this.nextSounds(sound)
 
     if (start >= 0 && start < 1) {
       sound.start = start

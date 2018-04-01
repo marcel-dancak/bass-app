@@ -13,6 +13,7 @@
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
     "file-saver": "^1.3.4",
+    "tonal": "^1.1.3",
     "vue": "^2.5.2",
     "vuetify": "^1.0.10"
   },

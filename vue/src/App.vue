@@ -6,14 +6,12 @@
     />
 
     <editor
-      v-if="mode === 'editor'"
+      v-if="mode === 'editor' && sectionData"
       :app="$data"
-      :sectionData="sectionData"></editor>
+      :sectionData="sectionData">
+    </editor>
 
     <v-toolbar class="bottom-toolbar" :dense="true">
-      <v-spacer />
-      <v-btn @click="prev">Prev</v-btn>
-      <v-btn @click="next">Next</v-btn>
       <v-spacer />
       <v-select
         :items="labelOptions"
@@ -30,13 +28,14 @@
 <script>
 import Vue from 'vue'
 import Player from './core/player'
+import Project from './core/project'
 import { PercussionInstrument, DrumKit, PercussionKit } from './core/percussion'
 import StringInstrument from './core/string-instrument'
 
 import MainToolbar from './components/MainToolbar'
 import Editor from './components/Editor'
 import data from './data/Treasure.json'
-// import data from './data/TheseDays.json'
+// import data2 from './data/TheseDays.json'
 // import data from './data/AnotherDayInParadise'
 // const data = {}
 
@@ -70,7 +69,7 @@ export default {
       screenLock: false
     },
     editor: {
-      sectionIndex: 0
+      sectionIndex: null
     },
     mode: 'editor',
     label: 'name',
@@ -78,17 +77,29 @@ export default {
     track: null,
     project: null
   }),
+  computed: {
+    sectionData () {
+      return this.project.getSectionData(this.editor.sectionIndex)
+    }
+  },
+  watch: {
+    project () {
+      this.editor.sectionIndex = this.project.sections[0].id
+    }
+  },
   created () {
-    this.$root.constructor.prototype.$bus = new Vue()
+    this.project = Project(data)
+    // setTimeout(() => {this.project = Project(data2) }, 5000)
 
-    this.project = data
+    this.$root.constructor.prototype.$bus = new Vue()
     this.labelOptions = NoteLabelOptions
 
     const player = Player(new AudioContext())
     player.addTrack({
       id: 'bass_0',
       instrument: StringInstrument({
-        strings: ['B', 'E', 'A', 'D', 'G']
+        strings: ['E', 'A', 'D', 'G']
+        // strings: ['B', 'E', 'A', 'D', 'G']
       })
     })
     player.addTrack({
@@ -102,11 +113,6 @@ export default {
     this.track = player.tracks['bass_0']
     this.audioPlayer = player
     this._provided.$player = player
-  },
-  computed: {
-    sectionData () {
-      return this.project.sections[this.editor.sectionIndex]
-    }
   },
   beforeDestroy () {
     this.audioPlayer.context.close()

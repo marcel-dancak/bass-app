@@ -29,47 +29,36 @@
         />
       </div>
     </swiper>
+    <fretboard :instrument="app.track.instrument.config" />
     <mouse-selector @selected="mouseSelection"/>
     <context-menu ref="contextMenu" />
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import { Section } from '../core/section'
+import BassEditor from '../core/bass-editor'
 import Swiper from './Swiper'
 import MouseSelector from './MouseSelector'
 import BeatHeader from './BeatHeader'
 import BassBeat from './BassBeat'
 import BassSoundForm from './BassSoundForm'
+import Fretboard from './Fretboard'
 import ContextMenu from '../ui/ContextMenu'
 
-const bassEditor = {
-  selection: [],
-  select (e, sound) {
-    if (e.ctrlKey) {
-      const index = this.selection.indexOf(sound)
-      if (index === -1) {
-        this.selection.push(sound)
-      } else {
-        this.selection.splice(index, 1)
-      }
-    } else {
-      this.selection = [sound]
-    }
-  }
-}
 
 export default {
   name: 'editor',
   components: {
-    Swiper, MouseSelector, BeatHeader, BassBeat, BassSoundForm, ContextMenu
+    Swiper, MouseSelector, BeatHeader, BassBeat, BassSoundForm, ContextMenu, Fretboard
   },
   inject: ['$player'],
   props: ['app', 'sectionData'],
   data: () => ({
     slidesPerView: 8,
     activeSubbeat: '',
-    trackEditor: bassEditor
+    trackEditor: BassEditor()
   }),
   computed: {
     section () {
@@ -82,11 +71,16 @@ export default {
       }
       return section
     },
-    beats () {
+    beats1 () {
       if (!this.section) return []
       const beats = []
       this.section.tracks[this.app.trackId].forEachBeat(beat => { beats.push(beat) })
       return beats
+    },
+    beats () {
+      // ensure reactivity like if was normal data (not computed property only)
+      Vue.util.defineReactive(this.section.tracks[this.app.trackId], 'beats')
+      return this.section.tracks[this.app.trackId].beats
     }
   },
   created () {
@@ -171,14 +165,15 @@ export default {
       if (evt.target.tagName === 'INPUT' || evt.target.hasAttribute('contenteditable')) {
         return
       }
-      console.log(evt)
-      if (evt.key === 'd') {
-        console.log(this.trackEditor.selection[0])
-      }
+      this.trackEditor.keyDown(evt)
     },
     soundContextMenu (e, sound) {
       this.trackEditor.select({}, sound)
-      this.$refs.contextMenu.open(e, BassSoundForm, {sound})
+      const props = {
+        sound,
+        editor: this.trackEditor
+      }
+      this.$refs.contextMenu.open(e, BassSoundForm, props)
     }
   }
 }

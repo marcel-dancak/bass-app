@@ -46,3 +46,12 @@ export const NoteLengths = [
     value: 32
   }
 ]
+
+export const StringRoots = {
+  C: 'C3',
+  G: 'G2',
+  D: 'D2',
+  A: 'A1',
+  E: 'E1',
+  B: 'B0'
+}

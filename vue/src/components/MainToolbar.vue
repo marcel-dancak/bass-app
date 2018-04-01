@@ -47,7 +47,7 @@
       :items="sections"
       v-model="app.editor.sectionIndex"
       item-text="name"
-      item-value="index"
+      item-value="id"
       hide-details>
     </v-select>
 
@@ -59,13 +59,7 @@ export default {
   props: ['app'],
   computed: {
     sections () {
-      const project = this.app.project
-      console.log('project', project)
-      if (!project) return []
-      return project.sections.map((s, i) => ({
-        index: i,
-        name: s.name
-      }))
+      return this.app.project.sections
     }
   },
   methods: {

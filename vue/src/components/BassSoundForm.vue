@@ -14,7 +14,8 @@
           class="flex"
           label="Note"
           :items="NoteTypes"
-          v-model="sound.note.type"
+          :value="sound.note.type"
+          @input="setType"
           hide-details
         />
       </v-flex>
@@ -22,20 +23,21 @@
     <v-layout>
       <note-select
         label="Pitch"
-        :root="sound.string + '1'"
+        :root="StringRoots[sound.string]"
         :note="sound.note" />
       <note-select
         v-if="sound.endNote"
         label="End pitch"
-        :root="sound.string + '1'"
+        :root="StringRoots[sound.string]"
         :note="sound.endNote" />
     </v-layout>
-    <v-layout row>
-      <v-flex xs4>
+    <v-layout class="length" row>
+      <v-flex style="flex: 0 0 28%">
         <v-select
           label="Length"
           :items="NoteLengths"
-          v-model="sound.note.length"
+          :value="sound.note.length"
+          @input="v => editor.resizeSound(sound, v, sound.note.dotted)"
           hide-details>
           <template
             slot="selection"
@@ -47,7 +49,8 @@
       <v-checkbox
         label="Dotted"
         color="primary"
-        v-model="sound.note.dotted"
+        :input-value="sound.note.dotted"
+        @change="v => editor.resizeSound(sound, sound.note.length, v)"
         hide-details
       />
       <v-checkbox
@@ -56,6 +59,7 @@
         v-model="sound.note.staccato"
         hide-details
       />
+      <div />
     </v-layout>
     <v-layout row>
       <v-flex xs3>
@@ -86,18 +90,22 @@
 </template>
 
 <script>
-import { NoteLengths, NoteTypes, PlayingStyles } from './constants'
+import { NoteLengths, NoteTypes, PlayingStyles, StringRoots } from './constants'
 import NoteSelect from './NoteSelect'
 
 export default {
   components: { NoteSelect },
-  props: ['sound'],
+  props: ['sound', 'editor'],
   computed: {
     PlayingStyles: () => PlayingStyles,
     NoteTypes: () => NoteTypes,
-    NoteLengths: () => NoteLengths
+    NoteLengths: () => NoteLengths,
+    StringRoots: () => StringRoots
   },
   methods: {
+    setType (value) {
+      this.sound.note.type = value
+    }
   }
 }
 </script>
