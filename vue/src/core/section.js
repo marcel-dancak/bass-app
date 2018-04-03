@@ -17,6 +17,11 @@ function detune (note, offset) {
   note.name = scale[index]
 }
 
+  // Math.random should be unique because of its seeding algorithm.
+  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
+  // after the decimal.
+const randomId = () => Math.random().toString(36).substr(2, 7)
+
 const floatsEqual = (a, b) => (Math.abs(a - b) <= 0.01)
 
 export class BaseTrackSection {
@@ -79,7 +84,9 @@ export class BaseTrackSection {
     this.beats = beats
   }
 
-  initializeSound (sound) {}
+  initializeSound (sound) {
+
+  }
 
   beat (bar, beat) {
     // var flatIndex = (bar-1)*this.timeSignature.top + beat-1;
@@ -250,6 +257,17 @@ export class NotesTrackSection extends BaseTrackSection {
     }
   }
 
+  noteDuration (beat, note) {
+    let duration = this.section.timeSignature.bottom / note.length
+    if (note.dotted) {
+      duration *= 1.5
+    }
+    if (beat.subdivision === 3) {
+      duration *= 2 / 3
+    }
+    return duration
+  }
+
   initializeSound (sound) {
     if (sound.note && sound.note.length < 1) {
       sound.note.length = Math.round(1.0 / sound.note.length)
@@ -257,6 +275,7 @@ export class NotesTrackSection extends BaseTrackSection {
     const end = sound.start + this.soundDuration(sound)
     // sound.end = end
     Object.defineProperty(sound, 'end', {value: end, writable: true, configurable: true, enumerable: false})
+    sound.id = randomId()
   }
 
   nextSoundPosition (sound) {

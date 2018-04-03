@@ -11,9 +11,9 @@
       </div>
     </div>
     <template v-for="(sound, i) in beat.data">
-      <sound-top-label :key="i" :sound="sound" />
+      <sound-top-label :key="'l'+i" :sound="sound" />
       <div
-        :key="i"
+        :key="sound.id"
         ref="sound"
         class="sound"
         :class="{selected: editor.selection.includes(sound)}"
@@ -22,11 +22,12 @@
           top: stringsPositions[sound.string],
           width: 100 * (sound.end - sound.start) + '%'
         }"
-        click="e => $emit('soundClick', e, sound)"
-        @mousedown="e => editor.select(e, sound)"
-        @contextmenu="(e) => $emit('contextmenu', e, sound)">
+        @click="e => editor.select(e, sound)"
+        @contextmenu="(e) => $emit('contextmenu', e, sound)"
+        v-drag-sound="() => initDrag(sound)">
         <sound-label :sound="sound" :display="display" />
         <sound-resize :sound="sound" :editor="editor" />
+        <!-- <span style="position:absolute">{{ sound.id }}</span> -->
       </div>
     </template>
     <div class="drop-area" v-if="dropStyle" :style="dropStyle" />
@@ -39,6 +40,7 @@ import { bassFret } from '../core/note-utils'
 import SoundLabel from './BassLabel'
 import SoundTopLabel from './SoundTopLabel'
 import SoundResize from './SoundResize'
+import '../directives/drag-sound'
 
 export default {
   name: 'bass-beat',
@@ -72,6 +74,10 @@ export default {
     }
   },
   methods: {
+    soundElem (sound) {
+      const index = this.beat.data.indexOf(sound)
+      return this.$refs.sound[index]
+    },
     subbeatCell (evt) {
       const grid = this.beat.subdivision
       const cell = evt.target.offsetWidth / grid
@@ -84,37 +90,70 @@ export default {
       }
     },
     dragOver (evt, string) {
-      const position = this.subbeatCell(evt.detail.evt)
+      const position = this.subbeatCell(evt)
       const key = [string, this.beat.bar, this.beat.beat, position.subbeat].join(':')
       if (!this.dropInfo || this.dropInfo.key !== key) {
-        console.log(key, performance.now())
-        const fret = bassFret(string, evt.detail.sound.note)
-        const valid = fret >= 0 && fret < 25
+        const sound = evt.dataTransfer.sound
+
+        let width
+        let valid = true
+        if (sound.note.type !== 'ghost') {
+          const fret = bassFret(string, sound.note)
+          valid = fret >= 0 && fret < 25
+          // console.log(this.beat.section, evt.dataTransfer.sound.note)
+          const duration = this.beat.section.noteDuration(this.beat, evt.dataTransfer.sound.note)
+          width = (100 * duration) + '%'
+        } else {
+          width = '25%'
+        }
+
         this.dropStyle = {
           left: (100 * position.start) + '%',
           top: this.stringsPositions[string],
-          width: '100px',
+          width: width,
           height: evt.target.offsetHeight + 'px',
           borderColor: valid ? '#2196F3' : '#f44336'
         }
         this.dropInfo = {
           key,
           valid,
-          fret,
           position
         }
       }
     },
     onDrop (evt, string) {
-      if (this.dropInfo.valid) {
-        const sound = evt.detail.sound
+      if (this.dropInfo && this.dropInfo.valid) {
+        const copy = evt.ctrlKey
+        let sound = evt.dataTransfer.sound
+        if (copy) {
+          sound = JSON.parse(JSON.stringify(sound))
+        } else if (sound.beat) {
+          this.beat.section.deleteSound(sound)
+        }
+
         sound.string = string
         sound.start = this.dropInfo.position.start
-        sound.note.fret = this.dropInfo.fret
+        if (sound.note.type !== 'ghost') {
+          sound.note.fret = bassFret(string, sound.note)
+        }
         this.beat.section.addSound(this.beat, sound)
-        console.log(sound)
       }
       this.dropStyle = this.dropInfo = null
+    },
+    initDrag (sound) {
+      if (!this.editor.selection.includes(sound)) {
+        this.editor.selection = [sound]
+      }
+      // sound = this.editor.selection[0]
+      const display = this.display
+      const soundEl = this.soundElem(sound)
+      const style = {width: soundEl.offsetWidth + 'px'}
+      return {
+        data: sound,
+        render (h) {
+          return <div style={style} class="sound"><SoundLabel sound={sound} display={display} /></div>
+        }
+      }
     }
   }
 }

@@ -1,11 +1,5 @@
 <template>
   <div>
-    <div ref="dragSound" class="drag sound">
-      <div />
-    </div>
-    <div ref="dragElem" class="custom-drag sound" :style="dragStyle">
-      <sound-label v-if="dragStyle" :sound="dragSound" :display="'name'" />
-    </div>
     <div class="fretboard">
       <div
         v-for="(string, i) in instrument.strings"
@@ -17,20 +11,14 @@
           class="fret"
           :style="{ backgroundColor: Colors[note.octave] }">
           <label
-            draggable="true"
-            @dragstart="(e) => dragStart(e, note.name, note.octave)">
+            v-drag-sound="() => initDrag(note.name, note.octave)">
             {{ note.name }}<sub>{{ note.octave }}</sub>
           </label>
           <template v-if="note.flatName">
             <span>/</span>
-            <label @mousedown="(e) => customDragStart(e, note.flatName, note.octave)">
+            <label v-drag-sound="() => initDrag(note.flatName, note.octave)">
               {{ note.flatName }}<sub>{{ note.octave }}</sub>
             </label>
-<!--             <label
-              draggable="true"
-              @dragstart="(e) => dragStart(e, note.flatName, note.octave)">
-              {{ note.flatName }}<sub>{{ note.octave }}</sub>
-            </label> -->
           </template>
         </div>
         <div class="fret ghost">x</div>
@@ -40,11 +28,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import { Note } from 'tonal'
 import { StringRoots } from './constants'
 import { Colors } from '../colors'
 import SoundLabel from './BassLabel'
+import '../directives/drag-sound'
+
 
 export default {
   components: { SoundLabel },
@@ -56,8 +45,6 @@ export default {
     }
   },
   data: () => ({
-    dragSound: null,
-    dragStyle: null
   }),
   computed: {
     stringsNotes () {
@@ -88,33 +75,9 @@ export default {
       }
       return notes
     },
-    dragStart (evt, note, octave) {
-      const dragSound = {
-        style: 'finger',
-        note: {
-          type: 'regular',
-          name: note,
-          octave: octave
-        }
-      }
-      new Vue({
-        el: this.$refs.dragSound.children[0],
-        render () {
-          return <SoundLabel sound={dragSound} display={'name'} />
-        },
-        mounted () {
-          this.$destroy()
-        }
-      })
-      console.log(JSON.stringify({sound: dragSound, source: 'fretboard'}))
-      // evt.dataTransfer.setData('text', JSON.stringify({sound: dragSound, source: 'fretboard'}))
-      evt.dataTransfer.setData(JSON.stringify({sound: dragSound, source: 'fretboard'}), 'x')
-      evt.dataTransfer.setData('text/html', 'data')
-      evt.dataTransfer.setDragImage(this.$refs.dragSound, 10, evt.target.offsetHeight / 2)
-    },
-    customDragStart (evt, note, octave) {
-      console.log(evt)
-      this.dragSound = {
+    fretSound (note, octave) {
+      console.log('#fretSound')
+      return {
         style: 'finger',
         volume: 0.75,
         note: {
@@ -125,45 +88,15 @@ export default {
           dotted: false
         }
       }
-      document.addEventListener('mousemove', this.emitDragOver)
-      document.addEventListener('mouseup', this.dragEnd, {once: true})
     },
-    emitDragEvent (evt, type) {
-      const detail = {
-        sound: this.dragSound,
-        evt: evt
-      }
-      const event = new CustomEvent(type, { detail })
-      evt.target.dispatchEvent(event)
-    },
-    emitDragOver (evt) {
-      // console.log('emulateDrag', e.target)
-      this.dragStyle = {
-        left: (evt.clientX - 8) + 'px',
-        top: (evt.clientY - 16) + 'px'
-      }
-      // this.$refs.dragElem.style.left = this.dragStyle.left
-      // this.$refs.dragElem.style.top = this.dragStyle.top
-
-      if (this.lastTarget !== evt.target) {
-        console.log('DragEnter/Leave')
-        if (this.lastTarget) {
-          const event = new CustomEvent('dragleave')
-          this.lastTarget.dispatchEvent(event)
+    initDrag (note, octave) {
+      const sound = this.fretSound(note, octave)
+      return {
+        data: sound,
+        render (h) {
+          return <div class="custom-drag sound"><SoundLabel sound={sound} display={'name'} /></div>
         }
       }
-      this.emitDragEvent(evt, 'dragover')
-      this.lastTarget = evt.target
-    },
-    emitDragEnter (evt) {
-      console.log('emitDragEnter', evt.target)
-    },
-    dragEnd (evt) {
-      console.log('dragEnd')
-      document.removeEventListener('mousemove', this.emitDragOver)
-      this.emitDragEvent(evt, 'drop')
-      this.dragSound = null
-      this.dragStyle = null
     }
   }
 }

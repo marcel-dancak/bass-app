@@ -18,7 +18,7 @@
     </template>
     <div
       class="handler"
-      @mousedown="startResize">
+      @mousedown.stop="startResize">
       <span>◀</span>
       <span>▶</span>
     </div>
@@ -92,6 +92,8 @@ export default {
   },
   methods: {
     startResize (e) {
+      this.editor.select(e, this.sound)
+
       this.bounds = this.$refs.container.getBoundingClientRect()
       this.width = this.bounds.width
       this.active = true
@@ -136,7 +138,7 @@ export default {
       border-radius: 4px;
     }
     .bg {
-      background-color: rgba(100, 0, 0, 0.25);
+      background-color: rgba(3,169,244, 0.25);
     }
     .highlight {
       border: 2px solid #03A9F4;
