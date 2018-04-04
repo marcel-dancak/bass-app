@@ -73,7 +73,6 @@ export default {
     },
     mode: 'editor',
     label: 'name',
-    trackId: 'bass_0',
     track: null,
     project: null
   }),
@@ -85,6 +84,7 @@ export default {
   watch: {
     project () {
       this.editor.sectionIndex = this.project.sections[0].id
+      this.track = this.project.tracks[0]
     }
   },
   created () {
@@ -110,7 +110,6 @@ export default {
       id: 'drums_1',
       instrument: PercussionInstrument(PercussionKit)
     })
-    this.track = player.tracks['bass_0']
     this.audioPlayer = player
     this._provided.$player = player
   },

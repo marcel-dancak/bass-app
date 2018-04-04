@@ -85,7 +85,7 @@ export class BaseTrackSection {
   }
 
   initializeSound (sound) {
-
+    sound.id = randomId()
   }
 
   beat (bar, beat) {
@@ -269,13 +269,13 @@ export class NotesTrackSection extends BaseTrackSection {
   }
 
   initializeSound (sound) {
+    super.initializeSound(sound)
     if (sound.note && sound.note.length < 1) {
       sound.note.length = Math.round(1.0 / sound.note.length)
     }
     const end = sound.start + this.soundDuration(sound)
     // sound.end = end
     Object.defineProperty(sound, 'end', {value: end, writable: true, configurable: true, enumerable: false})
-    sound.id = randomId()
   }
 
   nextSoundPosition (sound) {

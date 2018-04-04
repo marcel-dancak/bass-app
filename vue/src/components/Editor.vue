@@ -19,17 +19,17 @@
           :active="activeSubbeat"
         />
         <div
-          :is="'bass-beat'"
-          class="instrument bass"
+          :is="beatComponent"
+          class="instrument"
           :beat="props.item"
           :editor="trackEditor"
-          :instrument="app.track.instrument.config"
+          :instrument="app.track"
           :display="app.label"
           @contextmenu="soundContextMenu"
         />
       </div>
     </swiper>
-    <fretboard :instrument="app.track.instrument.config" />
+    <fretboard v-if="app.track.type === 'bass'" :instrument="app.track" />
     <mouse-selector @selected="mouseSelection"/>
     <context-menu ref="contextMenu" />
   </div>
@@ -39,26 +39,27 @@
 import Vue from 'vue'
 import { Section } from '../core/section'
 import BassEditor from '../core/bass-editor'
+import DrumEditor from '../core/drum-editor'
 import Swiper from './Swiper'
 import MouseSelector from './MouseSelector'
 import BeatHeader from './BeatHeader'
 import BassBeat from './BassBeat'
 import BassSoundForm from './BassSoundForm'
 import Fretboard from './Fretboard'
+import DrumBeat from './DrumBeat'
 import ContextMenu from '../ui/ContextMenu'
 
 
 export default {
   name: 'editor',
   components: {
-    Swiper, MouseSelector, BeatHeader, BassBeat, BassSoundForm, ContextMenu, Fretboard
+    Swiper, MouseSelector, BeatHeader, DrumBeat, BassBeat, BassSoundForm, ContextMenu, Fretboard
   },
   inject: ['$player'],
   props: ['app', 'sectionData'],
   data: () => ({
     slidesPerView: 8,
-    activeSubbeat: '',
-    trackEditor: BassEditor()
+    activeSubbeat: ''
   }),
   computed: {
     section () {
@@ -71,19 +72,32 @@ export default {
       }
       return section
     },
-    beats1 () {
-      if (!this.section) return []
-      const beats = []
-      this.section.tracks[this.app.trackId].forEachBeat(beat => { beats.push(beat) })
-      return beats
+    beatComponent () {
+      return {
+        bass: 'bass-beat',
+        drums: 'drum-beat'
+      }[this.app.track.type]
     },
     beats () {
       // ensure reactivity like if was normal data (not computed property only)
-      Vue.util.defineReactive(this.section.tracks[this.app.trackId], 'beats')
-      return this.section.tracks[this.app.trackId].beats
+      Vue.util.defineReactive(this.section.tracks[this.app.track.id], 'beats')
+      return this.section.tracks[this.app.track.id].beats
+    },
+    trackEditor () {
+      const track = this.app.track
+      let editor = this.editors[track.id]
+      if (!editor) {
+        editor = track.type === 'bass'
+          ? BassEditor(track)
+          : DrumEditor(track)
+        this.editors[track.id] = editor
+        Vue.util.defineReactive(editor, 'selection')
+      }
+      return editor
     }
   },
   created () {
+    this.editors = {}
     this.$bus.$on('playbackChange', this.play)
     this.$bus.$on('playerBack', this.seekToStart)
     document.addEventListener('keydown', this.keyDown)
@@ -133,7 +147,7 @@ export default {
       this.slidesPerView = Math.min(Math.max(2, this.slidesPerView), this.beats.length)
     },
     highlightBeat (e) {
-      const beat = e.section.tracks['bass_0'].beat(e.bar, e.beat)
+      const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
       const subbeatTime = 1000 * (e.duration / beat.subdivision)
       let delay = 1000 * (e.startTime - this.$player.context.currentTime)
       for (let i = 0; i < beat.subdivision; i++) {

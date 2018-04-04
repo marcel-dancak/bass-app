@@ -3,6 +3,15 @@
     dark
     color="blue-grey darken-2"
     class="main-toolbar elevation-3">
+    <v-select
+      class="tracks"
+      :items="tracks"
+      v-model="app.track"
+      item-text="name"
+      return-object
+      hide-details>
+    </v-select>
+
     <v-spacer />
 
     <v-btn
@@ -60,6 +69,9 @@ export default {
   computed: {
     sections () {
       return this.app.project.sections
+    },
+    tracks () {
+      return this.app.project.tracks
     }
   },
   methods: {
@@ -105,9 +117,7 @@ export default {
     .input-group__input {
     }
   }
-  input-group--select {
-  }
-  .sections {
+  .input-group--select {
     min-width: 150px;
   }
 }
