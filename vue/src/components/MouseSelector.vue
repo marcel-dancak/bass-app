@@ -42,10 +42,10 @@ export default {
         // console.log('move')
         this.selectionRect.left = Math.min(origin.x, e.clientX)
         this.selectionRect.top = Math.min(origin.y, e.clientY)
-        this.selectionRect.width = Math.abs(origin.x - e.clientX)
-        this.selectionRect.height = Math.abs(origin.y - e.clientY)
+        this.selectionRect.width = Math.abs(origin.x - e.clientX) + 1
+        this.selectionRect.height = Math.abs(origin.y - e.clientY) + 1
       }
-      document.addEventListener('mouseup', () => {
+      document.addEventListener('mouseup', (evt) => {
         document.removeEventListener('mousemove', dragHandler)
         const { left, top, width, height } = this.selectionRect
         const selection = {

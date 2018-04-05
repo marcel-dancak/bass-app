@@ -2,6 +2,7 @@
   <v-flex>
     <v-select
       ref="select"
+      class="note-select"
       content-class="note-select"
       :label="label"
       :items="items"
@@ -10,7 +11,8 @@
       hide-details>
       <span
         slot="selection"
-        slot-scope="data">
+        slot-scope="data"
+        class="input-group__selection">
         {{ note.name }}<sub>{{ note.octave }}</sub>
       </span>
       <template
@@ -75,7 +77,7 @@ export default {
     this.selected = this.note.fret
   },
   methods: {
-    selectItem (item, flatName=false) {
+    selectItem (item, flatName = false) {
       // data.parent.$emit('change', data.item)
       // data.parent.$emit('input', data.item)
       // data.parent.$refs.menu.$emit('update:returnValue', undefined)
@@ -93,6 +95,9 @@ export default {
 
 <style lang="scss">
 .note-select {
+  .input-group__selection {
+    color: rgba(0,0,0,0.87);
+  }
   .list__tile {
     height: 3em;
     padding: 0;

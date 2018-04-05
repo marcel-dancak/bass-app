@@ -103,8 +103,17 @@ export default {
     StringRoots: () => StringRoots
   },
   methods: {
-    setType (value) {
-      this.sound.note.type = value
+    setType (type) {
+      const hasEndNote = type === 'slide' || type === 'grace'
+      if (hasEndNote) {
+        const { name, octave, fret } = this.sound.note
+        this.$set(this.sound, 'endNote', { name, octave, fret })
+      } else {
+        this.$delete(this.sound, 'endNote')
+        // delete this.sound.endNote
+      }
+
+      this.sound.note.type = type
     }
   }
 }

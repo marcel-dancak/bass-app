@@ -4,12 +4,26 @@
     color="blue-grey darken-2"
     class="main-toolbar elevation-3">
     <v-select
+      label="Track"
       class="tracks"
       :items="tracks"
       v-model="app.track"
       item-text="name"
       return-object
+      content-class="tracks"
       hide-details>
+      <template
+        slot="selection"
+        slot-scope="data">
+        <icon :name="data.item.type" />
+        <span class="input-group__selections__comma">{{ data.item.name }}</span>
+      </template>
+      <template
+        slot="item"
+        slot-scope="data">
+        <icon :name="data.item.type" />
+        <span class="input-group__selections__comma">{{ data.item.name }}</span>
+      </template>
     </v-select>
 
     <v-spacer />
@@ -52,6 +66,7 @@
     <v-spacer />
 
     <v-select
+      label="Section"
       class="sections"
       :items="sections"
       v-model="app.editor.sectionIndex"
@@ -113,12 +128,38 @@ export default {
   .input-group {
     flex: 0 0 auto;
     width: auto;
-    padding: 0 0.5em;
+    padding: 0.8em 0 0.25em 0;
     .input-group__input {
     }
   }
   .input-group--select {
-    min-width: 150px;
+    min-width: 180px;
+    label {
+      font-size: 0.938em;
+      height: 1.25em;
+      line-height: 1.25em;
+    }
+  }
+
+  .tracks {
+    .icon {
+      width: 1em;
+      height: 1em;
+      margin-right: 0.25em;
+    }
+  }
+}
+
+.menu__content.tracks {
+  .list__tile--active {
+    .icon {
+      color: inherit;
+    }
+  }
+  .icon {
+    width: 1em;
+    height: 1em;
+    margin-right: 0.5em;
   }
 }
 </style>
