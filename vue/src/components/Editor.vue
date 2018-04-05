@@ -119,11 +119,19 @@ export default {
         return this.stop()
       }
       const swiper = this.$refs.swiper
+
+      const startBeat = this.beats[swiper.index]
+      const start = {
+        bar: startBeat.bar,
+        beat: startBeat.beat
+      }
       this.$player.play(this.section, (e) => {
-        const beat = e.section.tracks.bass_0.beat(e.bar, e.beat)
-        swiper.setIndex(this.beats.indexOf(beat))
+        if (!this.app.player.screenLock) {
+          const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
+          swiper.setIndex(this.beats.indexOf(beat))
+        }
         this.highlightBeat(e)
-      })
+      }, { start })
       // this.$player.export(this.section)
     },
     stop () {

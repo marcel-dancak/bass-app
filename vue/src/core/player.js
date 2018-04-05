@@ -67,12 +67,12 @@ export default function Player (context) {
       return startTime + beatTime
     },
 
-    play (section, beatPrepared) {
+    play (section, beatPrepared, opts = {}) {
       this.playing = true
       this.beatPreparedCb = beatPrepared
       this.fetchResources(section).then(() => {
-        let bar = 1
-        let beat = 1
+        let bar = opts.start ? opts.start.bar : 1
+        let beat = opts.start ? opts.start.beat : 1
         let end = this.playBeat(section, bar, beat, context.currentTime)
         const playNext = (startTime) => {
           beat++
