@@ -1,5 +1,3 @@
-import { noteDetune } from './note-utils'
-
 function shiftLeft (sound) {
   if (sound.start > 0) {
     sound.start = sound.start - 1 / sound.beat.subdivision
@@ -11,7 +9,7 @@ function shiftLeft (sound) {
   }
 }
 
-function shiftRight(sound) {
+function shiftRight (sound) {
   const step = 1 / sound.beat.subdivision
   sound.start += step
   if (sound.start >= 1) {
@@ -30,7 +28,7 @@ function shiftUp (sound) {
   }
 }
 
-function shiftDown(sound) {
+function shiftDown (sound) {
   const index = this.track.drums.findIndex(s => s.name === sound.drum) + 1
   if (index < this.track.drums.length) {
     sound.drum = this.track.drums[index].name

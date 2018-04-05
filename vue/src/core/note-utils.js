@@ -17,3 +17,16 @@ export function bassFret (string, note) {
   // console.log(string.midi, noteMidi)
   return noteMidi - rootNote.midi
 }
+
+export function noteProps (note) {
+  return Note.props(asciNote(note.name + note.octave))
+}
+
+export function noteDetune (note, offset) {
+  const props = noteProps(note)
+  const newNote = Note.props(Note.fromMidi(props.midi + offset))
+  return {
+    name: Note.enharmonic(newNote.pc),
+    octave: newNote.oct
+  }
+}

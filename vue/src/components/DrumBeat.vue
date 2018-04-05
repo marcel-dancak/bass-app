@@ -7,10 +7,12 @@
     <div class="grid">
       <svg width="100%" height="100%">
         <g
-          v-for="(y, i) in instrument.drums"
+          v-for="(drum, i) in instrument.drums"
+          :key="i"
           :style="{transform: `translate(0, ${i * 3}em)`}">
           <circle
             v-for="cx in grid"
+            :key="cx"
             :cx="cx"
             cy="1.5em"
             r="1em"
@@ -21,7 +23,7 @@
     </div>
     <transition-group name="scale" xtag="div">
       <div
-        v-for="(sound, i) in beat.data"
+        v-for="sound in beat.data"
         :key="sound.id"
         ref="sound"
         v-bind-el="sound"
@@ -51,10 +53,10 @@ export default {
       const grid = []
       const size = this.beat.grid || this.beat.subdivision
       for (let i = 0; i < size; i++) {
-        const cx =  ((i + 1) * (100 / size)) - (50 / size)
+        const cx = ((i + 1) * (100 / size)) - (50 / size)
         grid.push(cx + '%')
       }
-      return grid        
+      return grid
     },
     drumPosition () {
       const positions = {}
