@@ -2,18 +2,31 @@ import Vue from 'vue'
 
 const drag = {
   dragging: false,
-  sound: null,
+  data: null,
   emitEvent (type, evt) {
-    const dataTransfer = {
-      sound: drag.sound
-    }
-    const event = new MouseEvent(type, evt)
-    Object.defineProperty(event, 'dataTransfer', {value: dataTransfer})
-    evt.target.dispatchEvent(event)
+    return drag.info.data.map((group, i) => {
+      const x = evt.clientX + group.offset.x
+      const y = evt.clientY + group.offset.y
+      const target = document.elementFromPoint(x, y)
+      const event = new MouseEvent(type, evt)
+      Object.defineProperty(event, 'clientX', {value: x})
+      Object.defineProperty(event, 'clientY', {value: y})
+      const data = {
+        data: drag.info.data[i].sounds,
+        channel: i
+      }
+      Object.defineProperty(event, 'dataTransfer', {value: data})
+      if (target) {
+        target.dispatchEvent(event)
+      }
+      return event
+    })
   },
   init (el, opts) {
     el.addEventListener('mousedown', e => {
+      drag.startEvent = e
       drag.opts = opts
+      drag.lastTargets = null
       document.addEventListener('mousemove', drag.dragOver)
       document.addEventListener('mouseup', (evt) => {
         document.removeEventListener('mousemove', drag.dragOver)
@@ -29,9 +42,8 @@ const drag = {
   },
   dragOver (evt) {
     if (!drag.dragging) {
-      const info = drag.opts.dragInfo()
-      drag.sound = info.data
-      // drag.el = info.el
+      const info = drag.opts.dragInfo(drag.startEvent)
+      drag.info = info
 
       const container = document.createElement('div')
       document.querySelector('[data-app="true"]').appendChild(container)
@@ -50,34 +62,41 @@ const drag = {
         },
         mounted () {
           drag.el = this.$el
-          // this.$destroy()
         }
       })
       drag.dragging = true
     }
     drag.vm.effect = evt.ctrlKey ? 'copy' : 'move'
     if (drag.el) {
-      drag.el.style.left = (evt.clientX - 8) + 'px'
-      drag.el.style.top = (evt.clientY - 16) + 'px'
+      drag.el.style.left = evt.clientX + 'px'
+      drag.el.style.top = evt.clientY + 'px'
     }
 
-    if (drag.lastTarget !== evt.target) {
-      console.log('DragEnter/Leave')
-      if (drag.lastTarget) {
-        const event = new MouseEvent('dragleave', evt)
-        drag.lastTarget.dispatchEvent(event)
-      }
+    if (drag.lastTargets) {
+      const targets = drag.info.data.map(group => {
+        const x = evt.clientX + group.offset.x
+        const y = evt.clientY + group.offset.y
+        return document.elementFromPoint(x, y)
+      })
+      targets.forEach((target, i) => {
+        if (target !== drag.lastTargets[i] && drag.lastTargets[i]) {
+          const event = new MouseEvent('dragleave')
+          Object.defineProperty(event, 'channel', {value: i})
+          drag.lastTargets[i].dispatchEvent(event)
+        }
+      })
     }
-    drag.emitEvent('dragover', evt)
-    drag.lastTarget = evt.target
+    // TODO: remove duplicit usage of document.elementFromPoint
+    const evts = drag.emitEvent('dragover', evt)
+    drag.lastTargets = evts.map(e => e.target)
   }
 }
 
 Vue.directive('drag-sound', {
   bind (el, binding) {
     drag.init(el, {
-      dragInfo () {
-        return binding.value()
+      dragInfo (evt) {
+        return binding.value(evt)
       }
     })
   }

@@ -107,6 +107,7 @@ export default {
       position: absolute;
       left: -0.4em;
       top: -1.75em;
+      pointer-events: none;
     }
 
     .slide {

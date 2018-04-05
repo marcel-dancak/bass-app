@@ -49,6 +49,11 @@ import Fretboard from './Fretboard'
 import DrumBeat from './DrumBeat'
 import ContextMenu from '../ui/ContextMenu'
 
+Vue.directive('bind-el', {
+  bind (el, binding) {
+    Object.defineProperty(binding.value, 'elem', {value: el, configurable: true})
+  }
+})
 
 export default {
   name: 'editor',
@@ -92,6 +97,7 @@ export default {
           : DrumEditor(track)
         this.editors[track.id] = editor
         Vue.util.defineReactive(editor, 'selection')
+        Vue.util.defineReactive(editor, 'draggedSounds')
       }
       return editor
     }
@@ -213,6 +219,24 @@ export default {
     }
   }
 }
+
+.drag-container {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0.75;
+  .icon {
+    position: absolute;
+    left: -0.5em;
+    top: -1.25em;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    border: 2px solid #999;
+    background-color: rgba(255,255,255,0.75);
+    padding: 0.15em;
+  }
+}
+
 /*** Borders ***/
 
 .beat {
@@ -221,6 +245,7 @@ export default {
       content: "";
       position: absolute;
       background-color: #aaa;
+      pointer-events: none;
       top: 0;
       bottom: 0;
       left: 0;

@@ -2,7 +2,7 @@
   <div>
     <div class="fretboard">
       <div
-        v-for="(string, i) in instrument.strings"
+        v-for="(string, i) in strings"
         :key="string"
         class="string">
         <div
@@ -11,12 +11,12 @@
           class="fret"
           :style="{ backgroundColor: Colors[note.octave] }">
           <label
-            v-drag-sound="() => initDrag(note.name, note.octave)">
+            v-drag-sound="(e) => initDrag(e, note.name, note.octave)">
             {{ note.name }}<sub>{{ note.octave }}</sub>
           </label>
           <template v-if="note.flatName">
             <span>/</span>
-            <label v-drag-sound="() => initDrag(note.flatName, note.octave)">
+            <label v-drag-sound="(e) => initDrag(e, note.flatName, note.octave)">
               {{ note.flatName }}<sub>{{ note.octave }}</sub>
             </label>
           </template>
@@ -47,9 +47,11 @@ export default {
   data: () => ({
   }),
   computed: {
+    strings () {
+      return this.instrument.strings.split('')
+    },
     stringsNotes () {
-      const strings = this.instrument.strings
-      return strings.map(string => this.stringNotes(StringRoots[string]))
+      return this.strings.map(string => this.stringNotes(StringRoots[string]))
     }
   },
   created () {
@@ -89,12 +91,23 @@ export default {
         }
       }
     },
-    initDrag (note, octave) {
+    initDrag (e, note, octave) {
       const sound = this.fretSound(note, octave)
+      const style = {
+        left:  '-10px',
+        top: (-e.target.offsetHeight / 2) + 'px',
+      }
       return {
-        data: sound,
+        data: [{
+          sounds: [sound],
+          offset: { x: 0, y: 0 }
+        }],
         render (h) {
-          return <div class="custom-drag sound"><SoundLabel sound={sound} display={'name'} /></div>
+          return (
+            <div class="fret-drag sound" style={style}>
+              <SoundLabel sound={sound} display={'name'} />
+            </div>
+          )
         }
       }
     }
@@ -151,10 +164,8 @@ export default {
   top: -80px;
   width: 4em;
 }
-.custom-drag.sound {
-  position: fixed;
-  pointer-events: none;
-  opacity: 0.75;
+.fret-drag.sound {
+  position: absolute;
   width: 4em;
 }
 </style>

@@ -30,12 +30,30 @@ const keyHandlers = {
   },
   ArrowRight () {
     this.selection.forEach(shiftRight)
+  },
+  ArrowUp () {
+    this.selection.forEach(transposeUp)
+  },
+  ArrowDown () {
+    this.selection.forEach(transposeDown)
+  },
+  Delete () {
+    this.selection.forEach(s => s.beat.section.deleteSound(s))
+    this.selection = []
+  },
+  '.' () {
+    this.selection.filter(s => {
+      if (s.note.type !== 'ghost' && !s.next) {
+        s.note.staccato = !s.note.staccato
+      }
+    })
   }
 }
 
 export default function BassEditor () {
   return {
     selection: [],
+    draggedSounds: [],
     select (e, sound) {
       if (e.ctrlKey) {
         const index = this.selection.indexOf(sound)
