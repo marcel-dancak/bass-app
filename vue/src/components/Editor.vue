@@ -9,6 +9,34 @@
       @wheel.native="mouseWheel">
 
       <div
+        slot="header"
+        slot-scope="props"
+        class="beat"
+        swipeable
+        :class="{first: props.item.beat === 1}">
+        <beat-header
+          :beat="props.item"
+          :active="activeSubbeat"
+        />
+      </div>
+
+      <div
+        slot="content"
+        slot-scope="props"
+        class="beat"
+        :class="{first: props.item.beat === 1}">
+        <div
+          :is="beatComponent"
+          class="instrument"
+          :beat="props.item"
+          :editor="trackEditor"
+          :instrument="app.track"
+          :display="app.label"
+          @contextmenu="soundContextMenu"
+        />
+      </div>
+
+<!--       <div
         slot="item"
         slot-scope="props"
         class="beat"
@@ -27,7 +55,8 @@
           :display="app.label"
           @contextmenu="soundContextMenu"
         />
-      </div>
+      </div> -->
+
     </swiper>
     <fretboard v-if="app.track.type === 'bass'" :instrument="app.track" />
     <mouse-selector @selected="mouseSelection"/>
@@ -40,7 +69,10 @@ import Vue from 'vue'
 import { Section } from '../core/section'
 import BassEditor from '../core/bass-editor'
 import DrumEditor from '../core/drum-editor'
-import Swiper from './Swiper'
+import PianoEditor from '../core/piano-editor'
+// import Swiper from './swiper/Swiper'
+import Swiper from './swiper/DualSwiper'
+
 import MouseSelector from './MouseSelector'
 import BeatHeader from './BeatHeader'
 import BassBeat from './BassBeat'
@@ -58,7 +90,9 @@ Vue.directive('bind-el', {
 export default {
   name: 'editor',
   components: {
-    Swiper, MouseSelector, BeatHeader, DrumBeat, BassBeat, BassSoundForm, ContextMenu, Fretboard
+    Swiper, MouseSelector, BeatHeader, ContextMenu,
+    BassBeat, BassSoundForm, Fretboard,
+    DrumBeat,  PianoBeat
   },
   inject: ['$player'],
   props: ['app', 'sectionData'],
@@ -174,8 +208,10 @@ export default {
     mouseSelection (evt) {
       const { x1, y1, x2, y2 } = evt
       const sounds = []
-      this.$refs.swiper.$children.forEach(slide => {
-        const beatComp = slide.$children[1]
+      // const slides = this.$refs.swiper.$children
+      const slides = this.$refs.swiper.$refs.slides
+      slides.forEach(slide => {
+        const beatComp = slide.$children[0] // [1] for simple swiper
         const indexes = []
         if (beatComp && beatComp.$refs && beatComp.$refs.sound) {
           beatComp.$refs.sound.forEach((el, i) => {
@@ -210,13 +246,24 @@ export default {
 <style lang="scss">
 
 .editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
   .swiper {
+    display: flex;
+    flex-direction: column;
     padding: 1em;
+
+    .slides-container {
+      padding: 0 2px;
+    }
     .beat {
       text-align: center;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
+
       .beat-header {
         padding-bottom: 2em;
         margin-bottom: 1em;
