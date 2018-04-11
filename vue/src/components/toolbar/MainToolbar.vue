@@ -28,40 +28,48 @@
 
     <v-spacer />
 
-    <v-btn
-      icon
-      @click="togglePlayback()">
-      <icon name="play" />
-    </v-btn>
+    <div class="player">
+      <player-bg />
+      <v-btn
+        icon
+        class="play"
+        @click="togglePlayback()">
+        <icon name="play" />
+      </v-btn>
 
-    <v-btn
-      icon
-      @click="$bus.$emit('playerBack')">
-      <icon name="back" />
-    </v-btn>
+      <v-btn
+        icon
+        class="separated"
+        @click="$bus.$emit('playerBack')">
+        <icon name="back" />
+      </v-btn>
 
-    <v-btn
-      icon flat
-      :class="{'primary--text': app.player.countdown}"
-      @click="app.player.countdown = !app.player.countdown">
-      <icon name="countdown" />
-    </v-btn>
+      <v-btn
+        icon
+        class="separated"
+        :class="{'primary--text': app.player.countdown}"
+        @click="app.player.countdown = !app.player.countdown">
+        <icon name="countdown" />
+      </v-btn>
 
-    <!-- <icon class="toggle" name="countdown" /> -->
+      <!-- <icon class="toggle" name="countdown" /> -->
 
-    <v-btn
-      icon
-      :class="{'primary--text': app.player.loopMode}"
-      @click="app.player.loopMode = !app.player.loopMode">
-      <icon name="loop" />
-    </v-btn>
+      <v-btn
+        icon
+        class="separated"
+        :class="{'primary--text': app.player.loopMode}"
+        @click="app.player.loopMode = !app.player.loopMode">
+        <icon name="loop" />
+      </v-btn>
 
-    <v-btn
-      icon
-      :class="{'primary--text': app.player.screenLock}"
-      @click="app.player.screenLock = !app.player.screenLock">
-      <icon name="screen-playback" />
-    </v-btn>
+      <v-btn
+        icon
+        class="separated"
+        :class="{'primary--text': app.player.screenLock}"
+        @click="app.player.screenLock = !app.player.screenLock">
+        <icon name="screen-playback" />
+      </v-btn>
+    </div>
 
     <v-spacer />
 
@@ -79,7 +87,10 @@
 </template>
 
 <script>
+import PlayerBg from './PlayerBg'
+
 export default {
+  components: { PlayerBg },
   props: ['app'],
   computed: {
     sections () {
@@ -102,6 +113,7 @@ export default {
 .main-toolbar {
 
   height: 3.125em;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
 
@@ -110,18 +122,41 @@ export default {
     height: inherit!important;
   }
 
-  .toggle {
-    width: 1.25em;
-    height: 1.25em;
-  }
   .btn {
-    transition: none;
+    opacity: 0.8;
+    &:hover {
+      opacity: 1;
+      .btn__content:before {
+        display: none;
+      }
+    }
     &.active {
       color: red;
     }
     .icon {
-      width: 1.25em;
-      height: 1.25em;
+      transition: none;
+      width: 1.35em;
+      height: 1.35em;
+    }
+    &.separated {
+      border-radius: 0;
+      position: relative;
+      margin: auto 0;
+      width: 3.5em;
+      &:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        width: 1px;
+        top: 18%;
+        bottom: 18%;
+        background-color: #fff;
+        opacity: 0.3;
+      }
+      .icon {
+        width: 1em;
+        height: 1em;
+      }
     }
   }
 
@@ -146,6 +181,17 @@ export default {
       width: 1em;
       height: 1em;
       margin-right: 0.25em;
+    }
+  }
+
+  .player {
+    position: relative;
+    height: 3em;
+    padding-right: 0.7em;
+    display: flex;
+
+    .btn.play {
+      margin: auto 1em;
     }
   }
 }

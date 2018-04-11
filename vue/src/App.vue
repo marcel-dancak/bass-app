@@ -32,10 +32,10 @@ import Project from './core/project'
 import { PercussionInstrument, DrumKit, PercussionKit } from './core/percussion'
 import StringInstrument from './core/string-instrument'
 
-import MainToolbar from './components/MainToolbar'
+import MainToolbar from './components/toolbar/MainToolbar'
 import Editor from './components/Editor'
-import data from './data/Treasure.json'
-// import data2 from './data/TheseDays.json'
+// import data from './data/Treasure.json'
+import data from './data/TheseDays.json'
 // import data from './data/AnotherDayInParadise'
 // const data = {}
 
@@ -137,6 +137,18 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 1em;
+  height: 100%;
+  body {
+    height: 100%;
+  }
+}
+
+#app {
+  height: 100%;
+  position: relative;
+  .application--wrap {
+    xheight: 100%;
+  }
 }
 
 .bottom-toolbar {
