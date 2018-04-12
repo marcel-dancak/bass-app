@@ -1,17 +1,16 @@
 <template>
-  <div class="bass-beat">
+  <div
+    class="piano-beat"
+    :style="{minHeight: (keys.length * 1) + 'em'}">
     <div>
       <div
-        v-for="string in strings"
-        :key="string"
-        class="string"
-        @dragover="e => dragOver(e, string)"
-        @dragleave="dragLeave"
-        @drop="e => onDrop(e, string)">
+        v-for="key in keys"
+        :key="key.code"
+        class="key"
+        :class="{black: key.enharmonic, c: key.name === 'C'}">
       </div>
     </div>
     <template v-for="(sound, i) in beat.data">
-      <sound-top-label :key="'l'+i" :sound="sound" />
       <div
         :key="sound.id"
         ref="sound"
@@ -23,14 +22,12 @@
         }"
         :style="{
           left: (sound.start * 100) + '%',
-          top: stringsPositions[sound.string],
+          top: gridPosition[sound.string],
           width: 100 * (sound.end - sound.start) + '%'
         }"
-        @click="e => editor.select(e, sound)"
-        @contextmenu="(e) => $emit('contextmenu', e, sound)"
-        v-drag-sound="(e) => initDrag(e, sound)">
-        <sound-label :sound="sound" :display="display" />
-        <sound-resize v-if="sound.note.type !== 'ghost'" :sound="sound" :editor="editor" />
+        @click="e => editor.select(e, sound)">
+        <piano-note-label :sound="sound" />
+        <sound-resize :sound="sound" :editor="editor" />
       </div>
     </template>
     <div
@@ -43,29 +40,49 @@
 
 <script>
 import Vue from 'vue'
-import { bassFret } from '../core/note-utils'
-import SoundLabel from './BassLabel'
-import SoundTopLabel from './SoundTopLabel'
+import { Note } from 'tonal'
+import { asciNote, unicodeNote } from '../core/note-utils'
+import PianoNoteLabel from './PianoNoteLabel'
 import SoundResize from './SoundResize'
 import '../directives/drag-sound'
 
+window.Note = Note
+const SharpNotes = 'C C♯ D D♯ E F F♯ G G♯ A A♯ B'.split(' ')
+const FlatNotes = 'C D♭ D E♭ E F G♭ G A♭ A B♭ B'.split(' ')
+
 export default {
   name: 'bass-beat',
-  components: { SoundLabel, SoundTopLabel, SoundResize },
+  components: { PianoNoteLabel, SoundResize },
   props: ['editor', 'beat', 'instrument', 'display'],
   data: () => ({
     dropItems: []
   }),
   computed: {
-    strings () {
-      return this.instrument.strings.split('').reverse()
+    keys () {
+      const octaves = [3, 5]
+      const keys = []
+      for (let o = octaves[0]; o <= octaves[1]; o++) {
+        const notes = SharpNotes.map(note => {
+          const isSharp = note.includes('♯')
+          return {
+            name: note,
+            code: note + o,
+            octave: o,
+            enharmonic: isSharp ? FlatNotes[SharpNotes.indexOf(note)] : false
+          }
+        })
+        keys.push(...notes)
+      }
+      return keys.reverse()
     },
-    stringsPositions () {
+    gridPosition () {
       const positions = {}
-      this.strings.forEach((s, i) => {
-        // const note = Note.props(s)
-        // positions[note.letter] = (100 * i / this.strings.length) + '%'
-        positions[s] = (100 * i / this.strings.length) + '%'
+      this.keys.forEach((key, i) => {
+        const pos = (100 * i / this.keys.length) + '%'
+        positions[key.code] = pos
+        if (key.enharmonic) {
+          positions[key.enharmonic + key.octave] = pos
+        }
       })
       return positions
     }
@@ -234,34 +251,29 @@ export default {
 </script>
 
 <style lang="scss">
-.bass-beat {
+.piano-beat {
   position: relative;
-  margin-top: 1.75em;
-  margin-bottom: 0.25em;
-  .string {
-    height: 2.25em;
-    position: relative;
-    &:before {
-      content: "";
-      position: absolute;
-      pointer-events: none;
-      height: 1px;
-      width: 100%;
-      top: 50%;
-      left: 0;
-      background-color: #e2e2e2;
+  border-top: 1px solid #aaa;
+  .key {
+    height: 1em;
+    &.black {
+      background-color: #eee!important;
+    }
+    &.c {
+      border-bottom: 1px solid #aaa;
     }
   }
   .sound {
     position: absolute;
     top: 0;
-    height: 2.25em;
-    line-height: 2.25em;
+    height: 1.063em;
     z-index: 100;
     color: #222;
 
     .label {
+      line-height: 0.875em;
       padding: 1px;
+      box-shadow: none;
     }
     &.selected {
       z-index: 200;
@@ -277,14 +289,19 @@ export default {
         opacity: 0.15;
       }
     }
+
+    .resize-container {
+      .handler {
+        font-size: 0.65em;
+        flex-direction: row;
+        align-items: center;
+        margin-right: 1px;
+        > span {
+          width: 7px;
+        }
+      }
+    }
   }
 }
-.drop-area {
-  position: absolute;
-  border-radius: 4px;
-  border: 2px solid #2196F3;
-  box-sizing: border-box;
-  pointer-events: none;
-  z-index: 250;
-}
+
 </style>

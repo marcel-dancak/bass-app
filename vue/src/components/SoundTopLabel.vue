@@ -31,14 +31,19 @@ export default {
 .beat {
   .top-label {
     position: absolute;
-    top: -1.5em;
-    height: 1.5em;
+    top: -1.75em;
+    width: 1em;
+    height: 1.75em;
     line-height: 1.75em;
+    margin-left: -0.5em; /* or transform: translate(-50%, 0); */
+    text-align: center;
     &.staccato:before {
       content: "•";
       position: absolute;
+      left: 0;
       top: -0.75em;
-      left: 0.15em;
+      width: 100%;
+      text-align: center;
     }
   }
 }

@@ -1,6 +1,12 @@
 import { Note } from 'tonal'
 
-export const asciNote = name => name.replace('♭', 'b').replace('♯', '#')
+export function asciNote (name) {
+  return name.replace('♭', 'b').replace('♯', '#')
+}
+
+export function unicodeNote (name) {
+  return name.replace('b', '♭').replace('#', '♯')
+}
 
 const BassRootNotes = {
   C: Note.props('C3'),
@@ -26,7 +32,7 @@ export function noteDetune (note, offset) {
   const props = noteProps(note)
   const newNote = Note.props(Note.fromMidi(props.midi + offset))
   return {
-    name: Note.enharmonic(newNote.pc),
+    name: unicodeNote(Note.enharmonic(newNote.pc)),
     octave: newNote.oct
   }
 }

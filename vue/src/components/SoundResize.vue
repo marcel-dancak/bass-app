@@ -124,58 +124,60 @@ export default {
 </script>
 
 <style lang="scss">
-  .resize-container {
+.resize-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  .bg, .highlight {
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    .bg, .highlight {
+    bottom: 0;
+    border-radius: 4px;
+  }
+  .bg {
+    background-color: rgba(3,169,244, 0.25);
+  }
+  .highlight {
+    border: 2px solid #03A9F4;
+    .symbol {
       position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      border-radius: 4px;
-    }
-    .bg {
-      background-color: rgba(3,169,244, 0.25);
-    }
-    .highlight {
-      border: 2px solid #03A9F4;
-      .symbol {
-        position: absolute;
-        right: 0.25em;
-        top: -1.75em;
-        display: flex;
-        justify-content: flex-end;
-        .icon {
-          font-size: 1em;
-          width: 1.25em;
-          height: 1.25em;
-        }
-      }
-    }
-    .handler {
+      right: 0.25em;
+      top: -1.75em;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: absolute;
-      width: 1.5em;
-      right: 0;
-      height: inherit;
-      font-size: 0.75em;
-      cursor: col-resize;
-      opacity: 0;
-      > span {
-        height: 1em;
-        line-height: 0.85em;
-        transform: scale(0.5, 1);
-      }
-    }
-    &:hover, &.active {
-      .handler {
-        opacity: 1;
+      justify-content: flex-end;
+      .icon {
+        font-size: 1em;
+        width: 1.25em;
+        height: 1.25em;
       }
     }
   }
+  .handler {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    width: 1.5em;
+    right: 0;
+    height: inherit;
+    font-size: 0.75em;
+    cursor: col-resize;
+    opacity: 0;
+    will-change: opacity;
+    transition: 0.2s opacity ease;
+    > span {
+      height: 1em;
+      line-height: 0.85em;
+      transform: scale(0.5, 1);
+    }
+  }
+  &:hover, &.active {
+    .handler {
+      opacity: 1;
+    }
+  }
+}
 </style>

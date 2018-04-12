@@ -79,6 +79,7 @@ import BassBeat from './BassBeat'
 import BassSoundForm from './BassSoundForm'
 import Fretboard from './Fretboard'
 import DrumBeat from './DrumBeat'
+import PianoBeat from './PianoBeat'
 import ContextMenu from '../ui/ContextMenu'
 
 Vue.directive('bind-el', {
@@ -104,17 +105,13 @@ export default {
     section () {
       const data = this.sectionData
       const section = Section(data)
-      section.addBass('bass_0', data.tracks.bass_0)
-      section.addDrum('drums_0', data.tracks.drums_0)
-      if (data.tracks.drums_1) {
-        section.addDrum('drums_1', data.tracks.drums_1)
-      }
       return section
     },
     beatComponent () {
       return {
         bass: 'bass-beat',
-        drums: 'drum-beat'
+        drums: 'drum-beat',
+        piano: 'piano-beat'
       }[this.app.track.type]
     },
     beats () {
@@ -126,9 +123,12 @@ export default {
       const track = this.app.track
       let editor = this.editors[track.id]
       if (!editor) {
-        editor = track.type === 'bass'
-          ? BassEditor(track)
-          : DrumEditor(track)
+        const Editor = {
+          bass: BassEditor,
+          drums: DrumEditor,
+          piano: PianoEditor
+        }[track.type]
+        editor = Editor(track)
         this.editors[track.id] = editor
         Vue.util.defineReactive(editor, 'selection')
         Vue.util.defineReactive(editor, 'draggedSounds')
@@ -189,7 +189,6 @@ export default {
       swiper.setIndex(swiper.index + 1)
     },
     mouseWheel (e) {
-      // console.log(e)
       const step = e.deltaY > 0 ? -1 : 1
       this.slidesPerView += step
       this.slidesPerView = Math.min(Math.max(2, this.slidesPerView), this.beats.length)

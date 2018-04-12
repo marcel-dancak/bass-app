@@ -43,13 +43,16 @@ export default {
   display: flex;
   margin-top: 1em;
   height: 3em;
+  min-height: 2.5em;
+  xflex-shrink: 0;
   box-sizing: content-box;
+  color: #777;
 
   xbackground-color: #eee;
   > label {
     position: absolute;
     border-radius: 50%;
-    background-color: #333;
+    background-color: #444;
     color: #fff;
     width: 20px;
     height: 20px;
@@ -66,6 +69,7 @@ export default {
     border-left: 1px solid #bbb;
     &:first-of-type {
       height: 100%;
+      color: #333;
       font-weight: bold;
       font-size: 1.25em;
       border-left: none;
