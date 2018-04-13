@@ -22,16 +22,19 @@ const drag = {
       return event
     })
   },
-  init (el, opts) {
+  init (el, handler) {
     el.addEventListener('mousedown', e => {
       drag.startEvent = e
-      drag.opts = opts
+      drag.handler = handler
       drag.lastTargets = null
       document.addEventListener('mousemove', drag.dragOver)
       document.addEventListener('mouseup', (evt) => {
         document.removeEventListener('mousemove', drag.dragOver)
         if (drag.dragging) {
           drag.emitEvent('drop', evt)
+          if (drag.handler.end) {
+            drag.handler.end(evt)
+          }
           drag.dragging = false
           drag.vm.$destroy()
           drag.el.remove()
@@ -42,7 +45,7 @@ const drag = {
   },
   dragOver (evt) {
     if (!drag.dragging) {
-      const info = drag.opts.dragInfo(drag.startEvent)
+      const info = drag.handler.start(drag.startEvent)
       drag.info = info
 
       const container = document.createElement('div')
@@ -56,7 +59,7 @@ const drag = {
           return (
             <div class="drag-container">
               {info.render(h)}
-              {this.effect === 'copy' ? <icon name="plus" /> : null}
+              {this.effect === 'copy' ? <div class="effect">+</div> : null}
             </div>
           )
         },
@@ -94,10 +97,6 @@ const drag = {
 
 Vue.directive('drag-sound', {
   bind (el, binding) {
-    drag.init(el, {
-      dragInfo (evt) {
-        return binding.value(evt)
-      }
-    })
+    drag.init(el, binding.value)
   }
 })

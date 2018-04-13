@@ -21,7 +21,7 @@
         class="sound piano"
         :class="{
           selected: editor.selection.includes(sound),
-          dragged: editor.draggedSounds.includes(sound)
+          dragged: !editor.dragCopy && editor.draggedSounds.includes(sound)
         }"
         :style="{
           left: (sound.start * 100) + '%',
@@ -29,7 +29,10 @@
           width: 100 * (sound.end - sound.start) + '%'
         }"
         @click="e => editor.select(e, sound)"
-        v-drag-sound="(e) => initDrag(e, sound)">
+        v-drag-sound="{
+          start: (e) => initDrag(e, sound),
+          end: () => editor.draggedSounds = []
+        }">
         <piano-note-label :sound="sound" />
         <sound-resize :sound="sound" :editor="editor" />
       </div>
@@ -114,6 +117,7 @@ export default {
       }
     },
     dragOver (evt, note) {
+      this.editor.dragCopy = evt.ctrlKey
       const channel = evt.dataTransfer.channel
       const position = this.subbeatCell(evt)
       const key = [note.code, this.beat.bar, this.beat.beat, position.subbeat].join(':')
@@ -189,7 +193,6 @@ export default {
       if (record) {
         this.dropItems.splice(this.dropItems.indexOf(record), 1)
       }
-      this.editor.draggedSounds = []
     },
     initDrag (evt, clickSound) {
       if (!this.editor.selection.includes(clickSound)) {

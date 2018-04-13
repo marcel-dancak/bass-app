@@ -132,6 +132,7 @@ export default {
         this.editors[track.id] = editor
         Vue.util.defineReactive(editor, 'selection')
         Vue.util.defineReactive(editor, 'draggedSounds')
+        Vue.util.defineReactive(editor, 'dragCopy')
       }
       return editor
     }
@@ -278,16 +279,17 @@ export default {
   position: fixed;
   pointer-events: none;
   opacity: 0.75;
-  .icon {
+  .effect {
     position: absolute;
-    left: -0.5em;
+    left: 0;
     top: -1.25em;
     width: 1em;
     height: 1em;
+    line-height: 1em;
     border-radius: 50%;
-    border: 2px solid #999;
-    background-color: rgba(255,255,255,0.75);
-    padding: 0.15em;
+    color: #fff;
+    background-color: #333;
+    text-align: center;
   }
 }
 

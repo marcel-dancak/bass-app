@@ -24,6 +24,7 @@ const shiftRight = sound => {
 export default function SoundEditor () {
   return {
     selection: [],
+    dragCopy: false,
     draggedSounds: [],
     keyHandlers: {
       d () {

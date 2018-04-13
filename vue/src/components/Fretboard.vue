@@ -11,12 +11,12 @@
           class="fret"
           :style="{ backgroundColor: Colors[note.octave] }">
           <label
-            v-drag-sound="(e) => initDrag(e, note.name, note.octave)">
+            v-drag-sound="{start: e => initDrag(e, note.name, note.octave)}">
             {{ note.name }}<sub>{{ note.octave }}</sub>
           </label>
           <template v-if="note.flatName">
             <span>/</span>
-            <label v-drag-sound="(e) => initDrag(e, note.flatName, note.octave)">
+            <label v-drag-sound="{start: e => initDrag(e, note.flatName, note.octave)}">
               {{ note.flatName }}<sub>{{ note.octave }}</sub>
             </label>
           </template>
@@ -94,8 +94,8 @@ export default {
     initDrag (e, note, octave) {
       const sound = this.fretSound(note, octave)
       const style = {
-        left:  '-10px',
-        top: (-e.target.offsetHeight / 2) + 'px',
+        left: '-10px',
+        top: (-e.target.offsetHeight / 2) + 'px'
       }
       return {
         data: [{

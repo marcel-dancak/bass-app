@@ -19,7 +19,7 @@
         class="sound"
         :class="{
           selected: editor.selection.includes(sound),
-          dragged: editor.draggedSounds.includes(sound)
+          dragged: !editor.dragCopy && editor.draggedSounds.includes(sound)
         }"
         :style="{
           left: (sound.start * 100) + '%',
@@ -28,7 +28,10 @@
         }"
         @click="e => editor.select(e, sound)"
         @contextmenu="(e) => $emit('contextmenu', e, sound)"
-        v-drag-sound="(e) => initDrag(e, sound)">
+        v-drag-sound="{
+          start: (e) => initDrag(e, sound),
+          end: () => editor.draggedSounds = []
+        }">
         <sound-label :sound="sound" :display="display" />
         <sound-resize v-if="sound.note.type !== 'ghost'" :sound="sound" :editor="editor" />
       </div>
@@ -93,6 +96,7 @@ export default {
       }
     },
     dragOver (evt, string) {
+      this.editor.dragCopy = evt.ctrlKey
       const channel = evt.dataTransfer.channel
       const position = this.subbeatCell(evt)
       const key = [string, this.beat.bar, this.beat.beat, position.subbeat].join(':')
@@ -175,7 +179,6 @@ export default {
       if (record) {
         this.dropItems.splice(this.dropItems.indexOf(record), 1)
       }
-      this.editor.draggedSounds = []
     },
     initDrag (evt, clickSound) {
       if (!this.editor.selection.includes(clickSound)) {
