@@ -4,10 +4,13 @@
     :style="{minHeight: (keys.length * 1) + 'em'}">
     <div>
       <div
-        v-for="key in keys"
-        :key="key.code"
+        v-for="note in keys"
+        :key="note.code"
         class="key"
-        :class="{black: key.enharmonic, c: key.name === 'C'}">
+        :class="{black: note.enharmonic, c: note.name === 'C'}"
+        @dragover="e => dragOver(e, note)"
+        @dragleave="dragLeave"
+        @drop="e => onDrop(e, note)">
       </div>
     </div>
     <template v-for="(sound, i) in beat.data">
@@ -15,7 +18,7 @@
         :key="sound.id"
         ref="sound"
         v-bind-el="sound"
-        class="sound"
+        class="sound piano"
         :class="{
           selected: editor.selection.includes(sound),
           dragged: editor.draggedSounds.includes(sound)
@@ -25,7 +28,8 @@
           top: gridPosition[sound.string],
           width: 100 * (sound.end - sound.start) + '%'
         }"
-        @click="e => editor.select(e, sound)">
+        @click="e => editor.select(e, sound)"
+        v-drag-sound="(e) => initDrag(e, sound)">
         <piano-note-label :sound="sound" />
         <sound-resize :sound="sound" :editor="editor" />
       </div>
@@ -109,10 +113,10 @@ export default {
         subbeat
       }
     },
-    dragOver (evt, string) {
+    dragOver (evt, note) {
       const channel = evt.dataTransfer.channel
       const position = this.subbeatCell(evt)
-      const key = [string, this.beat.bar, this.beat.beat, position.subbeat].join(':')
+      const key = [note.code, this.beat.bar, this.beat.beat, position.subbeat].join(':')
       // console.log('over', evt.target, key)
       let record = this.dropItems.find(i => i.id === channel)
       if (!record) {
@@ -131,18 +135,12 @@ export default {
       let width = 0
       let valid = true
       sounds.forEach(sound => {
-        if (sound.note.type !== 'ghost') {
-          const fret = bassFret(string, sound.note)
-          valid = valid && fret >= 0 && fret < 25
-          const duration = this.beat.section.noteDuration(this.beat, sound.note)
-          width += (100 * duration)
-        } else {
-          width = 25
-        }
+        const duration = this.beat.section.noteDuration(this.beat, sound.note)
+        width += (100 * duration)
       })
       this.$set(record, 'style', {
         left: (100 * position.start) + '%',
-        top: this.stringsPositions[string],
+        top: this.gridPosition[note.code],
         width: width + '%',
         height: evt.target.offsetHeight + 'px',
         borderColor: valid ? '#2196F3' : '#f44336'
@@ -158,14 +156,13 @@ export default {
       const index = this.dropItems.findIndex(i => i.id === e.channel)
       this.dropItems.splice(index, 1)
     },
-    addSounds (sounds, string, position) {
+    addSounds (sounds, note, position) {
       let prevSound = null
       sounds.forEach((sound, i) => {
-        sound.string = string
+        sound.note.name = note.name
+        sound.note.octave = note.octave
+        sound.string = note.name + note.octave
         sound.start = position.start
-        if (sound.note.type !== 'ghost') {
-          sound.note.fret = bassFret(sound.string, sound.note)
-        }
         position.beat.section.addSound(position.beat, sound)
         position = position.beat.section.nextSoundPosition(sound)
         if (prevSound) {
@@ -175,7 +172,7 @@ export default {
         prevSound = sound
       })
     },
-    onDrop (evt, string) {
+    onDrop (evt, note) {
       const record = this.dropItems.find(i => i.id === evt.dataTransfer.channel)
       if (record && record.dropInfo.valid) {
         const copy = evt.ctrlKey
@@ -186,7 +183,7 @@ export default {
         } else if (sounds[0].beat) {
           sounds[0].beat.section.deleteSound(sounds[0])
         }
-        this.addSounds(sounds, string, {beat: this.beat, start: record.dropInfo.position.start})
+        this.addSounds(sounds, note, {beat: this.beat, start: record.dropInfo.position.start})
       }
       // this.dropItems = []
       if (record) {
@@ -221,7 +218,6 @@ export default {
         }
       })
       this.editor.draggedSounds = draggedSounds
-      const display = this.display
       return {
         data: groups,
         render (h) {
@@ -231,13 +227,14 @@ export default {
               const bounds = sound.elem.getBoundingClientRect()
               const style = {
                 position: 'absolute',
-                width: (2 + sound.elem.offsetWidth) + 'px',
+                width: sound.elem.offsetWidth + 'px',
+                // height: sound.elem.offsetHeight + 'px',
                 left: (bounds.left - evt.clientX) + 'px',
                 top: (bounds.top - evt.clientY) + 'px'
               }
               children.push(
                 <div class="sound" style={style}>
-                  <SoundLabel sound={sound} display={display} />
+                  <PianoNoteLabel sound={sound} />
                 </div>
               )
             })
@@ -266,15 +263,9 @@ export default {
   .sound {
     position: absolute;
     top: 0;
-    height: 1.063em;
     z-index: 100;
     color: #222;
 
-    .label {
-      line-height: 0.875em;
-      padding: 1px;
-      box-shadow: none;
-    }
     &.selected {
       z-index: 200;
       .label {
@@ -303,5 +294,4 @@ export default {
     }
   }
 }
-
 </style>

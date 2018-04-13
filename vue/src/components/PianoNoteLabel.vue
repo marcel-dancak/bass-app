@@ -30,13 +30,15 @@ export default {
   .label {
     display: flex;
     justify-content: center;
+    font-size: 13px;
+    height: 1em;
+    line-height: 0.875em;
+    padding: 1px;
     border-radius: 3px;
     border: 1px solid #555;
+    box-sizing: content-box;
+    xbox-shadow: none;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    height: 100%;
-    font-size: 13px;
-
     .tie {
       line-height: 0.35em;
     }
