@@ -50,6 +50,7 @@ function requireAll (requireContext) {
 }
 requireAll(require.context('../icons', false, /.*\.svg$/))
 requireAll(require.context('../icons/musical', false, /.*\.svg$/))
+requireAll(require.context('../icons/percussion', false, /.*\.svg$/))
 
 // Disable ripple ink effect by overriding Vuetify's directive
 Vue.directive('ripple', (el, binding) => {})

@@ -13,6 +13,8 @@ export default function Project (data) {
 
     if (track.type === 'drums') {
       track.drums = track.kit === 'Drums' ? DrumKit : PercussionKit
+    } else if (track.type === 'piano') {
+      track.octaves = track.range.map(note => parseInt(note.substr(-1)))
     }
   })
   return {

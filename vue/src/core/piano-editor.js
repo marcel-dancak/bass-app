@@ -2,8 +2,7 @@ import SoundEditor from './sound-editor'
 import { noteDetune } from './note-utils'
 
 function transpose(sound, track, step) {
-  const minOct = parseInt(track.range[0].substr(-1))
-  const maxOct = parseInt(track.range[1].substr(-1))
+  const [minOct, maxOct] = track.octaves
   const transposedNote = noteDetune(sound.note, step)
   if (transposedNote && transposedNote.octave >= minOct && transposedNote.octave <= maxOct) {
     if (sound.next) {

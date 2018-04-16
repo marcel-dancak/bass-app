@@ -20,8 +20,6 @@ const Subbeats = {
 export default {
   name: 'beat-header',
   props: ['beat', 'active'],
-  data: () => ({
-  }),
   computed: {
     subbeats () {
       const beat = this.beat
@@ -41,7 +39,7 @@ export default {
   position: relative;
   font-size: 1em;
   display: flex;
-  margin-top: 1em;
+  margin-top: 1.5em;
   height: 3em;
   min-height: 2.5em;
   xflex-shrink: 0;
@@ -59,7 +57,7 @@ export default {
     line-height: 20px;
     font-size: 14px;
     top: -24px;
-    left: -8px;
+    left: -9px;
   }
 
   .subbeat {

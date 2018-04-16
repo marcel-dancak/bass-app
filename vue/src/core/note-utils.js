@@ -1,11 +1,30 @@
 import { Note } from 'tonal'
 
+export const SharpNotes = 'C C♯ D D♯ E F F♯ G G♯ A A♯ B'.split(' ')
+export const FlatNotes = 'C D♭ D E♭ E F G♭ G A♭ A B♭ B'.split(' ')
+
 export function asciNote (name) {
   return name.replace('♭', 'b').replace('♯', '#')
 }
 
 export function unicodeNote (name) {
   return name.replace('b', '♭').replace('#', '♯')
+}
+
+export function enharmonic (name) {
+  if (name.includes('♯')) {
+    return FlatNotes[SharpNotes.indexOf(name)]
+  } else if (name.includes('♭')) {
+    return SharpNotes[FlatNotes.indexOf(name)]
+  }
+}
+
+export function parseNote (name) {
+  const props = Note.props(asciNote(name))
+  return {
+    name: asciNote(props.pc),
+    octave: props.oct
+  }
 }
 
 const BassRootNotes = {

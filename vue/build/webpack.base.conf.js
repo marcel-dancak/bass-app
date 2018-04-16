@@ -67,7 +67,7 @@ module.exports = {
               loader: 'svgo-loader',
               options: {
                 plugins: [
-                  {removeAttrs: {attrs: '(fill)'}},
+                  // {removeAttrs: {attrs: '(fill)'}},
                 ]
               }
             }

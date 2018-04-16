@@ -34,13 +34,13 @@ export default {
   },
   computed: {
     slideStyle () {
-      return {minWidth: (100 / this.perView) + '%'}
+      return {width: this.slideWidth + 'px'}
     },
-    slideWidthPx () {
+    slideWidth () {
       return Math.floor(this.width / this.perView)
     },
     visible () {
-      const fIndex = -this.translate / this.slideWidthPx
+      const fIndex = -this.translate / this.slideWidth
       const visible = {
         first: Math.floor(fIndex),
         last: Math.ceil(fIndex + this.perView) - 1
@@ -54,7 +54,7 @@ export default {
       return visible
     },
     minTranslate () {
-      return -(this.slides.length - this.perView) * this.slideWidthPx
+      return -(this.slides.length - this.perView) * this.slideWidth
     },
     slides () {
       let slides = [].concat(this.items)
@@ -67,8 +67,8 @@ export default {
   watch: {
     perView () {
       const slidesCount = this.slides.length
-      if (this.width - (slidesCount - this.index) * this.slideWidthPx > 40) {
-        const index = -this.minTranslate / this.slideWidthPx
+      if (this.width - (slidesCount - this.index) * this.slideWidth > 40) {
+        const index = -this.minTranslate / this.slideWidth
         console.log('WRONG', this.index, '->', index)
         this.setIndex(index, false)
       } else {
@@ -115,7 +115,7 @@ export default {
           const t = performance.now()
           const points = swipe.points.slice(swipe.points.findIndex(p => t - p.time < 50))
           const delta = points[points.length - 1].screen - points[0].screen
-          const fIndex = -this.translate / this.slideWidthPx
+          const fIndex = -this.translate / this.slideWidth
           let newIndex
           // console.log('delta', delta)
           if (Math.abs(delta) > 10) {
@@ -188,7 +188,7 @@ export default {
       } else {
         this.visibleBefore = this.visible
       }
-      this.translate = -this.slideWidthPx * this.index
+      this.translate = -this.slideWidth * this.index
     },
     isSwipeable (e) {
       // return e.path.slice(0, e.path.indexOf(this.$el)).find(el => el.getAttribute('swipeable'))
@@ -206,7 +206,13 @@ export default {
     updateContainerSize: debounce(
       function () {
         // this.width = this.$el.clientWidth
-        this.width = this.$el.children[0].clientWidth
+        if (this.$refs.slidesContainer) {
+          this.width = this.$refs.slidesContainer.clientWidth
+          console.log(this.width)
+        } else {
+          this.width = this.$el.children[0].clientWidth
+        }
+        // this.width = this.$el.children[0].clientWidth
         this.setIndex(this.index, false)
       },
       50

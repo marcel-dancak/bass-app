@@ -56,7 +56,11 @@
           @contextmenu="soundContextMenu"
         />
       </div> -->
-
+      <div
+        slot="instrument"
+        :is="instrumentComponent"
+        :instrument="app.track" />
+      <!-- <keyboard slot="instrument" v-if="app.track.type === 'piano'" :instrument="app.track" /> -->
     </swiper>
     <fretboard v-if="app.track.type === 'bass'" :instrument="app.track" />
     <mouse-selector @selected="mouseSelection"/>
@@ -77,8 +81,11 @@ import MouseSelector from './MouseSelector'
 import BeatHeader from './BeatHeader'
 import BassBeat from './BassBeat'
 import BassSoundForm from './BassSoundForm'
+import BassStrings from './BassStrings'
 import Fretboard from './Fretboard'
+import Keyboard from './Keyboard'
 import DrumBeat from './DrumBeat'
+import Drums from './Drums'
 import PianoBeat from './PianoBeat'
 import ContextMenu from '../ui/ContextMenu'
 
@@ -88,12 +95,22 @@ Vue.directive('bind-el', {
   }
 })
 
+const BeatComponents = {
+  bass: 'bass-beat',
+  drums: 'drum-beat',
+  piano: 'piano-beat'
+}
+const InstrumentComponents = {
+  bass: 'bass-strings',
+  drums: 'drums',
+  piano: 'keyboard'
+}
 export default {
   name: 'editor',
   components: {
     Swiper, MouseSelector, BeatHeader, ContextMenu,
-    BassBeat, BassSoundForm, Fretboard,
-    DrumBeat,  PianoBeat
+    BassBeat, BassSoundForm, BassStrings, Fretboard,
+    DrumBeat, Drums, PianoBeat, Keyboard
   },
   inject: ['$player'],
   props: ['app', 'sectionData'],
@@ -107,17 +124,20 @@ export default {
       const section = Section(data)
       return section
     },
+    instrumentComponent () {
+      return InstrumentComponents[this.app.track.type]
+    },
     beatComponent () {
-      return {
-        bass: 'bass-beat',
-        drums: 'drum-beat',
-        piano: 'piano-beat'
-      }[this.app.track.type]
+      return BeatComponents[this.app.track.type]
     },
     beats () {
+      let sectionTrack = this.section.tracks[this.app.track.id]
+      if (!sectionTrack) {
+        sectionTrack = this.section.addTrack(this.app.track.id, [])
+      }
       // ensure reactivity like if was normal data (not computed property only)
-      Vue.util.defineReactive(this.section.tracks[this.app.track.id], 'beats')
-      return this.section.tracks[this.app.track.id].beats
+      Vue.util.defineReactive(sectionTrack, 'beats')
+      return sectionTrack.beats
     },
     trackEditor () {
       const track = this.app.track
@@ -253,7 +273,7 @@ export default {
   .swiper {
     display: flex;
     flex-direction: column;
-    padding: 1em;
+    padding: 0.5em;
 
     .slides-container {
       padding: 0 2px;

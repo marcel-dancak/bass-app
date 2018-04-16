@@ -4,26 +4,63 @@
     @mousedown="swipe.start"
     @xwheel="scroll">
 
-    <div
-      class="slides-container"
-      :class="{animate: animate}"
-      :style="{transform: `translate3d(${translate}px, 0, 0)`}"
-      @transitionend="swipe.after">
+    <div class="header-swiper">
+      <div class="header-panel">
+        <slot name="header-panel">4<br >4</slot>
+      </div>
+      <div
+        class="slides-container top flex"
+        :class="{animate: animate}"
+        :style="{transform: `translate3d(${translate}px, 0, 0)`}"
+        @transitionend="swipe.after">
 
-      <swiper-slide
-        v-for="(item, i) in slides"
-        :key="i"
-        :style="slideStyle"
-        :class="{last: i === items.length - 1}">
-        <slot
-          name="header"
-          :item="item"
-          v-if="i >= visible.first && i <= visible.last">
-        </slot>
-      </swiper-slide>
+        <swiper-slide
+          v-for="(item, i) in slides"
+          :key="i"
+          :style="slideStyle"
+          :class="{last: i === items.length - 1}">
+          <slot
+            name="header"
+            :item="item"
+            v-if="i >= visible.first && i <= visible.last">
+          </slot>
+        </swiper-slide>
+      </div>
     </div>
 
-    <scroll-area overflow="vertical" @wheel.native.stop="">
+<!--     <div class="layout row">
+      <slot name="header-panel">
+        <div style="min-width: 3em;z-index: 1;">M</div>
+      </slot>
+      <div style="xoverflow:hidden; flex: 1;" ref="slidesContainer">
+        <div
+          class="slides-container top flex"
+          :class="{animate: animate}"
+          :style="{transform: `translate3d(${translate}px, 0, 0)`}"
+          @transitionend="swipe.after">
+
+          <swiper-slide
+            v-for="(item, i) in slides"
+            :key="i"
+            :style="slideStyle"
+            :class="{last: i === items.length - 1}">
+            <slot
+              name="header"
+              :item="item"
+              v-if="i >= visible.first && i <= visible.last">
+            </slot>
+          </swiper-slide>
+        </div>
+      </div>
+    </div> -->
+
+    <scroll-area
+      overflow="vertical"
+      content-class="layout row"
+      @wheel.native.stop="">
+      <div class="instrument-panel">
+        <slot name="instrument" class="x" />
+      </div>
       <div
         class="slides-container"
         :class="{animate: animate}"
@@ -64,6 +101,17 @@ export default {
   overflow: hidden;
   margin-top: 2em;
 
+  .header-swiper {
+    margin-left: 3em;
+    margin-right: 0.25em;
+    display: flex;
+    .header-panel {
+      min-width: 3em;
+      max-width: 3em;
+      margin-left: -3em;
+      z-index:1;
+    }
+  }
   .simplebar-content {
     overflow: hidden;
   }
@@ -71,9 +119,16 @@ export default {
     display: flex;
     flex-direction: row;
     position: relative;
+    flex: 1;
     &.animate {
       transition: transform .4s ease;
     }
+  }
+  .instrument-panel {
+    position: relative;
+    min-width: 3em;
+    background-color: #fff;
+    z-index: 1;
   }
 }
 </style>

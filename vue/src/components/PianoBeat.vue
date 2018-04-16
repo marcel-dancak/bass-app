@@ -48,34 +48,31 @@
 <script>
 import Vue from 'vue'
 import { Note } from 'tonal'
-import { asciNote, unicodeNote } from '../core/note-utils'
+import { asciNote, unicodeNote, SharpNotes, enharmonic } from '../core/note-utils'
 import PianoNoteLabel from './PianoNoteLabel'
 import SoundResize from './SoundResize'
 import '../directives/drag-sound'
 
-window.Note = Note
-const SharpNotes = 'C C♯ D D♯ E F F♯ G G♯ A A♯ B'.split(' ')
-const FlatNotes = 'C D♭ D E♭ E F G♭ G A♭ A B♭ B'.split(' ')
+
 
 export default {
   name: 'bass-beat',
   components: { PianoNoteLabel, SoundResize },
-  props: ['editor', 'beat', 'instrument', 'display'],
+  props: ['editor', 'beat', 'instrument'],
   data: () => ({
     dropItems: []
   }),
   computed: {
     keys () {
-      const octaves = [3, 5]
+      const [minOct, maxOct] = this.instrument.octaves
       const keys = []
-      for (let o = octaves[0]; o <= octaves[1]; o++) {
+      for (let o = minOct; o <= maxOct; o++) {
         const notes = SharpNotes.map(note => {
-          const isSharp = note.includes('♯')
           return {
             name: note,
             code: note + o,
             octave: o,
-            enharmonic: isSharp ? FlatNotes[SharpNotes.indexOf(note)] : false
+            enharmonic: enharmonic(note)
           }
         })
         keys.push(...notes)
@@ -255,9 +252,9 @@ export default {
   position: relative;
   border-top: 1px solid #aaa;
   .key {
-    height: 1em;
+    height: 16px;
     &.black {
-      background-color: #eee!important;
+      background-color: #f0f0f0!important;
     }
     &.c {
       border-bottom: 1px solid #aaa;
