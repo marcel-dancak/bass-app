@@ -22,7 +22,7 @@ export function enharmonic (name) {
 export function parseNote (name) {
   const props = Note.props(asciNote(name))
   return {
-    name: asciNote(props.pc),
+    name: unicodeNote(props.pc),
     octave: props.oct
   }
 }

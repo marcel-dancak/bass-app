@@ -111,8 +111,10 @@ export default {
       }
     },
     handleWheel (e) {
-      const dir = e.deltaY > 0 ? -1 : 1
       const cell = this.subbeatCell(e)
+      if (!cell) return
+
+      const dir = e.deltaY > 0 ? -1 : 1
       let sound = this.beat.section.sound(this.beat, {start: cell.start, drum: cell.drum})
       if (!sound && dir > 0) {
         sound = {
@@ -140,6 +142,10 @@ export default {
   position: relative;
   .grid {
     height: 100%;
+    svg {
+      /* required for correct scrollHeight - https://stackoverflow.com/questions/19719797/what-is-the-difference-between-offsetheight-and-scrollheight-of-an-element-in-do/19719861 */
+      /* display: block; */
+    }
   }
 }
 

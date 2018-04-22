@@ -20,7 +20,6 @@ export default {
     this.$parent.$el.addEventListener('mousedown', this.startSelection, true)
   },
   beforeDestroy () {
-    console.log('destroy', this.$parent.$el)
     this.$parent.$el.removeEventListener('mousedown', this.startSelection, true)
   },
   methods: {

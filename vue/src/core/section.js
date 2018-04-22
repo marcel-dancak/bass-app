@@ -425,22 +425,40 @@ export class NotesTrackSection extends BaseTrackSection {
 
 export function Section (params) {
   const tracks = {}
-  return {
+
+  const section = {
     bpm: params.bpm,
     timeSignature: params.timeSignature,
     length: params.length,
     tracks,
-    addBass (id, data) {
-      const track = new NotesTrackSection(params, data)
-      track.id = id
-      tracks[id] = track
-      return track
-    },
-    addDrum (id, data) {
-      const track = new BaseTrackSection(params, data)
+    // addBass (id, data) {
+    //   const track = new NotesTrackSection(params, data)
+    //   track.id = id
+    //   tracks[id] = track
+    //   return track
+    // },
+    // addDrum (id, data) {
+    //   const track = new BaseTrackSection(params, data)
+    //   track.id = id
+    //   tracks[id] = track
+    //   return track
+    // }
+    addTrack (id, data) {
+      const type = id.split('_')[0]
+      const TrackSection = {
+        bass: NotesTrackSection,
+        piano: NotesTrackSection,
+        drums: BaseTrackSection
+      }[type]
+      const track = new TrackSection(params, data)
       track.id = id
       tracks[id] = track
       return track
     }
   }
+  for (let id in params.tracks) {
+    section.addTrack(id, params.tracks[id])
+  }
+
+  return section
 }

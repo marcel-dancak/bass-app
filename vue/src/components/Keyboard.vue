@@ -1,7 +1,7 @@
 <template>
   <div class="keyboard">
     <div
-      v-for="(note, i) in keys"
+      v-for="note in keys"
       :key="note.code"
       class="key"
       :class="{black: note.enharmonic, c: note.name === 'C'}"

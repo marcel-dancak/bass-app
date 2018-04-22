@@ -12,7 +12,7 @@ export default {
     if (sound.prev) {
       return (
         <div class="label" style={{background: color}}>
-          <span class={["tie", {staccato}]}>⏝</span>
+          <span class={['tie', {staccato}]}>⏝</span>
         </div>
       )
     }

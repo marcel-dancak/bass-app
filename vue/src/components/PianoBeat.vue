@@ -13,7 +13,7 @@
         @drop="e => onDrop(e, note)">
       </div>
     </div>
-    <template v-for="(sound, i) in beat.data">
+    <template v-for="sound in beat.data">
       <div
         :key="sound.id"
         ref="sound"
@@ -47,12 +47,10 @@
 
 <script>
 import Vue from 'vue'
-import { Note } from 'tonal'
-import { asciNote, unicodeNote, SharpNotes, enharmonic } from '../core/note-utils'
+import { SharpNotes, enharmonic } from '../core/note-utils'
 import PianoNoteLabel from './PianoNoteLabel'
 import SoundResize from './SoundResize'
 import '../directives/drag-sound'
-
 
 
 export default {

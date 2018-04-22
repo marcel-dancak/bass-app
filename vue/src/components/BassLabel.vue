@@ -49,7 +49,7 @@ export default {
       color = `linear-gradient(to right, ${color}, ${color}, ${endColor}, ${endColor})`
       return (
         <div class="label" style={{background: color}}>
-          { Note(h, note, display) }
+          { style !== 'ring' && Note(h, note, display) }
           <span class={cls}>|</span>
           { Note(h, sound.endNote, display) }
         </div>
