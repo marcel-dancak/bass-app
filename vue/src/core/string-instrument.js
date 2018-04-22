@@ -34,7 +34,7 @@ export default function StringInstrument (params) {
     fadeOut () {
       this._fadeOut = {
         time: this.endTime - 0.016,
-        gain: this.slide ? this.slide.volume : this.gain.value
+        gain: this.volume || this.gain.value
       }
       this.gain.setValueAtTime(this._fadeOut.gain, this._fadeOut.time)
       this.gain.linearRampToValueAtTime(0.000001, this.endTime)
@@ -69,7 +69,7 @@ export default function StringInstrument (params) {
       case 'undefined':
         resource = 0 // eslint-disable-line no-fallthrough
       case 'number':
-        resource = this.getResources(sound)[resource] // eslint-disable-line no-fallthrough
+        resource = this.soundResources(sound)[resource] // eslint-disable-line no-fallthrough
       case 'string':
         audioData = bufferLoader.loadResource(resource)
         if (!audioData) {
@@ -115,7 +115,7 @@ export default function StringInstrument (params) {
   const handlers = [
     {
       filter: (sound) => (sound.style === 'hammer' || sound.style === 'pull'),
-      getResources (sound) {
+      soundResources (sound) {
         const rootSound = sound.beat.section.rootSoundOf(sound)
         return [`bass/${rootSound.style}/${sound.string}${sound.note.fret}`]
       },
@@ -133,7 +133,7 @@ export default function StringInstrument (params) {
     },
     {
       filter: (sound) => (sound.note.type === 'slide'),
-      getResources (sound) {
+      soundResources (sound) {
         const rootSound = sound.beat.section.rootSoundOf(sound)
         const step = sound.note.fret > sound.endNote.fret ? -1 : 1
         const outOfRange = sound.endNote.fret + step
@@ -169,7 +169,7 @@ export default function StringInstrument (params) {
         const e = sound.note.slide.end || 0.8
         const curve = this.slideCurve(sound, beatTime, s, 1 - e)
 
-        const resources = this.getResources(sound)
+        const resources = this.soundResources(sound)
         const samples = resources.map(resource => createSoundAudio(sound, beatTime, resource))
         return AudioUtils.slide(null, sound, curve, startTime, beatTime, samples)
       },
@@ -183,7 +183,7 @@ export default function StringInstrument (params) {
     },
     {
       filter: (sound) => (sound.style === 'ring'),
-      getResources (sound) {
+      soundResources (sound) {
         const rootSound = sound.beat.section.rootSoundOf(sound)
         return [`bass/${rootSound.style}/${sound.string}${sound.note.fret}`]
       },
@@ -202,7 +202,7 @@ export default function StringInstrument (params) {
     },
     {
       filter: (sound) => (sound.note.type === 'ghost'),
-      getResources (sound) {
+      soundResources (sound) {
         return [`bass/${sound.style}/${sound.string}X`]
       },
       startPlayback (sound, startTime, beatTime) {
@@ -214,7 +214,7 @@ export default function StringInstrument (params) {
     },
     {
       filter: (sound) => sound.note.type === 'grace',
-      getResources (sound) {
+      soundResources (sound) {
         return [
           `bass/${sound.style}/${sound.string}${sound.note.fret}`,
           `bass/${sound.style}/${sound.string}${sound.endNote.fret}`
@@ -234,12 +234,12 @@ export default function StringInstrument (params) {
 
         AudioUtils.join(startAudio, endAudio)
         startAudio.play(startTime)
-        return startAudio
+        return endAudio
       }
     },
     {
       filter: (sound) => (sound.note.type === 'regular'),
-      getResources (sound) {
+      soundResources (sound) {
         return [`bass/${sound.style}/${sound.string}${sound.note.fret}`]
       },
       startPlayback (sound, startTime, beatTime) {
@@ -256,7 +256,7 @@ export default function StringInstrument (params) {
     config: params,
     soundResources (sound) {
       const handler = handlers.find(h => h.filter(sound))
-      return handler.getResources(sound)
+      return handler.soundResources(sound)
     },
     playSound (outputAudio, sound, startTime, beatTime) {
       output = outputAudio

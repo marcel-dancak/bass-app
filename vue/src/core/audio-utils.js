@@ -367,30 +367,32 @@ function slide (prevAudio, sound, curve, startTime, beatTime, samples) {
 
   // console.log(crossPointIndex+' vs '+info.crossIndex)
   crossPointIndex = info.crossIndex
-  audio.slide = {
+  let slide = {
     crossPointIndex: crossPointIndex,
     crossPointDuration: curve[0] + diff / sampleRate,
     nextStepDurationCorrection: -diff / sampleRate,
     crossPointTime: audio.startTime + crossPointIndex / sampleRate,
-    // amplitude: info.absoluteValue*sound.volume,
-    volume: prevAudio ? prevAudio.slide ? prevAudio.slide.volume : prevAudio.sound.volume : sound.volume
+    volume: prevAudio
+      ? prevAudio.volume || prevAudio.sound.volume
+      : sound.volume
   }
-  audio.slide.amplitude = info.absoluteValue * audio.slide.volume
+  slide.amplitude = info.absoluteValue * slide.volume
+  audio.volume = slide.volume
 
   // console.log('add duration: '+audio.slide.crossPointDuration)
 
   // console.log('first slide sound start time: '+startTime)
   // console.log('amplitude: '+info.absoluteValue)
-  audio.gain.setValueAtTime(audio.slide.volume, startTime)
-  audio.duration += audio.slide.crossPointDuration
-  audio.endTime += audio.slide.crossPointDuration
+  audio.gain.setValueAtTime(slide.volume, startTime)
+  audio.duration += slide.crossPointDuration
+  audio.endTime += slide.crossPointDuration
 
   audio.duration2 = audio.duration
 
   var step
   for (var i = 0; i < steps; i += step) {
     waveLength = fretWaveLength(sound.string, sound.note.fret + ((i + 1) * direction))
-    var wavesCount = ((audio.slide.nextStepDurationCorrection + curve[i + 1]) / waveLength)
+    var wavesCount = ((slide.nextStepDurationCorrection + curve[i + 1]) / waveLength)
     if (wavesCount < 2.5 && i + 1 < steps) {
       step = 2
     } else {
@@ -408,7 +410,7 @@ function slide (prevAudio, sound, curve, startTime, beatTime, samples) {
     info = analyzeSignal(buffer, nextBufferOffset, searchMaxSize)
     nextBufferOffset = info.crossIndex
 
-    var nextStepDuration = audio.slide.nextStepDurationCorrection + curve[i + 1]
+    var nextStepDuration = slide.nextStepDurationCorrection + curve[i + 1]
     if (step === 2) {
       nextStepDuration += curve[i + 2]
     }
@@ -421,49 +423,51 @@ function slide (prevAudio, sound, curve, startTime, beatTime, samples) {
     nextCrossPointIndex = info.crossIndex
     // console.log('nextStepDuration: {0} nextCrossPointIndex: {1} nextStartRate: {2}'.format(nextStepDuration, nextCrossPointIndex, nextStartRate));
 
-    var volumeCorrection = audio.slide.amplitude / info.absoluteValue
-    nextAudio.slide = {
+    var volumeCorrection = slide.amplitude / info.absoluteValue
+    const nextSlide = {
       crossPointIndex: nextCrossPointIndex,
       crossPointDuration: nextStepDuration + diff / sampleRate,
       nextStepDurationCorrection: -diff / sampleRate,
-      crossPointTime: audio.slide.crossPointTime + nextStepDuration + diff / sampleRate, // relative to the begining of the whole slide
+      crossPointTime: slide.crossPointTime + nextStepDuration + diff / sampleRate, // relative to the begining of the whole slide
       amplitude: info.absoluteValue * volumeCorrection,
       volume: volumeCorrection,
       startRate: nextStartRate
     }
 
     // setup playback
-    audio.duration += nextAudio.slide.crossPointDuration
-    audio.endTime += nextAudio.slide.crossPointDuration
-    audio.slide.endRate = stepRate[step * direction]
+    audio.duration += nextSlide.crossPointDuration
+    audio.endTime += nextSlide.crossPointDuration
+    slide.endRate = stepRate[step * direction]
 
-    audio.source.playbackRate.setValueAtTime(1, audio.slide.crossPointTime)
-    audio.source.playbackRate.linearRampToValueAtTime(audio.slide.endRate, nextAudio.slide.crossPointTime)
-    audio.gain.setValueAtTime(audio.slide.volume, audio.slide.crossPointTime)
-    audio.gain.linearRampToValueAtTime(0.00001, nextAudio.slide.crossPointTime)
-    // audio.gain.setValueCurveAtTime(fadeOut(audio.slide.volume), audio.slide.crossPointTime+0.0001, nextAudio.slide.crossPointDuration-0.0002)
-    // audio.gain.setValueAtTime(0.00001, nextAudio.slide.crossPointTime)
+    audio.source.playbackRate.setValueAtTime(1, slide.crossPointTime)
+    audio.source.playbackRate.linearRampToValueAtTime(slide.endRate, nextSlide.crossPointTime)
+    audio.gain.setValueAtTime(slide.volume, slide.crossPointTime)
+    audio.gain.linearRampToValueAtTime(0.00001, nextSlide.crossPointTime)
+    // audio.gain.setValueCurveAtTime(fadeOut(slide.volume), slide.crossPointTime+0.0001, nextSlide.crossPointDuration-0.0002)
+    // audio.gain.setValueAtTime(0.00001, nextSlide.crossPointTime)
 
     audio.play(audio.startTime, audio.offset)
 
-    nextAudio.startTime = audio.slide.crossPointTime
-    nextAudio.source.playbackRate.setValueAtTime(nextAudio.slide.startRate, nextAudio.startTime)
-    nextAudio.source.playbackRate.linearRampToValueAtTime(1, nextAudio.slide.crossPointTime)
+    nextAudio.startTime = slide.crossPointTime
+    nextAudio.source.playbackRate.setValueAtTime(nextSlide.startRate, nextAudio.startTime)
+    nextAudio.source.playbackRate.linearRampToValueAtTime(1, nextSlide.crossPointTime)
 
     nextAudio.gain.setValueAtTime(0.00001, nextAudio.startTime)
-    nextAudio.gain.linearRampToValueAtTime(nextAudio.slide.volume, nextAudio.slide.crossPointTime - 0.0001)
-    // nextAudio.gain.setValueCurveAtTime(fadeIn(nextAudio.slide.volume), nextAudio.startTime+0.0001, nextAudio.slide.crossPointDuration-0.0002);
-    // nextAudio.gain.setValueAtTime(nextAudio.slide.volume, nextAudio.startTime+nextAudio.slide.crossPointDuration);
-    // console.log('{0} fade in: at {1} duration {2}'.format(i, nextAudio.startTime, nextAudio.slide.crossPointDuration));
+    nextAudio.gain.linearRampToValueAtTime(nextSlide.volume, nextSlide.crossPointTime - 0.0001)
+    // nextAudio.gain.setValueCurveAtTime(fadeIn(nextSlide.volume), nextAudio.startTime+0.0001, nextSlide.crossPointDuration-0.0002);
+    // nextAudio.gain.setValueAtTime(nextSlide.volume, nextAudio.startTime+nextSlide.crossPointDuration);
+    // console.log('{0} fade in: at {1} duration {2}'.format(i, nextAudio.startTime, nextSlide.crossPointDuration));
     nextAudio.offset = nextBufferOffset / sampleRate
-    nextAudio.duration = nextAudio.slide.crossPointDuration
-    nextAudio.endTime = nextAudio.slide.crossPointTime
+    nextAudio.duration = nextSlide.crossPointDuration
+    nextAudio.endTime = nextSlide.crossPointTime
+    nextAudio.volume = nextSlide.volume
     audio = nextAudio
+    slide = nextSlide
   }
 
   audio.duration += curve[curve.length - 1] // +0.1
   audio.endTime += curve[curve.length - 1]
-  // audio.gain.setValueAtTime(audio.slide.volume, audio.slide.crossPointTime + 0.0001)
+  // audio.gain.setValueAtTime(slide.volume, slide.crossPointTime + 0.0001)
   audio.play(audio.startTime, audio.offset)
   return audio
 }
