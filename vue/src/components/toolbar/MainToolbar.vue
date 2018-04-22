@@ -25,6 +25,21 @@
         <span class="input-group__selections__comma">{{ data.item.name }}</span>
       </template>
     </v-select>
+    <v-menu
+      content-class="audio-preferences"
+      :close-on-content-click="false">
+      <v-btn
+        icon
+        slot="activator">
+        <icon name="volume-medium" />
+      </v-btn>
+      <div class="layout column">
+        <track-volume-field
+          v-for="track in tracks"
+          :key="track.id"
+          :track="track" />
+      </div>
+    </v-menu>
 
     <v-spacer />
 
@@ -34,7 +49,7 @@
         icon
         class="play"
         @click="togglePlayback()">
-        <icon name="play" />
+        <icon :name="$player.playing ? 'pause' : 'play'" />
       </v-btn>
 
       <v-btn
@@ -88,10 +103,12 @@
 
 <script>
 import PlayerBg from './PlayerBg'
+import TrackVolumeField from './TrackVolumeField'
 
 export default {
-  components: { PlayerBg },
+  components: { PlayerBg, TrackVolumeField },
   props: ['app'],
+  inject: ['$player'],
   computed: {
     sections () {
       return this.app.project.sections
@@ -135,8 +152,8 @@ export default {
     }
     .icon {
       transition: none;
-      width: 1.35em;
-      height: 1.35em;
+      width: 1em;
+      height: 1em;
     }
     &.separated {
       border-radius: 0;
@@ -152,10 +169,6 @@ export default {
         bottom: 18%;
         background-color: #fff;
         opacity: 0.3;
-      }
-      .icon {
-        width: 1em;
-        height: 1em;
       }
     }
   }
@@ -192,6 +205,10 @@ export default {
 
     .btn.play {
       margin: auto 1em;
+      .icon {
+        width: 1.35em;
+        height: 1.3p5em;
+      }
     }
   }
 }
@@ -207,5 +224,11 @@ export default {
     height: 1em;
     margin-right: 0.5em;
   }
+}
+
+.menu__content.audio-preferences {
+  background-color: #fff;
+  width: 250px;
+  padding: 0.5em 1em;
 }
 </style>

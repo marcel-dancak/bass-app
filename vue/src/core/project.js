@@ -23,6 +23,10 @@ export default function Project (data) {
     playlists: data.playlists,
     tracks: data.tracks,
 
+    track (id) {
+      return data.tracks.find(t => t.id === id)
+    },
+
     getSectionData (id) {
       const index = data.index.findIndex(s => s.id === id)
       return data.sections[index]

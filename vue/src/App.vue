@@ -31,6 +31,7 @@ import Player from './core/player'
 import Project from './core/project'
 import { PercussionInstrument, DrumKit, PercussionKit } from './core/percussion'
 import StringInstrument from './core/string-instrument'
+import Piano from './core/piano'
 
 import MainToolbar from './components/toolbar/MainToolbar'
 import Editor from './components/Editor'
@@ -110,8 +111,23 @@ export default {
       id: 'drums_1',
       instrument: PercussionInstrument(PercussionKit)
     })
+    player.addTrack({
+      id: 'piano_0',
+      instrument: Piano({preset: 'electric'}) // acoustic electric
+    })
+    player.addTrack({
+      id: 'piano_1',
+      instrument: Piano({preset: 'acoustic'})
+    })
+    player.tracks.piano_0.audio.gain.value = this.project.track('piano_0').volume.value
     this.audioPlayer = player
     this._provided.$player = player
+    setTimeout(() => {
+      console.log('set $player')
+      this.aplayer = player
+    }, 20)
+
+    // this.constructor.prototype.$player = player
   },
   beforeDestroy () {
     this.audioPlayer.context.close()
