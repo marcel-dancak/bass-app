@@ -11,6 +11,7 @@ export default function Player (context) {
     context,
     tracks,
     playbackSpeed: 1,
+    playing: false,
 
     addTrack (config) {
       const audio = AudioTrack(context)
@@ -24,6 +25,7 @@ export default function Player (context) {
     collectResources (section) {
       const resources = new Set()
       for (let id in section.tracks) {
+        // if (id.startsWith('piano')) continue
         section.tracks[id].forEachSound(s => {
           tracks[id].instrument.soundResources(s).forEach(r => resources.add(r))
         })
@@ -38,13 +40,15 @@ export default function Player (context) {
       })
     },
 
-    playBeat (section, bar, beat, startTime) {
+    playBeat (section, bar, beat, startTime, opts) {
       // console.log('playBeat', bar, beat, startTime)
       const beatTime = 60 / (section.bpm * this.playbackSpeed)
       // Object.values(section.tracks).forEach(track => {})
 
       for (let id in section.tracks) {
         const sTrack = section.tracks[id]
+        if (!tracks[sTrack.id]) continue // Temporary check
+
         const { instrument, audio } = tracks[sTrack.id]
         sTrack.beatSounds(sTrack.beat(bar, beat)).forEach(sound => {
           const startAt = startTime + (sound.start * beatTime)
@@ -52,7 +56,7 @@ export default function Player (context) {
         })
       }
 
-      this.beatPreparedCb({
+      const evt = {
         section: section,
         bar: bar,
         beat: beat,
@@ -60,35 +64,45 @@ export default function Player (context) {
         startTime: startTime,
         endTime: startTime + beatTime,
         duration: beatTime
-        // flatIndex: flatIndex,
         // playbackActive: !isPlaybackEnd,
         // playbackStart: playbackStart
-      })
-      return startTime + beatTime
-    },
+      }
+      this.beatPreparedCb(evt)
 
-    play (section, beatPrepared, opts = {}) {
-      this.playing = true
-      this.beatPreparedCb = beatPrepared
-      this.fetchResources(section).then(() => {
-        let bar = opts.start ? opts.start.bar : 1
-        let beat = opts.start ? opts.start.beat : 1
-        let end = this.playBeat(section, bar, beat, context.currentTime)
-        const playNext = (startTime) => {
+      if (this.playing) {
+        if (!evt.stop) {
           beat++
           if (beat > section.timeSignature.top) {
             beat = 1
             bar++
           }
-          if (bar <= section.length && this.playing) {
-            end = this.playBeat(section, bar, beat, startTime)
-            setTimeout(playNext, (end - context.currentTime - 0.15) * 1000, end)
-          } else {
-            console.log('End', bar, beat)
-            this.playing = false
-          }
         }
-        setTimeout(playNext, (end - context.currentTime - 0.15) * 1000, end)
+        if (evt.stop || bar > section.length) {
+          const next = opts.playbackEnd()
+          if (!next) {
+            setTimeout(() => {this.playing = false}, (evt.endTime - evt.eventTime) * 1000)
+            return
+          }
+          section = next.section || section
+          bar = next.bar
+          beat = next.beat
+        }
+
+        setTimeout(
+          () => this.playBeat(section, bar, beat, evt.endTime, opts),
+          (evt.endTime - evt.eventTime - 0.15) * 1000
+        )
+      }
+    },
+
+    play (section, beatPrepared, opts = {}) {
+      this.playing = true
+      this.beatPreparedCb = beatPrepared
+      const endCallback = opts.playbackEnd || (() => {})
+      this.fetchResources(section).then(() => {
+        let bar = opts.start ? opts.start.bar : 1
+        let beat = opts.start ? opts.start.beat : 1
+        this.playBeat(section, bar, beat, context.currentTime, opts)
       })
     },
 

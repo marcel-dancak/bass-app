@@ -180,14 +180,41 @@ export default {
         bar: startBeat.bar,
         beat: startBeat.beat
       }
-      this.$player.play(this.section, (e) => {
-        if (!this.app.player.screenLock) {
-          const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
-          swiper.setIndex(this.beats.indexOf(beat))
-        }
-        this.highlightBeat(e)
-      }, { start })
+      this.$player.play(
+        this.section,
+        // beat playback prepared
+        (e) => {
+          this.highlightBeat(e)
+          if (!this.app.player.screenLock) {
+            const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
+            let nextIndex = this.beats.indexOf(beat)
+            if (this.app.player.loopMode && nextIndex < swiper.index) {
+              nextIndex += this.beats.length
+            }
+            swiper.setIndex(nextIndex)
+          } else {
+            const lastIndex = swiper.index + this.slidesPerView - 1
+            const last = this.beats[lastIndex]
+            if (e.bar + e.beat / 100 >= last.bar + last.beat / 100) {
+              e.stop = true
+            }
+          }
+        },
+        { start, playbackEnd: this.playbackEnd }
+      )
       // this.$player.export(this.section)
+    },
+    playbackEnd () {
+      if (this.app.player.loopMode) {
+        const swiper = this.$refs.swiper
+        const beatIndex = this.app.player.screenLock ? swiper.index : 0
+        const firstBeat = this.beats[beatIndex]
+        return {
+          section: this.section,
+          bar: firstBeat.bar,
+          beat: firstBeat.beat
+        }
+      }
     },
     stop () {
       this.$player.stop()
