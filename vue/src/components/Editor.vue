@@ -8,6 +8,51 @@
       :loop="app.player.loopMode"
       @wheel.native="mouseWheel">
 
+      <template slot="header-panel">
+        <div class="mask top" />
+        <div class="mask bottom" />
+        <v-menu
+          class="section"
+          content-class="section"
+          :close-on-content-click="false"
+          :min-width="200">
+          <div
+            slot="activator"
+            class="layout column">
+            <span>{{ section.timeSignature.top }}</span>
+            <span>{{ section.timeSignature.bottom }}</span>
+          </div>
+          <div class="section-preferences">
+            <div class="layout row align-end">
+              <v-text-field
+                label="Time Signature"
+                type="number"
+                min="1"
+                max="12"
+                hide-details
+                :value="section.timeSignature.top"
+                @input="val => section.setTimeSignature(val, section.timeSignature.bottom)"
+              />
+              <span class="px-2">/</span>
+              <v-select
+                label=""
+                hide-details
+                :items="[2, 4, 8, 16]"
+                :value="section.timeSignature.bottom"
+                @input="val => section.setTimeSignature(section.timeSignature.top, val)"
+              />
+            </div>
+            <v-text-field
+              label="Number of bars"
+              type="number"
+              min="1"
+              max="24"
+              hide-details
+            />
+          </div>
+        </v-menu>
+      </template>
+
       <div
         slot="header"
         slot-scope="props"
@@ -70,7 +115,6 @@
 
 <script>
 import Vue from 'vue'
-import { Section } from '../core/section'
 import BassEditor from '../core/bass-editor'
 import DrumEditor from '../core/drum-editor'
 import PianoEditor from '../core/piano-editor'
@@ -113,17 +157,13 @@ export default {
     DrumBeat, Drums, PianoBeat, Keyboard
   },
   inject: ['$player'],
-  props: ['app', 'sectionData'],
+  context: ['aplayer'],
+  props: ['app', 'section'],
   data: () => ({
     slidesPerView: 8,
     activeSubbeat: ''
   }),
   computed: {
-    section () {
-      const data = this.sectionData
-      const section = Section(data)
-      return section
-    },
     instrumentComponent () {
       return InstrumentComponents[this.app.track.type]
     },
@@ -134,9 +174,8 @@ export default {
       let sectionTrack = this.section.tracks[this.app.track.id]
       if (!sectionTrack) {
         sectionTrack = this.section.addTrack(this.app.track.id, [])
+        Vue.util.defineReactive(sectionTrack, 'beats')
       }
-      // ensure reactivity like if was normal data (not computed property only)
-      Vue.util.defineReactive(sectionTrack, 'beats')
       return sectionTrack.beats
     },
     trackEditor () {
@@ -300,13 +339,13 @@ export default {
   .swiper {
     display: flex;
     flex-direction: column;
-    padding: 0.5em;
+    padding-right: 0.5em;
+    margin: 2em 0 0.5em 0.5em;
 
     .slides-container {
       padding: 0 2px;
     }
     .beat {
-      text-align: center;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -320,6 +359,41 @@ export default {
       }
     }
   }
+  .header-panel {
+    position: relative;
+    .mask {
+      background-color: #fff;
+      position: absolute;
+      left: 0;
+      &.top {
+        top: 0;
+        height: 1.5em;
+        right: 10px;
+      }
+      &.bottom {
+        top: 1.5em;
+        bottom: 0;
+        right: 0;
+      }
+    }
+  }
+  .menu.section {
+    margin-top: 1.5em;
+    width: 100%;
+    .menu__activator {
+      line-height: 1.5em;
+      span {
+        font-size: 1.25em;
+        font-weight: 500;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.menu__content.section {
+  background-color: #fff;
+  padding: 0.5em 1em;
 }
 
 .drag-container {

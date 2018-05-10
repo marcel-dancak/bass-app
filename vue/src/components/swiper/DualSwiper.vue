@@ -2,6 +2,7 @@
   <div
     class="swiper"
     @mousedown="swipe.start"
+    @touchstart="swipe.start"
     @xwheel="scroll">
 
     <div class="header-swiper">

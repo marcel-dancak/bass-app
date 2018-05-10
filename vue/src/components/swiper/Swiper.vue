@@ -2,11 +2,12 @@
   <div
     class="swiper"
     @mousedown="swipe.start"
-    @xwheel="scroll">
+    @touchstart="swipe.start"
+    @wheel="scroll">
     <div
       class="slides-container"
-      :class="{animate: animate}"
-      :style="{transform: `translate3d(${translate}px, 0, 0)`}"
+      :class="[direction, {animate: animate}]"
+      :style="{transform: transform}"
       @transitionend="swipe.after">
 
 <!--       <div
@@ -58,8 +59,11 @@ export default {
 
   .slides-container {
     display: flex;
-    flex-direction: flex-row;
+    flex-direction: row;
     position: relative;
+    &.vertical {
+      flex-direction: column;
+    }
     &.animate {
       transition: transform .4s ease;
     }

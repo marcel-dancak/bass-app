@@ -47,7 +47,7 @@ export default {
   position: absolute;
   left: -24px;
   right: 0;
-  top: 0;
+  top: -1px;
   bottom: 0;
 
   .fill {

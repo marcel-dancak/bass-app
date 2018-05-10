@@ -2,7 +2,8 @@
   <v-toolbar
     dark
     color="blue-grey darken-2"
-    class="main-toolbar elevation-3">
+    class="main-toolbar elevation-3"
+    :height="-1">
     <v-select
       label="Track"
       class="tracks"
@@ -45,6 +46,16 @@
 
     <div class="player">
       <player-bg />
+      <v-text-field
+        v-if="app.editor.section"
+        class="bpm-field"
+        v-model="app.editor.section.bpm"
+        label="Speed"
+        type="number"
+        min="30"
+        max="300"
+        suffix="bpm">
+      </v-text-field>
       <v-btn
         icon
         class="play"
@@ -88,7 +99,24 @@
 
     <v-spacer />
 
+    <div class="mode-switch">
+      <label>Mode</label>
+      <v-btn
+        icon
+        :class="{'primary--text': app.mode === 'editor'}"
+        @click="app.mode = 'editor'">
+        <icon name="section-mode" />
+      </v-btn>
+      <v-btn
+        icon
+        :class="{'primary--text': app.mode === 'viewer'}"
+        @click="app.mode = 'viewer'">
+        <icon name="playlist-mode" />
+      </v-btn>
+    </div>
+
     <v-select
+      v-if="app.mode === 'editor'"
       label="Section"
       class="sections"
       :items="sections"
@@ -98,6 +126,16 @@
       hide-details>
     </v-select>
 
+    <v-select
+      v-if="app.mode === 'viewer'"
+      label="Playlist"
+      class="playlists"
+      :items="playlists"
+      v-model="app.viewer.playlist"
+      item-text="name"
+      :return-object="true"
+      hide-details>
+    </v-select>
   </v-toolbar>
 </template>
 
@@ -110,11 +148,14 @@ export default {
   props: ['app'],
   inject: ['$player'],
   computed: {
+    tracks () {
+      return this.app.project.tracks
+    },
     sections () {
       return this.app.project.sections
     },
-    tracks () {
-      return this.app.project.tracks
+    playlists () {
+      return this.app.project.playlists
     }
   },
   methods: {
@@ -129,14 +170,13 @@ export default {
 <style lang="scss">
 .main-toolbar {
 
-  height: 3.125em;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
 
   .toolbar__content {
     width: 100%;
-    height: inherit!important;
+    height: 3.125em;
   }
 
   .btn {
@@ -177,16 +217,18 @@ export default {
     flex: 0 0 auto;
     width: auto;
     padding: 0.8em 0 0.25em 0;
-    .input-group__input {
-    }
-  }
-  .input-group--select {
-    min-width: 180px;
+
     label {
       font-size: 0.938em;
       height: 1.25em;
       line-height: 1.25em;
     }
+    .input-group__input {
+    }
+  }
+  .input-group--select {
+    min-width: 180px;
+
   }
 
   .tracks {
@@ -200,15 +242,51 @@ export default {
   .player {
     position: relative;
     height: 3em;
+    padding-left: 1em;
     padding-right: 0.7em;
     display: flex;
+
+    .bpm-field {
+      input {
+        width: 80px;
+      }
+      .input-group--text-field__suffix {
+        font-size: 85%;
+        pointer-events: none;
+        max-width: 0;
+        transform: translate(-50px, 0);
+      }
+    }
 
     .btn.play {
       margin: auto 1em;
       .icon {
         width: 1.35em;
-        height: 1.3p5em;
+        height: 1.35em;
       }
+    }
+  }
+
+  .mode-switch {
+    border: 1px solid rgba(#fff, 0.2);
+    border-radius: 4px;
+    margin: 0 0.75em;
+    position: relative;
+
+    label {
+      position: absolute;
+      font-size: 67%;
+      color: rgba(#fff, 0.6);
+      background-color: #455A64;
+      top: -0.75em;
+      left: 1em;
+      right: 1em;
+      text-align: center;
+    }
+    .btn {
+      margin: 0;
+      padding: 1px 0;
+      xtop: 2px;
     }
   }
 }
@@ -227,8 +305,8 @@ export default {
 }
 
 .menu__content.audio-preferences {
+  padding: 0.5em 1em;
   background-color: #fff;
   width: 250px;
-  padding: 0.5em 1em;
 }
 </style>

@@ -45,6 +45,7 @@ export default {
   xflex-shrink: 0;
   box-sizing: content-box;
   color: #777;
+  touch-action: none;
 
   xbackground-color: #eee;
   > label {
@@ -56,8 +57,16 @@ export default {
     height: 20px;
     line-height: 20px;
     font-size: 14px;
+    text-align: center;
     top: -24px;
     left: -9px;
+
+    /*
+    left: -2px;
+    width: auto;
+    min-width: 16px;
+    border-radius: 4px;
+    */
   }
 
   .subbeat {
@@ -65,6 +74,7 @@ export default {
     height: 80%;
     line-height: 1.5em;
     border-left: 1px solid #bbb;
+    text-align: center;
     &:first-of-type {
       height: 100%;
       color: #333;

@@ -47,7 +47,7 @@
 
 <script>
 import Vue from 'vue'
-import { SharpNotes, enharmonic } from '../core/note-utils'
+import { SharpNotes, enharmonic, noteProps } from '../core/note-utils'
 import PianoNoteLabel from './PianoNoteLabel'
 import SoundResize from './SoundResize'
 import '../directives/drag-sound'
@@ -136,6 +136,10 @@ export default {
       sounds.forEach(sound => {
         const duration = this.beat.section.noteDuration(this.beat, sound.note)
         width += (100 * duration)
+        if (!sound.beat) {
+          // check validity when dragging new sound from keyboard
+          valid = valid && noteProps(sound.note).midi === noteProps(note).midi
+        }
       })
       this.$set(record, 'style', {
         left: (100 * position.start) + '%',

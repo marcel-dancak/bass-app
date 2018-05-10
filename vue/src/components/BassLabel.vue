@@ -79,6 +79,7 @@ export default {
     box-sizing: border-box;
     height: 100%;
     line-height: 2em;
+    text-align: center;
     /*
     &.prev {
       border-top-left-radius: 0;

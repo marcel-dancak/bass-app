@@ -213,10 +213,11 @@ export class BaseTrackSection {
   }
 
   forEachBeat (callback) {
+    let index = 0
     let barIndex, beatIndex
     for (barIndex = 1; barIndex <= this.section.length; barIndex++) {
       for (beatIndex = 1; beatIndex <= this.section.timeSignature.top; beatIndex++) {
-        callback(this.beat(barIndex, beatIndex))
+        callback(this.beat(barIndex, beatIndex), index++)
       }
     }
   }
@@ -454,6 +455,26 @@ export function Section (params) {
       track.id = id
       tracks[id] = track
       return track
+    },
+
+    setTimeSignature (top, bottom) {
+      console.log('setTimeSignature')
+      this.timeSignature.top = top
+      this.timeSignature.bottom = bottom
+      Object.values(this.tracks).forEach(t => {
+        const beats = []
+        t.forEachBeat(beat => beats.push(beat))
+        t.beats = beats
+        // t.beats.filter(b => b.beat > top).forEach(b => t.beats.splice(t.beats.indexOf(b), 1))
+        // t.forEachBeat((beat, i) => {
+        //   if (!t.beats.includes(beat)) {
+        //     t.beats.splice(i, 0, beat)
+        //   }
+        // })
+        if (t.soundDuration) {
+          t.forEachSound(s => s.end = s.start + t.soundDuration(s))
+        }
+      })
     }
   }
   for (let id in params.tracks) {
