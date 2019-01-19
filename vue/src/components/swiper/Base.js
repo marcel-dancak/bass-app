@@ -108,7 +108,6 @@ export default {
         translate: 0
       },
       start: (e) => {
-        console.log('start')
         if (this.checkSwipeable) {
           if (!this.isSwipeable(e)) {
             return
@@ -132,12 +131,11 @@ export default {
         // console.log(`Swipe End (${e.type})`)
         document.removeEventListener('mousemove', swipe.pointermove)
         document.removeEventListener('touchmove', swipe.pointermove)
+        this.animate = true
         // document.removeEventListener('dragend', swipe.end, false)
         if (!swipe.points || swipe.points.length < 2) {
           return
         }
-
-        this.animate = true
         if (this.translate > 0) {
           this.translate = 0
         } else {
@@ -235,7 +233,6 @@ export default {
       }
     },
     scroll: throttle(function (e) {
-      console.log('scroll', e.deltaY)
       const step = e.deltaY < 0 ? -1 : 1
       this.setIndex(this.index + step)
     }, 30),

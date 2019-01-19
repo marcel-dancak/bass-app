@@ -46,7 +46,7 @@ export default {
         </v-menu>
       )
     })
-    return <div>{menuContainers}</div>
+    return <div class="context-menu-container">{menuContainers}</div>
   },
   methods: {
     open (evt, component, props) {
@@ -81,6 +81,9 @@ export default {
 </script>
 
 <style lang="scss">
+.context-menu-container {
+  position: absolute;
+}
 .context-menu {
   background-color: #fff;
   .layout > * {

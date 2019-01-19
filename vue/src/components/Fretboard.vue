@@ -1,28 +1,27 @@
 <template>
-  <div>
-    <div class="fretboard">
+  <div class="fretboard">
+    <div
+      v-for="(string, i) in strings"
+      :key="string"
+      class="string"
+    >
       <div
-        v-for="(string, i) in strings"
-        :key="string"
-        class="string">
-        <div
-          v-for="(note, fret) in stringsNotes[i]"
-          :key="fret"
-          class="fret"
-          :style="{ backgroundColor: Colors[note.octave] }">
-          <label
-            v-drag-sound="{start: e => initDrag(e, note.name, note.octave)}">
-            {{ note.name }}<sub>{{ note.octave }}</sub>
+        v-for="(note, fret) in stringsNotes[i]"
+        :key="fret"
+        class="fret"
+        :style="{ backgroundColor: Colors[note.octave] }"
+      >
+        <label v-drag-sound="{start: e => initDrag(e, note.name, note.octave)}">
+          {{ note.name }}<sub>{{ note.octave }}</sub>
+        </label>
+        <template v-if="note.flatName">
+          <span>/</span>
+          <label v-drag-sound="{start: e => initDrag(e, note.flatName, note.octave)}">
+            {{ note.flatName }}<sub>{{ note.octave }}</sub>
           </label>
-          <template v-if="note.flatName">
-            <span>/</span>
-            <label v-drag-sound="{start: e => initDrag(e, note.flatName, note.octave)}">
-              {{ note.flatName }}<sub>{{ note.octave }}</sub>
-            </label>
-          </template>
-        </div>
-        <div class="fret ghost">x</div>
+        </template>
       </div>
+      <div class="fret ghost">x</div>
     </div>
   </div>
 </template>

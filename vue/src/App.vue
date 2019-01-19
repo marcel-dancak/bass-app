@@ -1,5 +1,6 @@
 <template>
-  <v-app @contextmenu.native.prevent>
+  <!-- <v-app @contextmenu.native.prevent> -->
+  <div class="flex layout column" @contextmenu.prevent>
     <main-toolbar
       :app="$data"
       @playbackChange="audioPlayer.playing ? stop() : play()"
@@ -11,7 +12,7 @@
     </editor>
 
     <viewer
-      v-if="mode === 'viewer'"
+      v-if="mode === 'viewer'&& viewer.playlist"
       :app="$data"
       :playlist="viewer.playlist">
     </viewer>
@@ -27,7 +28,8 @@
       </v-select>
     </v-toolbar>
 
-  </v-app>
+  </div>
+  <!-- </v-app> -->
 </template>
 
 <script>
@@ -120,9 +122,10 @@ export default {
     },
     viewer: {
       playlistIndex: null,
-      playlist: null
+      playlist: null,
+      playlistEditor: false
     },
-    mode: 'editor',
+    mode: 'viewer',
     label: 'name',
     track: null,
     project: null,
@@ -134,9 +137,6 @@ export default {
         console.log('Create Section')
         return Section(this.project.getSectionData(this.editor.sectionIndex))
       }
-    },
-    playlist () {
-      return {}
     }
   },
   watch: {
@@ -212,11 +212,13 @@ export default {
 </script>
 
 <style lang="scss">
+@import './transitions';
+
 html {
-  overflow: hidden;
+  overflow: hidden!important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: 1em;
+  font-size: 1em!important;
   height: 100%;
   body {
     height: 100%;

@@ -6,11 +6,11 @@
       :checkSwipeable="true"
       :items="beats"
       :loop="app.player.loopMode"
-      @wheel.native="mouseWheel">
-
+      @wheel.native="mouseWheel"
+    >
       <template slot="header-panel">
-        <div class="mask top" />
-        <div class="mask bottom" />
+        <div class="mask top"/>
+        <div class="mask bottom"/>
         <v-menu
           class="section"
           content-class="section"
@@ -81,6 +81,11 @@
         />
       </div>
 
+      <fretboard
+        slot="bottom"
+        v-if="app.track.type === 'bass'"
+        :instrument="app.track"
+      />
 <!--       <div
         slot="item"
         slot-scope="props"
@@ -104,10 +109,9 @@
       <div
         slot="instrument"
         :is="instrumentComponent"
-        :instrument="app.track" />
-      <!-- <keyboard slot="instrument" v-if="app.track.type === 'piano'" :instrument="app.track" /> -->
+        :instrument="app.track"
+      />
     </swiper>
-    <fretboard v-if="app.track.type === 'bass'" :instrument="app.track" />
     <mouse-selector @selected="mouseSelection"/>
     <context-menu ref="contextMenu" />
   </div>
@@ -219,29 +223,31 @@ export default {
         bar: startBeat.bar,
         beat: startBeat.beat
       }
-      this.$player.play(
-        this.section,
-        // beat playback prepared
-        (e) => {
-          this.highlightBeat(e)
-          if (!this.app.player.screenLock) {
-            const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
-            let nextIndex = this.beats.indexOf(beat)
-            if (this.app.player.loopMode && nextIndex < swiper.index) {
-              nextIndex += this.beats.length
+      this.$player.fetchResources(this.$player.collectResources(this.section)).then(() => {
+        this.$player.play(
+          this.section,
+          // beat playback prepared
+          (e) => {
+            this.highlightBeat(e)
+            if (!this.app.player.screenLock) {
+              const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
+              let nextIndex = this.beats.indexOf(beat)
+              if (this.app.player.loopMode && nextIndex < swiper.index) {
+                nextIndex += this.beats.length
+              }
+              swiper.setIndex(nextIndex)
+            } else {
+              const lastIndex = swiper.index + this.slidesPerView - 1
+              const last = this.beats[lastIndex]
+              if (e.bar + e.beat / 100 >= last.bar + last.beat / 100) {
+                e.stop = true
+              }
             }
-            swiper.setIndex(nextIndex)
-          } else {
-            const lastIndex = swiper.index + this.slidesPerView - 1
-            const last = this.beats[lastIndex]
-            if (e.bar + e.beat / 100 >= last.bar + last.beat / 100) {
-              e.stop = true
-            }
-          }
-        },
-        { start, playbackEnd: this.playbackEnd }
-      )
-      // this.$player.export(this.section)
+          },
+          { start, playbackEnd: this.playbackEnd }
+        )
+        // this.$player.export(this.section)
+      })
     },
     playbackEnd () {
       if (this.app.player.loopMode) {
@@ -264,16 +270,6 @@ export default {
         this.play()
       }
       this.$refs.swiper.setIndex(0)
-    },
-    prev () {
-      const swiper = this.$refs.swiper
-      if (swiper.index) {
-        swiper.setIndex(swiper.index - 1)
-      }
-    },
-    next () {
-      const swiper = this.$refs.swiper
-      swiper.setIndex(swiper.index + 1)
     },
     mouseWheel (e) {
       const step = e.deltaY > 0 ? -1 : 1

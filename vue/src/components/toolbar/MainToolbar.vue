@@ -126,16 +126,23 @@
       hide-details>
     </v-select>
 
-    <v-select
-      v-if="app.mode === 'viewer'"
-      label="Playlist"
-      class="playlists"
-      :items="playlists"
-      v-model="app.viewer.playlist"
-      item-text="name"
-      :return-object="true"
-      hide-details>
-    </v-select>
+    <template v-if="app.mode === 'viewer'">
+      <v-select
+        label="Playlist"
+        class="playlists"
+        :items="playlists"
+        v-model="app.viewer.playlist"
+        item-text="name"
+        :return-object="true"
+        hide-details>
+      </v-select>
+      <v-btn
+        icon
+        :class="{'primary--text': app.viewer.playlistEditor}"
+        @click="app.viewer.playlistEditor = !app.viewer.playlistEditor">
+        <icon name="playlist-edit"/>
+      </v-btn>
+    </template>
   </v-toolbar>
 </template>
 
@@ -167,14 +174,18 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.toolbar__content {
+  width: 100%;
+  height: 3.125em;
+}
 .main-toolbar {
 
   flex-shrink: 0;
   display: flex;
   justify-content: center;
 
-  .toolbar__content {
+  /deep/ .toolbar__content {
     width: 100%;
     height: 3.125em;
   }
@@ -183,7 +194,7 @@ export default {
     opacity: 0.8;
     &:hover {
       opacity: 1;
-      .btn__content:before {
+      /deep/ .btn__content:before {
         display: none;
       }
     }
@@ -213,7 +224,7 @@ export default {
     }
   }
 
-  .input-group {
+  /deep/ .input-group {
     flex: 0 0 auto;
     width: auto;
     padding: 0.8em 0 0.25em 0;
@@ -247,10 +258,10 @@ export default {
     display: flex;
 
     .bpm-field {
-      input {
+      /deep/ input {
         width: 80px;
       }
-      .input-group--text-field__suffix {
+      /deep/ .input-group--text-field__suffix {
         font-size: 85%;
         pointer-events: none;
         max-width: 0;
@@ -290,7 +301,9 @@ export default {
     }
   }
 }
+</style>
 
+<style lang="scss">
 .menu__content.tracks {
   .list__tile--active {
     .icon {

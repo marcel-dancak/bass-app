@@ -34,9 +34,15 @@ export default function Player (context) {
       return Array.from(resources)
     },
 
-    fetchResources (section) {
+    // fetchResources (section) {
+    //   return new Promise((resolve, reject) => {
+    //     bufferLoader.loadResources(this.collectResources(section), resolve, reject)
+    //   })
+    // },
+
+    fetchResources (resources) {
       return new Promise((resolve, reject) => {
-        bufferLoader.loadResources(this.collectResources(section), resolve, reject)
+        bufferLoader.loadResources(resources, resolve, reject)
       })
     },
 
@@ -57,11 +63,12 @@ export default function Player (context) {
       }
 
       const evt = {
-        section: section,
-        bar: bar,
-        beat: beat,
+        id: opts.id,
+        section,
+        bar,
+        beat,
+        startTime,
         eventTime: context.currentTime,
-        startTime: startTime,
         endTime: startTime + beatTime,
         duration: beatTime
         // playbackActive: !isPlaybackEnd,
@@ -78,7 +85,7 @@ export default function Player (context) {
           }
         }
         if (evt.stop || bar > section.length) {
-          const next = opts.playbackEnd()
+          const next = opts.playbackEnd ? opts.playbackEnd() : null
           if (!next) {
             setTimeout(() => {this.playing = false}, (evt.endTime - evt.eventTime) * 1000)
             return
@@ -86,6 +93,7 @@ export default function Player (context) {
           section = next.section || section
           bar = next.bar
           beat = next.beat
+          opts.id = next.id || opts.id
         }
 
         setTimeout(
@@ -98,12 +106,12 @@ export default function Player (context) {
     play (section, beatPrepared, opts = {}) {
       this.playing = true
       this.beatPreparedCb = beatPrepared
-      const endCallback = opts.playbackEnd || (() => {})
-      this.fetchResources(section).then(() => {
+      // const endCallback = opts.playbackEnd || (() => {})
+      // this.fetchResources(section).then(() => {
         let bar = opts.start ? opts.start.bar : 1
         let beat = opts.start ? opts.start.beat : 1
         this.playBeat(section, bar, beat, context.currentTime, opts)
-      })
+      // })
     },
 
     stop () {
@@ -123,7 +131,7 @@ export default function Player (context) {
         }
       })
 
-      this.fetchResources(section).then(() => {
+      this.fetchResources(this.collectResources(section)).then(() => {
         for (let id in section.tracks) {
           const sTrack = section.tracks[id]
           const { instrument, audio } = exportTracks[sTrack.id]

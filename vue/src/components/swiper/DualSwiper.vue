@@ -3,8 +3,8 @@
     class="swiper"
     @mousedown="swipe.start"
     @touchstart="swipe.start"
-    @xwheel="scroll">
-
+    @xwheel="scroll"
+  >
     <div class="header-swiper">
       <div class="header-panel">
         <slot name="header-panel">4<br />4</slot>
@@ -31,10 +31,12 @@
 
     <scroll-area
       overflow="vertical"
-      content-class="layout row"
-      @wheel.native.stop="">
+      content-class="layout column"
+      @wheel.native.stop=""
+    >
+      <v-layout>
       <div class="instrument-panel">
-        <slot name="instrument" class="x" />
+        <slot name="instrument"/>
       </div>
       <div
         class="slides-container"
@@ -55,8 +57,9 @@
         </swiper-slide>
 
       </div>
+    </v-layout>
+      <slot name="bottom"/>
     </scroll-area>
-    <br />
     <!-- <p><small>Show: {{ visible.first + 1 }} - {{ visible.last + 1 }} (width: {{ width }})</small></p> -->
   </div>
 </template>
@@ -79,6 +82,7 @@ export default {
     margin-left: 3em;
     margin-right: 0.25em;
     display: flex;
+    flex: 1 0 auto;
     .header-panel {
       min-width: 3em;
       max-width: 3em;

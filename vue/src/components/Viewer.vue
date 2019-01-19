@@ -13,27 +13,36 @@
         class="slide layout row"
         swipeable>
         <div
-          v-for="beat in props.item.beats"
+          v-for="item in props.item"
           class="beat flex">
           <beat-header
-            :beat="beat"
+            :beat="item.beat"
+            :active="activeSection === `${ item.sectionId }_${ item.repeat }` ? activeSubbeat : ''"
           />
           <div
             class="instrument"
             :is="beatComponent"
-            :beat="beat"
+            :beat="item.beat"
             :instrument="app.track"
             :display="app.label"/>
         </div>
       </div>
 
     </swiper>
+    <transition name="r-slide">
+      <PlaylistEditor
+        v-if="app.viewer.playlistEditor"
+        :playlist="playlist"
+        :project="app.project"
+      />
+    </transition>
   </div>
 </template>
 
 <script>
 import { Section } from '../core/section'
 import Swiper from './swiper/Swiper'
+import PlaylistEditor from './viewer/PlaylistEditor'
 import BeatHeader from './BeatHeader'
 import BassBeat from './viewer/BassBeat'
 import DrumBeat from './viewer/DrumBeat'
@@ -44,37 +53,158 @@ const BeatComponents = {
 }
 
 export default {
-  components: { Swiper, BeatHeader, BassBeat, DrumBeat },
+  components: { Swiper, BeatHeader, BassBeat, DrumBeat, PlaylistEditor },
+  inject: ['$player'],
   props: ['app', 'playlist'],
   data: () => ({
     slidesPerView: 2,
-    beatsPerSlide: 8
+    beatsPerSlide: 8,
+    activeSubbeat: '',
+    activeSection: null
   }),
   computed: {
     beatComponent () {
       return BeatComponents[this.app.track.type]
+    },
+    sections () {
+      const sections = {}
+      this.playlist.items.forEach(item => {
+        if (!sections[item.section]) {
+          sections[item.section] = Section(this.app.project.getSectionData(item.section))
+        }
+      })
+      return sections
     },
     slides () {
       const project = this.app.project
       const track = this.app.track.id
       const slides = []
       let beats = []
-      this.playlist.items.forEach(pi => {
-        const section = Section(project.getSectionData(pi.section))
+      this.playlist.items.forEach((item, index) => {
+
+        const section = this.sections[item.section]
         const sBeats = section.tracks[track].beats
-        sBeats.forEach(b => {
-          beats.push(b)
-          if (beats.length === this.beatsPerSlide) {
-            slides.push({
-              beats
+        for (let i = 1; i <= item.repeats; i++) {
+          sBeats.forEach(b => {
+            beats.push({
+              beat: b,
+              section,
+              sectionId: item.section,
+              repeat: i,
+              playlistIndex: index,
             })
-            beats = []
-          }
-        })
+            if (beats.length === this.beatsPerSlide) {
+              slides.push(beats)
+              beats = []
+            }
+          })
+        }
       })
-      console.log(slides)
       return slides
-      // return this.playlist.items
+    }
+  },
+  created () {
+    this.$bus.$on('playbackChange', this.play)
+    this.$bus.$on('playerBack', this.seekToStart)
+  },
+  beforeDestroy () {
+    this.$bus.$off('playbackChange', this.play)
+    this.$bus.$off('playerBack', this.seekToStart)
+  },
+  methods: {
+    fetchResources () {
+      const resources = new Set()
+      Object.values(this.sections).forEach(section => {
+        this.$player.collectResources(section).forEach(r => resources.add(r))
+      })
+      return this.$player.fetchResources(Array.from(resources))
+    },
+    play () {
+      if (this.$player.playing) {
+        return this.stop()
+      }
+      const { swiper } = this.$refs
+      const startBeat = this.slides[swiper.index][0]
+      const start = {
+        bar: startBeat.beat.bar,
+        beat: startBeat.beat.beat
+      }
+      const startSlide = this.slides[swiper.index]
+      this.playbackPosition = {
+        slide: swiper.index,
+        slidePosition: 0,
+        item: startBeat
+      }
+      // this.activeSection = startBeat.sectionId + '_' + startBeat.repeat
+      this.fetchResources().then(() => {
+        this.$player.play(
+          startBeat.section,
+          (e) => {
+            this.activeSection = e.id
+            this.highlightBeat(e)
+
+            this.playbackPosition.slidePosition++
+            if (!this.app.player.screenLock && this.playbackPosition.slidePosition === this.beatsPerSlide) {
+              setTimeout(() => swiper.setIndex(swiper.index + 1), 200)
+              // swiper.setIndex(swiper.index + 1)
+            }
+            if (this.playbackPosition.slidePosition === this.beatsPerSlide) {
+              this.playbackPosition.slidePosition = 0
+              this.playbackPosition.slide++
+            }
+            // console.log(this.playbackPosition.slide, this.playbackPosition.slidePosition)
+            this.playbackPosition.item = this.slides[this.playbackPosition.slide][this.playbackPosition.slidePosition]
+
+            // const next = this.playbackPosition.item
+            // this.activeSection = next.sectionId + '_' + next.repeat
+            /*
+            // trigger animation on last beat of current slide
+            const beats = this.slides[swiper.index]
+            const index = beats.findIndex(item => item.beat.bar === e.bar && item.beat.beat === e.beat)
+            if (index === beats.length - 1) {
+              swiper.setIndex(swiper.index + 1)
+            }
+            */
+          },
+          { start, playbackEnd: this.sectionPlaybackEnd, id: startBeat.sectionId + '_' + startBeat.repeat }
+        )
+      })
+    },
+    sectionPlaybackEnd () {
+      console.log('position', this.playbackPosition.slide, this.playbackPosition.slidePosition)
+      const next = this.playbackPosition.item
+      // this.activeSection = next.sectionId + '_' + next.repeat
+      return {
+        section: next.section,
+        bar: next.beat.bar,
+        beat: next.beat.beat,
+        id: next.sectionId + '_' + next.repeat
+      }
+    },
+    stop () {
+      this.$player.stop()
+    },
+    playbackPosition (e) {
+      for (let i = 0; i < this.slidesPerView; i++) {
+        const slide = this.slides[swiper.index]
+        // slide.findIndex(item => item.section === && item.beat.bar === e.bar && item.beat.beat === e.beat)
+
+      }
+    },
+    highlightBeat (e) {
+      const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
+      const subbeatTime = 1000 * (e.duration / beat.subdivision)
+      let delay = 1000 * (e.startTime - this.$player.context.currentTime)
+
+      for (let i = 0; i < beat.subdivision; i++) {
+        setTimeout(() => {
+          this.activeSubbeat = `${e.bar}:${e.beat}:${i + 1}`
+        }, delay)
+        delay += subbeatTime
+      }
+    },
+    seekToStart () {
+      this.$refs.swiper.setIndex(0)
     }
   }
 }
@@ -84,7 +214,7 @@ export default {
 
 .viewer {
   flex-grow: 1;
-  background-color: rgba(orange, 0.1);
+  xbackground-color: rgba(orange, 0.1);
   display: flex;
 
   .swiper {
@@ -98,6 +228,13 @@ export default {
     .slide {
       flex-shring: 0;
     }
+  }
+
+  .playlist-editor {
+    position: absolute;
+    xmin-width: 400px;
+    right: 0;
+    top: 5em;
   }
 }
 </style>

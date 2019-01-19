@@ -115,4 +115,5 @@ BufferLoader.prototype.loadResources = function (urlList, callback, errorCallbac
 }
 
 // new BufferLoader(context, '/sounds/', true)
-export const bufferLoader = new BufferLoader('http://127.0.0.1:8887/sounds/', true)
+// export const bufferLoader = new BufferLoader('http://127.0.0.1:8887/sounds/', true)
+export const bufferLoader = new BufferLoader('/sounds/', true)

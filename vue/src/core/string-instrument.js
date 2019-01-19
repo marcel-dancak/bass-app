@@ -201,6 +201,12 @@ export default function StringInstrument (params) {
       }
     },
     {
+      filter: (sound) => (sound.note.type === 'bend'),
+      soundResources (sound) {
+        return [`bass/${sound.style}/${sound.string}${sound.note.fret}`]
+      }
+    },
+    {
       filter: (sound) => (sound.note.type === 'ghost'),
       soundResources (sound) {
         return [`bass/${sound.style}/${sound.string}X`]
