@@ -1,48 +1,18 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
+// import Vue from 'vue-dev/dist/vue'
+// import Vue from 'vue-dev/dist/vue.runtime.esm'
 import App from './App'
+
 import Icon from './ui/Icon'
+import ScrollArea from './ui/ScrollArea2'
 
-// import Vuetify from 'vuetify'
-// import 'vuetify/dist/vuetify.min.css'
-// Vue.use(Vuetify)
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+import colors from 'vuetify/es5/util/colors'
 
-import {
-  Vuetify, // required
-  VApp, // required
-  VBtn,
-  VCheckbox,
-  VGrid,
-  VMenu,
-  VList,
-  VSelect,
-  VDialog,
-  VToolbar,
-  VTextField,
-  VSlider,
-  transitions
-} from 'vuetify'
-
-require('vuetify/src/stylus/app.styl')
-
-Vue.use(Vuetify, {
-  components: {
-    VApp,
-    Vuetify,
-    VBtn,
-    VCheckbox,
-    VGrid,
-    VList,
-    VMenu,
-    VSelect,
-    VDialog,
-    VToolbar,
-    VTextField,
-    VSlider
-  },
-  transitions
-})
+Vue.use(Vuetify)
 
 
 function requireAll (requireContext) {
@@ -55,6 +25,7 @@ requireAll(require.context('../icons/percussion', false, /.*\.svg$/))
 // Disable ripple ink effect by overriding Vuetify's directive
 Vue.directive('ripple', (el, binding) => {})
 Vue.component('icon', Icon)
+Vue.component('scroll-area', ScrollArea)
 
 Vue.config.productionTip = false
 
@@ -62,5 +33,5 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   components: { App },
-  template: '<App/>'
+  render: h => h(App)
 })

@@ -60,7 +60,8 @@
         icon
         class="play"
         @click="togglePlayback()">
-        <icon :name="$player.playing ? 'pause' : 'play'" />
+        <!-- <icon :name="$player.playing ? 'pause' : 'play'" /> -->
+        <icon :name="app.aplayer && app.aplayer.playing ? 'pause' : 'play'" />
       </v-btn>
 
       <v-btn
@@ -175,12 +176,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.toolbar__content {
-  width: 100%;
-  height: 3.125em;
-}
 .main-toolbar {
-
   flex-shrink: 0;
   display: flex;
   justify-content: center;

@@ -212,7 +212,7 @@ export default {
     document.removeEventListener('keydown', this.keyDown)
   },
   methods: {
-    play () {
+    async play () {
       if (this.$player.playing) {
         return this.stop()
       }
@@ -223,31 +223,33 @@ export default {
         bar: startBeat.bar,
         beat: startBeat.beat
       }
-      this.$player.fetchResources(this.$player.collectResources(this.section)).then(() => {
-        this.$player.play(
-          this.section,
-          // beat playback prepared
-          (e) => {
-            this.highlightBeat(e)
-            if (!this.app.player.screenLock) {
-              const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
-              let nextIndex = this.beats.indexOf(beat)
-              if (this.app.player.loopMode && nextIndex < swiper.index) {
-                nextIndex += this.beats.length
-              }
-              swiper.setIndex(nextIndex)
-            } else {
-              const lastIndex = swiper.index + this.slidesPerView - 1
-              const last = this.beats[lastIndex]
-              if (e.bar + e.beat / 100 >= last.bar + last.beat / 100) {
-                e.stop = true
-              }
+
+      const resources = this.$player.collectResources(this.section)
+      await this.$player.fetchResources(resources)
+
+      this.$player.play(
+        this.section,
+        // beat playback prepared
+        (e) => {
+          this.highlightBeat(e)
+          if (!this.app.player.screenLock) {
+            const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
+            let nextIndex = this.beats.indexOf(beat)
+            if (this.app.player.loopMode && nextIndex < swiper.index) {
+              nextIndex += this.beats.length
             }
-          },
-          { start, playbackEnd: this.playbackEnd }
-        )
-        // this.$player.export(this.section)
-      })
+            swiper.setIndex(nextIndex)
+          } else {
+            const lastIndex = swiper.index + this.slidesPerView - 1
+            const last = this.beats[lastIndex]
+            if (e.bar + e.beat / 100 >= last.bar + last.beat / 100) {
+              e.stop = true
+            }
+          }
+        },
+        { start, playbackEnd: this.playbackEnd }
+      )
+      // this.$player.export(this.section)
     },
     playbackEnd () {
       if (this.app.player.loopMode) {
@@ -326,6 +328,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "borders.scss";
 
 .editor {
   display: flex;
@@ -407,51 +410,6 @@ export default {
     color: #fff;
     background-color: #333;
     text-align: center;
-  }
-}
-
-/*** Borders ***/
-
-.beat {
-  .instrument, .beat-header {
-    &:before {
-      content: "";
-      position: absolute;
-      background-color: #aaa;
-      pointer-events: none;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: 1px;
-      z-index: 1;
-    }
-  }
-  .beat-header:before {
-    height: 70%;
-    width: 2px;
-  }
-  &.first {
-    .beat-header:before, .instrument:before {
-      width: 3px;
-      left: -1px;
-    }
-  }
-  &:last-of-type, &.last {
-    .beat-header:after, .instrument:after {
-      content: "";
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 1px;
-      border: solid #aaa;
-      border-width: 0 2px;
-    }
-    .beat-header:after {
-      height: 70%;
-    }
-    .instrument:after {
-      bottom: 0;
-    }
   }
 }
 </style>

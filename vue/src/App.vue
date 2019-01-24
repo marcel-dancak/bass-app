@@ -1,35 +1,34 @@
 <template>
-  <!-- <v-app @contextmenu.native.prevent> -->
-  <div class="flex layout column" @contextmenu.prevent>
-    <main-toolbar
-      :app="$data"
-      @playbackChange="audioPlayer.playing ? stop() : play()"
-    />
-    <editor
-      v-if="mode === 'editor' && section"
-      :app="$data"
-      :section="section">
-    </editor>
+  <v-app @contextmenu.native.prevent>
+    <div class="flex layout column" @contextmenu.prevent>
+      <main-toolbar
+        :app="$data"
+        @playbackChange="audioPlayer.playing ? stop() : play()"
+      />
+      <editor
+        v-if="mode === 'editor' && section"
+        :app="$data"
+        :section="section">
+      </editor>
 
-    <viewer
-      v-if="mode === 'viewer'&& viewer.playlist"
-      :app="$data"
-      :playlist="viewer.playlist">
-    </viewer>
+      <viewer
+        v-if="mode === 'viewer'&& viewer.playlist"
+        :app="$data"
+        :playlist="viewer.playlist">
+      </viewer>
 
-    <v-toolbar class="bottom-toolbar" :height="-1">
-      <v-spacer />
-      <v-select
-        :items="labelOptions"
-        v-model="label"
-        item-text="name"
-        item-value="value"
-        hide-details>
-      </v-select>
-    </v-toolbar>
-
-  </div>
-  <!-- </v-app> -->
+      <v-toolbar class="bottom-toolbar" :height="-1">
+        <v-spacer />
+        <v-select
+          :items="labelOptions"
+          v-model="label"
+          item-text="name"
+          item-value="value"
+          hide-details>
+        </v-select>
+      </v-toolbar>
+    </div>
+  </v-app>
 </template>
 
 <script>
@@ -125,7 +124,7 @@ export default {
       playlist: null,
       playlistEditor: false
     },
-    mode: 'viewer',
+    mode: 'editor',
     label: 'name',
     track: null,
     project: null,

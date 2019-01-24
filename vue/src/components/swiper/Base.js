@@ -12,13 +12,13 @@ const SwiperSlide = {
 }
 
 export default {
-  components: {SwiperSlide},
+  components: { SwiperSlide },
   props: {
     items: Array,
     perView: {
       type: Number,
       validator: (value) => {
-        return value > 0 && (!this.items || value < this.items.length)
+        return value > 0 // && (!this.items || value < this.items.length)
       }
     },
     loop: Boolean,
@@ -42,9 +42,9 @@ export default {
     slideStyle () {
       console.log(this.direction)
       if (this.direction === 'horizontal') {
-        return {width: this.slideSize + 'px', minWidth: this.slideSize + 'px'}
+        return { width: this.slideSize + 'px', minWidth: this.slideSize + 'px' }
       }
-      return {height: this.slideSize + 'px', minHeight: this.slideSize + 'px'}
+      return { height: this.slideSize + 'px', minHeight: this.slideSize + 'px' }
     },
     slideSize () {
       if (this.direction === 'horizontal') {

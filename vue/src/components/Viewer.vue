@@ -188,7 +188,6 @@ export default {
       for (let i = 0; i < this.slidesPerView; i++) {
         const slide = this.slides[swiper.index]
         // slide.findIndex(item => item.section === && item.beat.bar === e.bar && item.beat.beat === e.beat)
-
       }
     },
     highlightBeat (e) {
@@ -211,6 +210,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "borders.scss";
 
 .viewer {
   flex-grow: 1;

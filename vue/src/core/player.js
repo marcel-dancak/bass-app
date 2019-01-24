@@ -47,6 +47,9 @@ export default function Player (context) {
     },
 
     playBeat (section, bar, beat, startTime, opts) {
+      if (!this.playing) {
+        return
+      }
       // console.log('playBeat', bar, beat, startTime)
       const beatTime = 60 / (section.bpm * this.playbackSpeed)
       // Object.values(section.tracks).forEach(track => {})
@@ -87,7 +90,10 @@ export default function Player (context) {
         if (evt.stop || bar > section.length) {
           const next = opts.playbackEnd ? opts.playbackEnd() : null
           if (!next) {
-            setTimeout(() => {this.playing = false}, (evt.endTime - evt.eventTime) * 1000)
+            setTimeout(
+              () => { this.playing = false },
+              (evt.endTime - evt.eventTime) * 1000
+            )
             return
           }
           section = next.section || section
@@ -108,9 +114,9 @@ export default function Player (context) {
       this.beatPreparedCb = beatPrepared
       // const endCallback = opts.playbackEnd || (() => {})
       // this.fetchResources(section).then(() => {
-        let bar = opts.start ? opts.start.bar : 1
-        let beat = opts.start ? opts.start.beat : 1
-        this.playBeat(section, bar, beat, context.currentTime, opts)
+      let bar = opts.start ? opts.start.bar : 1
+      let beat = opts.start ? opts.start.beat : 1
+      this.playBeat(section, bar, beat, context.currentTime, opts)
       // })
     },
 
@@ -118,7 +124,7 @@ export default function Player (context) {
       this.playing = false
     },
 
-    export (section) {
+    async export (section) {
       const duration = 5
       const offlineContext = new OfflineAudioContext(2, 44100 * (duration + 0.1), 44100)
 
@@ -131,29 +137,25 @@ export default function Player (context) {
         }
       })
 
-      this.fetchResources(this.collectResources(section)).then(() => {
-        for (let id in section.tracks) {
-          const sTrack = section.tracks[id]
-          const { instrument, audio } = exportTracks[sTrack.id]
+      await this.fetchResources(this.collectResources(section))
+      for (let id in section.tracks) {
+        const sTrack = section.tracks[id]
+        const { instrument, audio } = exportTracks[sTrack.id]
 
-          let startTime = 0
-          sTrack.forEachBeat(beat => {
-            const beatTime = 60 / section.bpm
-            sTrack.beatSounds(beat).forEach(sound => {
-              instrument.playSound(audio, sound, startTime + (sound.start * beatTime), beatTime)
-            })
-            startTime += beatTime
+        let startTime = 0
+        sTrack.forEachBeat(beat => {
+          const beatTime = 60 / section.bpm
+          sTrack.beatSounds(beat).forEach(sound => {
+            instrument.playSound(audio, sound, startTime + (sound.start * beatTime), beatTime)
           })
-        }
-
-        offlineContext.startRendering().then(renderedBuffer => {
-          const wav = audioBufferToWav(renderedBuffer)
-          const blob = new window.Blob([ new DataView(wav) ], {
-            type: 'audio/wav'
-          })
-          saveAs(blob, 'export.wav')
+          startTime += beatTime
         })
-      })
+      }
+
+      const renderedBuffer = await offlineContext.startRendering()
+      const wav = audioBufferToWav(renderedBuffer)
+      const blob = new window.Blob([ new DataView(wav) ], { type: 'audio/wav' })
+      saveAs(blob, 'export.wav')
     }
   }
 }

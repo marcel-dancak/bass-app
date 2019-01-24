@@ -1,7 +1,7 @@
 <script>
 import { Colors } from '../colors'
 
-const Note = (h, note, display) => {
+function Note (h, note, display) {
   switch (display) {
     case 'name':
       return <span>{note.name}<sub>{note.octave}</sub></span>
