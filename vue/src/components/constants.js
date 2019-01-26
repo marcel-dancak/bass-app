@@ -2,7 +2,6 @@ export const PlayingStyles = [
   {text: 'Finger', value: 'finger'},
   {text: 'Slap', value: 'slap'},
   {text: 'Pop', value: 'pop'},
-  {text: 'Finger', value: 'finger'},
   {text: 'Pick', value: 'pick'},
   {text: 'Tap', value: 'tap'},
   {text: 'Hammer-On', value: 'hammer'},

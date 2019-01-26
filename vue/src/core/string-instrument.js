@@ -17,7 +17,7 @@ export default function StringInstrument (params) {
 
   // keep references to last audio (per string)
   // TODO: move to audio track (output)?
-  const playingSounds = {}
+  let playingSounds = {}
 
   const Audio = {
     play (start, offset = 0) {
@@ -282,6 +282,20 @@ export default function StringInstrument (params) {
       if (lastSegment) {
         lastSegment.fadeOut()
       }
+    },
+    stop () {
+      if (!output) return
+      const currentTime = output.context.currentTime
+      Object.values(playingSounds).forEach(sounds => {
+        sounds.forEach(s => {
+          if (s.gain.value > 0.01) {
+            s.gain.cancelScheduledValues(currentTime)
+            s.gain.setValueAtTime(s._fadeOut.gain, currentTime)
+            s.gain.linearRampToValueAtTime(0.00001, currentTime + 0.05)
+          }
+        })
+      })
+      playingSounds = {}
     }
   }
 }
