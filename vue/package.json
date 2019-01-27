@@ -10,6 +10,7 @@
   "dependencies": {
     "audiobuffer-to-wav": "^1.0.0",
     "file-saver": "^1.3.4",
+    "material-icons": "^0.2.3",
     "simplebar": "^2.6.1",
     "tonal": "^2.1.2",
     "vue": "^2.5.21",

@@ -9,6 +9,7 @@ import Icon from './ui/Icon'
 import ScrollArea from './ui/ScrollArea2'
 
 import Vuetify from 'vuetify'
+import 'material-icons/iconfont/material-icons.scss'
 import 'vuetify/dist/vuetify.min.css'
 import colors from 'vuetify/es5/util/colors'
 
