@@ -5,8 +5,8 @@
       :per-view="slidesPerView"
       :checkSwipeable="true"
       :items="slides"
-      direction="vertical">
-
+      direction="vertical"
+    >
       <div
         slot="item"
         slot-scope="props"
@@ -14,7 +14,8 @@
         swipeable>
         <div
           v-for="item in props.item"
-          class="beat flex">
+          class="beat layout column"
+        >
           <beat-header
             :beat="item.beat"
             :active="activeSection === `${ item.sectionId }_${ item.repeat }` ? activeSubbeat : ''"
@@ -24,7 +25,8 @@
             :is="beatComponent"
             :beat="item.beat"
             :instrument="app.track"
-            :display="app.label"/>
+            :display="app.label"
+          />
         </div>
       </div>
 
@@ -54,15 +56,27 @@ const BeatComponents = {
 
 export default {
   components: { Swiper, BeatHeader, BassBeat, DrumBeat, PlaylistEditor },
-  inject: ['$player'],
-  props: ['app', 'playlist'],
-  data: () => ({
-    slidesPerView: 2,
-    beatsPerSlide: 8,
-    activeSubbeat: '',
-    activeSection: null
-  }),
+  data () {
+    return {
+      slidesPerView: 2,
+      beatsPerSlide: 8,
+      activeSubbeat: '',
+      activeSection: null
+    }
+  },
   computed: {
+    $player () {
+      return this.$service('player')
+    },
+    $project () {
+      return this.$service('project')
+    },
+    app () {
+      return this.$store
+    },
+    playlist () {
+      return this.$store.viewer.playlist
+    },
     beatComponent () {
       return BeatComponents[this.app.track.type]
     },
@@ -70,7 +84,7 @@ export default {
       const sections = {}
       this.playlist.items.forEach(item => {
         if (!sections[item.section]) {
-          sections[item.section] = Section(this.app.project.getSectionData(item.section))
+          sections[item.section] = Section(this.$project.getSectionData(item.section))
         }
       })
       return sections
@@ -214,9 +228,15 @@ export default {
 
 .viewer {
   flex-grow: 1;
-  xbackground-color: rgba(orange, 0.1);
   display: flex;
 
+  .beat {
+    flex: 1 0 auto;
+    // overflow: hidden;
+    > div {
+      flex-shrink: 0;
+    }
+  }
   .swiper {
     padding: 1em 1em 0 1em;
     margin-top: 1em;
@@ -226,7 +246,7 @@ export default {
       height: 100%;
     }
     .slide {
-      flex-shring: 0;
+      flex-shrink: 0;
     }
   }
 

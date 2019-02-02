@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout class="column sound-form">
     <v-layout>
       <v-flex xs6>
         <v-select
@@ -24,12 +24,14 @@
       <note-select
         label="Pitch"
         :root="StringRoots[sound.string]"
-        :note="sound.note" />
+        :note="sound.note"
+      />
       <note-select
         v-if="sound.endNote"
         label="End pitch"
         :root="StringRoots[sound.string]"
-        :note="sound.endNote" />
+        :note="sound.endNote"
+      />
     </v-layout>
     <v-layout class="length" row>
       <v-flex style="flex: 0 0 28%">
@@ -38,11 +40,16 @@
           :items="NoteLengths"
           :value="sound.note.length"
           @input="v => editor.resizeSound(sound, v, sound.note.dotted)"
-          hide-details>
+          hide-details
+        >
+          <template slot="item" slot-scope="{ item }">
+            <icon :name="item.symbol" class="mr-2"/>
+            <span v-text="item.text"/>
+          </template>
           <template
             slot="selection"
-            slot-scope="data">
-            <icon :name="data.item.symbol" />
+            slot-scope="{ item }">
+            <icon :name="item.symbol"/>
           </template>
         </v-select>
       </v-flex>
@@ -83,7 +90,7 @@
         />
       </v-flex>
       <v-btn icon>
-        <icon name="play" />
+        <icon name="play"/>
       </v-btn>
     </v-layout>
   </v-layout>
@@ -121,6 +128,8 @@ export default {
 
 <style lang="scss">
 .sound-form {
+  padding: 0.25em;
+  min-width: 280px!important;
   background-color: #fff;
   .layout > * {
     padding: 0.25em;

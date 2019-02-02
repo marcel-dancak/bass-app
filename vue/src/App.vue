@@ -1,31 +1,27 @@
 <template>
   <v-app @contextmenu.native.prevent>
     <div class="flex layout column" @contextmenu.prevent>
-      <main-toolbar
-        :app="$data"
-        @playbackChange="audioPlayer.playing ? stop() : play()"
-      />
-      <editor
-        v-if="mode === 'editor' && section"
-        :app="$data"
-        :section="section">
-      </editor>
+      <main-toolbar v-if="$player"/>
 
-      <viewer
-        v-if="mode === 'viewer'&& viewer.playlist"
-        :app="$data"
-        :playlist="viewer.playlist">
-      </viewer>
+      <editor v-if="app.mode === 'editor'"/>
+      <viewer v-else/>
 
       <v-toolbar class="bottom-toolbar" :height="-1">
-        <v-spacer />
+        <v-select
+          :items="songs"
+          v-model="song"
+          item-text="name"
+          item-value="name"
+          hide-details
+        />
+        <v-spacer/>
         <v-select
           :items="labelOptions"
-          v-model="label"
+          v-model="app.label"
           item-text="name"
           item-value="value"
-          hide-details>
-        </v-select>
+          hide-details
+        />
       </v-toolbar>
     </div>
   </v-app>
@@ -35,7 +31,6 @@
 import Vue from 'vue'
 import Player from './core/player'
 import Project from './core/project'
-import { Section } from './core/section'
 import { PercussionInstrument, DrumKit, PercussionKit } from './core/percussion'
 import StringInstrument from './core/string-instrument'
 import Piano from './core/piano'
@@ -43,14 +38,15 @@ import Piano from './core/piano'
 import MainToolbar from './components/toolbar/MainToolbar'
 import Editor from './components/Editor'
 import Viewer from './components/Viewer'
+
 import data from './data/Treasure.json'
-// import data from './data/TheseDays.json'
-// import data from './data/AnotherDayInParadise'
+import data2 from './data/TheseDays.json'
+import data3 from './data/AnotherDayInParadise'
 // const data = {}
 
 
 const shared = {
-  player: {playing: false}
+  player: { playing: false }
 }
 
 shared.install = function (Vue, options) {
@@ -98,113 +94,106 @@ const NoteLabelOptions = [
   }
 ]
 
+// const store = {}
+// const vm = {}
+// Vue.util.defineReactive(vm, 'store', store)
+// return vm.store.$project
+// Vue.set(vm.store, '$project', Project(data))
+// vm.store.__ob__.dep.notify()
+
 export default {
   name: 'App',
   components: {
     MainToolbar, Editor, Viewer
   },
-  provide: {
-    '$player': null
+  data () {
+    return {
+      song: 'Treasure'
+    }
   },
-  data: () => ({
-    player: {
-      playing: false,
-      loopMode: false,
-      loading: false,
-      countdown: false,
-      screenLock: false,
-      bpm: 80
-    },
-    editor: {
-      sectionIndex: null,
-      section: null
-    },
-    viewer: {
-      playlistIndex: null,
-      playlist: null,
-      playlistEditor: false
-    },
-    mode: 'editor',
-    label: 'name',
-    track: null,
-    project: null,
-    aplayer: null
-  }),
   computed: {
-    section () {
-      if (this.editor.sectionIndex !== null) {
-        console.log('Create Section')
-        return Section(this.project.getSectionData(this.editor.sectionIndex))
-      }
+    app () {
+      return this.$store
+    },
+    songs () {
+      return [
+        { name: 'Treasure', data: data },
+        { name: 'These Days', data: data2 },
+        { name: 'Another Day In Paradise', data: data3 }
+      ]
+    },
+    $project () {
+      return this.$service('project')
+    },
+    $player () {
+      return this.$service('player')
     }
   },
   watch: {
-    project () {
-      this.editor.sectionIndex = this.project.sections[0].id
-      if (this.project.playlists.length) {
-        this.viewer.playlist = this.project.playlists[0]
+    $project: {
+      immediate: true,
+      handler (project) {
+        if (!project) {
+          return
+        }
+        this.app.editor.sectionIndex = project.sections[0].id
+        if (project.playlists.length) {
+          this.app.viewer.playlist = project.playlists[0]
+          // Vue.set(this.app.viewer, 'playlist', project.playlists[0])
+        }
+        this.app.track = project.tracks[0]
+        if (this.$player) {
+          this.$player.context.close()
+        }
+        const player = this.createPlayer(project)
+        this.$createService(player, 'player')
+        Vue.prototype.$player = player
       }
-      this.track = this.project.tracks[0]
     },
-    section (section) {
-      console.log('Update Section reference')
-      this.editor.section = section
+    song: {
+      immediate: true,
+      handler (song) {
+        const data = this.songs.find(s => s.name === song).data
+        this.$createService(Project(data), 'project')
+      }
     }
   },
   created () {
-    this.project = Project(data)
-    // setTimeout(() => {this.project = Project(data2) }, 5000)
-
     this.$root.constructor.prototype.$bus = new Vue()
     this.labelOptions = NoteLabelOptions
-
-    const player = Player(new AudioContext())
-    player.addTrack({
-      id: 'bass_0',
-      instrument: StringInstrument({
-        strings: ['E', 'A', 'D', 'G']
-        // strings: ['B', 'E', 'A', 'D', 'G']
-      })
-    })
-    player.addTrack({
-      id: 'drums_0',
-      instrument: PercussionInstrument(DrumKit)
-    })
-    player.addTrack({
-      id: 'drums_1',
-      instrument: PercussionInstrument(PercussionKit)
-    })
-    player.addTrack({
-      id: 'piano_0',
-      instrument: Piano({preset: 'electric'}) // acoustic electric
-    })
-    player.addTrack({
-      id: 'piano_1',
-      instrument: Piano({preset: 'acoustic'})
-    })
-    player.tracks.piano_0.audio.gain.value = this.project.track('piano_0').volume.value
-    this.audioPlayer = player
-    this._provided.$player = player
-    setTimeout(() => {
-      console.log('set $player')
-      this.aplayer = player
-    }, 20)
-
     // this.constructor.prototype.$player = player
   },
   beforeDestroy () {
-    this.audioPlayer.context.close()
+    this.$player.context.close()
   },
   methods: {
-    prev () {
-      const swiper = this.$refs.swiper
-      if (swiper.index) {
-        swiper.setIndex(swiper.index - 1)
-      }
-    },
-    next () {
-      const swiper = this.$refs.swiper
-      swiper.setIndex(swiper.index + 1)
+    createPlayer (project) {
+      const player = Player(new AudioContext())
+      player.addTrack({
+        id: 'bass_0',
+        instrument: StringInstrument({
+          strings: ['E', 'A', 'D', 'G']
+          // strings: ['B', 'E', 'A', 'D', 'G']
+        })
+      })
+      player.addTrack({
+        id: 'drums_0',
+        instrument: PercussionInstrument(DrumKit)
+      })
+      player.addTrack({
+        id: 'drums_1',
+        instrument: PercussionInstrument(PercussionKit)
+      })
+      player.addTrack({
+        id: 'piano_0',
+        instrument: Piano({ preset: 'electric' }) // acoustic electric
+      })
+      player.addTrack({
+        id: 'piano_1',
+        instrument: Piano({ preset: 'acoustic' })
+      })
+      player.tracks.piano_0.audio.gain.value = project.track('piano_0').volume.value
+      return player
     }
   }
 }
@@ -246,6 +235,14 @@ html {
     padding: 0 0.5em;
     flex: 0 0 auto;
     width: auto;
+  }
+}
+.menu__content--select {
+  .icon {
+    color: inherit!important;
+    fill: currentColor;
+    width: 0.875em;
+    height: 0.875em;
   }
 }
 </style>

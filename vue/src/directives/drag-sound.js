@@ -9,13 +9,13 @@ const drag = {
       const y = evt.clientY + group.offset.y
       const target = document.elementFromPoint(x, y)
       const event = new MouseEvent(type, evt)
-      Object.defineProperty(event, 'clientX', {value: x})
-      Object.defineProperty(event, 'clientY', {value: y})
+      Object.defineProperty(event, 'clientX', { value: x })
+      Object.defineProperty(event, 'clientY', { value: y })
       const data = {
         data: drag.info.data[i].sounds,
         channel: i
       }
-      Object.defineProperty(event, 'dataTransfer', {value: data})
+      Object.defineProperty(event, 'dataTransfer', { value: data })
       if (target) {
         target.dispatchEvent(event)
       }
@@ -40,11 +40,15 @@ const drag = {
           drag.el.remove()
           drag.el = null
         }
-      }, {once: true})
+      }, { once: true })
     })
   },
   dragOver (evt) {
     if (!drag.dragging) {
+      const diff = Math.abs(evt.clientX - drag.startEvent.clientX) + Math.abs(evt.clientY - drag.startEvent.clientY)
+      if (diff < 5) {
+        return
+      }
       const info = drag.handler.start(drag.startEvent)
       drag.info = info
 
@@ -84,7 +88,7 @@ const drag = {
       targets.forEach((target, i) => {
         if (target !== drag.lastTargets[i] && drag.lastTargets[i]) {
           const event = new MouseEvent('dragleave')
-          Object.defineProperty(event, 'channel', {value: i})
+          Object.defineProperty(event, 'channel', { value: i })
           drag.lastTargets[i].dispatchEvent(event)
         }
       })

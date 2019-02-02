@@ -1,6 +1,7 @@
 <template>
   <div class="editor">
     <swiper
+      v-if="$section"
       ref="swiper"
       :per-view="slidesPerView"
       :checkSwipeable="true"
@@ -19,8 +20,8 @@
           <div
             slot="activator"
             class="layout column">
-            <span>{{ section.timeSignature.top }}</span>
-            <span>{{ section.timeSignature.bottom }}</span>
+            <span>{{ timeSignature.top }}</span>
+            <span>{{ timeSignature.bottom }}</span>
           </div>
           <div class="section-preferences">
             <div class="layout row align-end">
@@ -30,16 +31,16 @@
                 min="1"
                 max="12"
                 hide-details
-                :value="section.timeSignature.top"
-                @input="val => section.setTimeSignature(val, section.timeSignature.bottom)"
+                :value="timeSignature.top"
+                @input="$section.setTimeSignature($event, timeSignature.bottom)"
               />
               <span class="px-2">/</span>
               <v-select
                 label=""
                 hide-details
                 :items="[2, 4, 8, 16]"
-                :value="section.timeSignature.bottom"
-                @input="val => section.setTimeSignature(section.timeSignature.top, val)"
+                :value="timeSignature.bottom"
+                @input="$section.setTimeSignature(timeSignature.top, $event)"
               />
             </div>
             <v-text-field
@@ -62,6 +63,8 @@
         <beat-header
           :beat="props.item"
           :active="activeSubbeat"
+          @contextmenu.native="beatContextMenu($event, props.item)"
+          @xcontextmenu.native="showBeatMenu=true"
         />
       </div>
 
@@ -136,10 +139,13 @@ import DrumBeat from './DrumBeat'
 import Drums from './Drums'
 import PianoBeat from './PianoBeat'
 import ContextMenu from '../ui/ContextMenu'
+import BeatMenu from './BeatMenu'
+import { Section } from '@/core/section'
+
 
 Vue.directive('bind-el', {
   bind (el, binding) {
-    Object.defineProperty(binding.value, 'elem', {value: el, configurable: true})
+    Object.defineProperty(binding.value, 'elem', { value: el, configurable: true })
   }
 })
 
@@ -158,16 +164,33 @@ export default {
   components: {
     Swiper, MouseSelector, BeatHeader, ContextMenu,
     BassBeat, BassSoundForm, BassStrings, Fretboard,
-    DrumBeat, Drums, PianoBeat, Keyboard
+    DrumBeat, Drums, PianoBeat, Keyboard,
+    BeatMenu
   },
-  inject: ['$player'],
   context: ['aplayer'],
-  props: ['app', 'section'],
-  data: () => ({
-    slidesPerView: 8,
-    activeSubbeat: ''
-  }),
+  data () {
+    return {
+      slidesPerView: 8,
+      activeSubbeat: ''
+    }
+  },
   computed: {
+    app () {
+      return this.$store
+    },
+    $project () {
+      return this.$service('project')
+    },
+    $section () {
+      if (this.app.editor.sectionIndex !== null) {
+        const section = Section(this.$project.getSectionData(this.app.editor.sectionIndex))
+        return this.$createService(section, 'section')
+      }
+      return null
+    },
+    timeSignature () {
+      return this.$section.timeSignature
+    },
     instrumentComponent () {
       return InstrumentComponents[this.app.track.type]
     },
@@ -175,9 +198,9 @@ export default {
       return BeatComponents[this.app.track.type]
     },
     beats () {
-      let sectionTrack = this.section.tracks[this.app.track.id]
+      let sectionTrack = this.$section.tracks[this.app.track.id]
       if (!sectionTrack) {
-        sectionTrack = this.section.addTrack(this.app.track.id, [])
+        sectionTrack = this.$section.addTrack(this.app.track.id, [])
         Vue.util.defineReactive(sectionTrack, 'beats')
       }
       return sectionTrack.beats
@@ -224,11 +247,11 @@ export default {
         beat: startBeat.beat
       }
 
-      const resources = this.$player.collectResources(this.section)
+      const resources = this.$player.collectResources(this.$section)
       await this.$player.fetchResources(resources)
 
       this.$player.play(
-        this.section,
+        this.$section,
         // beat playback prepared
         (e) => {
           this.highlightBeat(e)
@@ -249,7 +272,7 @@ export default {
         },
         { start, playbackEnd: this.playbackEnd }
       )
-      // this.$player.export(this.section)
+      // this.$player.export(this.$section)
     },
     playbackEnd () {
       if (this.app.player.loopMode) {
@@ -257,7 +280,7 @@ export default {
         const beatIndex = this.app.player.screenLock ? swiper.index : 0
         const firstBeat = this.beats[beatIndex]
         return {
-          section: this.section,
+          section: this.$section,
           bar: firstBeat.bar,
           beat: firstBeat.beat
         }
@@ -321,7 +344,12 @@ export default {
         sound,
         editor: this.trackEditor
       }
-      this.$refs.contextMenu.open(e, BassSoundForm, props)
+      const bounds = e.currentTarget.getBoundingClientRect()
+      const opts = { x: bounds.left, y: bounds.bottom + 2 }
+      this.$refs.contextMenu.open(e, BassSoundForm, props, opts)
+    },
+    beatContextMenu (e, beat) {
+      this.$refs.contextMenu.open(e, BeatMenu, { beat })
     }
   }
 }

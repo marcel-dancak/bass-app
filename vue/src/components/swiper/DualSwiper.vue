@@ -5,7 +5,7 @@
     @touchstart="swipe.start"
     @xwheel="scroll"
   >
-    <div class="header-swiper">
+    <div class="swiper-header">
       <div class="header-panel">
         <slot name="header-panel">4<br />4</slot>
       </div>
@@ -31,33 +31,33 @@
 
     <scroll-area
       overflow="vertical"
-      content-class="layout column"
+      content-class="layout column swiper-content"
       @wheel.native.stop=""
     >
       <v-layout>
-      <div class="instrument-panel">
-        <slot name="instrument"/>
-      </div>
-      <div
-        class="slides-container"
-        :class="{animate: animate}"
-        :style="{transform: `translate3d(${translate}px, 0, 0)`}">
+        <div class="instrument-panel">
+          <slot name="instrument"/>
+        </div>
+        <div
+          class="slides-container"
+          :class="{animate: animate}"
+          :style="{transform: `translate3d(${translate}px, 0, 0)`}">
 
-        <swiper-slide
-          v-for="(item, i) in slides"
-          ref="slides"
-          :key="'c'+i"
-          :style="slideStyle"
-          :class="{last: i === items.length - 1}">
-          <slot
-            name="content"
-            :item="item"
-            v-if="i >= visible.first && i <= visible.last">
-          </slot>
-        </swiper-slide>
+          <swiper-slide
+            v-for="(item, i) in slides"
+            ref="slides"
+            :key="'c'+i"
+            :style="slideStyle"
+            :class="{last: i === items.length - 1}">
+            <slot
+              name="content"
+              :item="item"
+              v-if="i >= visible.first && i <= visible.last">
+            </slot>
+          </swiper-slide>
 
-      </div>
-    </v-layout>
+        </div>
+      </v-layout>
       <slot name="bottom"/>
     </scroll-area>
     <!-- <p><small>Show: {{ visible.first + 1 }} - {{ visible.last + 1 }} (width: {{ width }})</small></p> -->
@@ -78,7 +78,7 @@ export default {
   user-select: none;
   overflow: hidden;
 
-  .header-swiper {
+  .swiper-header {
     margin-left: 3em;
     margin-right: 0.25em;
     display: flex;

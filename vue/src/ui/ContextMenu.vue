@@ -3,45 +3,29 @@
 export default {
   data: () => ({
     containers: [
-      {isOpen: false, component: null},
-      {isOpen: false, component: null}
+      { isOpen: false, component: null },
+      { isOpen: false, component: null }
     ]
   }),
-  /*
-  render (h) {
-    const data = {
-      class: 'context-menu',
-      props: {
-        bottom: true,
-        right: true,
-        closeOnContentClick: false,
-        contentClass: 'sound-form bass',
-        transition: 'slide-y-transition',
-        positionX: this.menu.x,
-        positionY: this.menu.y,
-        value: this.menu.isOpen
-      },
-      on: {
-        input: (value) => { this.menu.isOpen = value }
-      }
-    }
-    return h('v-menu', data, [h(menu.component, {props: menu.props})])
-  },
-  */
   render (h) {
     const menuContainers = this.containers.map(menu => {
-      const content = menu.component ? h(menu.component, {props: menu.props}) : null
+      const data = {
+        props: menu.props,
+        on: {
+          close: () => { menu.isOpen = false }
+        }
+      }
+      const content = menu.component ? h(menu.component, data) : null
       return (
         <v-menu
           bottom right
-          content-class="sound-form bass"
           transition="slide-y-transition"
           closeOnContentClick={false}
           positionX={menu.x}
           positionY={menu.y}
-          minWidth={280}
           value={menu.isOpen}
-          onInput={value => { menu.isOpen = value }}>
+          onInput={value => { menu.isOpen = value }}
+        >
           {content}
         </v-menu>
       )
@@ -49,7 +33,7 @@ export default {
     return <div class="context-menu-container">{menuContainers}</div>
   },
   methods: {
-    open (evt, component, props) {
+    open (evt, component, props, opts={}) {
       const activator = evt.currentTarget
       const currentMenu = this.currentMenu
       if (currentMenu) {
@@ -64,10 +48,9 @@ export default {
       const menu = this.containers.find(c => !c.component)
       if (menu) {
         // console.log('open', this.containers.indexOf(menu))
-        const bounds = activator.getBoundingClientRect()
         Object.assign(menu, {
-          x: bounds.left,
-          y: bounds.bottom + 2,
+          x: opts.x || evt.clientX,
+          y: opts.y || evt.clientY,
           isOpen: true,
           activator,
           component,

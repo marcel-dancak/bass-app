@@ -49,7 +49,8 @@
         hide-details
       >
         <template slot="item" slot-scope="{ item }">
-          <icon  :name="item.symbol" /><span v-text="item.text"/>
+          <icon :name="item.symbol" class="mr-2" />
+          <span v-text="item.text"/>
         </template>
         <icon slot="selection" slot-scope="{ item }" :name="item.symbol" />
       </v-select>
@@ -89,7 +90,6 @@ export default {
       fretsNumber: 19
     }
   },
-  inject: ['$player'],
   computed: {
     strings () {
       return this.instrument.strings.split('').reverse()
@@ -294,15 +294,5 @@ export default {
 .fret-drag.sound {
   position: absolute;
   width: 4em;
-}
-
-.menu__content--select {
-  .icon {
-    color: inherit!important;
-    fill: currentColor;
-    width: 0.875em;
-    height: 0.875em;
-    margin: 0 0.5em;
-  }
 }
 </style>

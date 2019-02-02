@@ -8,6 +8,15 @@
         @dragover="e => dragOver(e, string)"
         @dragleave="dragLeave"
         @drop="e => onDrop(e, string)">
+<!--         <svg width="100%" height="100%" class="grid">
+          <svg
+            v-for="i in beat.subdivision"
+            :key="i"
+            :x="`${50/beat.subdivision + (i - 1) * (100 / beat.subdivision)}%`"
+          >
+            <bass-cell/>
+          </svg>
+        </svg> -->
       </div>
     </div>
     <template v-for="(sound, i) in beat.data">
@@ -50,11 +59,13 @@ import { bassFret } from '../core/note-utils'
 import SoundLabel from './BassLabel'
 import SoundTopLabel from './SoundTopLabel'
 import SoundResize from './SoundResize'
+import BassCell from './BassCell'
 import '../directives/drag-sound'
+
 
 export default {
   name: 'bass-beat',
-  components: { SoundLabel, SoundTopLabel, SoundResize },
+  components: { SoundLabel, SoundTopLabel, SoundResize, BassCell },
   props: ['editor', 'beat', 'instrument', 'display'],
   data: () => ({
     dropItems: []
@@ -237,6 +248,11 @@ export default {
 </script>
 
 <style lang="scss">
+.swiper-content:not(:hover) {
+  .bass-beat .grid {
+    opacity: 0.0;
+  }
+}
 .bass-beat {
   position: relative;
   margin-top: 1.75em;
@@ -253,6 +269,15 @@ export default {
       top: 50%;
       left: 0;
       background-color: #e2e2e2;
+    }
+  }
+  .grid {
+    position: relative;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    will-change: opacity;
+    svg {
+      overflow: visible;
     }
   }
   .sound {

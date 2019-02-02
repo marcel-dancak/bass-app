@@ -3,7 +3,8 @@
     dark
     color="blue-grey darken-2"
     class="main-toolbar elevation-3"
-    :height="-1">
+    :height="-1"
+  >
     <v-select
       label="Track"
       class="tracks"
@@ -12,7 +13,8 @@
       item-text="name"
       return-object
       content-class="tracks"
-      hide-details>
+      hide-details
+    >
       <template
         slot="selection"
         slot-scope="data">
@@ -28,40 +30,42 @@
     </v-select>
     <v-menu
       content-class="audio-preferences"
-      :close-on-content-click="false">
+      :close-on-content-click="false"
+    >
       <v-btn
         icon
         slot="activator">
-        <icon name="volume-medium" />
+        <icon name="volume-medium"/>
       </v-btn>
       <div class="layout column">
         <track-volume-field
           v-for="track in tracks"
           :key="track.id"
-          :track="track" />
+          :track="track"
+        />
       </div>
     </v-menu>
 
-    <v-spacer />
+    <v-spacer/>
 
     <div class="player">
-      <player-bg />
+      <player-bg/>
       <v-text-field
-        v-if="app.editor.section"
+        v-if="section"
         class="bpm-field"
-        v-model="app.editor.section.bpm"
+        v-model="section.bpm"
         label="Speed"
         type="number"
         min="30"
         max="300"
-        suffix="bpm">
-      </v-text-field>
+        suffix="bpm"
+      />
       <v-btn
         icon
         class="play"
         @click="togglePlayback()">
         <!-- <icon :name="$player.playing ? 'pause' : 'play'" /> -->
-        <icon :name="app.aplayer && app.aplayer.playing ? 'pause' : 'play'" />
+        <icon :name="$player && $player.playing ? 'pause' : 'play'" />
       </v-btn>
 
       <v-btn
@@ -124,8 +128,8 @@
       v-model="app.editor.sectionIndex"
       item-text="name"
       item-value="id"
-      hide-details>
-    </v-select>
+      hide-details
+    />
 
     <template v-if="app.mode === 'viewer'">
       <v-select
@@ -135,8 +139,8 @@
         v-model="app.viewer.playlist"
         item-text="name"
         :return-object="true"
-        hide-details>
-      </v-select>
+        hide-details
+      />
       <v-btn
         icon
         :class="{'primary--text': app.viewer.playlistEditor}"
@@ -144,6 +148,16 @@
         <icon name="playlist-edit"/>
       </v-btn>
     </template>
+
+<!--     <v-menu>
+      <v-btn slot="activator" icon>
+        <icon name="menu-dots" />
+      </v-btn>
+      <v-list dense>
+        <v-list-tile>
+        </v-list-tile>
+      </v-list>
+    </v-menu> -->
   </v-toolbar>
 </template>
 
@@ -153,17 +167,27 @@ import TrackVolumeField from './TrackVolumeField'
 
 export default {
   components: { PlayerBg, TrackVolumeField },
-  props: ['app'],
-  inject: ['$player'],
   computed: {
+    app () {
+      return this.$store
+    },
+    project () {
+      return this.$service('project')
+    },
+    $player () {
+      return this.$service('player', ['playing'])
+    },
+    section () {
+      return this.$service('section')
+    },
     tracks () {
-      return this.app.project.tracks
+      return this.project.tracks
     },
     sections () {
-      return this.app.project.sections
+      return this.project.sections
     },
     playlists () {
-      return this.app.project.playlists
+      return this.project.playlists
     }
   },
   methods: {

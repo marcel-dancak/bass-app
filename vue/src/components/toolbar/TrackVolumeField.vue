@@ -1,7 +1,7 @@
 <template>
   <div class="layout row track-field">
     <label>
-      <icon :name="track.type" />
+      <icon :name="track.type" class="mr-1"/>
       <span>{{ track.name }}</span>
     </label>
     <v-slider
@@ -25,7 +25,6 @@
 <script>
 export default {
   props: ['track'],
-  inject: ['$player'],
   methods: {
     setVolume (value) {
       this.track.volume.value = value
@@ -61,9 +60,6 @@ export default {
       width: 1.25rem;
       height: 1.25rem;
     }
-  }
-
-  .input-group--slider {
   }
 
   .btn {
