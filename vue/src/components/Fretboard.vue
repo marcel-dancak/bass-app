@@ -20,19 +20,23 @@
           :key="fret"
           class="fret"
           :style="{ backgroundColor: Colors[note.octave] }"
-          @click="playNote(note, string, fret)"
+          @click="playSound(string, fretNote(note.name, note.octave, fret))"
         >
-          <label v-drag-sound="{start: e => initDrag(e, note.name, note.octave)}">
+          <label v-drag-sound="{start: e => initDrag(e, string, fretNote(note.name, note.octave, fret))}">
             {{ note.name }}<sub>{{ note.octave }}</sub>
           </label>
           <template v-if="note.flatName">
             <span>/</span>
-            <label v-drag-sound="{start: e => initDrag(e, note.flatName, note.octave)}">
+            <label v-drag-sound="{start: e => initDrag(e, string, fretNote(note.flatName, note.octave, fret))}">
               {{ note.flatName }}<sub>{{ note.octave }}</sub>
             </label>
           </template>
         </div>
-        <div class="fret ghost">x</div>
+        <div
+          class="fret ghost"
+          @click="playSound(string, ghostNote())"
+          v-drag-sound="{start: e => initDrag(e, string, ghostNote())}"
+        />
       </div>
     </div>
     <v-layout class="settings">
@@ -146,21 +150,32 @@ export default {
       }
       return notes
     },
-    fretSound (note, octave) {
+    fretNote (note, octave, fret) {
+      return {
+        type: 'regular',
+        name: note,
+        octave,
+        fret,
+        length: this.length,
+        dotted: false
+      }
+    },
+    ghostNote () {
+      return {
+        type: 'ghost',
+        length: 16
+      }
+    },
+    stringSound (string, note) {
       return {
         style: this.style,
         volume: 0.75,
-        note: {
-          type: 'regular',
-          name: note,
-          octave: octave,
-          length: this.length,
-          dotted: false
-        }
+        string,
+        note
       }
     },
-    initDrag (e, note, octave) {
-      const sound = this.fretSound(note, octave)
+    initDrag (e, string, note) {
+      const sound = this.stringSound(string, note)
       const style = {
         left: '-10px',
         top: (-e.target.offsetHeight / 2) + 'px'
@@ -179,10 +194,8 @@ export default {
         }
       }
     },
-    async playNote (note, string, fret) {
-      const sound = this.fretSound(note.name, note.octave)
-      sound.string = string
-      sound.note.fret = fret
+    async playSound (string, note) {
+      const sound = this.stringSound(string, note)
       sound.start = 0
       sound.end = 1
       const { instrument, audio } = this.$player.tracks.bass_0
@@ -250,6 +263,9 @@ export default {
         background-color: #ccc;
         max-width: 3em;
         min-width: 3em;
+        &:before {
+          content: "x";
+        }
       }
       label {
         flex: 1;
