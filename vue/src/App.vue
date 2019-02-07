@@ -45,42 +45,6 @@ import data3 from './data/AnotherDayInParadise'
 // const data = {}
 
 
-const shared = {
-  player: { playing: false }
-}
-
-shared.install = function (Vue, options) {
-  // Object.defineProperty(Vue.prototype, '$test', {
-  //   get () { return shared }
-  // })
-
-  Vue.mixin({
-    beforeCreate () {
-      this.$test = shared
-      if (this.$options.context) {
-        const variable = this.$options.context[0]
-        let parent = this.$parent
-        let i = 0
-        // while (parent !== this.$root)
-        while (i++ < 50) {
-          if (parent.$data[variable] !== undefined) {
-            console.log('watch ', variable)
-            parent.$watch(variable, (n, o) => {
-              console.log('updated', n)
-            })
-          }
-          if (parent === this.$root) {
-            break
-          }
-          parent = parent.$parent
-        }
-      }
-    }
-  })
-}
-
-// Vue.use(shared)
-
 const NoteLabelOptions = [
   {
     name: 'Name',
@@ -93,13 +57,6 @@ const NoteLabelOptions = [
     value: ''
   }
 ]
-
-// const store = {}
-// const vm = {}
-// Vue.util.defineReactive(vm, 'store', store)
-// return vm.store.$project
-// Vue.set(vm.store, '$project', Project(data))
-// vm.store.__ob__.dep.notify()
 
 export default {
   name: 'App',
@@ -131,8 +88,13 @@ export default {
   },
   watch: {
     $project: {
-      immediate: true,
-      handler (project) {
+      // immediate: true,
+      handler (project, old) {
+        // console.log('$project wacher', project === old)
+        if (project === old) {
+          console.log('same project, skipping')
+          return
+        }
         if (!project) {
           return
         }
@@ -142,8 +104,10 @@ export default {
           // Vue.set(this.app.viewer, 'playlist', project.playlists[0])
         }
         this.app.track = project.tracks[0]
-        if (this.$player) {
-          this.$player.context.close()
+        if (this.$player && this.$player.context) {
+          try {
+            // this.$player.context.close()
+          } catch (ex) {}
         }
         const player = this.createPlayer(project)
         this.$createService(player, 'player')
@@ -153,7 +117,7 @@ export default {
     song: {
       immediate: true,
       handler (song) {
-        const data = this.songs.find(s => s.name === song).data
+        const data = JSON.parse(JSON.stringify(this.songs.find(s => s.name === song).data))
         this.$createService(Project(data), 'project')
       }
     }

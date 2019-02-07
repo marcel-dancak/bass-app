@@ -61,9 +61,10 @@ new Vue({
   render: h => h(App),
   created () {
     Vue.prototype.$store = this.$data
-    Vue.util.defineReactive(this, 'services', {})
+    // Vue.util.defineReactive(this, 'services', {})
+    // this.services = {}
     if (process.env.NODE_ENV === 'development') {
-      this.$data.$services = this.services
+      // this.$data.$services = this.services
     }
   }
 })

@@ -184,7 +184,7 @@ export default {
     $section () {
       if (this.app.editor.sectionIndex !== null) {
         const section = Section(this.$project.getSectionData(this.app.editor.sectionIndex))
-        return this.$createService(section, 'section')
+        return this.$createService(section, 'section', ['bpm', 'timeSignature'])
       }
       return null
     },
@@ -201,8 +201,10 @@ export default {
       let sectionTrack = this.$section.tracks[this.app.track.id]
       if (!sectionTrack) {
         sectionTrack = this.$section.addTrack(this.app.track.id, [])
-        Vue.util.defineReactive(sectionTrack, 'beats')
+        // Vue.util.defineReactive(sectionTrack, 'beats')
       }
+      Vue.util.defineReactive(sectionTrack, 'beats')
+      // console.log(sectionTrack.beats)
       return sectionTrack.beats
     },
     trackEditor () {
@@ -327,7 +329,7 @@ export default {
               indexes.push(i)
             }
           })
-          Array.prototype.push.apply(sounds, indexes.map(i => beatComp.$props.beat.data[i]))
+          sounds.push(...indexes.map(i => beatComp.$props.beat.data[i]))
         }
       })
       this.trackEditor.selection = sounds

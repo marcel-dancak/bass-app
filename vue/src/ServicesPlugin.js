@@ -1,23 +1,38 @@
 
 export default {
   install (Vue, options) {
-    Vue.prototype.$createService = function (obj, param, bindings = []) {
+    const services = {}
+    const vm = {}
 
-      // this.$root.services[param] = obj
-      Vue.set(this.$root.services, param, obj, null, true)
-      Vue.util.defineReactive(this.$root.services, param, obj, null, true)
+    Vue.util.defineReactive(vm, 'services', services)
+
+    function setProperty (target, key, val) {
+      if (key in target && !(key in Object.prototype)) {
+        target[key] = val
+        return val
+      }
+      const ob = target.__ob__
+      if (!ob) {
+        target[key] = val
+        return val
+      }
+      // Vue.util.defineReactive(ob.value, key, val)
+      Vue.util.defineReactive(ob.value, key, val, null, true)
+      ob.dep.notify()
+    }
+
+    Vue.prototype.$createService = function (obj, param, bindings = []) {
+      // Vue.set(vm.services, param, obj)
+      setProperty(vm.services, param, obj)
       bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
+      // console.log(param, obj)
       return obj
     }
 
     Vue.prototype.$service = function (name, bindings = []) {
-      // console.log('## $service', name)
-      const obj = this.$root.services[name] || null
-      if (obj) {
-        bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
-        return obj
-      }
-      return null // this.$root.services[name]
+      const obj = vm.services[name]
+      bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
+      return obj
     }
   }
 }
