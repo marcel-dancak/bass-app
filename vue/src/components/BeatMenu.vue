@@ -5,55 +5,101 @@
     <v-menu offset-x open-on-hover full-width>
       <v-list-tile slot="activator">
         <v-list-tile-title>Subdivision</v-list-tile-title>
-        <v-list-tile-action class="justify-end">
-          <v-icon small>play_arrow</v-icon>
-        </v-list-tile-action>
+        <v-icon small>play_arrow</v-icon>
       </v-list-tile>
       <v-list dense>
         <v-list-tile @click="setSubdivision(4)">
           <v-list-tile-title>Standard</v-list-tile-title>
+          <v-icon v-if="beat.subdivision === 4">check</v-icon>
         </v-list-tile>
         <v-list-tile @click="setSubdivision(3)">
           <v-list-tile-title>Triplet</v-list-tile-title>
+          <v-icon v-if="beat.subdivision === 3">check</v-icon>
         </v-list-tile>
       </v-list>
     </v-menu>
 
-<!--     <v-list-tile>
-      Comment
-    </v-list-tile> -->
-
     <text-separator>Bar</text-separator>
-    <v-list-tile>
+
+    <v-list-tile @click="copy(beat.bar)">
       Copy
     </v-list-tile>
-    <v-list-tile>
+    <v-list-tile
+      :disabled="!clipboard"
+      @click="paste(beat.bar)"
+    >
       Paste
     </v-list-tile>
-    <v-list-tile @click="clear">
+    <v-list-tile @click="clear(beat.bar)">
       Clear
     </v-list-tile>
   </v-list>
 </template>
 
 <script>
+
+let clipboard = null
+
 export default {
+  name: 'beat-menu',
   props: {
     beat: Object
   },
+  computed: {
+    track () {
+      return this.$store.track
+    },
+    clipboard () {
+      return clipboard && clipboard.instrument === this.track.type
+    },
+    $section () {
+      return this.$service('section')
+    },
+    $trackSection () {
+      return this.$section.tracks[this.track.id]
+    }
+  },
   methods: {
-    setSubdivision (subdivision) {
-      this.beat.subdivision = subdivision
+    close () {
       this.$emit('close')
     },
-    clear () {
-      console.log(this.beat)
-      this.beat.data = []
+    setSubdivision (subdivision) {
+      this.beat.subdivision = subdivision
+      this.close()
+    },
+    copy (bar) {
+      const data = this.$trackSection.beats.filter(b => b.bar === bar)
+      clipboard = {
+        instrument: this.track.type,
+        data: JSON.stringify(data)
+      }
+      this.close()
+    },
+    paste (bar) {
+      const data = JSON.parse(clipboard.data)
+      data.forEach(beat => { beat.bar = bar })
+      this.$trackSection.loadBeats(data)
+      this.close()
+    },
+    clear (bar) {
+      this.$trackSection.beats
+        .filter(b => b.bar === bar)
+        .forEach(b => this.$trackSection.clearBeat(b))
+
+      this.close()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.list {
+  min-width: 160px;
 
+  /deep/ .menu__activator {
+    .list__tile {
+      padding-right: 0.25em;
+    }
+  }
+}
 </style>

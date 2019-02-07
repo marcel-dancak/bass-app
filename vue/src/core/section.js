@@ -179,7 +179,7 @@ export class BaseTrackSection {
   loadBeats (beats) {
     beats.forEach(beat => {
       const destBeat = this.beat(beat.bar, beat.beat)
-      Array.prototype.push.apply(destBeat.data, beat.data)
+      destBeat.data.push(...beat.data)
       destBeat.data.forEach(sound => {
         Object.defineProperty(sound, 'beat', {value: destBeat, writable: true})
         this.initializeSound(sound)
