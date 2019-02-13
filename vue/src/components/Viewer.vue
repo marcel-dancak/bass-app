@@ -11,14 +11,17 @@
         slot="item"
         slot-scope="props"
         class="slide layout row"
-        swipeable>
+        swipeable
+      >
         <div
           v-for="item in props.item"
+          :key="item.position"
           class="beat layout column"
         >
           <beat-header
             :beat="item.beat"
-            :active="activeSection === `${ item.sectionId }_${ item.repeat }` ? activeSubbeat : ''"
+            :active="item.position === activeBeatId ? activeSubbeat : ''"
+            :xactive="activeSection === `${ item.sectionId }_${ item.repeat }` ? activeSubbeat : ''"
           />
           <div
             class="instrument"
@@ -61,7 +64,8 @@ export default {
       slidesPerView: 2,
       beatsPerSlide: 8,
       activeSubbeat: '',
-      activeSection: null
+      activeSection: null,
+      activeBeatId: -1
     }
   },
   computed: {
@@ -90,12 +94,11 @@ export default {
       return sections
     },
     slides () {
-      const project = this.app.project
       const track = this.app.track.id
       const slides = []
       let beats = []
+      let counter = 0
       this.playlist.items.forEach((item, index) => {
-
         const section = this.sections[item.section]
         const sBeats = section.tracks[track].beats
         for (let i = 1; i <= item.repeats; i++) {
@@ -106,6 +109,7 @@ export default {
               sectionId: item.section,
               repeat: i,
               playlistIndex: index,
+              position: counter++
             })
             if (beats.length === this.beatsPerSlide) {
               slides.push(beats)
@@ -133,76 +137,55 @@ export default {
       })
       return this.$player.fetchResources(Array.from(resources))
     },
-    play () {
+
+    async play () {
       if (this.$player.playing) {
         return this.stop()
       }
+      await this.fetchResources()
       const { swiper } = this.$refs
-      const startBeat = this.slides[swiper.index][0]
-      const start = {
-        bar: startBeat.beat.bar,
-        beat: startBeat.beat.beat
-      }
-      const startSlide = this.slides[swiper.index]
-      this.playbackPosition = {
-        slide: swiper.index,
-        slidePosition: 0,
-        item: startBeat
-      }
-      // this.activeSection = startBeat.sectionId + '_' + startBeat.repeat
-      this.fetchResources().then(() => {
-        this.$player.play(
-          startBeat.section,
-          (e) => {
-            this.activeSection = e.id
-            this.highlightBeat(e)
 
-            this.playbackPosition.slidePosition++
-            if (!this.app.player.screenLock && this.playbackPosition.slidePosition === this.beatsPerSlide) {
-              setTimeout(() => swiper.setIndex(swiper.index + 1), 200)
-              // swiper.setIndex(swiper.index + 1)
-            }
-            if (this.playbackPosition.slidePosition === this.beatsPerSlide) {
-              this.playbackPosition.slidePosition = 0
-              this.playbackPosition.slide++
-            }
-            // console.log(this.playbackPosition.slide, this.playbackPosition.slidePosition)
-            this.playbackPosition.item = this.slides[this.playbackPosition.slide][this.playbackPosition.slidePosition]
+      let playbackPosition = null
 
-            // const next = this.playbackPosition.item
-            // this.activeSection = next.sectionId + '_' + next.repeat
-            /*
-            // trigger animation on last beat of current slide
-            const beats = this.slides[swiper.index]
-            const index = beats.findIndex(item => item.beat.bar === e.bar && item.beat.beat === e.beat)
-            if (index === beats.length - 1) {
-              swiper.setIndex(swiper.index + 1)
-            }
-            */
-          },
-          { start, playbackEnd: this.sectionPlaybackEnd, id: startBeat.sectionId + '_' + startBeat.repeat }
-        )
+      const playbackBeat = (beat, index) => ({
+        section: beat.section,
+        bar: beat.beat.bar,
+        beat: beat.beat.beat,
+        index
       })
-    },
-    sectionPlaybackEnd () {
-      console.log('position', this.playbackPosition.slide, this.playbackPosition.slidePosition)
-      const next = this.playbackPosition.item
-      // this.activeSection = next.sectionId + '_' + next.repeat
-      return {
-        section: next.section,
-        bar: next.beat.bar,
-        beat: next.beat.beat,
-        id: next.sectionId + '_' + next.repeat
-      }
+      this.$player.playStream(
+        // next beat playback
+        (startTime) => {
+          const lastScreenBeatId = (swiper.index + this.slidesPerView) * this.beatsPerSlide - 1
+
+          if (!playbackPosition || (this.app.player.loopMode && playbackPosition.index === lastScreenBeatId)) {
+            // play from first beat on screen
+            const startBeat = this.slides[swiper.index][0]
+            return playbackBeat(startBeat, swiper.index * this.beatsPerSlide)
+          } else {
+            if (!this.app.player.loopMode && playbackPosition.index === lastScreenBeatId) {
+              return
+            }
+
+            // continue playback with next beat
+            const nextIndex = playbackPosition.index + 1
+            const slideIndex = parseInt(nextIndex / this.beatsPerSlide)
+            const beatIndex = nextIndex % this.beatsPerSlide
+
+            if (!this.app.player.screenLock && slideIndex !== swiper.index) {
+              swiper.setIndex(slideIndex)
+            }
+            return playbackBeat(this.slides[slideIndex][beatIndex], nextIndex)
+          }
+        },
+        (e) => {
+          this.highlightBeat(e)
+          playbackPosition = e
+        }
+      )
     },
     stop () {
       this.$player.stop()
-    },
-    playbackPosition (e) {
-      for (let i = 0; i < this.slidesPerView; i++) {
-        const slide = this.slides[swiper.index]
-        // slide.findIndex(item => item.section === && item.beat.bar === e.bar && item.beat.beat === e.beat)
-      }
     },
     highlightBeat (e) {
       const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
@@ -211,6 +194,7 @@ export default {
 
       for (let i = 0; i < beat.subdivision; i++) {
         setTimeout(() => {
+          this.activeBeatId = e.index
           this.activeSubbeat = `${e.bar}:${e.beat}:${i + 1}`
         }, delay)
         delay += subbeatTime

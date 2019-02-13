@@ -241,21 +241,48 @@ export default {
       if (this.$player.playing) {
         return this.stop()
       }
-      const swiper = this.$refs.swiper
 
-      const startBeat = this.beats[swiper.index]
-      const start = {
-        bar: startBeat.bar,
-        beat: startBeat.beat
-      }
+      const swiper = this.$refs.swiper
 
       const resources = this.$player.collectResources(this.$section)
       await this.$player.fetchResources(resources)
 
-      this.$player.play(
-        this.$section,
-        // beat playback prepared
-        (e) => {
+      let lastBeat = null
+      this.$player.playStream(
+        // next beat playback
+        (startTime) => {
+          let isOnEnd = false
+
+          if (lastBeat && this.app.player.screenLock) {
+            let endIndex = swiper.index + this.slidesPerView - 1
+            if (endIndex >= this.beats.length) {
+              endIndex -= this.beats.length
+            }
+            const endBeat = this.beats[endIndex]
+            isOnEnd = (lastBeat.bar === endBeat.bar && lastBeat.beat === endBeat.beat)
+          }
+          if (!lastBeat || (isOnEnd && this.app.player.loopMode)) {
+            const startBeat = this.beats[swiper.index]
+            return {
+              section: this.$section,
+              bar: startBeat.bar,
+              beat: startBeat.beat
+            }
+          } else if (!isOnEnd) {
+            let { bar, beat } = lastBeat
+            beat++
+            if (beat > this.timeSignature.top) {
+              beat = 1
+              bar++
+              if (bar > this.$section.length) {
+                bar = 1
+              }
+            }
+            return { section: this.$section, bar, beat }
+          }
+        },
+        // beat prepared callback
+        e => {
           this.highlightBeat(e)
           if (!this.app.player.screenLock) {
             const beat = e.section.tracks[this.app.track.id].beat(e.bar, e.beat)
@@ -264,29 +291,10 @@ export default {
               nextIndex += this.beats.length
             }
             swiper.setIndex(nextIndex)
-          } else {
-            const lastIndex = swiper.index + this.slidesPerView - 1
-            const last = this.beats[lastIndex]
-            if (e.bar + e.beat / 100 >= last.bar + last.beat / 100) {
-              e.stop = true
-            }
           }
-        },
-        { start, playbackEnd: this.playbackEnd }
-      )
-      // this.$player.export(this.$section)
-    },
-    playbackEnd () {
-      if (this.app.player.loopMode) {
-        const swiper = this.$refs.swiper
-        const beatIndex = this.app.player.screenLock ? swiper.index : 0
-        const firstBeat = this.beats[beatIndex]
-        return {
-          section: this.$section,
-          bar: firstBeat.bar,
-          beat: firstBeat.beat
+          lastBeat = e
         }
-      }
+      )
     },
     stop () {
       this.$player.stop()
