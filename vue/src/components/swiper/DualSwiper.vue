@@ -105,7 +105,6 @@ export default {
   .instrument-panel {
     position: relative;
     min-width: 3em;
-    background-color: #fff;
     z-index: 1;
   }
 }

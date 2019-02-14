@@ -32,9 +32,7 @@
       content-class="audio-preferences"
       :close-on-content-click="false"
     >
-      <v-btn
-        icon
-        slot="activator">
+      <v-btn icon slot="activator">
         <icon name="volume-medium"/>
       </v-btn>
       <div class="layout column">
@@ -63,23 +61,25 @@
       <v-btn
         icon
         class="play"
-        @click="togglePlayback()">
-        <!-- <icon :name="$player.playing ? 'pause' : 'play'" /> -->
-        <icon :name="$player && $player.playing ? 'pause' : 'play'" />
+        @click="togglePlayback()"
+      >
+        <icon :name="$player && $player.playing ? 'pause' : 'play'"/>
       </v-btn>
 
       <v-btn
         icon
         class="separated"
-        @click="$bus.$emit('playerBack')">
-        <icon name="back" />
+        @click="$bus.$emit('playerBack')"
+      >
+        <icon name="back"/>
       </v-btn>
 
       <v-btn
         icon
         class="separated"
         :class="{'primary--text': app.player.countdown}"
-        @click="app.player.countdown = !app.player.countdown">
+        @click="app.player.countdown = !app.player.countdown"
+      >
         <icon name="countdown" />
       </v-btn>
 
@@ -89,8 +89,9 @@
         icon
         class="separated"
         :class="{'primary--text': app.player.loopMode}"
-        @click="app.player.loopMode = !app.player.loopMode">
-        <icon name="loop" />
+        @click="app.player.loopMode = !app.player.loopMode"
+      >
+        <icon name="loop"/>
       </v-btn>
 
       <v-btn
@@ -102,20 +103,22 @@
       </v-btn>
     </div>
 
-    <v-spacer />
+    <v-spacer/>
 
     <div class="mode-switch">
       <label>Mode</label>
       <v-btn
         icon
         :class="{'primary--text': app.mode === 'editor'}"
-        @click="app.mode = 'editor'">
-        <icon name="section-mode" />
+        @click="app.mode = 'editor'"
+      >
+        <icon name="section-mode"/>
       </v-btn>
       <v-btn
         icon
         :class="{'primary--text': app.mode === 'viewer'}"
-        @click="app.mode = 'viewer'">
+        @click="app.mode = 'viewer'"
+      >
         <icon name="playlist-mode" />
       </v-btn>
     </div>
@@ -144,20 +147,36 @@
       <v-btn
         icon
         :class="{'primary--text': app.viewer.playlistEditor}"
-        @click="app.viewer.playlistEditor = !app.viewer.playlistEditor">
+        @click="app.viewer.playlistEditor = !app.viewer.playlistEditor"
+      >
         <icon name="playlist-edit"/>
       </v-btn>
     </template>
 
-<!--     <v-menu>
-      <v-btn slot="activator" icon>
+    <v-menu :min-width="180" left>
+      <v-btn slot="activator" class="mr-0" icon>
         <icon name="menu-dots" />
       </v-btn>
       <v-list dense>
+        <text-separator>Project</text-separator>
+        <v-list-tile @click="$bus.$emit('newProject')">
+          New
+        </v-list-tile>
+        <v-list-tile @click="$bus.$emit('openProject')">
+          Open
+        </v-list-tile>
+        <text-separator>Section</text-separator>
         <v-list-tile>
+          New
+        </v-list-tile>
+        <v-list-tile>
+          Save As...
+        </v-list-tile>
+        <v-list-tile>
+          Delete
         </v-list-tile>
       </v-list>
-    </v-menu> -->
+    </v-menu>
   </v-toolbar>
 </template>
 

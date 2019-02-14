@@ -153,12 +153,13 @@ export default {
   .input-group--select .input-group__selections__comma {
     font-size: 0.938em;
   }
-  .btn--icon {
+  .btn.btn--icon {
     margin: 0.7em 0;
     padding: 0;
     font-size: 1em;
     width: 1.5em;
     height: 1.5em;
+    color: #777;
     .icon {
       width: 1.5em;
       height: 1.5em;

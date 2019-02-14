@@ -126,6 +126,7 @@ export default {
     this.$root.constructor.prototype.$bus = new Vue()
     this.labelOptions = NoteLabelOptions
     // this.constructor.prototype.$player = player
+    this.$bus.$on('newProject', this.newProject)
   },
   beforeDestroy () {
     this.$player.context.close()
@@ -156,8 +157,53 @@ export default {
         id: 'piano_1',
         instrument: Piano({ preset: 'acoustic' })
       })
-      player.tracks.piano_0.audio.gain.value = project.track('piano_0').volume.value
+      if (project.audioTrack) {
+        player.addAudioTrack(project.audioTrack)
+      }
+      // player.tracks.piano_0.audio.gain.value = project.track('piano_0').volume.value
       return player
+    },
+    newProject () {
+      const data = {
+        name: "",
+        index: [],
+        tracks: [
+          {
+            type: "bass",
+            volume: {
+              muted: false,
+              value: 5.65
+            },
+            name: "Bass",
+            strings: "EADG",
+            tuning: [0,0,0,0],
+            muted: false,
+            solo: true
+          }, {
+            type: "drums",
+            volume: {
+              muted: false,
+              value: 1
+            },
+            kit: "Drums",
+            name: "Drums",
+            solo: false
+          }
+        ],
+        sections: [],
+        playlists: []
+      }
+      const project = Project(data)
+      project.addSection({
+        name: 'New Section',
+        bpm: 80,
+        timeSignature: {
+          top: 4,
+          bottom: 4
+        },
+        length: 2
+      })
+      this.$createService(project, 'project')
     }
   }
 }

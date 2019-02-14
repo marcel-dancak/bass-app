@@ -157,7 +157,8 @@ export default {
         octave,
         fret,
         length: this.length,
-        dotted: false
+        dotted: false,
+        staccato: false
       }
     },
     ghostNote () {

@@ -48,6 +48,8 @@
               type="number"
               min="1"
               max="24"
+              :value="$section.length"
+              @input="$section.setLength(parseInt($event))"
               hide-details
             />
           </div>
@@ -89,26 +91,6 @@
         v-if="app.track.type === 'bass'"
         :instrument="app.track"
       />
-<!--       <div
-        slot="item"
-        slot-scope="props"
-        class="beat"
-        :class="{first: props.item.beat === 1}">
-        <beat-header
-          swipeable
-          :beat="props.item"
-          :active="activeSubbeat"
-        />
-        <div
-          :is="beatComponent"
-          class="instrument"
-          :beat="props.item"
-          :editor="trackEditor"
-          :instrument="app.track"
-          :display="app.label"
-          @contextmenu="soundContextMenu"
-        />
-      </div> -->
       <div
         slot="instrument"
         :is="instrumentComponent"
@@ -125,7 +107,6 @@ import Vue from 'vue'
 import BassEditor from '../core/bass-editor'
 import DrumEditor from '../core/drum-editor'
 import PianoEditor from '../core/piano-editor'
-// import Swiper from './swiper/Swiper'
 import Swiper from './swiper/DualSwiper'
 
 import MouseSelector from './MouseSelector'
@@ -162,12 +143,20 @@ const InstrumentComponents = {
 export default {
   name: 'editor',
   components: {
-    Swiper, MouseSelector, BeatHeader, ContextMenu,
-    BassBeat, BassSoundForm, BassStrings, Fretboard,
-    DrumBeat, Drums, PianoBeat, Keyboard,
+    Swiper,
+    MouseSelector,
+    BeatHeader,
+    ContextMenu,
+    BassBeat,
+    BassSoundForm,
+    BassStrings,
+    Fretboard,
+    DrumBeat,
+    Drums,
+    PianoBeat,
+    Keyboard,
     BeatMenu
   },
-  context: ['aplayer'],
   data () {
     return {
       slidesPerView: 8,
@@ -399,7 +388,7 @@ export default {
   .header-panel {
     position: relative;
     .mask {
-      background-color: #fff;
+      background-color: #fafafa;
       position: absolute;
       left: 0;
       &.top {
@@ -425,6 +414,9 @@ export default {
         text-align: center;
       }
     }
+  }
+  .instrument-panel {
+    background-color: #fafafa;
   }
 }
 

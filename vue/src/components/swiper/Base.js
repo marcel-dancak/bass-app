@@ -40,7 +40,6 @@ export default {
   },
   computed: {
     slideStyle () {
-      console.log(this.direction)
       if (this.direction === 'horizontal') {
         return { width: this.slideSize + 'px', minWidth: this.slideSize + 'px' }
       }

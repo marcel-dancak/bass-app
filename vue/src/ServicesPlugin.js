@@ -1,10 +1,17 @@
 
 export default {
   install (Vue, options) {
+
     const services = {}
     const vm = {}
-
     Vue.util.defineReactive(vm, 'services', services)
+
+    Vue.prototype.$services = services
+    // Vue.mixin({
+    //   created () {
+    //     this.$services = services
+    //   }
+    // })
 
     function setProperty (target, key, val) {
       if (key in target && !(key in Object.prototype)) {

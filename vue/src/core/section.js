@@ -431,6 +431,7 @@ export function Section (params) {
     bpm: params.bpm,
     timeSignature: params.timeSignature,
     length: params.length,
+    audioTrack: params.audioTrack,
     tracks,
     // addBass (id, data) {
     //   const track = new NotesTrackSection(params, data)
@@ -458,7 +459,6 @@ export function Section (params) {
     },
 
     setTimeSignature (top, bottom) {
-      console.log('setTimeSignature')
       this.timeSignature.top = top
       this.timeSignature.bottom = bottom
       Object.values(this.tracks).forEach(t => {
@@ -474,6 +474,14 @@ export function Section (params) {
         if (t.soundDuration) {
           t.forEachSound(s => s.end = s.start + t.soundDuration(s))
         }
+      })
+    },
+
+    setLength (bars) {
+      section.length = bars
+      Object.values(tracks).forEach(track => {
+        track.section.length = bars
+        track.forEachBeat(() => {}) // this will initialize missing beats
       })
     }
   }

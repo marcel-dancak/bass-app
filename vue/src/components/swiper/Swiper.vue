@@ -28,10 +28,12 @@
         ref="slides"
         :key="i"
         :style="slideStyle"
-        :class="{last: i === items.length - 1}">
+        :class="{last: i === items.length - 1}"
+      >
         <slot
           name="item"
           :item="item"
+          :index="i"
           v-if="i >= visible.first && i <= visible.last">
         </slot>
       </swiper-slide>

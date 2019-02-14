@@ -64,7 +64,9 @@ new Vue({
     // Vue.util.defineReactive(this, 'services', {})
     // this.services = {}
     if (process.env.NODE_ENV === 'development') {
-      // this.$data.$services = this.services
+      // this.$data.$services = this.$services
+      this.$options.computed = this.$options.computed || {}
+      this.$options.computed.$services = this.$services
     }
   }
 })
