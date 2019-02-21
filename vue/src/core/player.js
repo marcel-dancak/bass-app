@@ -27,12 +27,21 @@ export default function Player (context) {
       stream.autoplay = false
       stream.preload = 'none'
       this.audioTrack = {
+        playing: false,
         play (offset = 0) {
+          this.playing = true
           stream.currentTime = offset
           return stream.play()
         },
         stop () {
+          this.playing = false
           stream.pause()
+        },
+        get currentTime() {
+          return stream.currentTime
+        },
+        set currentTime(value) {
+          stream.currentTime = value
         }
       }
     },
@@ -55,89 +64,6 @@ export default function Player (context) {
       })
     },
 
-    playBeat (section, bar, beat, startTime, opts) {
-      if (!this.playing) {
-        return
-      }
-      // console.log('playBeat', bar, beat, startTime)
-      const beatTime = 60 / (section.bpm * this.playbackSpeed)
-      // Object.values(section.tracks).forEach(track => {})
-
-      for (let id in section.tracks) {
-        const sTrack = section.tracks[id]
-        if (!tracks[sTrack.id]) continue // Temporary check
-
-        const { instrument, audio } = tracks[sTrack.id]
-        sTrack.beatSounds(sTrack.beat(bar, beat)).forEach(sound => {
-          const startAt = startTime + (sound.start * beatTime)
-          instrument.playSound(audio, sound, startAt, beatTime)
-        })
-      }
-
-      const evt = {
-        id: opts.id,
-        section,
-        bar,
-        beat,
-        startTime,
-        eventTime: context.currentTime,
-        endTime: startTime + beatTime,
-        duration: beatTime
-        // playbackActive: !isPlaybackEnd,
-        // playbackStart: playbackStart
-      }
-      this.beatPreparedCb(evt)
-
-      if (this.playing) {
-        if (!evt.stop) {
-          beat++
-          if (beat > section.timeSignature.top) {
-            beat = 1
-            bar++
-          }
-        }
-        if (evt.stop || bar > section.length) {
-          const next = opts.playbackEnd ? opts.playbackEnd() : null
-          if (!next) {
-            setTimeout(
-              // () => { this.playing = false },
-              () => this.stop(),
-              (evt.endTime - evt.eventTime) * 1000
-            )
-            return
-          }
-          section = next.section || section
-          bar = next.bar
-          beat = next.beat
-          opts.id = next.id || opts.id
-        }
-
-        setTimeout(
-          () => this.playBeat(section, bar, beat, evt.endTime, opts),
-          (evt.endTime - evt.eventTime - 0.15) * 1000
-        )
-      }
-    },
-
-    async play (section, beatPrepared, opts = {}) {
-      this.playing = true
-      let bar = opts.start ? opts.start.bar : 1
-      let beat = opts.start ? opts.start.beat : 1
-
-      if (this.audioTrack && section.audioTrack) {
-        const [min, sec, mili] = section.audioTrack.start
-        let start = min * 60 + sec + mili / 1000
-        const beatsOffset = (bar - 1) * section.timeSignature.top + beat - 1
-        const beatTime = 60 / section.bpm
-        start += beatsOffset * beatTime
-        await this.audioTrack.play(start)
-      }
-      this.beatPreparedCb = beatPrepared
-      // const endCallback = opts.playbackEnd || (() => {})
-      // await this.fetchResources(section)
-      this.playBeat(section, bar, beat, context.currentTime, opts)
-    },
-
     stop () {
       this.playing = false
       if (this.audioTrack) {
@@ -145,8 +71,10 @@ export default function Player (context) {
       }
     },
 
-
-    playBeat2 (next, startTime, opts) {
+    async playBeat (next, startTime, opts) {
+      if (!this.playing) {
+        return
+      }
       const params = next(startTime, beatTime)
       if (!params) {
         this.stop()
@@ -155,6 +83,29 @@ export default function Player (context) {
 
       const { section, bar, beat } = params
       const beatTime = 60 / (section.bpm * this.playbackSpeed)
+
+      if (this.audioTrack && section.audioTrack) {
+        const [min, sec, mili] = section.audioTrack.start
+        let start = min * 60 + sec + mili / 1000
+        const beatsOffset = (bar - 1) * section.timeSignature.top + beat - 1
+        const beatTime = 60 / section.bpm
+        start += beatsOffset * beatTime
+
+        if (!this.audioTrack.playing) {
+          await this.audioTrack.play(start) // expect (startTime === context.currentTime) here
+          if (startTime < context.currentTime) {
+            startTime = context.currentTime
+          }
+        } else {
+          const diff = Math.abs(start - this.audioTrack.currentTime)
+          if (diff > 0.35) {
+            setTimeout(
+              () => { this.audioTrack.currentTime = start },
+              1000 * (startTime - context.currentTime)
+            )
+          }
+        }
+      }
 
       for (let id in section.tracks) {
         const sTrack = section.tracks[id]
@@ -175,19 +126,16 @@ export default function Player (context) {
         duration: beatTime
       }
       this.beatPreparedCb(evt)
-
-      if (this.playing) {
-        setTimeout(
-          () => this.playBeat2(next, evt.endTime, opts),
-          (evt.endTime - evt.eventTime - 0.15) * 1000
-        )
-      }
+      setTimeout(
+        () => this.playBeat(next, evt.endTime, opts),
+        (evt.endTime - evt.eventTime - 0.15) * 1000
+      )
     },
 
     async playStream (next, beatPrepared, opts = {}) {
       this.playing = true
       this.beatPreparedCb = beatPrepared
-      this.playBeat2(next, context.currentTime, opts)
+      this.playBeat(next, context.currentTime, opts)
     },
 
     async export (section) {
