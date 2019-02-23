@@ -1,0 +1,15 @@
+/* Slide from the right */
+.r-slide-enter-active, .r-slide-leave-active {
+  transition: transform .4s cubic-bezier(.25,.8,.5,1)!important;
+}
+.r-slide-enter, .r-slide-leave-to {
+  transform: translate3d(100%, 0, 0);
+}
+
+/* Slide from the bottom */
+.b-slide-enter-active, .b-slide-leave-active {
+  transition: transform .4s cubic-bezier(.25,.8,.5,1)!important;
+}
+.b-slide-enter, .b-slide-leave-to {
+  transform: translate3d(0, 100%, 0);
+}

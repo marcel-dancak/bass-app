@@ -1,0 +1,42 @@
+.beat {
+  .instrument, .beat-header {
+    &:before {
+      content: "";
+      position: absolute;
+      background-color: #aaa;
+      pointer-events: none;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 1px;
+      z-index: 1;
+    }
+  }
+  .beat-header:before {
+    height: 70%;
+    width: 2px;
+  }
+  &.first {
+    .beat-header:before, .instrument:before {
+      width: 3px;
+      left: -1px;
+    }
+  }
+  &:last-of-type, &.last {
+    .beat-header:after, .instrument:after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 1px;
+      border: solid #aaa;
+      border-width: 0 2px;
+    }
+    .beat-header:after {
+      height: 70%;
+    }
+    .instrument:after {
+      bottom: 0;
+    }
+  }
+}

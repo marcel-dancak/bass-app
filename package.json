@@ -1,0 +1,37 @@
+{
+  "name": "bass-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "audiobuffer-to-wav": "^1.0.0",
+    "file-saver": "^1.3.4",
+    "material-icons": "^0.2.3",
+    "simplebar": "^2.6.1",
+    "tonal": "^2.1.2",
+    "vue": "^2.5.21",
+    "vue-slicksort": "^1.1.3",
+    "vue-smooth-dnd": "^0.2.8",
+    "vuedraggable": "^2.17.0",
+    "vuetify": "^1.0.19"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.3.0",
+    "@vue/cli-plugin-eslint": "^3.3.0",
+    "@vue/cli-service": "^3.3.0",
+    "@vue/eslint-config-standard": "^4.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "svg-sprite-loader": "^4.1.3",
+    "svgo": "^1.1.1",
+    "svgo-loader": "^2.2.0",
+    "vue-template-compiler": "^2.5.21"
+  }
+}
