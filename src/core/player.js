@@ -26,8 +26,19 @@ export default function Player (context) {
       const stream = new Audio(config.source.resource)
       stream.autoplay = false
       stream.preload = 'none'
+
       this.audioTrack = {
         playing: false,
+        audio: {
+          gain: {
+            set value (value) {
+              stream.volume = value
+            },
+            get value () {
+              return stream.volume
+            }
+          }
+        },
         play (offset = 0) {
           this.playing = true
           stream.currentTime = offset
@@ -37,10 +48,10 @@ export default function Player (context) {
           this.playing = false
           stream.pause()
         },
-        get currentTime() {
+        get currentTime () {
           return stream.currentTime
         },
-        set currentTime(value) {
+        set currentTime (value) {
           stream.currentTime = value
         }
       }
@@ -75,7 +86,7 @@ export default function Player (context) {
       if (!this.playing) {
         return
       }
-      const params = next(startTime, beatTime)
+      const params = next(startTime)
       if (!params) {
         this.stop()
         return

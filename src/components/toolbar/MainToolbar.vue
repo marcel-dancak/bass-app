@@ -40,6 +40,15 @@
           v-for="track in tracks"
           :key="track.id"
           :track="track"
+          :icon="track.type"
+          :label="track.name"
+          :audio-track="$player.tracks[track.id]"
+        />
+        <track-volume-field
+          v-if="$project.audioTrack"
+          label="Audio Track"
+          :track="$project.audioTrack"
+          :audio-track="$player.audioTrack"
         />
       </div>
     </v-menu>
