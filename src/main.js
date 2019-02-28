@@ -38,7 +38,12 @@ new Vue({
   el: '#app',
   components: { App },
   data () {
+    const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
     return {
+      env: {
+        mobile,
+        desktop: !mobile
+      },
       player: {
         loopMode: false,
         loading: false,

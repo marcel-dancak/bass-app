@@ -233,4 +233,15 @@ html {
     height: 0.875em;
   }
 }
+
+@media (max-height: 720px) {
+  html {
+    font-size: 0.8335em!important;
+  }
+}
+@media (max-height: 600px) {
+  html {
+    font-size: 0.7em!important;
+  }
+}
 </style>

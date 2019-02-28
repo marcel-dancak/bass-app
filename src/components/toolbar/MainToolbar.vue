@@ -114,66 +114,84 @@
 
     <v-spacer/>
 
-    <div class="mode-switch">
-      <label>Mode</label>
-      <v-btn
-        icon
-        :class="{'primary--text': app.mode === 'editor'}"
-        @click="app.mode = 'editor'"
-      >
-        <icon name="section-mode"/>
-      </v-btn>
-      <v-btn
-        icon
-        :class="{'primary--text': app.mode === 'viewer'}"
-        @click="app.mode = 'viewer'"
-      >
-        <icon name="playlist-mode" />
-      </v-btn>
-    </div>
+    <template v-if="app.env.desktop">
+      <div class="mode-switch">
+        <label>Mode</label>
+        <v-btn
+          icon
+          :class="{'primary--text': app.mode === 'editor'}"
+          @click="app.mode = 'editor'"
+        >
+          <icon name="section-mode"/>
+        </v-btn>
+        <v-btn
+          icon
+          :class="{'primary--text': app.mode === 'viewer'}"
+          @click="app.mode = 'viewer'"
+        >
+          <icon name="playlist-mode" />
+        </v-btn>
+      </div>
 
-    <v-select
-      v-if="app.mode === 'editor'"
-      label="Section"
-      class="sections"
-      :items="sections"
-      v-model="app.editor.sectionIndex"
-      item-text="name"
-      item-value="id"
-      hide-details
-    />
+      <template v-if="app.mode === 'editor' && sectionIndex">
+        <select-edit
+          label="Section"
+          :items="sectionsItems"
+          item-text="name"
+          item-value="id"
+          v-model="app.editor.sectionIndex"
+          :edit.sync="sectionIndex.name"
+        />
+        <v-btn icon class="mr-0">
+          <icon name="save"/>
+        </v-btn>
+      </template>
 
-    <template v-if="app.mode === 'viewer'">
-      <v-select
-        label="Playlist"
-        class="playlists"
-        :items="playlists"
-        v-model="app.viewer.playlist"
-        item-text="name"
-        :return-object="true"
-        hide-details
-      />
-      <v-btn
-        icon
-        :class="{'primary--text': app.viewer.playlistEditor}"
-        @click="app.viewer.playlistEditor = !app.viewer.playlistEditor"
-      >
-        <icon name="playlist-edit"/>
-      </v-btn>
+      <template v-if="app.mode === 'viewer'">
+        <select-edit
+          label="Playlist"
+          class="playlists"
+          :items="playlists"
+          v-model="app.viewer.playlist"
+          item-text="name"
+          :return-object="true"
+          :edit.sync="app.viewer.playlist.name"
+        />
+        <v-btn
+          icon
+          class="mr-0"
+          :class="{'primary--text': app.viewer.playlistEditor}"
+          @click="app.viewer.playlistEditor = !app.viewer.playlistEditor"
+        >
+          <icon name="playlist-edit"/>
+        </v-btn>
+      </template>
     </template>
 
-    <v-menu :min-width="180" left>
+    <v-menu ref="menu" :min-width="180" left>
       <v-btn slot="activator" class="mr-0" icon>
-        <icon name="menu-dots" />
+        <icon name="menu-dots"/>
       </v-btn>
       <v-list dense>
+        <fullscreen-menu-item v-if="app.env.mobile"/>
         <text-separator>Project</text-separator>
         <v-list-tile @click="$bus.$emit('newProject')">
           New
         </v-list-tile>
-        <v-list-tile @click="$bus.$emit('openProject')">
+
+        <app-dialog :max-width="500" header="Open" full-width lazy>
+          <v-list-tile slot="activator" @click="closeMenu">Open</v-list-tile>
+          <local-projects/>
+        </app-dialog>
+
+<!--         <v-dialog :max-width="500" full-width>
+          <v-list-tile slot="activator" @click="closeMenu">Open</v-list-tile>
+          <local-projects/>
+        </v-dialog> -->
+
+<!--         <v-list-tile @click="$bus.$emit('openProject')">
           Open
-        </v-list-tile>
+        </v-list-tile> -->
         <text-separator>Section</text-separator>
         <v-list-tile>
           New
@@ -192,15 +210,19 @@
 <script>
 import PlayerBg from './PlayerBg'
 import TrackVolumeField from './TrackVolumeField'
+import LocalProjects from './LocalProjects'
+import FullscreenMenuItem from './FullscreenMenuItem'
+import SelectEdit from '@/components/SelectEdit'
+import AppDialog from '@/components/Dialog'
 
 export default {
-  components: { PlayerBg, TrackVolumeField },
+  components: { PlayerBg, TrackVolumeField, LocalProjects, AppDialog, SelectEdit, FullscreenMenuItem },
   computed: {
     app () {
       return this.$store
     },
-    project () {
-      return this.$service('project')
+    $project () {
+      return this.$service('project', ['tracks', 'audioTrack'])
     },
     $player () {
       return this.$service('player', ['playing'])
@@ -209,19 +231,26 @@ export default {
       return this.$service('section')
     },
     tracks () {
-      return this.project.tracks
+      return this.$project.tracks
     },
-    sections () {
-      return this.project.sections
+    sectionsItems () {
+      return this.$project.index
+    },
+    sectionIndex () {
+      return this.sectionsItems.find(s => s.id === this.app.editor.sectionIndex)
     },
     playlists () {
-      return this.project.playlists
+      return this.$project.playlists
     }
   },
   methods: {
     togglePlayback () {
       // $emit('playbackChange')
       this.$bus.$emit('playbackChange')
+    },
+    closeMenu () {
+      this.$refs.menu.isActive = false
+      // this.$refs.menu.$props.value = false
     }
   }
 }
@@ -287,7 +316,6 @@ export default {
   }
   .input-group--select {
     min-width: 180px;
-
   }
 
   .tracks {

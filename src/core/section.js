@@ -17,12 +17,16 @@ function detune (note, offset) {
   note.name = scale[index]
 }
 
-  // Math.random should be unique because of its seeding algorithm.
-  // Convert it to base 36 (numbers + letters), and grab the first 9 characters
-  // after the decimal.
-const randomId = () => Math.random().toString(36).substr(2, 7)
+// Math.random should be unique because of its seeding algorithm.
+// Convert it to base 36 (numbers + letters), and grab the first 9 characters
+// after the decimal.
+function randomId () {
+  return Math.random().toString(36).substr(2, 7)
+}
 
-const floatsEqual = (a, b) => (Math.abs(a - b) <= 0.01)
+function floatsEqual (a, b) {
+  return Math.abs(a - b) <= 0.01
+}
 
 export class BaseTrackSection {
   constructor (section, data) {
@@ -34,7 +38,7 @@ export class BaseTrackSection {
     this.data.forEach(beat => {
       beat.section = this
       beat.data.forEach(sound => {
-        Object.defineProperty(sound, 'beat', {value: beat, writable: true})
+        Object.defineProperty(sound, 'beat', { value: beat, writable: true })
 
         if (sound.hasOwnProperty('subbeat')) {
           sound.start = (sound.subbeat - 1) / beat.subdivision
@@ -86,6 +90,8 @@ export class BaseTrackSection {
 
   initializeSound (sound) {
     sound.id = randomId()
+    // vue reactivity
+    sound.muted = sound.muted || false
   }
 
   beat (bar, beat) {
@@ -159,7 +165,7 @@ export class BaseTrackSection {
   }
 
   addSound (beat, sound) {
-    Object.defineProperty(sound, 'beat', {value: beat, writable: true})
+    Object.defineProperty(sound, 'beat', { value: beat, writable: true })
     delete sound.offset
     this.initializeSound(sound)
     beat.data.push(sound)
@@ -181,7 +187,7 @@ export class BaseTrackSection {
       const destBeat = this.beat(beat.bar, beat.beat)
       destBeat.data.push(...beat.data)
       destBeat.data.forEach(sound => {
-        Object.defineProperty(sound, 'beat', {value: destBeat, writable: true})
+        Object.defineProperty(sound, 'beat', { value: destBeat, writable: true })
         this.initializeSound(sound)
       })
     })
@@ -276,7 +282,7 @@ export class NotesTrackSection extends BaseTrackSection {
     }
     const end = sound.start + this.soundDuration(sound)
     // sound.end = end
-    Object.defineProperty(sound, 'end', {value: end, writable: true, configurable: true, enumerable: false})
+    Object.defineProperty(sound, 'end', { value: end, writable: true, configurable: true, enumerable: false })
   }
 
   nextSoundPosition (sound) {
@@ -472,7 +478,7 @@ export function Section (params) {
         //   }
         // })
         if (t.soundDuration) {
-          t.forEachSound(s => s.end = s.start + t.soundDuration(s))
+          t.forEachSound(s => { s.end = s.start + t.soundDuration(s) })
         }
       })
     },

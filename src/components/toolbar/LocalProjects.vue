@@ -12,12 +12,10 @@
 
 <script>
 import ProjectStorage from '@/core/local-storage'
-import DialogHeader from '@/components/DialogHeader'
 import { LocalProject } from '@/core/project'
 
 export default {
   name: 'local-projects',
-  components: { DialogHeader },
   computed: {
     projects () {
       return ProjectStorage.projectsList()

@@ -42,31 +42,23 @@ export default {
   margin-top: 1.5em;
   height: 3em;
   min-height: 2.5em;
-  xflex-shrink: 0;
   box-sizing: content-box;
   color: #777;
   touch-action: none;
 
-  xbackground-color: #eee;
   > label {
     position: absolute;
     border-radius: 50%;
     background-color: #444;
     color: #fff;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    font-size: 14px;
+    width: 1.35em;
+    height: 1.35em;
+    line-height: 1.35em;
+    font-size: 0.85em;
     text-align: center;
-    top: -24px;
-    left: -9px;
-
-    /*
-    left: -2px;
-    width: auto;
-    min-width: 16px;
-    border-radius: 4px;
-    */
+    top: -1.7em;
+    left: -0.675em;
+    display: block;
   }
 
   .subbeat {
