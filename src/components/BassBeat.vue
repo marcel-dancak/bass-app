@@ -46,9 +46,10 @@
       </div>
     </template>
     <div
-      v-for="drop in dropItems"
-      class="drop-area"
+      v-for="(drop, index) in dropItems"
+      :key="index"
       :style="drop.style"
+      class="drop-area"
     />
   </div>
 </template>
@@ -114,7 +115,7 @@ export default {
       // console.log('over', evt.target, key)
       let record = this.dropItems.find(i => i.id === channel)
       if (!record) {
-        record = {id: channel, key}
+        record = { id: channel, key }
         this.dropItems.push(record)
       } else if (record.key === key) {
         // console.log('cached', key)
@@ -184,7 +185,8 @@ export default {
         } else if (sounds[0].beat) {
           sounds[0].beat.section.deleteSound(sounds[0])
         }
-        this.addSounds(sounds, string, {beat: this.beat, start: record.dropInfo.position.start})
+        this.addSounds(sounds, string, { beat: this.beat, start: record.dropInfo.position.start })
+        this.editor.selection.push(...sounds)
       }
       // this.dropItems = []
       if (record) {
@@ -195,6 +197,7 @@ export default {
       if (!this.editor.selection.includes(clickSound)) {
         this.editor.selection = [clickSound]
       }
+
       const roots = []
       this.editor.selection.forEach(s => {
         const rootSound = this.beat.section.rootSoundOf(s)
@@ -217,6 +220,7 @@ export default {
           }
         }
       })
+      this.editor.selection = [] // clear selection before drop
       this.editor.draggedSounds = draggedSounds
       const display = this.display
       return {
