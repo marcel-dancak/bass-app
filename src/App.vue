@@ -2,18 +2,13 @@
   <v-app @contextmenu.native.prevent>
     <div class="flex layout column" @contextmenu.prevent>
       <main-toolbar v-if="$player"/>
-
       <editor v-if="app.mode === 'editor'"/>
       <viewer v-else/>
-
-      <v-toolbar class="bottom-toolbar" :height="-1">
-        <v-select
-          :items="songs"
-          v-model="song"
-          item-text="name"
-          item-value="name"
-          hide-details
-        />
+      <v-toolbar
+        v-if="app.env.desktop"
+        class="bottom-toolbar"
+        :height="-1"
+      >
         <v-spacer/>
         <v-select
           :items="labelOptions"
@@ -29,20 +24,17 @@
 
 <script>
 import Vue from 'vue'
-import Player from './core/player'
-import Project from './core/project'
-import { PercussionInstrument, DrumKit, PercussionKit } from './core/percussion'
-import StringInstrument from './core/string-instrument'
-import Piano from './core/piano'
+import Player from '@/core/player'
+import Project from '@/core/project'
+import { LocalProject } from '@/core/project'
+import ProjectStorage from '@/core/local-storage'
+import { PercussionInstrument, DrumKit, PercussionKit } from '@/core/percussion'
+import StringInstrument from '@/core/string-instrument'
+import Piano from '@/core/piano'
 
 import MainToolbar from './components/toolbar/MainToolbar'
 import Editor from './components/Editor'
 import Viewer from './components/Viewer'
-
-import data from './data/Treasure.json'
-import data2 from './data/TheseDays.json'
-import data3 from './data/AnotherDayInParadise'
-// const data = {}
 
 
 const NoteLabelOptions = [
@@ -63,21 +55,9 @@ export default {
   components: {
     MainToolbar, Editor, Viewer
   },
-  data () {
-    return {
-      song: 'Treasure'
-    }
-  },
   computed: {
     app () {
       return this.$store
-    },
-    songs () {
-      return [
-        { name: 'Treasure', data: data },
-        { name: 'These Days', data: data2 },
-        { name: 'Another Day In Paradise', data: data3 }
-      ]
     },
     $project () {
       return this.$service('project')
@@ -98,7 +78,7 @@ export default {
         if (!project) {
           return
         }
-        this.app.editor.sectionIndex = project.sections[0].id
+        this.app.editor.sectionIndex = project.index[0].id
         if (project.playlists.length) {
           this.app.viewer.playlist = project.playlists[0]
           // Vue.set(this.app.viewer, 'playlist', project.playlists[0])
@@ -113,20 +93,19 @@ export default {
         this.$createService(player, 'player')
         Vue.prototype.$player = player
       }
-    },
-    song: {
-      immediate: true,
-      handler (song) {
-        const data = JSON.parse(JSON.stringify(this.songs.find(s => s.name === song).data))
-        this.$createService(Project(data), 'project')
-      }
     }
   },
   created () {
     this.$root.constructor.prototype.$bus = new Vue()
     this.labelOptions = NoteLabelOptions
-    // this.constructor.prototype.$player = player
     this.$bus.$on('newProject', this.newProject)
+
+    const lastProject = ProjectStorage.projectsList()[0]
+    if (lastProject) {
+      this.$createService(LocalProject(6), 'project')
+    } else {
+      this.newProject()
+    }
   },
   beforeDestroy () {
     this.$player.context.close()
@@ -141,52 +120,51 @@ export default {
           // strings: ['B', 'E', 'A', 'D', 'G']
         })
       })
-      player.addTrack({
-        id: 'drums_0',
-        instrument: PercussionInstrument(DrumKit)
-      })
-      player.addTrack({
-        id: 'drums_1',
-        instrument: PercussionInstrument(PercussionKit)
-      })
-      player.addTrack({
-        id: 'piano_0',
-        instrument: Piano({ preset: 'electric' }) // acoustic electric
-      })
-      player.addTrack({
-        id: 'piano_1',
-        instrument: Piano({ preset: 'acoustic' })
+      project.tracks.forEach(track => {
+        let instrument
+        if (track.type === 'bass') {
+          instrument = StringInstrument({ strings: track.strings.split('') })
+        } else if (track.type === 'drums') {
+          const kit = track.kit === 'Drums' ? DrumKit : PercussionKit
+          instrument = PercussionInstrument(kit)
+        } else if (track.type === 'piano') {
+          instrument = Piano({ preset: track.preset })
+        }
+        player.addTrack({
+          id: track.id,
+          instrument
+        })
+        player.tracks[track.id].audio.gain.value = track.volume.muted ? 0.0001 : track.volume.value
       })
       if (project.audioTrack) {
         player.addAudioTrack(project.audioTrack)
       }
-      // player.tracks.piano_0.audio.gain.value = project.track('piano_0').volume.value
       return player
     },
     newProject () {
       const data = {
-        name: "",
+        name: '',
         index: [],
         tracks: [
           {
-            type: "bass",
+            type: 'bass',
             volume: {
               muted: false,
               value: 5.65
             },
-            name: "Bass",
-            strings: "EADG",
-            tuning: [0,0,0,0],
+            name: 'Bass',
+            strings: 'EADG',
+            tuning: [0, 0, 0, 0],
             muted: false,
             solo: true
           }, {
-            type: "drums",
+            type: 'drums',
             volume: {
               muted: false,
               value: 1
             },
-            kit: "Drums",
-            name: "Drums",
+            kit: 'Drums',
+            name: 'Drums',
             solo: false
           }
         ],
