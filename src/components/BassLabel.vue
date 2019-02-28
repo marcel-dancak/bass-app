@@ -24,7 +24,7 @@ export default {
       return <div class="label" style={{background: Colors.ghost}}>x</div>
     }
 
-    let color = Colors[sound.note.octave]
+    let color = sound.muted ? Colors.muted : Colors[sound.note.octave]
     if (style === 'ring' && note.type !== 'slide') {
       return <div class="label" style={{background: color}}>‿</div>
     }
@@ -45,7 +45,7 @@ export default {
 
     if (note.type === 'slide') {
       const cls = sound.endNote.fret > note.fret ? 'slide up' : 'slide down'
-      const endColor = Colors[sound.endNote.octave]
+      const endColor = sound.muted ? Colors.muted : Colors[sound.endNote.octave]
       color = `linear-gradient(to right, ${color}, ${color}, ${endColor}, ${endColor})`
       return (
         <div class="label" style={{background: color}}>

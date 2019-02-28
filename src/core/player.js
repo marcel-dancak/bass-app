@@ -23,7 +23,8 @@ export default function Player (context) {
     },
 
     addAudioTrack (config) {
-      const stream = new Audio(config.source.resource)
+      const url = config.source.resource.replace(/http:\/\/localhost:\d+/, '')
+      const stream = new Audio(url)
       stream.autoplay = false
       stream.preload = 'none'
 
@@ -120,12 +121,16 @@ export default function Player (context) {
 
       for (let id in section.tracks) {
         const sTrack = section.tracks[id]
-        if (!tracks[sTrack.id]) continue // Temporary check
+        if (!tracks[sTrack.id]) {
+          continue // Temporary check
+        }
 
         const { instrument, audio } = tracks[sTrack.id]
         sTrack.beatSounds(sTrack.beat(bar, beat)).forEach(sound => {
-          const startAt = startTime + (sound.start * beatTime)
-          instrument.playSound(audio, sound, startAt, beatTime)
+          if (!sound.muted) {
+            const startAt = startTime + (sound.start * beatTime)
+            instrument.playSound(audio, sound, startAt, beatTime)
+          }
         })
       }
 

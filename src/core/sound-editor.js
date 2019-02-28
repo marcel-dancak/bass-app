@@ -39,6 +39,9 @@ export default function SoundEditor () {
       Delete () {
         this.selection.forEach(s => s.beat.section.deleteSound(s))
         this.selection = []
+      },
+      m () {
+        this.selection.forEach(s => { s.muted = !s.muted })
       }
     },
     select (e, sound) {

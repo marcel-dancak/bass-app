@@ -8,7 +8,7 @@ export default {
     const note = sound.note
     const staccato = note.staccato
 
-    let color = Colors[note.octave]
+    let color = sound.muted ? Colors.muted : Colors[note.octave]
     if (sound.prev) {
       return (
         <div class="label" style={{background: color}}>
