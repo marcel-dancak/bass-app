@@ -2,7 +2,9 @@ import saveAs from 'file-saver'
 import audioBufferToWav from 'audiobuffer-to-wav'
 import { AudioTrack } from './audio-track'
 import { bufferLoader } from './buffer-loader'
-
+import { PercussionInstrument, DrumKit, PercussionKit } from './percussion'
+import StringInstrument from './string-instrument'
+import Piano from './piano'
 
 export default function Player (context) {
   const tracks = {}
@@ -13,13 +15,23 @@ export default function Player (context) {
     playbackSpeed: 1,
     playing: false,
 
-    addTrack (config) {
-      const audio = AudioTrack(context)
-      tracks[config.id] = {
-        id: config.id,
-        audio: audio,
-        instrument: config.instrument
+    addTrack (track) {
+      let instrument
+      if (track.type === 'bass') {
+        instrument = StringInstrument({ strings: track.strings.split('') })
+      } else if (track.type === 'drums') {
+        const kit = track.kit === 'Drums' ? DrumKit : PercussionKit
+        instrument = PercussionInstrument(kit)
+      } else if (track.type === 'piano') {
+        instrument = Piano({ preset: track.preset })
       }
+      const audio = AudioTrack(context)
+      tracks[track.id] = {
+        id: track.id,
+        audio: audio,
+        instrument: instrument
+      }
+      audio.gain.value = track.volume.muted ? 0.0001 : track.volume.value
     },
 
     addAudioTrack (config) {

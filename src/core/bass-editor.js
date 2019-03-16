@@ -16,7 +16,6 @@ function transposeUp (sound) {
     if (sound.endNote && sound.endNote.fret < 24) {
       detune(sound.endNote, 1)
     }
-    // this.soundLabelChanged(sound)
   }
 }
 
@@ -28,12 +27,36 @@ function transposeDown (sound) {
     if (sound.endNote && sound.endNote.fret > 0) {
       detune(sound.endNote, -1)
     }
-    // this.soundLabelChanged(sound)
   }
 }
 
+
 export default function BassEditor (track) {
   const editor = SoundEditor(track)
+  Object.assign(editor, {
+    transposeDown,
+    transposeUp,
+    setStyle (sound, style) {
+      if (style === 'hammer' || style === 'pull' || style === 'ring') {
+        const prevSound = sound.beat.section.prevSound(sound)
+        if (!prevSound || prevSound.note.type === 'ghost') {
+          return false
+        }
+        prevSound.next = true
+        sound.prev = true
+      } else {
+        if (sound.prev) {
+          console.log('disconnect sounds')
+          sound.prev = false
+          const prevSound = sound.beat.section.prevSound(sound)
+          if (prevSound) {
+            prevSound.next = false
+          }
+        }
+      }
+      sound.style = style
+    }
+  })
   Object.assign(editor.keyHandlers, {
     ArrowUp () {
       this.selection.forEach(transposeUp)
@@ -46,6 +69,16 @@ export default function BassEditor (track) {
         if (s.note.type !== 'ghost' && !s.next) {
           s.note.staccato = !s.note.staccato
         }
+      })
+    },
+    h () {
+      this.selection.forEach(sound => {
+        editor.setStyle(sound, 'hammer')
+      })
+    },
+    p () {
+      this.selection.forEach(sound => {
+        editor.setStyle(sound, 'pull')
       })
     }
   })

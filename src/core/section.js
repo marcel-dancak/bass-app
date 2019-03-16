@@ -1,3 +1,5 @@
+import omit from 'lodash/omit'
+
 const SharpNotes = 'C C♯ D D♯ E F F♯ G G♯ A A♯ B'.split(' ')
 const FlatNotes = 'C D♭ D E♭ E F G♭ G A♭ A B♭ B'.split(' ')
 
@@ -246,7 +248,9 @@ export class BaseTrackSection {
     return this.data
   }
 
-  toJSON () {}
+  toJSON (key) {
+    return this.data.map(beat => omit(beat, 'section'))
+  }
 }
 
 
@@ -277,9 +281,14 @@ export class NotesTrackSection extends BaseTrackSection {
 
   initializeSound (sound) {
     super.initializeSound(sound)
-    if (sound.note && sound.note.length < 1) {
-      sound.note.length = Math.round(1.0 / sound.note.length)
-    }
+    // if (sound.note) {
+      if (sound.note.length < 1) {
+        sound.note.length = Math.round(1.0 / sound.note.length)
+      }
+      if (sound.note.staccato === undefined) {
+        sound.note.staccato = false
+      }
+    // }
     const end = sound.start + this.soundDuration(sound)
     // sound.end = end
     Object.defineProperty(sound, 'end', { value: end, writable: true, configurable: true, enumerable: false })
@@ -487,7 +496,10 @@ export function Section (params) {
       section.length = bars
       Object.values(tracks).forEach(track => {
         track.section.length = bars
-        track.forEachBeat(() => {}) // this will initialize missing beats
+        // track.forEachBeat(() => {}) // this will initialize missing beats
+        const beats = []
+        track.forEachBeat(beat => { beats.push(beat) })
+        track.beats = beats
       })
     }
   }

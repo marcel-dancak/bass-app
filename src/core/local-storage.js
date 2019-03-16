@@ -12,7 +12,7 @@ function readData (key) {
 
 export default {
   projectsList () {
-    return readData('bd.projects')
+    return readData('bd.projects') || []
   },
 
   projectInfo (id) {
@@ -22,7 +22,18 @@ export default {
     return projectInfo
   },
 
+  saveProjectInfo (projectId, data) {
+    const key = `bd.project.${projectId}`
+    localStorage.setItem(key, LZString.compressToUTF16(data))
+  },
+
   sectionData (projectId, sectionId) {
     return readData(`bd.section.${projectId}.${sectionId}`)
+  },
+
+  saveSection (projectId, sectionId, data) {
+    const key = `bd.section.${projectId}.${sectionId}`
+    console.log(key)
+    localStorage.setItem(key, LZString.compressToUTF16(data))
   }
 }
