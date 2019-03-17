@@ -1,21 +1,21 @@
 export const PlayingStyles = [
-  {text: 'Finger', value: 'finger'},
-  {text: 'Slap', value: 'slap'},
-  {text: 'Pop', value: 'pop'},
-  {text: 'Pick', value: 'pick'},
-  {text: 'Tap', value: 'tap'},
-  {text: 'Hammer-On', value: 'hammer'},
-  {text: 'Pill-Off', value: 'pull'},
-  {text: 'Let ring (Tie)', value: 'ring'}
+  { text: 'Finger', value: 'finger' },
+  { text: 'Slap', value: 'slap' },
+  { text: 'Pop', value: 'pop' },
+  { text: 'Pick', value: 'pick' },
+  { text: 'Tap', value: 'tap' },
+  { text: 'Hammer-On', value: 'hammer' },
+  { text: 'Pull-Off', value: 'pull' },
+  { text: 'Let ring (Tie)', value: 'ring' }
 ]
 
 export const NoteTypes = [
-  {text: 'Regular', value: 'regular'},
-  {text: 'Ghost', value: 'ghost'},
-  {text: 'Slide', value: 'slide'},
-  {text: 'Grace', value: 'grace'},
-  {text: 'Bend', value: 'bend'},
-  {text: 'Harmonics', value: 'harmonics'}
+  { text: 'Regular', value: 'regular' },
+  { text: 'Ghost', value: 'ghost' },
+  { text: 'Slide', value: 'slide' },
+  { text: 'Grace', value: 'grace' },
+  { text: 'Bend', value: 'bend' },
+  { text: 'Harmonics', value: 'harmonics' }
 ]
 
 export const NoteLengths = [

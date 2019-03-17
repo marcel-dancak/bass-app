@@ -34,6 +34,10 @@ export default function Player (context) {
       audio.gain.value = track.volume.muted ? 0.0001 : track.volume.value
     },
 
+    removeTrack (trackId) {
+      delete tracks[trackId]
+    },
+
     addAudioTrack (config) {
       const url = config.source.resource.replace(/http:\/\/localhost:\d+/, '')
       const stream = new Audio(url)

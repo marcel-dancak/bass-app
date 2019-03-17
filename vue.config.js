@@ -33,9 +33,12 @@ module.exports = {
         .end()
   },
   devServer: {
+    compress: true,
+
     // contentBase: [path.join(__dirname, 'public'), path.join(__dirname, '../sounds')]
     before (app, server) {
       app.use('/sounds/', express.static(path.join(__dirname, '../sounds')))
+      app.use('/', express.static(path.join(__dirname, '../static')))
     }
   }
 }

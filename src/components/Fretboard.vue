@@ -95,6 +95,9 @@ export default {
     }
   },
   computed: {
+    trackId () {
+      return this.$store.track.id
+    },
     strings () {
       return this.instrument.strings.split('').reverse()
     },
@@ -199,7 +202,7 @@ export default {
       const sound = this.stringSound(string, note)
       sound.start = 0
       sound.end = 1
-      const { instrument, audio } = this.$player.tracks.bass_0
+      const { instrument, audio } = this.$player.tracks[this.trackId]
       instrument.stop()
       const resources = instrument.soundResources(sound)
       await new Promise((resolve, reject) => bufferLoader.loadResources(resources, resolve, reject))

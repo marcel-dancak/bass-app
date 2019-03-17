@@ -108,6 +108,9 @@ export default {
       }
     },
     dragOver (evt, string) {
+      if (!evt.dataTransfer.data) {
+        return
+      }
       this.editor.dragCopy = evt.ctrlKey
       const channel = evt.dataTransfer.channel
       const position = this.subbeatCell(evt)

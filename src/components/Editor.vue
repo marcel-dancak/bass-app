@@ -66,7 +66,6 @@
           :beat="props.item"
           :active="activeSubbeat"
           @contextmenu.native="beatContextMenu($event, props.item)"
-          @xcontextmenu.native="showBeatMenu=true"
         />
       </div>
 
@@ -140,6 +139,16 @@ const InstrumentComponents = {
   drums: 'drums',
   piano: 'keyboard'
 }
+const NewSection = {
+  name: 'New Section',
+  bpm: 80,
+  timeSignature: {
+    top: 4,
+    bottom: 4
+  },
+  length: 2
+}
+
 export default {
   name: 'editor',
   components: {
@@ -171,9 +180,9 @@ export default {
       return this.$service('project')
     },
     $section () {
-      if (this.app.editor.sectionIndex !== null) {
-        const section = Section(this.$project.getSectionData(this.app.editor.sectionIndex))
-        return this.$createService(section, 'section', ['bpm', 'timeSignature'])
+      const data = this.$project.getSectionData(this.app.editor.sectionId)
+      if (data) {
+        return this.$createService(Section(data), 'section', ['bpm', 'timeSignature', 'length'])
       }
       return null
     },
@@ -196,6 +205,7 @@ export default {
       // console.log(sectionTrack.beats)
       return sectionTrack.beats
     },
+    // TODO: make it as service
     trackEditor () {
       const track = this.app.track
       let editor = this.editors[track.id]
@@ -218,11 +228,13 @@ export default {
     this.editors = {}
     this.$bus.$on('playbackChange', this.play)
     this.$bus.$on('playerBack', this.seekToStart)
+    this.$bus.$on('newSection', this.newSection)
     document.addEventListener('keydown', this.keyDown)
   },
   beforeDestroy () {
     this.$bus.$off('playbackChange', this.play)
     this.$bus.$off('playerBack', this.seekToStart)
+    this.$bus.$off('newSection', this.newSection)
     document.removeEventListener('keydown', this.keyDown)
   },
   methods: {
@@ -242,7 +254,7 @@ export default {
         (startTime) => {
           let isOnEnd = false
 
-          if (lastBeat && this.app.player.screenLock) {
+          if (lastBeat) {
             let endIndex = swiper.index + this.slidesPerView - 1
             if (endIndex >= this.beats.length) {
               endIndex -= this.beats.length
@@ -349,6 +361,10 @@ export default {
     },
     beatContextMenu (e, beat) {
       this.$refs.contextMenu.open(e, BeatMenu, { beat })
+    },
+    newSection () {
+      const newSectionId = this.$project.addSection(JSON.parse(JSON.stringify(NewSection)))
+      this.app.editor.sectionId = newSectionId
     }
   }
 }

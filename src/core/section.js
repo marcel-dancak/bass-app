@@ -473,6 +473,10 @@ export function Section (params) {
       return track
     },
 
+    removeTrack (id) {
+      delete tracks[id]
+    },
+
     setTimeSignature (top, bottom) {
       this.timeSignature.top = top
       this.timeSignature.bottom = bottom

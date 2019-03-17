@@ -16,5 +16,7 @@ export default {
 <style>
 .icon {
   fill: currentColor;
+  width: 1em;
+  height: 1em;
 }
 </style>

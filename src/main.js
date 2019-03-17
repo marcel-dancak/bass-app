@@ -9,11 +9,13 @@ import Services from './ServicesPlugin'
 import Icon from './ui/Icon'
 import ScrollArea from './ui/ScrollArea2'
 import TextSeparator from './ui/TextSeparator'
+// import AppDialog from '@/components/Dialog'
+import AppDialog from '@/components/AppDialog'
 
 import Vuetify from 'vuetify'
 import 'material-icons/iconfont/material-icons.scss'
 import 'vuetify/dist/vuetify.min.css'
-import colors from 'vuetify/es5/util/colors'
+import 'vuetify/es5/util/colors'
 
 Vue.use(Vuetify)
 Vue.use(Services)
@@ -30,8 +32,27 @@ Vue.directive('ripple', (el, binding) => {})
 Vue.component('icon', Icon)
 Vue.component('scroll-area', ScrollArea)
 Vue.component('text-separator', TextSeparator)
+Vue.component('app-dialog', AppDialog)
+
+const VSlot = {
+  functional: true,
+  props: ['node'],
+  render (h, context) {
+    return context.props.node
+  }
+}
+Vue.component('v-slot', VSlot)
 
 Vue.config.productionTip = false
+
+// Import data from file into the localStorage
+// if (Object.keys(localStorage).length < 10) {
+//   fetch('/localstorage.backup').then(resp => {
+//     resp.json().then(data => {
+//       Object.keys(data).forEach(key => { localStorage.setItem(key, data[key]) })
+//     })
+//   })
+// }
 
 /* eslint-disable no-new */
 new Vue({
@@ -51,15 +72,14 @@ new Vue({
         screenLock: false
       },
       editor: {
-        sectionIndex: null
+        sectionId: null
       },
       viewer: {
-        playlistIndex: null,
         playlist: null,
         playlistEditor: false
       },
       mode: 'editor',
-      label: 'name',
+      label: 'name+fret',
       track: null
     }
   },

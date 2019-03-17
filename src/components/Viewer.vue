@@ -159,6 +159,9 @@ export default {
           const lastScreenBeatId = (swiper.index + this.slidesPerView) * this.beatsPerSlide - 1
 
           if (!playbackPosition || (this.app.player.loopMode && playbackPosition.index === lastScreenBeatId)) {
+            if (playbackPosition && !this.app.player.screenLock && playbackPosition.index === lastScreenBeatId) {
+              swiper.setIndex(0)
+            }
             // play from first beat on screen
             const startBeat = this.slides[swiper.index][0]
             return playbackBeat(startBeat, swiper.index * this.beatsPerSlide)

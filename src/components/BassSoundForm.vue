@@ -5,7 +5,8 @@
         <v-select
           label="Style"
           :items="PlayingStyles"
-          v-model="sound.style"
+          :value="sound.style"
+          @input="editor.setStyle(sound, $event)"
           hide-details
         />
       </v-flex>
@@ -119,7 +120,6 @@ export default {
         this.$delete(this.sound, 'endNote')
         // delete this.sound.endNote
       }
-
       this.sound.note.type = type
     }
   }

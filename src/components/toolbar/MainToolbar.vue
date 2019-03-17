@@ -8,7 +8,7 @@
     <v-select
       label="Track"
       class="tracks"
-      :items="tracks"
+      :items="$project.tracks"
       v-model="app.track"
       item-text="name"
       return-object
@@ -18,49 +18,32 @@
       <template
         slot="selection"
         slot-scope="data">
-        <icon :name="data.item.type" />
+        <icon :name="tracksIcons[data.item.id]"/>
         <span class="input-group__selections__comma">{{ data.item.name }}</span>
       </template>
       <template
         slot="item"
         slot-scope="data">
-        <icon :name="data.item.type" />
+        <icon :name="tracksIcons[data.item.id]"/>
         <span class="input-group__selections__comma">{{ data.item.name }}</span>
       </template>
     </v-select>
-    <v-menu
-      content-class="audio-preferences"
-      :close-on-content-click="false"
-    >
+
+    <dock-menu content-class="audio-preferences">
       <v-btn icon slot="activator">
         <icon name="volume-medium"/>
       </v-btn>
-      <div class="layout column">
-        <track-volume-field
-          v-for="track in tracks"
-          :key="track.id"
-          :track="track"
-          :icon="track.type"
-          :label="track.name"
-          :audio-track="$player.tracks[track.id]"
-        />
-        <track-volume-field
-          v-if="$project.audioTrack"
-          label="Audio Track"
-          :track="$project.audioTrack"
-          :audio-track="$player.audioTrack"
-        />
-      </div>
-    </v-menu>
+      <audio-preferences/>
+    </dock-menu>
 
     <v-spacer/>
 
     <div class="player">
       <player-bg/>
       <v-text-field
-        v-if="section"
-        class="bpm-field"
-        v-model="section.bpm"
+        v-if="$section"
+        class="bpm-field ml-1"
+        v-model="$section.bpm"
         label="Speed"
         type="number"
         min="30"
@@ -115,7 +98,7 @@
     <v-spacer/>
 
     <template v-if="app.env.desktop">
-      <div class="mode-switch">
+      <div class="mode-switch layout shrink">
         <label>Mode</label>
         <v-btn
           icon
@@ -133,16 +116,19 @@
         </v-btn>
       </div>
 
-      <template v-if="app.mode === 'editor' && sectionIndex">
+      <template v-if="app.mode === 'editor' && sectionId">
         <select-edit
           label="Section"
           :items="sectionsItems"
           item-text="name"
           item-value="id"
-          v-model="app.editor.sectionIndex"
-          :edit.sync="sectionIndex.name"
+          v-model="app.editor.sectionId"
+          :edit.sync="sectionId.name"
         />
-        <v-btn icon class="mr-0">
+        <v-btn
+          icon class="mr-0"
+          @click="$project.saveSection(app.editor.sectionId, $section)"
+        >
           <icon name="save"/>
         </v-btn>
       </template>
@@ -184,16 +170,8 @@
           <local-projects/>
         </app-dialog>
 
-<!--         <v-dialog :max-width="500" full-width>
-          <v-list-tile slot="activator" @click="closeMenu">Open</v-list-tile>
-          <local-projects/>
-        </v-dialog> -->
-
-<!--         <v-list-tile @click="$bus.$emit('openProject')">
-          Open
-        </v-list-tile> -->
         <text-separator>Section</text-separator>
-        <v-list-tile>
+        <v-list-tile @click="$bus.$emit('newSection')">
           New
         </v-list-tile>
         <v-list-tile>
@@ -202,45 +180,66 @@
         <v-list-tile>
           Delete
         </v-list-tile>
+
+        <text-separator>Track</text-separator>
+        <app-dialog
+          :max-width="500"
+          header="New Track"
+          full-width lazy
+        >
+          <v-list-tile slot="activator" @click="closeMenu">New</v-list-tile>
+          <new-track/>
+        </app-dialog>
+        <v-list-tile @click="deleteTrack">
+          Delete
+        </v-list-tile>
       </v-list>
     </v-menu>
   </v-toolbar>
 </template>
 
 <script>
+import zipObject from 'lodash/zipObject'
 import PlayerBg from './PlayerBg'
-import TrackVolumeField from './TrackVolumeField'
+import AudioPreferences from './AudioPreferences'
 import LocalProjects from './LocalProjects'
+import NewTrack from './NewTrack'
 import FullscreenMenuItem from './FullscreenMenuItem'
 import SelectEdit from '@/components/SelectEdit'
-import AppDialog from '@/components/Dialog'
+import DockMenu from '@/components/DockMenu'
 
 export default {
-  components: { PlayerBg, TrackVolumeField, LocalProjects, AppDialog, SelectEdit, FullscreenMenuItem },
+  components: { PlayerBg, AudioPreferences, LocalProjects, NewTrack, DockMenu, SelectEdit, FullscreenMenuItem },
   computed: {
     app () {
       return this.$store
     },
     $project () {
-      return this.$service('project', ['tracks', 'audioTrack'])
+      return this.$service('project', ['tracks', 'index', 'audioTrack'])
     },
     $player () {
       return this.$service('player', ['playing'])
     },
-    section () {
+    $section () {
       return this.$service('section')
-    },
-    tracks () {
-      return this.$project.tracks
     },
     sectionsItems () {
       return this.$project.index
     },
-    sectionIndex () {
-      return this.sectionsItems.find(s => s.id === this.app.editor.sectionIndex)
+    sectionId () {
+      return this.sectionsItems.find(s => s.id === this.app.editor.sectionId)
     },
     playlists () {
       return this.$project.playlists
+    },
+    tracksIcons () {
+      const icons = this.$project.tracks.map(track => {
+        if (track.type === 'drums') {
+          return track.kit === 'Percussions' ? 'percussions' : 'drums'
+        }
+        return track.type
+      })
+      return zipObject(this.$project.tracks.map(track => track.id), icons)
     }
   },
   methods: {
@@ -251,12 +250,24 @@ export default {
     closeMenu () {
       this.$refs.menu.isActive = false
       // this.$refs.menu.$props.value = false
+    },
+    deleteTrack () {
+      const trackId = this.app.track.id
+      this.$project.removeTrack(trackId)
+      this.$player.removeTrack(trackId)
+      this.$section.removeTrack(trackId)
+      this.app.track = this.$project.tracks[0]
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+/deep/ .input-group__input {
+  min-height: 1.75em!important;
+  height: 1.9em;
+}
+
 .main-toolbar {
   flex-shrink: 0;
   display: flex;
@@ -307,11 +318,8 @@ export default {
     padding: 0.8em 0 0.25em 0;
 
     label {
-      font-size: 0.938em;
       height: 1.25em;
       line-height: 1.25em;
-    }
-    .input-group__input {
     }
   }
   .input-group--select {
@@ -371,9 +379,10 @@ export default {
       text-align: center;
     }
     .btn {
-      margin: 0;
+      margin: 0.075em 0 0.15em 0;
       padding: 1px 0;
-      xtop: 2px;
+      width: 2.5em;
+      height: 2.25em;
     }
   }
 }
@@ -394,7 +403,6 @@ export default {
 }
 
 .menu__content.audio-preferences {
-  padding: 0.5em 1em;
   background-color: #fff;
   width: 250px;
 }

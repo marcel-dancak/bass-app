@@ -1,9 +1,5 @@
 <template>
   <div class="layout row track-field">
-    <label>
-      <icon v-if="icon" :name="icon" class="mr-1"/>
-      <span>{{ label }}</span>
-    </label>
     <v-slider
       :min="0"
       :max="1"
@@ -13,6 +9,10 @@
       @input="setVolume"
       hide-details
     />
+    <label>
+      <icon v-if="icon" :name="icon" class="mr-1"/>
+      <span>{{ label }}</span>
+    </label>
     <v-btn
       icon
       @click="toggleMute"
@@ -33,17 +33,22 @@ export default {
     audioTrack: Object
   },
   methods: {
+    _setGain (value) {
+      if (this.audioTrack) {
+        this.audioTrack.audio.gain.value = value
+      }
+    },
     setVolume (value) {
       this.track.volume.value = value
-      this.audioTrack.audio.gain.value = value
+      this._setGain(value)
     },
     toggleMute () {
       const muted = !this.track.volume.muted
       this.track.volume.muted = muted
       if (muted) {
-        this.audioTrack.audio.gain.value = 0.00001
+        this._setGain(0.00001)
       } else {
-        this.audioTrack.audio.gain.value = this.track.volume.value
+        this._setGain(this.track.volume.value)
       }
     }
   }

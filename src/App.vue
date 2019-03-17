@@ -2,7 +2,7 @@
   <v-app @contextmenu.native.prevent>
     <div class="flex layout column" @contextmenu.prevent>
       <main-toolbar v-if="$player"/>
-      <editor v-if="app.mode === 'editor'"/>
+      <section-editor v-if="app.mode === 'editor'"/>
       <viewer v-else/>
       <v-toolbar
         v-if="app.env.desktop"
@@ -28,12 +28,9 @@ import Player from '@/core/player'
 import Project from '@/core/project'
 import { LocalProject } from '@/core/project'
 import ProjectStorage from '@/core/local-storage'
-import { PercussionInstrument, DrumKit, PercussionKit } from '@/core/percussion'
-import StringInstrument from '@/core/string-instrument'
-import Piano from '@/core/piano'
 
 import MainToolbar from './components/toolbar/MainToolbar'
-import Editor from './components/Editor'
+import SectionEditor from './components/Editor'
 import Viewer from './components/Viewer'
 
 
@@ -46,14 +43,14 @@ const NoteLabelOptions = [
     value: 'fret'
   }, {
     name: 'Fret + Name',
-    value: ''
+    value: 'name+fret'
   }
 ]
 
 export default {
   name: 'App',
   components: {
-    MainToolbar, Editor, Viewer
+    MainToolbar, SectionEditor, Viewer
   },
   computed: {
     app () {
@@ -70,15 +67,14 @@ export default {
     $project: {
       // immediate: true,
       handler (project, old) {
-        // console.log('$project wacher', project === old)
+        if (!project) {
+          return
+        }
         if (project === old) {
           console.log('same project, skipping')
           return
         }
-        if (!project) {
-          return
-        }
-        this.app.editor.sectionIndex = project.index[0].id
+        this.app.editor.sectionId = project.index[0].id
         if (project.playlists.length) {
           this.app.viewer.playlist = project.playlists[0]
           // Vue.set(this.app.viewer, 'playlist', project.playlists[0])
@@ -113,28 +109,8 @@ export default {
   methods: {
     createPlayer (project) {
       const player = Player(new AudioContext())
-      player.addTrack({
-        id: 'bass_0',
-        instrument: StringInstrument({
-          strings: ['E', 'A', 'D', 'G']
-          // strings: ['B', 'E', 'A', 'D', 'G']
-        })
-      })
       project.tracks.forEach(track => {
-        let instrument
-        if (track.type === 'bass') {
-          instrument = StringInstrument({ strings: track.strings.split('') })
-        } else if (track.type === 'drums') {
-          const kit = track.kit === 'Drums' ? DrumKit : PercussionKit
-          instrument = PercussionInstrument(kit)
-        } else if (track.type === 'piano') {
-          instrument = Piano({ preset: track.preset })
-        }
-        player.addTrack({
-          id: track.id,
-          instrument
-        })
-        player.tracks[track.id].audio.gain.value = track.volume.muted ? 0.0001 : track.volume.value
+        player.addTrack(track)
       })
       if (project.audioTrack) {
         player.addAudioTrack(project.audioTrack)
@@ -232,6 +208,10 @@ html {
     width: 0.875em;
     height: 0.875em;
   }
+}
+
+.input-group label {
+  font-size: inherit!important;
 }
 
 @media (max-height: 720px) {
