@@ -1,8 +1,9 @@
 <template>
   <div class="editor">
     <swiper
-      v-if="$section"
+      v-if="$section && $trackEditor"
       ref="swiper"
+      :index.sync="app.editor.swiper.index"
       :per-view="slidesPerView"
       :checkSwipeable="true"
       :items="beats"
@@ -78,7 +79,6 @@
           :is="beatComponent"
           class="instrument"
           :beat="props.item"
-          :editor="trackEditor"
           :instrument="app.track"
           :display="app.label"
           @contextmenu="soundContextMenu"
@@ -97,7 +97,7 @@
       />
     </swiper>
     <mouse-selector @selected="mouseSelection"/>
-    <context-menu ref="contextMenu" />
+    <context-menu ref="contextMenu"/>
   </div>
 </template>
 
@@ -205,8 +205,10 @@ export default {
       // console.log(sectionTrack.beats)
       return sectionTrack.beats
     },
-    // TODO: make it as service
-    trackEditor () {
+    editors () {
+      return this.$project && {}
+    },
+    $trackEditor () {
       const track = this.app.track
       let editor = this.editors[track.id]
       if (!editor) {
@@ -216,16 +218,20 @@ export default {
           piano: PianoEditor
         }[track.type]
         editor = Editor(track)
-        this.editors[track.id] = editor
-        Vue.util.defineReactive(editor, 'selection')
-        Vue.util.defineReactive(editor, 'draggedSounds')
-        Vue.util.defineReactive(editor, 'dragCopy')
+        console.log('save editor ref', track.id)
       }
-      return editor
+      return this.$createService(editor, 'editor')
+    }
+  },
+  watch: {
+    $project: {
+      immediate: true,
+      handler (n, o) {
+        console.log('-- watch: $project', n === o)
+      }
     }
   },
   created () {
-    this.editors = {}
     this.$bus.$on('playbackChange', this.play)
     this.$bus.$on('playerBack', this.seekToStart)
     this.$bus.$on('newSection', this.newSection)
@@ -341,19 +347,19 @@ export default {
           sounds.push(...indexes.map(i => beatComp.$props.beat.data[i]))
         }
       })
-      this.trackEditor.selection = sounds
+      this.$trackEditor.selection = sounds
     },
     keyDown (evt) {
       if (evt.target.tagName === 'INPUT' || evt.target.hasAttribute('contenteditable')) {
         return
       }
-      this.trackEditor.keyDown(evt)
+      this.$trackEditor.keyDown(evt)
     },
     soundContextMenu (e, sound) {
-      this.trackEditor.select({}, sound)
+      this.$trackEditor.select({}, sound)
       const props = {
         sound,
-        editor: this.trackEditor
+        editor: this.$trackEditor
       }
       const bounds = e.currentTarget.getBoundingClientRect()
       const opts = { x: bounds.left, y: bounds.bottom + 2 }
@@ -377,6 +383,7 @@ export default {
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
 
   .swiper {
     display: flex;

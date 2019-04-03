@@ -1,6 +1,6 @@
 <template>
   <v-app @contextmenu.native.prevent>
-    <div class="flex layout column" @contextmenu.prevent>
+    <div class="layout column fill-height" @contextmenu.prevent>
       <main-toolbar v-if="$player"/>
       <section-editor v-if="app.mode === 'editor'"/>
       <viewer v-else/>
@@ -70,11 +70,8 @@ export default {
         if (!project) {
           return
         }
-        if (project === old) {
-          console.log('same project, skipping')
-          return
-        }
         this.app.editor.sectionId = project.index[0].id
+        this.app.editor.swiper.index = 0
         if (project.playlists.length) {
           this.app.viewer.playlist = project.playlists[0]
           // Vue.set(this.app.viewer, 'playlist', project.playlists[0])
@@ -98,7 +95,7 @@ export default {
 
     const lastProject = ProjectStorage.projectsList()[0]
     if (lastProject) {
-      this.$createService(LocalProject(6), 'project')
+      this.$createService(LocalProject(lastProject.id), 'project')
     } else {
       this.newProject()
     }

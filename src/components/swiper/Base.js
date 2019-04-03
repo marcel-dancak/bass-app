@@ -14,6 +14,10 @@ const SwiperSlide = {
 export default {
   components: { SwiperSlide },
   props: {
+    index: {
+      type: Number,
+      default: 0
+    },
     items: Array,
     perView: {
       type: Number,
@@ -32,7 +36,7 @@ export default {
     return {
       width: 0,
       height: 0,
-      index: 0,
+      // index: 0,
       translate: 0,
       animate: true,
       visibleBefore: null
@@ -92,6 +96,17 @@ export default {
       } else {
         this.setIndex(this.index, false)
       }
+    },
+    index: {
+      immediate: true,
+      handler (index) {
+        if (this.slideSize > 0) {
+          this.translate = -this.slideSize * index
+        }
+      }
+    },
+    slideSize (slideSize) {
+      this.translate = -slideSize * this.index
     }
   },
   created () {
@@ -212,14 +227,14 @@ export default {
       }, 30)
     },
     setIndex (index, animate = true) {
-      this.index = Math.max(0, Math.min(index, this.slides.length - this.perView))
+      index = Math.max(0, Math.min(index, this.slides.length - this.perView))
       if (!animate) {
         this.animate = false
         this.resetAnimation()
       } else {
         this.visibleBefore = this.visible
       }
-      this.translate = -this.slideSize * this.index
+      this.$emit('update:index', index)
     },
     isSwipeable (e) {
       // return e.path.slice(0, e.path.indexOf(this.$el)).find(el => el.getAttribute('swipeable'))

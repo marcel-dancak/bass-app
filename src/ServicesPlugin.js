@@ -1,17 +1,19 @@
+import Vue from 'vue'
+import mapValues from 'lodash/mapValues'
 
-export default {
+export const ServicesProvider = {
+  computed: {
+    services() {
+      return mapValues(this.$services, v => v.value)
+    }
+  },
+  created () {
+    Vue.prototype.$services = {}
+  }
+}
+
+export const Services = {
   install (Vue, options) {
-
-    const services = {}
-    const vm = {}
-    Vue.util.defineReactive(vm, 'services', services)
-
-    Vue.prototype.$services = services
-    // Vue.mixin({
-    //   created () {
-    //     this.$services = services
-    //   }
-    // })
 
     function setProperty (target, key, val) {
       if (key in target && !(key in Object.prototype)) {
@@ -28,18 +30,31 @@ export default {
       ob.dep.notify()
     }
 
-    Vue.prototype.$createService = function (obj, param, bindings = []) {
-      // Vue.set(vm.services, param, obj)
-      setProperty(vm.services, param, obj)
+    Vue.prototype.$createService = function (obj, name, bindings = []) {
+      if (this.$services[name] === undefined) {
+        const vm = {}
+        Vue.util.defineReactive(vm, 'value', obj)
+        this.$services[name] = vm
+      }
+      setProperty(this.$services[name], 'value', obj)
       bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
-      // console.log(param, obj)
       return obj
     }
 
     Vue.prototype.$service = function (name, bindings = []) {
-      const obj = vm.services[name]
-      bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
+      // console.log('$service', name)
+      if (this.$services[name] === undefined) {
+        const vm = {}
+        Vue.util.defineReactive(vm, 'value', null)
+        this.$services[name] = vm
+      }
+      const obj = this.$services[name].value
+      if (obj) {
+        bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
+      }
       return obj
     }
   }
 }
+
+export default Services

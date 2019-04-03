@@ -5,7 +5,8 @@
       :per-view="slidesPerView"
       :checkSwipeable="true"
       :items="slides"
-      direction="vertical"
+      :index.sync="app.viewer.swiper.index"
+      :direction="app.viewer.swiper.direction"
     >
       <div
         slot="item"

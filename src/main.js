@@ -4,7 +4,7 @@ import Vue from 'vue'
 // import Vue from 'vue-dev/dist/vue'
 // import Vue from 'vue-dev/dist/vue.runtime.esm'
 import App from './App'
-import Services from './ServicesPlugin'
+import { Services, ServicesProvider } from './ServicesPlugin'
 
 import Icon from './ui/Icon'
 import ScrollArea from './ui/ScrollArea2'
@@ -42,7 +42,6 @@ const VSlot = {
   }
 }
 Vue.component('v-slot', VSlot)
-
 Vue.config.productionTip = false
 
 // Import data from file into the localStorage
@@ -57,6 +56,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  mixins: [ServicesProvider],
   components: { App },
   data () {
     const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
@@ -72,11 +72,19 @@ new Vue({
         screenLock: false
       },
       editor: {
-        sectionId: null
+        sectionId: null,
+        swiper: {
+          index: 0
+        }
       },
       viewer: {
         playlist: null,
-        playlistEditor: false
+        playlistEditor: false,
+        swiper: {
+          index: 0,
+          // direction: 'horizontal'
+          direction: 'vertical'
+        }
       },
       mode: 'editor',
       label: 'name+fret',
@@ -86,12 +94,5 @@ new Vue({
   render: h => h(App),
   created () {
     Vue.prototype.$store = this.$data
-    // Vue.util.defineReactive(this, 'services', {})
-    // this.services = {}
-    if (process.env.NODE_ENV === 'development') {
-      // this.$data.$services = this.$services
-      this.$options.computed = this.$options.computed || {}
-      this.$options.computed.$services = this.$services
-    }
   }
 })
