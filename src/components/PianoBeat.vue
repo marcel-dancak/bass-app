@@ -8,9 +8,9 @@
         :key="note.code"
         class="key"
         :class="{black: note.enharmonic, c: note.name === 'C'}"
-        @dragover="e => dragOver(e, note)"
+        @dragover="dragOver($event, note)"
         @dragleave="dragLeave"
-        @drop="e => onDrop(e, note)">
+        @drop="onDrop($event, note)">
       </div>
     </div>
     <template v-for="sound in beat.data">
@@ -20,21 +20,21 @@
         v-bind-el="sound"
         class="sound piano"
         :class="{
-          selected: editor.selection.includes(sound),
-          dragged: !editor.dragCopy && editor.draggedSounds.includes(sound)
+          selected: $editor.selection.includes(sound),
+          dragged: !$editor.dragCopy && $editor.draggedSounds.includes(sound)
         }"
         :style="{
           left: (sound.start * 100) + '%',
           top: gridPosition[sound.string],
           width: 100 * (sound.end - sound.start) + '%'
         }"
-        @click="e => editor.select(e, sound)"
+        @click="e => $editor.select(e, sound)"
         v-drag-sound="{
           start: (e) => initDrag(e, sound),
-          end: () => editor.draggedSounds = []
+          end: () => $editor.draggedSounds = []
         }">
         <piano-note-label :sound="sound" />
-        <sound-resize :sound="sound" :editor="editor" />
+        <sound-resize :sound="sound" :editor="$editor" />
       </div>
     </template>
     <div
@@ -56,11 +56,14 @@ import '../directives/drag-sound'
 export default {
   name: 'bass-beat',
   components: { PianoNoteLabel, SoundResize },
-  props: ['editor', 'beat', 'instrument'],
+  props: ['beat', 'instrument'],
   data: () => ({
     dropItems: []
   }),
   computed: {
+    $editor () {
+      return this.$service('editor', ['selection', 'draggedSounds', 'dragCopy'])
+    },
     keys () {
       const [minOct, maxOct] = this.instrument.octaves
       const keys = []
@@ -112,7 +115,7 @@ export default {
       }
     },
     dragOver (evt, note) {
-      this.editor.dragCopy = evt.ctrlKey
+      this.$editor.dragCopy = evt.ctrlKey
       const channel = evt.dataTransfer.channel
       const position = this.subbeatCell(evt)
       const key = [note.code, this.beat.bar, this.beat.beat, position.subbeat].join(':')
@@ -194,11 +197,11 @@ export default {
       }
     },
     initDrag (evt, clickSound) {
-      if (!this.editor.selection.includes(clickSound)) {
-        this.editor.selection = [clickSound]
+      if (!this.$editor.selection.includes(clickSound)) {
+        this.$editor.selection = [clickSound]
       }
       const roots = []
-      this.editor.selection.forEach(s => {
+      this.$editor.selection.forEach(s => {
         const rootSound = this.beat.section.rootSoundOf(s)
         if (!roots.includes(rootSound)) {
           roots.push(rootSound)
@@ -219,7 +222,7 @@ export default {
           }
         }
       })
-      this.editor.draggedSounds = draggedSounds
+      this.$editor.draggedSounds = draggedSounds
       return {
         data: groups,
         render (h) {

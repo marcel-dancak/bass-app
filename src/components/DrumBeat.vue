@@ -28,7 +28,7 @@
         ref="sound"
         v-bind-el="sound"
         class="drum sound"
-        :class="{ selected: editor.selection.includes(sound) }"
+        :class="{ selected: $editor.selection.includes(sound) }"
         :style="{
           left: ((sound.start + (0.5 / beat.subdivision)) * 100) + '%',
           top: drumPosition[sound.drum]
@@ -47,8 +47,11 @@ const DrumsVolumeLevels = [0.0, 0.85, 0.4]
 
 export default {
   name: 'drum-beat',
-  props: ['editor', 'beat', 'instrument'],
+  props: ['beat', 'instrument'],
   computed: {
+    $editor () {
+      return this.$service('editor', ['selection'])
+    },
     grid () {
       const grid = []
       const size = this.beat.grid || this.beat.subdivision

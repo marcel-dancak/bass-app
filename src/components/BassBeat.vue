@@ -5,9 +5,9 @@
         v-for="string in strings"
         :key="string"
         class="string"
-        @dragover="e => dragOver(e, string)"
+        @dragover="dragOver($event, string)"
         @dragleave="dragLeave"
-        @drop="e => onDrop(e, string)">
+        @drop="onDrop($event, string)">
 <!--         <svg width="100%" height="100%" class="grid">
           <svg
             v-for="i in beat.subdivision"
@@ -27,22 +27,24 @@
         v-bind-el="sound"
         class="sound"
         :class="{
-          selected: editor.selection.includes(sound),
-          dragged: !editor.dragCopy && editor.draggedSounds.includes(sound)
+          selected: $editor.selection.includes(sound),
+          dragged: !$editor.dragCopy && $editor.draggedSounds.includes(sound)
         }"
         :style="{
           left: (sound.start * 100) + '%',
           top: stringsPositions[sound.string],
           width: 100 * (sound.end - sound.start) + '%'
         }"
-        @click="e => editor.select(e, sound)"
-        @contextmenu="(e) => $emit('contextmenu', e, sound)"
+        @click="$editor.select($event, sound)"
+        @contextmenu="$emit('contextmenu', $event, sound)"
+        @auxclick="$emit('contextmenu', $event, sound)"
+        @dblclick="$emit('contextmenu', $event, sound)"
         v-drag-sound="{
           start: (e) => initDrag(e, sound),
-          end: () => editor.draggedSounds = []
+          end: () => $editor.draggedSounds = []
         }">
         <sound-label :sound="sound" :display="display" />
-        <sound-resize v-if="sound.note.type !== 'ghost'" :sound="sound" :editor="editor" />
+        <sound-resize v-if="sound.note.type !== 'ghost'" :sound="sound" :editor="$editor" />
       </div>
     </template>
     <div
@@ -67,11 +69,14 @@ import '../directives/drag-sound'
 export default {
   name: 'bass-beat',
   components: { SoundLabel, SoundTopLabel, SoundResize, BassCell },
-  props: ['editor', 'beat', 'instrument', 'display'],
+  props: ['beat', 'instrument', 'display'],
   data: () => ({
     dropItems: []
   }),
   computed: {
+    $editor () {
+      return this.$service('editor', ['selection', 'draggedSounds', 'dragCopy'])
+    },
     strings () {
       return this.instrument.strings.split('').reverse()
     },
@@ -111,7 +116,7 @@ export default {
       if (!evt.dataTransfer.data) {
         return
       }
-      this.editor.dragCopy = evt.ctrlKey
+      this.$editor.dragCopy = evt.ctrlKey
       const channel = evt.dataTransfer.channel
       const position = this.subbeatCell(evt)
       const key = [string, this.beat.bar, this.beat.beat, position.subbeat].join(':')
@@ -189,7 +194,7 @@ export default {
           sounds[0].beat.section.deleteSound(sounds[0])
         }
         this.addSounds(sounds, string, { beat: this.beat, start: record.dropInfo.position.start })
-        this.editor.selection.push(...sounds)
+        this.$editor.selection.push(...sounds)
       }
       // this.dropItems = []
       if (record) {
@@ -197,12 +202,12 @@ export default {
       }
     },
     initDrag (evt, clickSound) {
-      if (!this.editor.selection.includes(clickSound)) {
-        this.editor.selection = [clickSound]
+      if (!this.$editor.selection.includes(clickSound)) {
+        this.$editor.selection = [clickSound]
       }
 
       const roots = []
-      this.editor.selection.forEach(s => {
+      this.$editor.selection.forEach(s => {
         const rootSound = this.beat.section.rootSoundOf(s)
         if (!roots.includes(rootSound)) {
           roots.push(rootSound)
@@ -223,8 +228,8 @@ export default {
           }
         }
       })
-      this.editor.selection = [] // clear selection before drop
-      this.editor.draggedSounds = draggedSounds
+      this.$editor.selection = [] // clear selection before drop
+      this.$editor.draggedSounds = draggedSounds
       const display = this.display
       return {
         data: groups,
