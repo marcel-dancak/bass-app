@@ -32,6 +32,11 @@ export default {
       </v-card>
     )
     return h('v-dialog', params, [activator, content])
+  },
+  methods: {
+    close () {
+      this.visible = false
+    }
   }
 }
 </script>

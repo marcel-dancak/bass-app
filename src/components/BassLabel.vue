@@ -34,7 +34,7 @@ export default {
       const symbol = style === 'hammer' ? 'H' : 'P'
       extra = <div class="join"><span>{symbol}</span><span>⁀</span></div>
     }
-    if (note.type === 'regular' || note.type === 'bend') {
+    if (note.type === 'regular' || note.type === 'bend' || note.type === 'harmonics') {
       return (
         <div class="label" style={{background: color}}>
           {extra}

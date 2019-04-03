@@ -111,43 +111,6 @@ for (let i = -12; i < 13; i++) {
 
 function AudioComposer () {}
 
-AudioComposer.prototype.bend = function (audio, sound, duration, startTime, beatTime) {
-  let durationOffset = 0
-  function bendSound (sRate, sTime, eRate, eTime) {
-    audio.source.playbackRate.setValueAtTime(sRate, startTime + sTime * duration)
-    audio.source.playbackRate.linearRampToValueAtTime(eRate, startTime + eTime * duration)
-    const avgRate = (sRate + eRate) / 2
-    const bendDuration = (eTime - sTime) * duration
-    const offset = (avgRate - 1) * bendDuration
-    // console.log('{0} -> {1} ({2} to {3}) : {4}'.format(sRate, eRate, sTime, eTime, offset));
-    // console.log('avg rage: {0} duration: {1}'.format(avgRate, bendDuration));
-    durationOffset += offset
-  }
-
-  // console.log(sound.note.bend)
-  // var config = sound.note.bend || ''
-  // var parts = config.split(',').map(v => parseFloat(v))
-  var parts = sound.note.bend // .map(v => v * 2)
-  for (let i = 1; i < parts.length; i++) {
-    const prevBend = parts[i - 1]
-    const bend = parts[i]
-    if (bend !== prevBend) {
-      bendSound(
-        Math.pow(Math.pow(2, 1 / 12), prevBend),
-        (i - 1) / (parts.length - 1),
-        Math.pow(Math.pow(2, 1 / 12), bend),
-        i / (parts.length - 1)
-      )
-    } else {
-      var offset = (Math.pow(Math.pow(2, 1 / 12), bend) - 1) * (1 / (parts.length - 1)) * duration
-      // console.log('no bending:', offset)
-      durationOffset += offset
-    }
-  }
-  // console.log('durationOffset:', durationOffset)
-  audio.duration += durationOffset
-}
-
 function findWavePattern (note, ab, channel) {
   const buffer = ab.getChannelData(channel)
   const sampleRate = ab.sampleRate
@@ -472,7 +435,45 @@ function slide (prevAudio, sound, curve, startTime, beatTime, samples) {
   return audio
 }
 
+
+function bend (audio, sound, duration, startTime, beatTime) {
+  let durationOffset = 0
+  function bendSound (sRate, sTime, eRate, eTime) {
+    audio.source.playbackRate.setValueAtTime(sRate, startTime + sTime * duration)
+    audio.source.playbackRate.linearRampToValueAtTime(eRate, startTime + eTime * duration)
+    const avgRate = (sRate + eRate) / 2
+    const bendDuration = (eTime - sTime) * duration
+    const offset = (avgRate - 1) * bendDuration
+    // console.log('{0} -> {1} ({2} to {3}) : {4}'.format(sRate, eRate, sTime, eTime, offset));
+    // console.log('avg rage: {0} duration: {1}'.format(avgRate, bendDuration));
+    durationOffset += offset
+  }
+
+  // console.log(sound.note.bend)
+  // var config = sound.note.bend || ''
+  // var parts = config.split(',').map(v => parseFloat(v))
+  var parts = sound.note.bend // .map(v => v * 2)
+  for (let i = 1; i < parts.length; i++) {
+    const prevBend = parts[i - 1]
+    const bend = parts[i]
+    if (bend !== prevBend) {
+      bendSound(
+        Math.pow(Math.pow(2, 1 / 12), prevBend),
+        (i - 1) / (parts.length - 1),
+        Math.pow(Math.pow(2, 1 / 12), bend),
+        i / (parts.length - 1)
+      )
+    } else {
+      var offset = (Math.pow(Math.pow(2, 1 / 12), bend) - 1) * (1 / (parts.length - 1)) * duration
+      // console.log('no bending:', offset)
+      durationOffset += offset
+    }
+  }
+  // console.log('durationOffset:', durationOffset)
+  audio.duration += durationOffset
+}
 export default {
   join,
-  slide
+  slide,
+  bend
 }

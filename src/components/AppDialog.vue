@@ -8,16 +8,17 @@
     <v-slot :node="$slots.activator"/>
     <v-card ref="container">
       <v-card-title
-        class="header px-4 py-2"
-        primary-title
+        class="header"
         @mousedown="onDragStart"
       >
         <span>{{ header }}</span>
-        <v-btn icon @click="close">
+        <v-btn icon small @click="close">
           <v-icon>close</v-icon>
         </v-btn>
       </v-card-title>
-      <v-slot :node="$slots.default"/>
+      <transition :duration="visible ? 0 : 400">
+        <v-slot v-if="visible" :node="$slots.default"/>
+      </transition>
     </v-card>
   </v-dialog>
 </template>
@@ -31,6 +32,8 @@ export default {
   props: {
     /* v-dialog props */
     fullWidth: Boolean,
+    persistent: Boolean,
+    hideOverlay: Boolean,
     lazy: Boolean,
     value: Boolean,
     maxWidth: Number,
@@ -41,6 +44,13 @@ export default {
   data () {
     return {
       visible: false
+    }
+  },
+  watch: {
+    value (value) {
+      if (value) {
+        this.visible = true
+      }
     }
   },
   methods: {
@@ -58,6 +68,7 @@ export default {
         this._draggable.reset()
         this._draggable = null
       }
+      this.$emit('update:value', false)
     },
     onInput (visible) {
       this.visible = visible
@@ -83,5 +94,10 @@ export default {
 }
 .header {
   user-select: none;
+  padding: 0.35em 0.5em;
+  > span {
+    font-size: 14px;
+    font-weight: 500;
+  }
 }
 </style>

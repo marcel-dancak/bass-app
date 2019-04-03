@@ -74,6 +74,10 @@ export default function Player (context) {
       }
     },
 
+    removeAudioTrack () {
+      delete this.audioTrack
+    },
+
     collectResources (section) {
       const resources = new Set()
       for (let id in section.tracks) {

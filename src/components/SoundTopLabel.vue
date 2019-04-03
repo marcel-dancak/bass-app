@@ -10,7 +10,7 @@ export default {
   render (h, context) {
     const { sound } = context.props
 
-    const symbol = SoundStyleSymbols[sound.style]
+    const symbol = sound.note.type === 'harmonics' ? 'N.H.' : SoundStyleSymbols[sound.style]
     const staccato = sound.note.staccato
 
     if (symbol || staccato) {

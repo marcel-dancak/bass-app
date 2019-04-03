@@ -1,3 +1,4 @@
+import BezierEasing from 'bezier-easing'
 import { bufferLoader, ResourceNotAvailable } from './buffer-loader'
 import AudioUtils from './audio-utils'
 
@@ -82,7 +83,7 @@ export default function StringInstrument (params) {
 
     const duration = noteRealDuration(sound, beatTime)
     const minDuration = Math.max(duration, params.duration || 0)
-    // this.composer.enlarge(sound, audioData, 6);
+    // this.composer.enlarge(sound, audioData, 6)
     if (audioData.duration < minDuration) {
       const note = params.note || sound.note
       if (note && note.name) {
@@ -153,7 +154,7 @@ export default function StringInstrument (params) {
         const slideDuration = duration - curve[0] - curve[curve.length - 1]
 
         if (sound.note.slide.easing) {
-          const easing = new BezierEasing(...sound.note.slide.easing)
+          const easing = BezierEasing(...sound.note.slide.easing)
           for (let i = 1; i <= steps; i++) {
             const x = easing(i / steps) - easing((i - 1) / steps)
             curve[i] = x * slideDuration
@@ -201,9 +202,15 @@ export default function StringInstrument (params) {
       }
     },
     {
-      filter: (sound) => (sound.note.type === 'bend'),
+      filter: sound => sound.note.type === 'bend',
       soundResources (sound) {
         return [`bass/${sound.style}/${sound.string}${sound.note.fret}`]
+      },
+      startPlayback (sound, startTime, beatTime) {
+        const audio = this.createSoundAudio(sound, beatTime)
+        AudioUtils.bend(audio, sound, audio.duration, startTime, beatTime)
+        audio.play(startTime, 0.1)
+        return audio
       }
     },
     {
@@ -244,6 +251,17 @@ export default function StringInstrument (params) {
       }
     },
     {
+      filter: (sound) => sound.note.type === 'harmonics',
+      soundResources (sound) {
+        return [`bass/${sound.style}/${sound.string}${sound.note.fret}_H`]
+      },
+      startPlayback (sound, startTime, beatTime) {
+        const audio = this.createSoundAudio(sound, beatTime)
+        audio.play(startTime)
+        return audio
+      }
+    },
+    {
       filter: (sound) => (sound.note.type === 'regular'),
       soundResources (sound) {
         return [`bass/${sound.style}/${sound.string}${sound.note.fret}`]
@@ -262,6 +280,10 @@ export default function StringInstrument (params) {
     config: params,
     soundResources (sound) {
       const handler = handlers.find(h => h.filter(sound))
+      if (!handler) {
+        console.error('Unknown sound', sound)
+        return []
+      }
       return handler.soundResources(sound)
     },
     playSound (outputAudio, sound, startTime, beatTime) {

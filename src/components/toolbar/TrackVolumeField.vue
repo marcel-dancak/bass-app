@@ -9,10 +9,11 @@
       @input="setVolume"
       hide-details
     />
-    <label>
+    <label @click="$emit('click:label')">
       <icon v-if="icon" :name="icon" class="mr-1"/>
       <span>{{ label }}</span>
     </label>
+    <slot name="actions"/>
     <v-btn
       icon
       @click="toggleMute"
