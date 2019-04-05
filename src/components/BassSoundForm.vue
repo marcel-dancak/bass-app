@@ -34,6 +34,20 @@
         :note="sound.endNote"
       />
     </v-layout>
+    <template v-if="sound.note.bend">
+      <div class="ml-1 input-group input-group--dirty input-group--text-field">
+        <label>Bend graph</label>
+      </div>
+      <bend-editor v-model="sound.note.bend"/>
+    </template>
+
+    <template v-if="sound.note.slide">
+      <div class="ml-1 input-group input-group--dirty input-group--text-field">
+        <label>Slide graph</label>
+      </div>
+      <slide-editor v-model="sound.note.slide"/>
+    </template>
+
     <v-layout class="length" row>
       <v-flex style="flex: 0 0 28%">
         <v-select
@@ -100,9 +114,11 @@
 <script>
 import { NoteLengths, NoteTypes, PlayingStyles, StringRoots } from './constants'
 import NoteSelect from './NoteSelect'
+import BendEditor from './BendEditor'
+import SlideEditor from './SlideEditor'
 
 export default {
-  components: { NoteSelect },
+  components: { NoteSelect, BendEditor, SlideEditor },
   props: ['sound', 'editor'],
   computed: {
     PlayingStyles: () => PlayingStyles,
@@ -120,6 +136,16 @@ export default {
         this.$delete(this.sound, 'endNote')
         // delete this.sound.endNote
       }
+      if (type === 'slide') {
+        this.$set(this.sound.note, 'slide', { start: 0.2, end: 0.8 })
+      } else if (this.sound.note.slide) {
+        this.$delete(this.sound.note, 'slide')
+      }
+      if (type === 'bend') {
+        this.$set(this.sound.note, 'bend', [0, 0, 0, 0])
+      } else if (this.sound.note.bend) {
+        this.$delete(this.sound.note, 'bend')
+      }
       this.sound.note.type = type
     }
   }
@@ -130,6 +156,7 @@ export default {
 .sound-form {
   padding: 0.25em;
   min-width: 280px!important;
+  max-width: 300px;
   background-color: #fff;
   .layout > * {
     padding: 0.25em;
