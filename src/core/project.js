@@ -1,5 +1,3 @@
-import omit from 'lodash/omit'
-
 import { DrumKit, PercussionKit } from './percussion'
 import ProjectStorage from './local-storage'
 
@@ -47,8 +45,7 @@ export function Project (params) {
 }
 
 
-export default function JsonProject (params) {
-
+export function JsonProject (params) {
   const { sections, ...opts } = params
   const base = Project(opts)
 
@@ -73,27 +70,14 @@ export function LocalProject (projectId) {
   const memData = {}
 
   return Object.assign(base, {
+    id: projectId,
     getSectionData (id) {
-      console.log('getSectionData', id)
       return ProjectStorage.sectionData(projectId, id) || memData[id]
     },
     addSection (data) {
       const id = base.newSection('New')
       memData[id] = data
       return id
-    },
-    saveSection (id, section) {
-      // TODO: remove from memData?
-      const projectInfo = {
-        ...omit(base, 'playlists', 'index'),
-        sections: base.index
-      }
-      const sectionData = {
-        name: base.index.find(item => item.id === id).name,
-        ...section
-      }
-      ProjectStorage.saveProjectInfo(projectId, JSON.stringify(projectInfo))
-      ProjectStorage.saveSection(projectId, id, JSON.stringify(sectionData))
     }
   })
 }
