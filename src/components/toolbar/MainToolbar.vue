@@ -127,7 +127,7 @@
         />
         <v-btn
           icon class="mr-0"
-          @click="$project.saveSection(app.editor.sectionId, $section)"
+          @click="saveSection"
         >
           <icon name="save"/>
         </v-btn>
@@ -207,6 +207,7 @@ import NewTrack from './NewTrack'
 import FullscreenMenuItem from './FullscreenMenuItem'
 import SelectEdit from '@/components/SelectEdit'
 import DockMenu from '@/components/DockMenu'
+import ProjectStorage from '@/core/local-storage'
 
 export default {
   components: { PlayerBg, AudioPreferences, LocalProjects, NewTrack, DockMenu, SelectEdit, FullscreenMenuItem },
@@ -221,7 +222,7 @@ export default {
       return this.$service('player', ['playing'])
     },
     $section () {
-      return this.$service('section')
+      return this.$service('section', ['bpm'])
     },
     sectionsItems () {
       return this.$project.index
@@ -257,6 +258,10 @@ export default {
       this.$player.removeTrack(trackId)
       this.$section.removeTrack(trackId)
       this.app.track = this.$project.tracks[0]
+    },
+    saveSection () {
+      ProjectStorage.saveProjectInfo(this.$project.id, this.$project)
+      ProjectStorage.saveSection(this.$project.id, this.app.editor.sectionId, this.$section)
     }
   }
 }

@@ -38,6 +38,11 @@ export default {
     openProject (project) {
       // this.$emit('loadProject', project)
       this.$createService(LocalProject(project.id), 'project')
+      const updatedProjectsList = [
+        { id: project.id, name: project.name },
+        ...ProjectStorage.projectsList().filter(p => p.id !== project.id)
+      ]
+      ProjectStorage.saveProjectList(updatedProjectsList)
     },
     async onDrop (evt) {
       var file = evt.dataTransfer.files[0]
