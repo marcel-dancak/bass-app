@@ -37,7 +37,9 @@ export const Services = {
         this.$services[name] = vm
       }
       setProperty(this.$services[name], 'value', obj)
-      bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
+      // Setup reactivity 'outside' of this call to avoid updating of services defined
+      // as computed properties when some property from bindings will be changed.
+      setTimeout(() => bindings.forEach(prop => Vue.util.defineReactive(obj, prop)))
       return obj
     }
 
@@ -50,7 +52,7 @@ export const Services = {
       }
       const obj = this.$services[name].value
       if (obj) {
-        bindings.forEach(prop => Vue.util.defineReactive(obj, prop))
+        setTimeout(() => bindings.forEach(prop => Vue.util.defineReactive(obj, prop)))
       }
       return obj
     }
