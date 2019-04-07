@@ -104,7 +104,7 @@
           hide-details
         />
       </v-flex>
-      <v-btn icon>
+      <v-btn icon @click="playSound">
         <icon name="play"/>
       </v-btn>
     </v-layout>
@@ -113,6 +113,7 @@
 
 <script>
 import { NoteLengths, NoteTypes, PlayingStyles, StringRoots } from './constants'
+import { bufferLoader } from '@/core/buffer-loader'
 import NoteSelect from './NoteSelect'
 import BendEditor from './BendEditor'
 import SlideEditor from './SlideEditor'
@@ -124,7 +125,13 @@ export default {
     PlayingStyles: () => PlayingStyles,
     NoteTypes: () => NoteTypes,
     NoteLengths: () => NoteLengths,
-    StringRoots: () => StringRoots
+    StringRoots: () => StringRoots,
+    trackId () {
+      return this.$store.track.id
+    },
+    $section () {
+      return this.$service('section')
+    }
   },
   methods: {
     setType (type) {
@@ -147,6 +154,25 @@ export default {
         this.$delete(this.sound.note, 'bend')
       }
       this.sound.note.type = type
+    },
+    async playSound () {
+      const trackSection = this.$section.tracks[this.trackId]
+      const { instrument, audio } = this.$player.tracks[this.trackId]
+      const sounds = [this.sound, ...trackSection.nextSounds(this.sound)]
+
+      const resources = []
+      sounds.forEach(s => resources.push(...instrument.soundResources(s)))
+      instrument.stop()
+      await new Promise((resolve, reject) => {
+        bufferLoader.loadResources(Array.from(resources), resolve, reject)
+      })
+
+      let start = this.$player.context.currentTime + 0.05
+      const beatTime = 60 / (this.$section.bpm)
+      sounds.forEach(sound => {
+        instrument.playSound(audio, sound, start, beatTime)
+        start += trackSection.soundDuration(sound)
+      })
     }
   }
 }
