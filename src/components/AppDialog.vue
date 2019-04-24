@@ -5,7 +5,10 @@
     @input="onInput"
     @update:returnValue="onClose"
   >
-    <v-slot :node="$slots.activator"/>
+    <!-- <v-slot :node="$slots.activator"/> -->
+    <div @click="visible = true" slot="activator">
+      <slot name="activator"/>
+    </div>
     <v-card ref="container">
       <v-card-title
         class="header"
@@ -78,13 +81,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.card__title {
+.v-card__title {
   justify-content: center;
   background: #263238;
   color: #fff;
   font-size: 115%;
 
-  .btn {
+  .v-btn {
     position: absolute;
     right: 0;
     top: 0;

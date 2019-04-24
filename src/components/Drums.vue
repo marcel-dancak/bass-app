@@ -1,15 +1,12 @@
 <template>
-  <div class="drums">
-    <div
+  <v-layout class="column drums">
+    <icon
       v-for="drum in instrument.drums"
       :key="drum.name"
-    >
-      <icon
-        :name="drum.name"
-        @click="playSample(drum)"
-      />
-    </div>
-  </div>
+      :name="drum.name"
+      @click="playSample(drum)"
+    />
+  </v-layout>
 </template>
 
 <script>
@@ -41,8 +38,7 @@ export default {
 <style lang="scss">
 .drums {
   .icon {
-    font-size: 1em;
-    width: 3em;
+    width: 2.67em;
     height: 3em;
     cursor: pointer;
   }

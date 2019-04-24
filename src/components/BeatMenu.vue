@@ -3,7 +3,7 @@
     <text-separator>Beat</text-separator>
 
     <v-menu offset-x open-on-hover full-width>
-      <v-list-tile slot="activator">
+      <v-list-tile slot="activator" class="flex">
         <v-list-tile-title>Subdivision</v-list-tile-title>
         <v-icon small>play_arrow</v-icon>
       </v-list-tile>
@@ -93,11 +93,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.list {
+.v-list {
   min-width: 160px;
 
-  /deep/ .menu__activator {
-    .list__tile {
+  /deep/ .v-menu__activator {
+    .v-list__tile {
       padding-right: 0.25em;
     }
   }

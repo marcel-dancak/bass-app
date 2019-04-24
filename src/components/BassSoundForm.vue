@@ -84,7 +84,7 @@
       <div />
     </v-layout>
     <v-layout row>
-      <v-flex xs3>
+      <v-flex>
         <v-text-field
           label="Volume"
           type="number"
@@ -95,7 +95,7 @@
           hide-details
         />
       </v-flex>
-      <v-flex xs7>
+      <v-flex mx-2>
         <v-slider
           :min="0"
           :max="1"
@@ -180,22 +180,26 @@ export default {
 
 <style lang="scss">
 .sound-form {
-  padding: 0.25em;
+  padding: 0 0.35em;
   min-width: 280px!important;
   max-width: 300px;
   background-color: #fff;
-  .layout > * {
-    padding: 0.25em;
+  .layout {
+    margin: 0.35em 0;
+    > * {
+      padding: 0.25em;
+    }
+    &.row {
+      align-items: flex-end;
+    }
   }
-  .layout.row {
-    align-items: flex-end;
-  }
-  .input-group {
+
+  .v-input {
     label {
       font-size: 0.938em;
     }
-    .input-group__selections {
-      height: 2.5em;
+    .v-select__selections {
+      height: 2.25em;
       .icon {
         font-size: 1em;
         width: 1.25em;
@@ -206,8 +210,8 @@ export default {
   .input-group--select .input-group__selections__comma {
     font-size: 0.938em;
   }
-  .btn.btn--icon {
-    margin: 0.7em 0;
+  .v-btn.v-btn--icon {
+    margin: 0.5em;
     padding: 0;
     font-size: 1em;
     width: 1.5em;

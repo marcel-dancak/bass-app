@@ -68,6 +68,7 @@ export default {
     top: 0;
     font-size: 80%;
     opacity: 0.75;
+    display: flex;
 
     .icon {
       width: 1.25rem;
@@ -75,14 +76,12 @@ export default {
     }
   }
 
-  .btn {
+  .v-btn {
     margin: 0;
     &:not(.primary--text) .icon {
       color: #555;
     }
     .icon {
-      width: 1.5rem;
-      height: 1.5rem;
       transition: none;
     }
   }

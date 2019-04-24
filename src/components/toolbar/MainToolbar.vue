@@ -12,19 +12,18 @@
       v-model="app.track"
       item-text="name"
       return-object
-      content-class="tracks"
       hide-details
     >
       <template
         slot="selection"
         slot-scope="data">
-        <icon :name="tracksIcons[data.item.id]"/>
+        <icon :name="tracksIcons[data.item.id]" class="mr-2"/>
         <span class="input-group__selections__comma">{{ data.item.name }}</span>
       </template>
       <template
         slot="item"
         slot-scope="data">
-        <icon :name="tracksIcons[data.item.id]"/>
+        <icon :name="tracksIcons[data.item.id]" class="mr-2"/>
         <span class="input-group__selections__comma">{{ data.item.name }}</span>
       </template>
     </v-select>
@@ -250,7 +249,6 @@ export default {
     },
     closeMenu () {
       this.$refs.menu.isActive = false
-      // this.$refs.menu.$props.value = false
     },
     deleteTrack () {
       const trackId = this.app.track.id
@@ -278,64 +276,52 @@ export default {
   display: flex;
   justify-content: center;
 
-  /deep/ .toolbar__content {
+  /deep/ .v-toolbar__content {
     width: 100%;
     height: 3.125em;
+    padding: 0 0.5em;
   }
 
-  .btn {
+  .v-input {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0.8em 0 0.25em 0;
+  }
+  .v-select {
+    min-width: 180px;
+    max-width: 240px;
+  }
+  .v-btn {
     opacity: 0.8;
+    &:before {
+      display: none;
+    }
     &:hover {
       opacity: 1;
-      /deep/ .btn__content:before {
-        display: none;
-      }
     }
     &.active {
       color: red;
     }
     .icon {
       transition: none;
-      width: 1em;
-      height: 1em;
+      width: 1.75em;
+      height: 1.75em;
     }
     &.separated {
       border-radius: 0;
       position: relative;
       margin: auto 0;
       width: 3.5em;
-      &:before {
+      /deep/ .v-btn__content:before {
         content: "";
         position: absolute;
         left: 0;
         width: 1px;
-        top: 18%;
-        bottom: 18%;
+        top: 0;
+        bottom: 0;
         background-color: #fff;
         opacity: 0.3;
       }
-    }
-  }
-
-  /deep/ .input-group {
-    flex: 0 0 auto;
-    width: auto;
-    padding: 0.8em 0 0.25em 0;
-
-    label {
-      height: 1.25em;
-      line-height: 1.25em;
-    }
-  }
-  .input-group--select {
-    min-width: 180px;
-  }
-
-  .tracks {
-    .icon {
-      width: 1em;
-      height: 1em;
-      margin-right: 0.25em;
     }
   }
 
@@ -350,7 +336,7 @@ export default {
       /deep/ input {
         width: 80px;
       }
-      /deep/ .input-group--text-field__suffix {
+      /deep/ .v-text-field__suffix {
         font-size: 85%;
         pointer-events: none;
         max-width: 0;
@@ -358,11 +344,11 @@ export default {
       }
     }
 
-    .btn.play {
+    .v-btn.play {
       margin: auto 1em;
       .icon {
-        width: 1.35em;
-        height: 1.35em;
+        width: 2em;
+        height: 2em;
       }
     }
   }
@@ -383,7 +369,7 @@ export default {
       right: 1em;
       text-align: center;
     }
-    .btn {
+    .v-btn {
       margin: 0.075em 0 0.15em 0;
       padding: 1px 0;
       width: 2.5em;
@@ -394,20 +380,7 @@ export default {
 </style>
 
 <style lang="scss">
-.menu__content.tracks {
-  .list__tile--active {
-    .icon {
-      color: inherit;
-    }
-  }
-  .icon {
-    width: 1em;
-    height: 1em;
-    margin-right: 0.5em;
-  }
-}
-
-.menu__content.audio-preferences {
+.v-menu__content.audio-preferences {
   background-color: #fff;
   width: 250px;
 }

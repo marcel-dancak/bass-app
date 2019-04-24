@@ -187,18 +187,19 @@ html {
 .bottom-toolbar {
   border-top: 1px solid #bbb;
 
-  .toolbar__content {
+  .v-toolbar__content {
     height: 2.5em;
     background-color: #ccc;
+    padding: 0 0.5em;
   }
 
-  .input-group {
+  .v-input {
     padding: 0 0.5em;
     flex: 0 0 auto;
     width: auto;
   }
 }
-.menu__content--select {
+.v-menu__content--select {
   .icon {
     color: inherit!important;
     fill: currentColor;
@@ -206,11 +207,13 @@ html {
     height: 0.875em;
   }
 }
-
-.input-group label {
-  font-size: inherit!important;
+.v-select {
+  .v-select__selections {
+    > input:last-child {
+      max-width: 10px; // to make width compact
+    }
+  }
 }
-
 @media (max-height: 720px) {
   html {
     font-size: 0.8335em!important;

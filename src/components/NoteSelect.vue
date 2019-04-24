@@ -3,24 +3,26 @@
     <v-select
       ref="select"
       class="note-select"
-      content-class="note-select"
+      :menu-props="{contentClass:'note-select'}"
       :label="label"
       :items="items"
       item-value="fret"
       v-model="selected"
-      hide-details>
+      hide-details
+    >
       <span
         slot="selection"
         slot-scope="data"
-        class="input-group__selection">
+        class="input-group__selection"
+      >
         {{ note.name }}<sub>{{ note.octave }}</sub>
       </span>
       <template
         slot="item"
-        slot-scope="data">
-        <span
-          class="fret"
-          @click.stop="">({{ data.item.fret }})
+        slot-scope="data"
+      >
+        <span class="fret px-2" @click.stop="">
+          ({{ data.item.fret }})
         </span>
         <span class="note" @click.stop="selectItem(data.item)">
           {{ data.item.name }}<sub>{{ data.item.octave }}</sub>
@@ -78,16 +80,11 @@ export default {
   },
   methods: {
     selectItem (item, flatName = false) {
-      // data.parent.$emit('change', data.item)
-      // data.parent.$emit('input', data.item)
-      // data.parent.$refs.menu.$emit('update:returnValue', undefined)
-      // data.parent.$refs.menu.$emit('input', false)
       this.note.name = flatName ? item.flatName : item.name
       this.note.octave = item.octave
       this.note.fret = item.fret
 
       this.$refs.select.selectItem(item)
-      this.$refs.select.hideMenu()
     }
   }
 }
@@ -95,19 +92,10 @@ export default {
 
 <style lang="scss">
 .note-select {
-  .input-group__selection {
-    color: rgba(0,0,0,0.87);
-  }
-  .list__tile {
-    height: 3em;
+  .v-list__tile {
     padding: 0;
     .fret {
       opacity: 0.35;
-      padding-left: 0.5em;
-    }
-    > * {
-      height: inherit;
-      line-height: 3em;
     }
     .note {
       padding-left: 1em;

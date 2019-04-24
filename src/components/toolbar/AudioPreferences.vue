@@ -158,11 +158,11 @@ export default {
 .header {
   background-color: #eee;
   border-bottom: 1px solid #ddd;
-  .btn {
+  .v-btn {
     margin: 0.15em;
     .icon {
-      width: 0.85em;
-      height: 0.85em;
+      width: 1.5em;
+      height: 1.5em;
     }
   }
 }

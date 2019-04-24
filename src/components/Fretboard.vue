@@ -286,20 +286,14 @@ export default {
   }
 }
 .settings {
-  .input-group {
+  margin-bottom: 1px;
+  .v-input {
     margin: 0 0.25em;
     min-width: 75px;
-    width: auto;
     flex: 0 1 auto;
-    .input-group__input {
-      justify-content: space-between;
-    }
-    .input-group__selections {
-      width: auto;
-    }
     svg.icon {
-      width: 0.875em;
-      height: 0.875em;
+      width: 1.25em;
+      height: 1.25em;
     }
   }
 }

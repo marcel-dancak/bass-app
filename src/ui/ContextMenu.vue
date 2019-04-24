@@ -67,18 +67,4 @@ export default {
 .context-menu-container {
   position: absolute;
 }
-.context-menu {
-  background-color: #fff;
-  .layout > * {
-    padding: 0.25em;
-  }
-  .input-group {
-    label {
-      font-size: 0.938em;
-    }
-  }
-  .input-group--select .input-group__selections__comma {
-    font-size: 0.938em;
-  }
-}
 </style>
