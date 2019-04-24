@@ -45,7 +45,7 @@
       <div class="ml-1 input-group input-group--dirty input-group--text-field">
         <label>Slide graph</label>
       </div>
-      <slide-editor v-model="sound.note.slide"/>
+      <slide-editor v-model="sound.note.slide" :up="sound.note.fret < sound.endNote.fret"/>
     </template>
 
     <v-layout class="length" row>

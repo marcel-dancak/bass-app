@@ -3,24 +3,24 @@
     <div class="flex graph">
       <svg ref="svg" height="40" width="100%">
         <line
-          x1="0" y1="0" :x2="start" y2="0"
+          x1="0" :y1="startY" :x2="startX" :y2="startY"
           class="primary--text"
         />
         <line
-          :x1="start" y1="0" :x2="end" y2="100%"
+          :x1="startX" :y1="startY" :x2="endX" :y2="endY"
           class="primary--text"
         />
         <line
-          :x1="end" y1="100%" x2="100%" y2="100%"
+          :x1="endX" :y1="endY" x2="100%" :y2="endY"
           class="primary--text"
         />
         <circle
-          :cx="start" :cy="0" r="8"
+          :cx="startX" :cy="startY" r="8"
           class="primary--text"
           @mousedown.prevent="startDrag($event, 'start')"
         />
         <circle
-          :cx="end" cy="100%" r="8"
+          :cx="endX" :cy="endY" r="8"
           class="primary--text"
           @mousedown.prevent="startDrag($event, 'end')"
         />
@@ -36,17 +36,27 @@ function perc (val) {
 export default {
   props: {
     value: Object,
+    up: {
+      type: Boolean,
+      default: true
+    },
     minDist: {
       type: Number,
       default: 0.1
     }
   },
   computed: {
-    start () {
+    startX () {
       return perc(this.value.start)
     },
-    end () {
+    startY () {
+      return this.up ? '100%' : '0'
+    },
+    endX () {
       return perc(this.value.end)
+    },
+    endY () {
+      return this.up ? '0' : '100%'
     }
   },
   methods: {
@@ -75,7 +85,7 @@ export default {
 <style lang="scss" scoped>
 .graph {
   position: relative;
-  margin: 16px 0 6px 0;
+  margin: 16px 16px 6px 16px;
   padding: 0!important;
   svg {
     overflow: visible;

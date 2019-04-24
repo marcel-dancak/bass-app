@@ -426,10 +426,11 @@ export default {
       }
     }
   }
-  .menu.section {
+  .v-menu.section {
     margin-top: 1.5em;
     width: 100%;
-    .menu__activator {
+    position: absolute;
+    .v-menu__activator {
       line-height: 1.5em;
       span {
         font-size: 1.25em;
@@ -443,7 +444,7 @@ export default {
   }
 }
 
-.menu__content.section {
+.v-menu__content.section {
   background-color: #fff;
   padding: 0.5em 1em;
 }

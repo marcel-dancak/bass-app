@@ -1,5 +1,6 @@
 <script>
 import { Colors } from '../colors'
+import BendLabel from './BendLabel'
 
 function Note (h, note, display) {
   switch (display) {
@@ -25,15 +26,21 @@ export default {
     }
 
     let color = sound.muted ? Colors.muted : Colors[sound.note.octave]
-    if (style === 'ring' && note.type !== 'slide') {
-      return <div class="label" style={{background: color}}>‿</div>
+    let extra = null
+    if (note.type === 'bend') {
+      // extra = <div class="bend">bend</div>
+      extra = <BendLabel class="bend" points={note.bend}/>
     }
 
-    let extra = null
+    if (style === 'ring' && note.type !== 'slide') {
+      return <div class="label" style={{background: color}}>{extra}‿</div>
+    }
+
     if (style === 'hammer' || style === 'pull') {
       const symbol = style === 'hammer' ? 'H' : 'P'
       extra = <div class="join"><span>{symbol}</span><span>⁀</span></div>
     }
+
     if (note.type === 'regular' || note.type === 'bend' || note.type === 'harmonics') {
       return (
         <div class="label" style={{background: color}}>
@@ -120,6 +127,12 @@ export default {
       &.down {
         transform: rotate(-60deg);
       }
+    }
+    .bend {
+      position: absolute;
+      top: -2em;
+      left: 0;
+      right: 0;
     }
   }
 }
